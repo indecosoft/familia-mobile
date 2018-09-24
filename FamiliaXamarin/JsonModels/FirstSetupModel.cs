@@ -18,5 +18,7 @@ namespace FamiliaXamarin.JsonModels
         public string DateOfBirth { get; set; }
         public string Gender { get; set; }
         public string Disease { get; set; }
+        public string ImageName { get; set; }
+        public string ImageExtension { get; set; }
     }
 }

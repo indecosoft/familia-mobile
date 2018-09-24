@@ -1,19 +1,25 @@
 ﻿using System;
+using System.IO;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Preferences;
 using Android.Provider;
+using Android.Support.Constraints;
+using Android.Support.Design.Widget;
 using Android.Support.V4.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.JsonModels;
-using Java.IO;
 using Newtonsoft.Json;
+using Org.Json;
 using Refractored.Controls;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Environment = Android.OS.Environment;
+using File = Java.IO.File;
 using FragmentManager = Android.Support.V4.App.FragmentManager;
 using FragmentPagerAdapter = Android.Support.V4.App.FragmentPagerAdapter;
 
@@ -26,7 +32,12 @@ namespace FamiliaXamarin
         private SectionsPagerAdapter _sectionsPagerAdapter;
         private FirstSetupViewPager _viewPager;
         private readonly FirstSetupModel _firstSetupModel = new FirstSetupModel();
+        private readonly  IWebServices _webServices = new WebServices();
+        private ConstraintLayout MainContent;
         public static FirstSetup FragmentContext;
+#pragma warning disable 618
+        private ProgressDialog _progressDialog;
+#pragma warning restore 618
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -39,9 +50,18 @@ namespace FamiliaXamarin
         {
             FragmentContext = this;
             _sectionsPagerAdapter = new SectionsPagerAdapter(SupportFragmentManager);
+            MainContent = FindViewById<ConstraintLayout>(Resource.Id.main_content);
             _viewPager = FindViewById<FirstSetupViewPager>(Resource.Id.container);
             _viewPager.SetPagingEnabled(false);
             _viewPager.Adapter = _sectionsPagerAdapter;
+#pragma warning disable 618
+            _progressDialog = new ProgressDialog(this);
+#pragma warning restore 618
+            _progressDialog.SetTitle("Va rugam asteptati ...");
+            _progressDialog.SetMessage("Trimitere date");
+            _progressDialog.SetCancelable(false);
+            
+            Utils.SetDefaults("Logins", true.ToString(), this);
         }
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
@@ -67,6 +87,7 @@ namespace FamiliaXamarin
             private CircleImageView _profileImage;
             private bool _imageValidator;
             private Android.Net.Uri _photoUri;
+            private FileInfo _fileInformations;
             private string _imageExtension, _imagePath;
 
             
@@ -101,7 +122,8 @@ namespace FamiliaXamarin
                     });
                 pictureDialog.Show();
             }
-            public void ChoosePhotoFromGallary()
+
+            private void ChoosePhotoFromGallary()
             {
                 var a = new Intent();
                 a.SetType("image/*");
@@ -153,12 +175,33 @@ namespace FamiliaXamarin
                             _imagePath = _photoUri.Path;
                             _profileImage.SetImageBitmap(Utils.CheckRotation(_photoUri.Path, MediaStore.Images.Media.GetBitmap(FragmentContext.ContentResolver, _photoUri)));
                             GalleryAddPic();
-                            _imageValidator = true;
+                            _fileInformations = new FileInfo(_imagePath);
+                            Log.Error("Size", _fileInformations.Length.ToString());
+                            if (_fileInformations.Length >= 10240)
+                            {
+                                _imageValidator = false;
+                                ImageTooLargeWarning();
+                            }
+                            else
+                            {
+                                _imageValidator = true;
+                            }
                             break;
                         case 2:
                             var uri = data.Data;
                             _profileImage.SetImageBitmap(Utils.CheckRotation(GetPathToImage(uri), MediaStore.Images.Media.GetBitmap(FragmentContext.ContentResolver, uri)));
                             _imagePath = GetPathToImage(uri);
+                            _fileInformations = new FileInfo(_imagePath);
+                            Log.Error("Size", _fileInformations.Length.ToString());
+                            if (_fileInformations.Length >= 10485760)
+                            {
+                                _imageValidator = false;
+                                ImageTooLargeWarning();
+                            }
+                            else
+                            {
+                                _imageValidator = true;
+                            }
                             _imageValidator = true;
                             break;
                         default:
@@ -171,8 +214,9 @@ namespace FamiliaXamarin
                     if (_imageExtension.ToLower().Equals("jpeg"))
                         _imageExtension = "jpg";
                     FragmentContext._firstSetupModel.Base64Image = "data:image/" + _imageExtension + ";base64," + Convert.ToBase64String(System.IO.File.ReadAllBytes(_imagePath));
-                    Log.Error("Base64Image", FragmentContext._firstSetupModel.Base64Image);
-                    Log.Error("BImage_EXT", _imageExtension);
+                    FragmentContext._firstSetupModel.ImageExtension = _imageExtension;
+//                    Log.Error("Base64Image", FragmentContext._firstSetupModel.Base64Image);
+//                    Log.Error("BImage_EXT", _imageExtension);
 
 
                 }
@@ -183,6 +227,18 @@ namespace FamiliaXamarin
 
             }
 
+            private void ImageTooLargeWarning()
+            {
+                Toast.MakeText(FragmentContext, "Fotografie prea mare! Dimensiunea maxima acceptata este de 10 Mb.", ToastLength.Long).Show();
+                string resourcePath = "@drawable/profile";  // where myresource (without the extension) is the file
+
+                int imageResource = Activity.Resources.GetIdentifier(resourcePath, null, Activity.PackageName);
+
+#pragma warning disable CS0618 // Type or member is obsolete
+                Drawable res = Activity.Resources.GetDrawable(imageResource);
+#pragma warning restore CS0618 // Type or member is obsolete
+                _profileImage.SetImageDrawable(res);
+            }
 
             private void GalleryAddPic()
             {
@@ -304,7 +360,7 @@ namespace FamiliaXamarin
                         break;
                 }
 
-                _btnNext.Click += delegate
+                _btnNext.Click += async delegate
                 {
                     switch (Arguments.GetInt(ArgSectionNumber))
                     {
@@ -315,25 +371,57 @@ namespace FamiliaXamarin
                                 Toast.MakeText(FragmentContext, "Alege o imagine!", ToastLength.Short).Show();
                             break;
                         case 2:
-//                            _firstSetupModel.Gender = _genderSpinner.SelectedItem.ToString();
-                            PreferenceManager.GetDefaultSharedPreferences(FragmentContext)
-                                .Edit()
-                                .PutString("Avatar",
-                                    Constants.PUBLIC_SERVER_ADDRESS +
-                                    PreferenceManager.GetDefaultSharedPreferences(FragmentContext).GetString("Email", "") +
-                                    "." + _imageExtension)
-                                .Apply();
+////                            _firstSetupModel.Gender = _genderSpinner.SelectedItem.ToString();
+//                            PreferenceManager.GetDefaultSharedPreferences(FragmentContext)
+//                                .Edit()
+//                                .PutString("Avatar",
+//                                    Constants.PUBLIC_SERVER_ADDRESS +
+//                                    PreferenceManager.GetDefaultSharedPreferences(FragmentContext).GetString("Email", "") +
+//                                    "." + _imageExtension)
+//                                .Apply();
                             FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber);
-                            Log.Error("Avatar",
-                                PreferenceManager.GetDefaultSharedPreferences(FragmentContext).GetString("Email", ""));
+//                            Log.Error("Avatar",
+//                                PreferenceManager.GetDefaultSharedPreferences(FragmentContext).GetString("Email", ""));
                             break;
                         case 3:
-                            string jsonData = JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
-                            Log.Error("Json To Send", jsonData);
+                            FragmentContext._progressDialog.Show();
+                            FragmentContext._firstSetupModel.ImageName = Utils.GetDefaults("Email", Activity);
+                            
 
-//                            Toast.MakeText(FragmentContext, jsonData, ToastLength.Long).Show();
-                            FragmentContext.StartActivity(typeof(MainActivity));
-                            FragmentContext.Finish();
+                            await Task.Run(async () => {
+
+                                string jsonData = JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
+                                string response = await FragmentContext._webServices.Post(Constants.PUBLIC_SERVER_ADDRESS + "api/firstSetup", new JSONObject(jsonData), Utils.GetDefaults("Token", Activity));
+                                if (response != null)
+                                {
+                                    Snackbar snack;
+                                    var responseJson = new JSONObject(response);
+                                    switch (responseJson.GetInt("status"))
+                                    {
+                                        case 0:
+                                            snack = Snackbar.Make(FragmentContext.MainContent, "Wrong Data", Snackbar.LengthLong);
+                                            snack.Show();
+                                            break;
+                                        case 1:
+                                            snack = Snackbar.Make(FragmentContext.MainContent, "Internal Server Error", Snackbar.LengthLong);
+                                            snack.Show();
+                                            break;
+                                        case 2:
+                                            
+                                            FragmentContext.StartActivity(typeof(MainActivity));
+                                            FragmentContext.Finish();
+                                            //snack.Show();
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    var snack = Snackbar.Make(FragmentContext.MainContent, "Unable to reach the server!", Snackbar.LengthLong);
+                                    snack.Show();
+                                }
+                            });
+                            FragmentContext._progressDialog.Dismiss();
+                            
                             break;
                     }
                 };

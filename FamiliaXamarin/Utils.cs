@@ -9,13 +9,20 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Graphics;
 using Android.Media;
+using Android.Preferences;
 using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Telephony;
+using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
+using Java.Text;
+using Java.Util;
 using Java.Util.Regex;
+using Org.Json;
+using ZXing;
+using ZXing.Common;
 using Orientation = Android.Widget.Orientation;
 
 
@@ -23,6 +30,22 @@ namespace FamiliaXamarin
 {
     internal class Utils
     {
+
+        public static void SetDefaults(string key, string value, Context context)
+        {
+            var preferences = PreferenceManager.GetDefaultSharedPreferences(context);
+            var editor = preferences.Edit();
+            editor.PutString(key, value);
+            editor.Apply();
+        }                                                                                         
+
+        
+        public static string GetDefaults(string key, Context context)
+        {
+            var preferences = PreferenceManager.GetDefaultSharedPreferences(context);
+            return preferences.GetString(key, null);
+        }
+
         public static bool PasswordValidator(string s)
         {
             var regex = new Regex("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,100}$");
@@ -43,8 +66,8 @@ namespace FamiliaXamarin
         }
         public static Bitmap CheckRotation(string photoPath, Bitmap bitmap)
         {
-            ExifInterface ei = new ExifInterface(photoPath);
-            int orientation = ei.GetAttributeInt(ExifInterface.TagOrientation, (int)Android.Media.Orientation.Undefined);
+            var ei = new ExifInterface(photoPath);
+            var orientation = ei.GetAttributeInt(ExifInterface.TagOrientation, (int)Android.Media.Orientation.Undefined);
 
             Bitmap rotatedBitmap;
             switch (orientation)
@@ -75,14 +98,14 @@ namespace FamiliaXamarin
         }
         private static Bitmap RotateImage(Bitmap source, float angle)
         {
-            Matrix matrix = new Matrix();
+            var matrix = new Matrix();
             matrix.PostRotate(angle);
             return Bitmap.CreateBitmap(source, 0, 0, source.Width, source.Height,
                 matrix, true);
         }
         private static Bitmap Flip(Bitmap bitmap, bool horizontal, bool vertical)
         {
-            Matrix matrix = new Matrix();
+            var matrix = new Matrix();
             matrix.PreScale(horizontal ? -1 : 1, vertical ? -1 : 1);
             return Bitmap.CreateBitmap(bitmap, 0, 0, bitmap.Width, bitmap.Height, matrix, true);
         }
@@ -93,6 +116,49 @@ namespace FamiliaXamarin
             var view = activity.CurrentFocus ?? new View(activity);
             //If no view currently has focus, create a new one, just so we can grab a window token from it
             imm.HideSoftInputFromWindow(view.WindowToken, 0);
+        }
+        public static Bitmap GenQRCode(Context ctx)
+        {
+            try
+            {
+
+                string token = Utils.GetDefaults("Token",ctx);
+
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+                string genDateTime = sdf.Format(new Date());
+                Date d1 = sdf.Parse(genDateTime);
+                Calendar cal = Calendar.Instance;
+                cal.Time = d1;
+                cal.Add(Calendar.Minute, 30);
+                String expDateTime = sdf.Format(cal.Time);
+                //Log.e("newTime", expDateTime);
+
+                JSONObject qrCodeData = new JSONObject().Put("clientToken", token).Put("generationDateTime", genDateTime).Put("expirationDateTime", expDateTime);
+
+                //ZXing.BarcodeReader
+                //var content = "123456789012345678";
+                var options = new EncodingOptions();
+                options.Height = 1000;
+                options.Width = 1000;
+                var writer = new BarcodeWriter
+                {
+                    Format = BarcodeFormat.QR_CODE,
+                    Options = options
+
+                };
+                var bitmap = writer.Write(qrCodeData.ToString());
+//                BarcodeWriter barcodeEncoder = new BarcodeWriter();
+//                var bitmap = barcodeEncoder.Encoder.encode(qrCodeData.ToString(), BarcodeFormat.QR_CODE, 1000, 1000);
+
+                return bitmap;
+            }
+            catch (Exception e)
+            {
+                Log.Error("ErrorGeneratingQRCode", e.ToString());
+            }
+            return null;
         }
     }
 }

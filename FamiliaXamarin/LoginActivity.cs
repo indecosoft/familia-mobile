@@ -1,21 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Android;
 using Android.App;
-using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
-using Android.Support.V4.App;
 using Android.Support.V7.App;
-using Android.Telephony;
-using Android.Util;
-using Android.Views;
 using Android.Widget;
 using Org.Json;
 
@@ -25,8 +16,6 @@ namespace FamiliaXamarin
     public class LoginActivity : AppCompatActivity
     {
         private ConstraintLayout _layout;
-        private TextInputLayout _usernameInputLayout;
-        private TextInputLayout _pwdTextInputLayout;
 
         private EditText _usernameEditText;
         private EditText _passwordEditText;
@@ -63,6 +52,17 @@ namespace FamiliaXamarin
             {
                 RequestPermissions(_permissionsLocation, 0);
             }
+
+            try
+            {
+                if (!bool.Parse(Utils.GetDefaults("Logins", this)) || Utils.GetDefaults("Token", this) == null) return;
+                StartActivity(typeof(MainActivity));
+                Finish();
+            }
+            catch
+            {
+                // ignored
+            }
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
@@ -90,8 +90,6 @@ namespace FamiliaXamarin
             Title = string.Empty;
 
             _layout = FindViewById<ConstraintLayout>(Resource.Id.layout);
-            _usernameInputLayout = FindViewById<TextInputLayout>(Resource.Id.UserInputLayout);
-            _pwdTextInputLayout = FindViewById<TextInputLayout>(Resource.Id.PwdInputLayout);
 
             _usernameEditText = FindViewById<EditText>(Resource.Id.UsernameEditText);
             _passwordEditText = FindViewById<EditText>(Resource.Id.PasswordEditText);
@@ -154,11 +152,24 @@ namespace FamiliaXamarin
                             snack.Show();
                             break;
                         case 2:
-                            //snack = Snackbar.Make(_layout, "Login Succesful! Hello " + _usernameEditText.Text, Snackbar.LengthLong);
-                            //StartActivity(typeof(MainActivity));
-                            StartActivity(typeof(FirstSetup));
+                            var token = new JSONObject(response).GetString("token");
+                            var nume = new JSONObject(response).GetString("nume");
+                            var logins = new JSONObject(response).GetBoolean("logins");
+                            var avatar = new JSONObject(response).GetString("avatar");
+                    
+                            Utils.SetDefaults("Token", token, this);
+                            Utils.SetDefaults("Imei", Utils.GetImei(this), this);
+                            Utils.SetDefaults("Email", _usernameEditText.Text, this);
+                            Utils.SetDefaults("Logins", logins.ToString(), this);
+                            Utils.SetDefaults("Nume", nume, this);
+                            Utils.SetDefaults("Avatar", Constants.PUBLIC_SERVER_ADDRESS + avatar, this);
+
+                            if (logins)
+                                StartActivity(typeof(MainActivity));
+                            else
+                                StartActivity(typeof(FirstSetup));
+
                             Finish();
-                            //snack.Show();
                             break;
                     }
                 }
