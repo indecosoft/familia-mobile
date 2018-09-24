@@ -57,12 +57,14 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsistentForm.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DatePickerFragment.cs" />
     <Compile Include="FirstSetup.cs" />
     <Compile Include="FirstSetupViewPager.cs" />
     <Compile Include="IWebServices.cs" />
     <Compile Include="JsonModels\FirstSetupModel.cs" />
+    <Compile Include="LocationService.cs" />
     <Compile Include="LoginActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="PwdResetActivity.cs" />
@@ -309,6 +311,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\fragment_qr_code_generator.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_asistent_form.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

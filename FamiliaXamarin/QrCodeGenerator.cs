@@ -31,7 +31,7 @@ namespace FamiliaXamarin
             var view = inflater.Inflate(Resource.Layout.fragment_qr_code_generator, container, false);
             var btnReset = view.FindViewById<Button>(Resource.Id.btnReset);
             var imageViewQrCode = view.FindViewById< ImageView>(Resource.Id.qrCode);
-//            BitMatrix bitMatrix = Utils.GenQRCode(Activity);
+//            BitMatrix bitMatrix = Utils.GenQrCode(Activity);
 //                int height = bitMatrix.Height;
 //            int width = bitMatrix.Width;
 //            Bitmap bmp = Bitmap.CreateBitmap(width, height, Bitmap.Config.Rgb565);
@@ -42,12 +42,12 @@ namespace FamiliaXamarin
 //                    bmp.SetPixel(x, y, bitMatrix[x, y] ? Color.Black : Color.White);
 //                }
 //            }
-            imageViewQrCode.SetImageBitmap(Utils.GenQRCode(Activity));
+            imageViewQrCode.SetImageBitmap(Utils.GenQrCode(Activity));
 
 
             btnReset.Click += delegate
             {
-                imageViewQrCode.SetImageBitmap(Utils.GenQRCode(Activity));
+                imageViewQrCode.SetImageBitmap(Utils.GenQrCode(Activity));
             };
 
             return view;

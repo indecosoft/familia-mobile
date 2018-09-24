@@ -1,6 +1,7 @@
 ﻿using System;
 using Android;
 using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
@@ -42,6 +43,7 @@ namespace FamiliaXamarin
             var profileImageView = headerView.FindViewById<CircleImageView>(Resource.Id.menu_profile_image);
             var avatar = Utils.GetDefaults("Avatar", this);
             Log.Error("Avatar", avatar);
+            StartService(new Intent(this, typeof(LocationService)));
             Picasso.With(this)
                 .Load(avatar)
                 .Resize(100, 100)
@@ -64,10 +66,11 @@ namespace FamiliaXamarin
             if(drawer.IsDrawerOpen(GravityCompat.Start))
             {
                 drawer.CloseDrawer(GravityCompat.Start);
+                Utils.HideKeyboard(this);
             }
             else
             {
-                base.OnBackPressed();
+                Finish();
             }
         }
 
@@ -111,6 +114,12 @@ namespace FamiliaXamarin
                 case Resource.Id.nav_manage:
                     break;
                 case Resource.Id.nav_asistenta:
+                    var fragmentAsist = new AsistentForm();
+                    var fragmentManagerAsist = SupportFragmentManager;
+                    var fragmentTransactionAsist = fragmentManagerAsist.BeginTransaction();
+                    fragmentTransactionAsist.Replace(Resource.Id.fragment_container, fragmentAsist);
+                    fragmentTransactionAsist.AddToBackStack(null);
+                    fragmentTransactionAsist.Commit();
                     break;
                 case Resource.Id.nav_QRCode:
                     var fragment = new QrCodeGenerator();

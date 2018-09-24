@@ -117,7 +117,7 @@ namespace FamiliaXamarin
             //If no view currently has focus, create a new one, just so we can grab a window token from it
             imm.HideSoftInputFromWindow(view.WindowToken, 0);
         }
-        public static Bitmap GenQRCode(Context ctx)
+        public static Bitmap GenQrCode(Context ctx)
         {
             try
             {
@@ -131,26 +131,20 @@ namespace FamiliaXamarin
                 Date d1 = sdf.Parse(genDateTime);
                 Calendar cal = Calendar.Instance;
                 cal.Time = d1;
-                cal.Add(Calendar.Minute, 30);
-                String expDateTime = sdf.Format(cal.Time);
+                cal.Add(CalendarField.Minute, 30);
+                string expDateTime = sdf.Format(cal.Time);
                 //Log.e("newTime", expDateTime);
 
                 JSONObject qrCodeData = new JSONObject().Put("clientToken", token).Put("generationDateTime", genDateTime).Put("expirationDateTime", expDateTime);
 
-                //ZXing.BarcodeReader
-                //var content = "123456789012345678";
-                var options = new EncodingOptions();
-                options.Height = 1000;
-                options.Width = 1000;
+               
                 var writer = new BarcodeWriter
                 {
                     Format = BarcodeFormat.QR_CODE,
-                    Options = options
+                    Options = new EncodingOptions { Height = 1000, Width = 1000 }
 
                 };
                 var bitmap = writer.Write(qrCodeData.ToString());
-//                BarcodeWriter barcodeEncoder = new BarcodeWriter();
-//                var bitmap = barcodeEncoder.Encoder.encode(qrCodeData.ToString(), BarcodeFormat.QR_CODE, 1000, 1000);
 
                 return bitmap;
             }
