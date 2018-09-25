@@ -36,7 +36,7 @@ namespace FamiliaXamarin
         public static readonly string DATA_URL = "https://devgis.sigma.team/devices/save-device-measurements";
         public static readonly string SERVER_ADDRESS="http://192.168.101.192:3000/";
         //public static readonly string PUBLIC_SERVER_ADDRESS="https://chat.devgis.sigma.team/";
-        public static readonly string PUBLIC_SERVER_ADDRESS= "https://chat.devgis.sigma.team/";
+        public static readonly string PUBLIC_SERVER_ADDRESS= "http://192.168.101.131:3000/";
         public static readonly string IMAGE_DIRECTORY = "/demonuts";
         public static readonly int RequestGallery = 2;
         public static readonly int RequestCamera = 1;

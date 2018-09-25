@@ -22,6 +22,7 @@ namespace FamiliaXamarin
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Dark")]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
+        private Intent _loacationServiceIntent;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -43,7 +44,17 @@ namespace FamiliaXamarin
             var profileImageView = headerView.FindViewById<CircleImageView>(Resource.Id.menu_profile_image);
             var avatar = Utils.GetDefaults("Avatar", this);
             Log.Error("Avatar", avatar);
-            StartService(new Intent(this, typeof(LocationService)));
+            //            StartService(new Intent(this, typeof(LocationService)));
+            //            StartForegroundService(new Intent(this, typeof(LocationService)));
+            _loacationServiceIntent = new Intent(this, typeof(LocationService));
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                    StartForegroundService(_loacationServiceIntent);
+            }
+            else
+            {
+                    StartService(new Intent(this, typeof(LocationService)));
+            }
             Picasso.With(this)
                 .Load(avatar)
                 .Resize(100, 100)

@@ -7,6 +7,7 @@ using Android;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Gms.Common;
 using Android.Graphics;
 using Android.Media;
 using Android.Preferences;
@@ -17,12 +18,16 @@ using Android.Telephony;
 using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
+using Java.Lang;
 using Java.Text;
 using Java.Util;
 using Java.Util.Regex;
 using Org.Json;
 using ZXing;
 using ZXing.Common;
+using ZXing.Mobile;
+using Exception = System.Exception;
+using Math = System.Math;
 using Orientation = Android.Widget.Orientation;
 
 
@@ -154,5 +159,54 @@ namespace FamiliaXamarin
             }
             return null;
         }
+        public static bool IsGooglePlayServicesInstalled(Context ctx)
+        {
+            var queryResult = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(ctx);
+            if (queryResult == ConnectionResult.Success)
+            {
+                Log.Info("MainActivity", "Google Play Services is installed on this device.");
+                return true;
+            }
+
+            if (GoogleApiAvailability.Instance.IsUserResolvableError(queryResult))
+            {
+                // Check if there is a way the user can resolve the issue
+                var errorString = GoogleApiAvailability.Instance.GetErrorString(queryResult);
+                Log.Error("MainActivity", "There is a problem with Google Play Services on this device: {0} - {1}",
+                    queryResult, errorString);
+
+                // Alternately, display the error to the user.
+            }
+
+            return false;
+        }
+        private static double ToRadians(double angle)
+        {
+            return (Math.PI / 180) * angle;
+        }
+        public static double HaversineFormula(double CurrentLatitude, double CurrentLongitude, double DestLatitude, double DestLongitude)
+        {
+
+            //R => raza pamantului
+            //a => jumatatea patratului dintre lungimea coardei dintre puncte
+            //c => distanta unghiulara in radiani
+            //d => distanta finala in metri
+
+            double r = 6371e3;
+            //conversie in Radiani
+                                  
+            double radLat1 = ToRadians(CurrentLatitude);
+            double radLat2 = ToRadians(DestLatitude);
+
+            //diferenta dintre longitudine si latitudine in radiani
+            double difLat = ToRadians(DestLatitude - CurrentLatitude);
+            double difLong = ToRadians(DestLongitude - CurrentLongitude);
+            //calculare
+            double a = Math.Sin(difLat / 2) * Math.Sin(difLat / 2) + Math.Cos(radLat1) * Math.Cos(radLat2) * Math.Sin(difLong / 2) * Math.Sin(difLong / 2);
+            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            //(d)
+            return r * c;
+        }
+       
     }
 }
