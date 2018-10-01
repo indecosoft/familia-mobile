@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using Android;
@@ -10,11 +11,13 @@ using Android.Content.PM;
 using Android.Gms.Common;
 using Android.Graphics;
 using Android.Media;
+using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Telephony;
+using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
@@ -35,16 +38,16 @@ namespace FamiliaXamarin
 {
     internal class Utils
     {
-
+        private static AlertDialog _alertDialog;
         public static void SetDefaults(string key, string value, Context context)
         {
             var preferences = PreferenceManager.GetDefaultSharedPreferences(context);
             var editor = preferences.Edit();
             editor.PutString(key, value);
             editor.Apply();
-        }                                                                                         
+        }
 
-        
+
         public static string GetDefaults(string key, Context context)
         {
             var preferences = PreferenceManager.GetDefaultSharedPreferences(context);
@@ -127,7 +130,7 @@ namespace FamiliaXamarin
             try
             {
 
-                string token = Utils.GetDefaults("Token",ctx);
+                string token = Utils.GetDefaults("Token", ctx);
 
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -142,7 +145,7 @@ namespace FamiliaXamarin
 
                 JSONObject qrCodeData = new JSONObject().Put("clientToken", token).Put("generationDateTime", genDateTime).Put("expirationDateTime", expDateTime);
 
-               
+
                 var writer = new BarcodeWriter
                 {
                     Format = BarcodeFormat.QR_CODE,
@@ -194,7 +197,7 @@ namespace FamiliaXamarin
 
             double r = 6371e3;
             //conversie in Radiani
-                                  
+
             double radLat1 = ToRadians(CurrentLatitude);
             double radLat2 = ToRadians(DestLatitude);
 
@@ -207,6 +210,7 @@ namespace FamiliaXamarin
             //(d)
             return r * c;
         }
-       
+      
+
     }
 }

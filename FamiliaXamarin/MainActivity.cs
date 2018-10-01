@@ -116,7 +116,12 @@ namespace FamiliaXamarin
             switch (id)
             {
                 case Resource.Id.harta:
-                    // Handle the camera action
+                    var fragmentMap = new FindUsersFragment();
+                    var fragmentManagerMap = SupportFragmentManager;
+                    var fragmentTransactionMap = fragmentManagerMap.BeginTransaction();
+                    fragmentTransactionMap.Replace(Resource.Id.fragment_container, fragmentMap);
+                    fragmentTransactionMap.AddToBackStack(null);
+                    fragmentTransactionMap.Commit();
                     break;
                 case Resource.Id.nav_devices:
                     break;
