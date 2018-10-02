@@ -300,7 +300,7 @@ namespace FamiliaXamarin
                                         .Put("dateTimeStop", DateTimeEnd).Put("qrCodeData", QrJsonData)
                                         .Put("location", Location).Put("details", Details);
                                     Log.Error("DataToSend", dataToSend.ToString());
-                                    var response = await _webServices.Post(Constants.PUBLIC_SERVER_ADDRESS + "api/consult", dataToSend, Utils.GetDefaults("Token", Activity));
+                                    var response = await _webServices.Post(Constants.PublicServerAddress + "api/consult", dataToSend, Utils.GetDefaults("Token", Activity));
                                     if (response != null)
                                     {
                                         Snackbar snack;

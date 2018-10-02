@@ -103,7 +103,7 @@ namespace FamiliaXamarin
                     if (FormValidator())
                     {
                         var dataToSent = new JSONObject().Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text);
-                        var response = new JSONObject(await _webServices.Post(Constants.PUBLIC_SERVER_ADDRESS + "/api/passwordReset", dataToSent));
+                        var response = new JSONObject(await _webServices.Post(Constants.PublicServerAddress + "/api/passwordReset", dataToSent));
                         
                         try
                         {

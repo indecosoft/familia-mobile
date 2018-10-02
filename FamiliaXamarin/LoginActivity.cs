@@ -136,7 +136,7 @@ namespace FamiliaXamarin
                 var dataToSend = new JSONObject().Put("email", _usernameEditText.Text)
                     .Put("password", _passwordEditText.Text).Put("imei", Utils.GetImei(this));
 
-                string response = await _webServices.Post(Constants.PUBLIC_SERVER_ADDRESS + "api/login", dataToSend);
+                string response = await _webServices.Post(Constants.PublicServerAddress + "api/login", dataToSend);
                 if (response != null)
                 {
                     Snackbar snack;
@@ -162,7 +162,7 @@ namespace FamiliaXamarin
                             Utils.SetDefaults("Email", _usernameEditText.Text, this);
                             Utils.SetDefaults("Logins", logins.ToString(), this);
                             Utils.SetDefaults("Nume", nume, this);
-                            Utils.SetDefaults("Avatar", Constants.PUBLIC_SERVER_ADDRESS + avatar, this);
+                            Utils.SetDefaults("Avatar", Constants.PublicServerAddress + avatar, this);
 
                             if (logins)
                                 StartActivity(typeof(MainActivity));

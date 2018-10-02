@@ -1,0 +1,168 @@
+﻿using System;
+
+using Android.App;
+using Android.Content;
+using Android.Preferences;
+using Android.Support.V4.App;
+using Android.Util;
+using Org.Json;
+using SocketIO.Client;
+using Object = Java.Lang.Object;
+
+namespace FamiliaXamarin
+{
+    internal class WebSocketClient : IWebSocketClient
+    {
+        private Socket _socket;
+        public static Socket Client;
+
+        private JSONArray _rooms = new JSONArray();
+        private JSONObject _newRoom = new JSONObject();
+        private Context _context;
+        public void Connect(string hostname, int port, Context context)
+        {
+            Utils.CreateChannels();
+            _context = context;
+            try
+            {
+                
+                var options = new IO.Options
+                {
+                    ForceNew = true,
+                    Reconnection = true,
+                    Query =
+                        $"token={Utils.GetDefaults("Token", Application.Context)}&imei={Utils.GetImei(Application.Context)}"
+                };
+
+                _socket = IO.Socket($"{hostname}:{port}/", options);
+
+                _socket.On(Socket.EventConnect, OnConnect);
+                _socket.On(Socket.EventDisconnect, OnDisconnect);
+                _socket.On(Socket.EventConnectError, OnConnectError);
+                _socket.On(Socket.EventConnectTimeout, OnConnectTimeout);
+
+                _socket.On("conversation", OnConversation);
+                _socket.On("chat request", OnChatRequest);
+                _socket.On("chat accepted", OnChatAccepted);
+
+                _socket.Connect();
+                Client = _socket;
+            }
+            catch (Exception e)
+            {
+                Log.Error("WSConnectionError: ", e.ToString());
+            }
+        }
+
+//        public Socket Client()
+//        {
+//            return _socket;
+//        }
+
+        private static void OnConnect(Object[] obj)
+        {
+            Log.Error("WebSocket", "Client Connected");
+        }
+        private static void OnDisconnect(Object[] obj)
+        {
+            Log.Error("WebSocket", "Client Diconnected");
+        }
+        private static void OnConnectError(Object[] obj)
+        {
+            Log.Error("WebSocket", "Connection Error");
+        }
+        private static void OnConnectTimeout(Object[] obj)
+        {
+            Log.Error("WebSocket", "Connection Timeout");
+        }
+        private static void OnConversation(Object[] obj)
+        {
+            Log.Error("WebSocket", "Connection Timeout");
+        }
+        private void OnChatAccepted(Object[] obj)
+        {
+            Log.Error("WebSocket", "Hat Accepted");
+            var data = (JSONObject)obj[0];
+            string email;
+            string room;
+            try
+            {
+                //username = data.getString("username");
+                email = data.GetString("from");
+                room = data.GetString("room");
+            }
+            catch (JSONException e)
+            {
+                Log.Error("on Join: ", e.Message);
+                return;
+            }
+
+//            Chat.RoomName = room;
+//            Chat.Email = email;
+//            Chat.FromNotify = false;
+            // aici adaugi in array-ul de room-uri
+            var mPrefs = PreferenceManager.GetDefaultSharedPreferences(_context);
+            var sharedRooms = mPrefs.GetString("Rooms", "[]");
+            try
+            {
+                _newRoom.Put("dest", email).Put("room", room);
+                _rooms = new JSONArray(sharedRooms);
+                _rooms.Put(_newRoom);
+
+                var editor = mPrefs.Edit();
+                editor.PutString("Rooms", _rooms.ToString());
+                editor.Apply();
+            }
+            catch (JSONException e)
+            {
+                e.PrintStackTrace();
+            }
+            var nb = Utils.GetAndroidChannelNotification("Cerere acceptata", email + " ti-a acceptat cererea de chat!", "Converseaza", 2,_context);
+            Utils.GetManager().Notify(100, nb.Build());
+        }
+        private void OnChatRequest(Object[] obj)
+        {
+            Log.Error("WebSocket", "Chat Request");
+            var data = (JSONObject)obj[0];
+            string email;
+            string room;
+            //String avatar;
+            try
+            {
+                //username = data.getString("username");
+                email = data.GetString("from");
+                room = data.GetString("room");
+                //avatar = data.getString("avatar");
+            }
+            catch (JSONException e)
+            {
+                Log.Error("onStartChat: ", e.Message);
+                return;
+            }
+
+//            Chat.Email = email;
+//            Chat.RoomName = room;
+            // Chat.Avatar = avatar;
+            var mPrefs = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+            var sharedRooms = mPrefs.GetString("Rooms", "[]");
+            try
+            {
+                _newRoom.Put("dest", email).Put("room", room);
+                _rooms = new JSONArray(sharedRooms);
+                _rooms.Put(_newRoom);
+
+                var editor = mPrefs.Edit();
+                editor.PutString("Rooms", _rooms.ToString());
+                editor.Apply();
+            }
+            catch (JSONException e)
+            {
+                e.PrintStackTrace();
+            }
+
+
+            var nb = Utils.GetAndroidChannelNotification("Cerere de chat", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context);
+            Utils.GetManager().Notify(100, nb.Build());
+        }
+    }
+}

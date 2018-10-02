@@ -1,9 +1,6 @@
-﻿using System;
-using Android;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
@@ -11,11 +8,8 @@ using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Java.Lang;
-using Java.Util;
 using Refractored.Controls;
 using Square.Picasso;
-using String = System.String;
 
 namespace FamiliaXamarin
 {
@@ -23,11 +17,13 @@ namespace FamiliaXamarin
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private Intent _loacationServiceIntent;
+        private Intent _webSocketServiceIntent;
+        
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
 //            var fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
@@ -47,14 +43,18 @@ namespace FamiliaXamarin
             //            StartService(new Intent(this, typeof(LocationService)));
             //            StartForegroundService(new Intent(this, typeof(LocationService)));
             _loacationServiceIntent = new Intent(this, typeof(LocationService));
+            _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
                     StartForegroundService(_loacationServiceIntent);
+                    StartForegroundService(_webSocketServiceIntent);
             }
             else
             {
-                    StartService(new Intent(this, typeof(LocationService)));
+                    StartService(_loacationServiceIntent);
+                    StartService(_webSocketServiceIntent);
             }
+            //_socketClient.Connect(Constants.WebSocketAddress, Constants.WebSocketPort);
             Picasso.With(this)
                 .Load(avatar)
                 .Resize(100, 100)
@@ -93,25 +93,13 @@ namespace FamiliaXamarin
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            int id = item.ItemId;
-            if (id == Resource.Id.action_settings)
-            {
-                return true;
-            }
-
-            return base.OnOptionsItemSelected(item);
-        }
-
-        private void FabOnClick(object sender, EventArgs eventArgs)
-        {
-            View view = (View) sender;
-            Snackbar.Make(view, "Replace with your own action", Snackbar.LengthLong)
-                .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
+            var id = item.ItemId;
+            return id == Resource.Id.action_settings || base.OnOptionsItemSelected(item);
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)
         {
-            int id = item.ItemId;
+            var id = item.ItemId;
 
             switch (id)
             {
@@ -158,7 +146,7 @@ namespace FamiliaXamarin
             item.SetChecked(true);
             // Set action bar title
             Title = item.ToString();
-            DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+            var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
             return true;
         }

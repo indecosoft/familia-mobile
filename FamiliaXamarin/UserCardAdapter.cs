@@ -45,7 +45,7 @@ namespace FamiliaXamarin
 
         holder.Name.Text = spot.Name;
         holder.Probleme.Text = spot.Probleme ;
-        holder.Image.SetImageDrawable(spot.Url);
+        holder.Image.SetImageResource(spot.Url);
 
         Glide.With(Context).Load(spot.Url).Into(holder.Image);
 

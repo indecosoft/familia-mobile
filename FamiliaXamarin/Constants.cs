@@ -15,31 +15,51 @@ namespace FamiliaXamarin
 {
     class Constants
     {
-        public static readonly string BLOOD_PRESSURE_FILE = "blood_pressure_data.txt";
-        public static readonly string BLOOD_GLUCOSE_FILE = "blood_glucose_data.txt";
+        public static string BloodPressureFile { get; } = "blood_pressure_data.txt";
+        public static string BloodGlucoseFile { get; } = "blood_glucose_data.txt";
 
 
-        public static readonly UUID UUID_BLOOD_PRESSURE_SERVICE = UUID.FromString("00001810-0000-1000-8000-00805f9b34fb");
-        public static readonly UUID UUID_BLOOD_PRESSURE_MEASUREMENT_CHAR = UUID.FromString("00002a35-0000-1000-8000-00805f9b34fb");
-        public static readonly UUID CLIENT_CHARACTERISTIC_CONFIG = UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
+        public static UUID UuidBloodPressureService { get; } = UUID.FromString("00001810-0000-1000-8000-00805f9b34fb");
+
+        public static UUID UuidBloodPressureMeasurementChar { get; } =
+            UUID.FromString("00002a35-0000-1000-8000-00805f9b34fb");
+
+        public static UUID ClientCharacteristicConfig { get; } =
+            UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
+
         //public static final UUID UUID_GLUC_FEATURE = UUID.fromString("00002a51-0000-1000-8000-00805f9b34fb");
-        public static readonly UUID UUID_GLUC_MEASUREMENT_CHAR = UUID.FromString("00002a18-0000-1000-8000-00805f9b34fb");
-        public static readonly UUID UUID_GLUC_MEASUREMENT_CONTEXT_CHAR = UUID.FromString("00002a34-0000-1000-8000-00805f9b34fb");
-        public static readonly UUID UUID_GLUC_RECORD_ACCESS_CONTROL_POINT_CHAR = UUID.FromString("00002a52-0000-1000-8000-00805f9b34fb");
-        public static readonly UUID UUID_GLUC_SERV = UUID.FromString("00001808-0000-1000-8000-00805f9b34fb");
+        public static UUID UuidGlucMeasurementChar { get; } = UUID.FromString("00002a18-0000-1000-8000-00805f9b34fb");
 
-        public static readonly UUID TRANSFER_WEARABLE_CONTROL_UUID = UUID.FromString("0a0ae00a-0a00-1000-8000-00805f9b34fb");
-        public static readonly UUID TRANSFER_WEARABLE_EKG_UUID = UUID.FromString("0a0ae00c-0a00-1000-8000-00805f9b34fb");
-        public static readonly UUID TRANSFER_WEARABLE_ACTIVITY_UUID = UUID.FromString("0a0ae00d-0a00-1000-8000-00805f9b34fb");
-        public static readonly UUID TRANSFER_WEARABLE_SLEEPCONTENT_UUID = UUID.FromString("0a0ae00b-0a00-1000-8000-00805f9b34fb");
+        public static UUID UuidGlucMeasurementContextChar { get; } =
+            UUID.FromString("00002a34-0000-1000-8000-00805f9b34fb");
 
-        public static readonly string DATA_URL = "https://devgis.sigma.team/devices/save-device-measurements";
-        public static readonly string SERVER_ADDRESS="http://192.168.101.192:3000/";
+        public static UUID UuidGlucRecordAccessControlPointChar { get; } =
+            UUID.FromString("00002a52-0000-1000-8000-00805f9b34fb");
+
+        public static UUID UuidGlucServ { get; } = UUID.FromString("00001808-0000-1000-8000-00805f9b34fb");
+
+        public static UUID TransferWearableControlUuid { get; } =
+            UUID.FromString("0a0ae00a-0a00-1000-8000-00805f9b34fb");
+
+        public static UUID TransferWearableEkgUuid { get; } = UUID.FromString("0a0ae00c-0a00-1000-8000-00805f9b34fb");
+
+        public static UUID TransferWearableActivityUuid { get; } =
+            UUID.FromString("0a0ae00d-0a00-1000-8000-00805f9b34fb");
+
+        public static UUID TransferWearableSleepcontentUuid { get; } =
+            UUID.FromString("0a0ae00b-0a00-1000-8000-00805f9b34fb");
+
+        public static string DataUrl { get; } = "https://devgis.sigma.team/devices/save-device-measurements";
+
+        public static string ServerAddress { get; } = "http://192.168.101.192:3000/";
+
         //public static readonly string PUBLIC_SERVER_ADDRESS="https://chat.devgis.sigma.team/";
-        public static readonly string PUBLIC_SERVER_ADDRESS= "http://192.168.101.159:3000/";
-        public static readonly string IMAGE_DIRECTORY = "/demonuts";
-        public static readonly int RequestGallery = 2;
-        public static readonly int RequestCamera = 1;
+        public static string PublicServerAddress { get; } = "http://192.168.101.192:3000/";
+        public static string WebSocketAddress { get; } = "http://192.168.101.192";
+        public static int WebSocketPort { get; } = 3000;
+        public static string ImageDirectory { get; } = "/demonuts";
+        public static int RequestGallery { get; } = 2;
+        public static int RequestCamera { get; } = 1;
 
         //    public static readonly string SERVER_ADDRESS="http://192.168.101.140:3000/";
     }

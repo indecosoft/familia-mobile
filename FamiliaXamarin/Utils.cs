@@ -38,7 +38,7 @@ namespace FamiliaXamarin
 {
     internal class Utils
     {
-        private static AlertDialog _alertDialog;
+        private static NotificationManager _notificationManager;
         public static void SetDefaults(string key, string value, Context context)
         {
             var preferences = PreferenceManager.GetDefaultSharedPreferences(context);
@@ -210,7 +210,83 @@ namespace FamiliaXamarin
             //(d)
             return r * c;
         }
-      
+        public static void CreateChannels()
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
+            var androidChannel = new NotificationChannel("ANDROID_CHANNEL_ID", "ANDROID_CHANNEL_NAME", NotificationImportance.High);
+            androidChannel.EnableLights(true);
+            androidChannel.EnableVibration(true);
+            androidChannel.LightColor = Color.Green;
+            androidChannel.LockscreenVisibility = NotificationVisibility.Private;
+
+            GetManager().CreateNotificationChannel(androidChannel);
+        }
+
+        public static NotificationManager GetManager()
+        {
+            return _notificationManager ??
+                   (_notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService));
+        }
+        public static NotificationCompat.Builder GetAndroidChannelNotification(string title, string body, string buttonTitle, int type, Context context)
+        {
+            var intent = new Intent(context, typeof(ChatActivity));
+            var rejectintent = new Intent(context, typeof(ChatActivity));
+            //intent.setAction("ro.indecosoft.familia_ingrijire_paleativ");
+            //intent.putExtra("100", 0);
+            var acceptIntent = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
+            var rejectIntent = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
+            switch (type)
+            {
+                //1 => request
+                //2 => accept
+                //3 => message
+                case 1:
+                    intent.PutExtra("AcceptClick", true);
+                    rejectintent.PutExtra("RejectClick", true);
+                    intent.PutExtra("EmailFrom", body.Replace(" doreste sa ia legatura cu tine!", ""));
+
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    {
+                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                            .SetContentTitle(title)
+                            .SetContentText(body)
+                            .SetSmallIcon(Resource.Drawable.logo)
+                            .SetStyle(new NotificationCompat.BigTextStyle()
+                                .BigText(body))
+                            .SetPriority(NotificationCompat.PriorityDefault)
+                            .SetContentIntent(acceptIntent)
+                            .SetAutoCancel(true)
+                            .AddAction(Resource.Drawable.logo, "Refuza", rejectIntent)
+                            .AddAction(Resource.Drawable.logo, "Accepta", acceptIntent);
+                    }
+
+                    break;
+
+                case 2:
+
+                    //intent.putExtra("ConversationClick",true);
+                    intent.PutExtra("Conv", true);
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    {
+
+                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                            .SetContentTitle(title)
+                            .SetContentText(body)
+                            .SetSmallIcon(Resource.Drawable.logo)
+                            .SetStyle(new NotificationCompat.BigTextStyle()
+                                .BigText(body))
+                            .SetPriority(NotificationCompat.PriorityDefault)
+                            .SetContentIntent(acceptIntent)
+                            .SetAutoCancel(true)
+                            .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent);
+                    }
+
+                    break;
+            }
+
+            return null;
+        }
+
 
     }
 }

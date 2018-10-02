@@ -391,7 +391,7 @@ namespace FamiliaXamarin
                             await Task.Run(async () => {
 
                                 string jsonData = JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
-                                string response = await FragmentContext._webServices.Post(Constants.PUBLIC_SERVER_ADDRESS + "api/firstSetup", new JSONObject(jsonData), Utils.GetDefaults("Token", Activity));
+                                string response = await FragmentContext._webServices.Post(Constants.PublicServerAddress + "api/firstSetup", new JSONObject(jsonData), Utils.GetDefaults("Token", Activity));
                                 if (response != null)
                                 {
                                     Snackbar snack;

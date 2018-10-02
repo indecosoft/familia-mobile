@@ -45,7 +45,7 @@ namespace FamiliaXamarin
         static readonly string KEY_REQUESTING_LOCATION_UPDATES = "requesting_location_updates";
         bool isGooglePlayServicesInstalled;
         bool isRequestingLocationUpdates;
-        public const int SERVICE_RUNNING_NOTIFICATION_ID = 10000;
+        public const int ServiceRunningNotificationId = 10000;
 
 
         public override IBinder OnBind(Intent intent)
@@ -142,7 +142,7 @@ namespace FamiliaXamarin
                 .Build();
 
             // Enlist this instance of the service as a foreground service
-            StartForeground(SERVICE_RUNNING_NOTIFICATION_ID, notification);
+            StartForeground(ServiceRunningNotificationId, notification);
             return StartCommandResult.Sticky;
         }
     }

@@ -19,9 +19,9 @@ namespace FamiliaXamarin
         public string Probleme;
         public string Email;
         public string Avatar;
-        public Drawable Url;
+        public int Url;
 
-        public UserCard(string name, string email, string probleme, string avatar, Drawable url)
+        public UserCard(string name, string email, string probleme, string avatar, int url)
         {
             Name = name;
             Probleme = probleme;

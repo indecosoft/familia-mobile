@@ -60,6 +60,7 @@
     <Compile Include="AsistentForm.cs" />
     <Compile Include="BenefitAdapter.cs" />
     <Compile Include="BenefitSpinnerState.cs" />
+    <Compile Include="ChatActivity.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DatePickerFragment.cs" />
     <Compile Include="DistanceCalculator.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="FirstSetupViewPager.cs" />
     <Compile Include="FusedLocationProviderCallback.cs" />
     <Compile Include="IWebServices.cs" />
+    <Compile Include="IWebSocketClient.cs" />
     <Compile Include="JsonModels\FirstSetupModel.cs" />
     <Compile Include="LocationService.cs" />
     <Compile Include="LoginActivity.cs" />
@@ -81,6 +83,8 @@
     <Compile Include="UserCardAdapter.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WebServices.cs" />
+    <Compile Include="WebSocketClient.cs" />
+    <Compile Include="WebSocketService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -389,6 +393,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\send.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_chat.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
