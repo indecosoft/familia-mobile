@@ -75,9 +75,66 @@ namespace FamiliaXamarin
         {
             Log.Error("WebSocket", "Connection Timeout");
         }
-        private static void OnConversation(Object[] obj)
+        private void OnConversation(Object[] obj)
         {
-            Log.Error("WebSocket", "Connection Timeout");
+            Log.Error("WebSocket", "OnConversation");
+            var data = (JSONObject)obj[0];
+            string room;
+            string message;
+            string username;
+            try
+            {
+                username = data.GetString("username");
+                message = data.GetString("message");
+                room = data.GetString("room");
+            }
+            catch (JSONException e)
+            {
+                Log.Error("message send error: ", e.Message);
+                return;
+            }
+            try
+            {
+                //Log.Error("Active", "" + Chat.active);
+//                if (!Chat.RoomName.equals(room))
+//                {
+//                    Chat.RoomName = room;
+//                    Chat.Email = username;
+//                    Chat.FromNotify = true;
+//                    Chat.NewMessage = message;
+//
+//                    NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 2, _context);
+//                    Utils.GetManager().Notify(100, nb.Build());
+//                }
+//                else if (!Chat.active)
+//                {
+//                    Log.Error("Caz 2", "*********************");
+//                    //String[] data2 = message.split(" ");
+//                    Chat.RoomName = room;
+//                    Chat.Email = username;
+//                    Chat.FromNotify = true;
+//
+//                    Chat.NewMessage = message;
+//                    NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 2, _context);
+//                    Utils.GetManager().Notify(100, nb.Build());
+//                }
+//                else if (Chat.RoomName.equals(room) && Chat.active)
+//                {
+//
+//                    Log.Error("Caz 3", "*********************");
+//
+//                    //String[] data2 = message.split(" ");
+//                    //removeTyping(username);
+//                    Log.Error("Mesaj: ", message);
+//                    //if(!data2[0].replace(":","").equals(Email))
+//                    Chat.addMessage(username, Chat.Avatar, message, 0);
+//
+//                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Eroare da nu ii bai", ex.ToString());
+            }
         }
         private void OnChatAccepted(Object[] obj)
         {

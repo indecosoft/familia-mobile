@@ -61,6 +61,8 @@
     <Compile Include="BenefitAdapter.cs" />
     <Compile Include="BenefitSpinnerState.cs" />
     <Compile Include="ChatActivity.cs" />
+    <Compile Include="ChatAdapter.cs" />
+    <Compile Include="ChatModel.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DatePickerFragment.cs" />
     <Compile Include="DistanceCalculator.cs" />
@@ -175,6 +177,9 @@
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.CardView">
       <Version>27.0.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.v7.RecyclerView">
+      <Version>23.4.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.GooglePlayServices.Location">
       <Version>60.1142.1</Version>
@@ -398,6 +403,23 @@
     <AndroidResource Include="Resources\layout\activity_chat.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_conversation.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_my_message.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_message.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_log.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_action.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
