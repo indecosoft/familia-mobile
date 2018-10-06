@@ -65,17 +65,25 @@
     <Compile Include="ChatModel.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DatePickerFragment.cs" />
+    <Compile Include="DevicesRecyclerViewAdapter.cs" />
     <Compile Include="DistanceCalculator.cs" />
     <Compile Include="FindUsersFragment.cs" />
     <Compile Include="FirstSetup.cs" />
     <Compile Include="FirstSetupViewPager.cs" />
     <Compile Include="FusedLocationProviderCallback.cs" />
+    <Compile Include="GlucoseDevice\AddNewGucoseDeviceActivity.cs" />
+    <Compile Include="GlucoseDevice\GlucoseDeviceActivity.cs" />
+    <Compile Include="GlucoseDevice\GlucoseDeviceData.cs" />
+    <Compile Include="HealthDevicesFragment.cs" />
     <Compile Include="IWebServices.cs" />
     <Compile Include="IWebSocketClient.cs" />
     <Compile Include="JsonModels\FirstSetupModel.cs" />
     <Compile Include="LocationService.cs" />
     <Compile Include="LoginActivity.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="PressureDevice\AddNewBloodPressureDeviceActivity.cs" />
+    <Compile Include="PressureDevice\BloodPressureData.cs" />
+    <Compile Include="PressureDevice\BloodPressureDeviceActivity.cs" />
     <Compile Include="PwdResetActivity.cs" />
     <Compile Include="QrCodeGenerator.cs" />
     <Compile Include="RegisterActivity.cs" />
@@ -420,6 +428,44 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\item_action.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_blood_pressure_device.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\health_button.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_health_devices.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\heart.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\water.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\watch.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_add_new_blood_pressure_device.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\rowlayout.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\add_new_blood_glucose_device.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\blood_glucose_device.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

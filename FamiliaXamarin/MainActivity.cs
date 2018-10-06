@@ -112,6 +112,12 @@ namespace FamiliaXamarin
                     fragmentTransactionMap.Commit();
                     break;
                 case Resource.Id.nav_devices:
+                    var devicesFragment = new HealthDevicesFragment();
+                    var supportFragmentManager = SupportFragmentManager;
+                    var beginTransaction = supportFragmentManager.BeginTransaction();
+                    beginTransaction.Replace(Resource.Id.fragment_container, devicesFragment);
+                    beginTransaction.AddToBackStack(null);
+                    beginTransaction.Commit();
                     break;
                 case Resource.Id.chat:
                     break;
