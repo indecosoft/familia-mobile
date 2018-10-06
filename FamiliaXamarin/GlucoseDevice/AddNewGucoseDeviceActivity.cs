@@ -18,7 +18,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.GlucoseDevice
 {
-    [Activity(Label = "AddNewGucoseDeviceActivity")]
+    [Activity(Label = "AddNewGucoseDeviceActivity", Theme = "@style/AppTheme.Dark")]
     public class AddNewGucoseDeviceActivity : AppCompatActivity
     {
         private RecyclerView recyclerView;

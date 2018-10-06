@@ -89,27 +89,25 @@ namespace FamiliaXamarin
 
             IntiUI(view);
             DistanceCalculatorService = new Intent(Activity, typeof(DistanceCalculator));
-            List<string> categories = new List<string> { "Masaj", "Baie", "Perfuzie", "Pansament" };
-            string[] select_qualification = {
+            string[] selectQualification = {
                 "Beneficiu acordat", "Masaj", "Baie", "Perfuzie", "Pansament"};
             listVOs = new List<BenefitSpinnerState>();
 
-            for (int i = 0; i < select_qualification.Length; i++)
+            foreach (var t in selectQualification)
             {
-                BenefitSpinnerState stateVO = new BenefitSpinnerState();
-                stateVO.SetTitle(select_qualification[i]);
-                stateVO.SetSelected(false);
-                listVOs.Add(stateVO);
+                var stateVo = new BenefitSpinnerState();
+                stateVo.SetTitle(t);
+                stateVo.SetSelected(false);
+                listVOs.Add(stateVo);
             }
-            BenefitAdapter myAdapter = new BenefitAdapter(Activity, 0,
-                listVOs);
+            var myAdapter = new BenefitAdapter(Activity, 0, listVOs);
             BenefitsSpinner.Adapter = myAdapter;
             TbDetails.TextChanged += delegate
             {
                 BtnScan.Enabled = FieldsValidation();
             };
-            string fromPreferences = Utils.GetDefaults("ActivityStart", Activity);
-            if (fromPreferences.Equals("") || fromPreferences.Equals("null"))
+            var fromPreferences = Utils.GetDefaults("ActivityStart", Activity);
+            if (string.IsNullOrEmpty(fromPreferences))
             {
                 FormContainer.Visibility = ViewStates.Gone;
                 BtnScan.Text = "Incepe activitatea";
@@ -128,7 +126,7 @@ namespace FamiliaXamarin
                 }
                 BtnScan.Text = "Finalizeaza activitatea";
                 BtnScan.Enabled = false;
-                if (Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
                     Activity.StartForegroundService(new Intent(Activity, typeof(DistanceCalculator)));
                 }
@@ -138,46 +136,55 @@ namespace FamiliaXamarin
                 }
             }
 
-            BtnScan.Click += async delegate
+            BtnScan.Click += delegate
             {
                 //IntentIntegrator.forSupportFragment(this).InitiateScan();
-#if __ANDROID__
+                #if __ANDROID__
                 // Initialize the scanner first so it can track the current context
                 var app = new Android.App.Application();
                 MobileBarcodeScanner.Initialize(app);
-#endif
+                #endif
 
                 StartScan();
             };
             isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(Activity);
 
 
+            if (!isGooglePlayServicesInstalled) return view;
+            locationRequest = new LocationRequest()
+                .SetPriority(LocationRequest.PriorityHighAccuracy)
+                .SetInterval(1000)
+                .SetFastestInterval(1000);
+            locationCallback = new FusedLocationProviderCallback(Activity);
 
-            if (isGooglePlayServicesInstalled)
-            {
-                locationRequest = new LocationRequest()
-                    .SetPriority(LocationRequest.PriorityHighAccuracy)
-                    .SetInterval(1000)
-                    .SetFastestInterval(1000);
-                locationCallback = new FusedLocationProviderCallback(Activity);
-
-                fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Activity);
-
-            }
+            fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Activity);
 
 
             return view;
         }
+        CameraResolution HandleCameraResolutionSelectorDelegate(List<CameraResolution> availableResolutions)
+        {
+            //Don't know if this will ever be null or empty
+            if (availableResolutions == null || availableResolutions.Count < 1)
+                return new CameraResolution() { Width = 1200, Height = 1000 };
 
+            //Debugging revealed that the last element in the list
+            //expresses the highest resolution. This could probably be more thorough.
+            return availableResolutions[availableResolutions.Count - 1];
+        }
         private async void StartScan()
         {
             var options = new MobileBarcodeScanningOptions
             {
                 PossibleFormats = new List<ZXing.BarcodeFormat>()
                 {
-                    ZXing.BarcodeFormat.CODE_128,
                     ZXing.BarcodeFormat.QR_CODE
-                }
+                },
+                UseNativeScanning = true,
+                AutoRotate = true,
+                //                CameraResolutionSelector = HandleCameraResolutionSelectorDelegate
+                TryHarder = true
+
             };
 
             ZXing.Result result = null;

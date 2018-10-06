@@ -19,7 +19,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.PressureDevice
 {
-    [Activity(Label = "AddNewBloodPressureDeviceActivity")]
+    [Activity(Label = "AddNewBloodPressureDeviceActivity", Theme = "@style/AppTheme.Dark")]
     public class AddNewBloodPressureDeviceActivity : AppCompatActivity
     {
         private RecyclerView recyclerView;
@@ -62,8 +62,8 @@ namespace FamiliaXamarin.PressureDevice
             adapter.ItemClick += delegate(object sender, int i)
             {
                 Log.Error("Address", devicesAddress[i]);
-                Utils.SetDefaults(GetString(Resource.String.blood_glucose_device), devicesAddress[i], this);
-                StartActivity(typeof(GlucoseDeviceActivity));
+                Utils.SetDefaults(GetString(Resource.String.blood_pressure_device), devicesAddress[i], this);
+                StartActivity(typeof(BloodPressureDeviceActivity));
                 Finish();
             };
 

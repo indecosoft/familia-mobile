@@ -31,9 +31,9 @@ namespace FamiliaXamarin
 
         private static  int TYPING_TIMER_LENGTH = 600;
 
-        public static RecyclerView mMessagesView;
+        public static RecyclerView _recyclerView;
         public static EditText mInputMessageView;
-        private List<ChatModel> mMessages = new List<ChatModel>();
+        private List<ChatModel> mMessages;
         private  ChatAdapter mAdapter;
         public static string Email;
         public static string RoomName = "";
@@ -50,16 +50,24 @@ namespace FamiliaXamarin
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-                  SetContentView(Resource.Layout.activity_chat);
+            SetContentView(Resource.Layout.activity_chat);
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             Title = string.Empty;
-            mAdapter = new ChatAdapter(mMessages);
+
+            mMessages = new List<ChatModel>();
+
+            mAdapter = new ChatAdapter(this,mMessages);
+            mAdapter.ItemClick += delegate (object sender, int i)
+            {
+                Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
+            };
 
 
-            mMessagesView = (RecyclerView)FindViewById(Resource.Id.messages);
-            mMessagesView.SetLayoutManager(new LinearLayoutManager(this));
-            mMessagesView.SetAdapter(mAdapter);
+            _recyclerView = FindViewById<RecyclerView>(Resource.Id.messages);
+            _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
+            _recyclerView.SetAdapter(mAdapter);
+
 
             mInputMessageView = (EditText)FindViewById(Resource.Id.tbMessage);
             send = FindViewById<Button>(Resource.Id.Send);
@@ -121,44 +129,47 @@ namespace FamiliaXamarin
             {
                 string message = mInputMessageView.Text;
                 mInputMessageView.Text = string.Empty;
-                addMessage("Eu", Utils.GetDefaults("Avatar" ,this), message, 1);
-                JSONObject messageToSend = null;
-                try
-                {
-                    messageToSend = new JSONObject().Put("message", message).Put("username", mUsername).Put("room", RoomName);
-                }
-                catch (JSONException e)
-                {
-                    e.PrintStackTrace();
-                }
+                addMessage("Eu", message, 1);
+//                JSONObject messageToSend = null;
+//                try
+//                {
+//                    messageToSend = new JSONObject().Put("message", message).Put("username", mUsername).Put("room", RoomName);
+//                }
+//                catch (JSONException e)
+//                {
+//                    e.PrintStackTrace();
+//                }
                 // perform the sending message attempt.
-                WebSocketClient.Client.Emit("send message", messageToSend);
+                //WebSocketClient.Client.Emit("send message", messageToSend);
             }
         }
-        public void addMessage(string username, string avatar, string message, int type)
+        public void addMessage(string username, string message, int type)
         {
-            this.RunOnUiThread(() =>
-            {
-                if (type == 0)
-                {
-                    mMessages.Add(new ChatModel.Builder(ChatModel.TypeMessage)
-                        .Username(username).Message(message).Avatar(avatar).Build());
 
-                }
-                else if (type == 1)
-                {
-                    mMessages.Add(new ChatModel.Builder(ChatModel.TypeMyMessage)
-                        .Username(username).Message(message).Avatar(avatar).Build());
-                }
+//                if (type == 0)
+//                {
+                    mMessages.Add(new ChatModel {Username = username, Message = message, Type = ChatModel.TypeMyMessage});
+                    mMessages.Add(new ChatModel {Username = username, Message = message, Type = ChatModel.TypeMessage});
+//mMessages.Add(new ChatModel.Builder(ChatModel.TypeMessage)
+//                .Username(username).Message(message).Build());
+//mMessages.Add(new ChatModel.Builder(ChatModel.TypeMyMessage)
+//                .Username(username).Message(message).Build());
+            //                }
+            //                else if (type == 1)
+            //                {
+            //                    mMessages.Add(new ChatModel.Builder(ChatModel.TypeMyMessage)
+            //                        .Username(username).Message(message).Avatar(avatar).Build());
+            //                }
                 mAdapter.NotifyItemInserted(mMessages.Count - 1);
+                mAdapter.NotifyDataSetChanged();
                 scrollToBottom();
-            });
+            
 
 
         }
         private void scrollToBottom()
         {
-            mMessagesView.ScrollToPosition(mAdapter.ItemCount - 1);
+            _recyclerView.ScrollToPosition(mAdapter.ItemCount - 1);
         }
     }
 }

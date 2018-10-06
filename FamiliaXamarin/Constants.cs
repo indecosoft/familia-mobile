@@ -53,14 +53,12 @@ namespace FamiliaXamarin
 
         public static string ServerAddress { get; } = "http://192.168.101.192:3000/";
 
-        //public static readonly string PUBLIC_SERVER_ADDRESS="https://chat.devgis.sigma.team/";
-        public static string PublicServerAddress { get; } = "http://192.168.101.192:3000/";
-        public static string WebSocketAddress { get; } = "http://192.168.101.192";
+        //public static string PublicServerAddress { get; } = "http://192.168.101.192:3000/";
+        public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/ws/";
+        public static string WebSocketAddress { get; } = "http://192.168.0.115";
         public static int WebSocketPort { get; } = 3000;
         public static string ImageDirectory { get; } = "/demonuts";
         public static int RequestGallery { get; } = 2;
         public static int RequestCamera { get; } = 1;
-
-        //    public static readonly string SERVER_ADDRESS="http://192.168.101.140:3000/";
     }
 }

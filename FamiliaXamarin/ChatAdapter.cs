@@ -13,38 +13,21 @@ namespace FamiliaXamarin
     class ChatAdapter : RecyclerView.Adapter
     {
         public event EventHandler<int> ItemClick;
+        public event EventHandler<SucHolderViewAdapterClickEventArgs> ItemLongClick;
 
         private List<ChatModel> _messages;
+        private LayoutInflater mInflater;
 
-        public ChatAdapter(List<ChatModel> messages)
+        public ChatAdapter(Context context, List<ChatModel> messages)
         {
+            mInflater = LayoutInflater.From(context);
             _messages = messages;
             //_imageManager = new ImageManager(resources);
         }
-        //Must override, just like regular Adapters
-        public override int ItemCount
+
+        public override int GetItemViewType(int position)
         {
-            get
-            {
-                return _messages.Count;
-            }
-        }
-
-        public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
-        {
-            var viewHolder = holder as SucHolder;
-
-//            var currentCrewMember = _messages[position];
-//
-//            //Bind our data from our data source to our View References
-//            viewHolder.UsernameView.Text = currentCrewMember.Username;
-//            viewHolder.MessageView.Text = currentCrewMember.Message;
-            //viewHolder._image.Text = currentCrewMember.Username;
-
-            var message = _messages[position];
-            viewHolder.UsernameView.Text = message.Username;
-            viewHolder.MessageView.Text = message.Message;
-            //viewHolder.setAvatar(message.getAvatar());
+            return _messages[position].Type;
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
@@ -71,15 +54,32 @@ namespace FamiliaXamarin
                     layout = Resource.Layout.item_my_message;
                     break;
             }
-            View v = LayoutInflater
-                .From(parent.Context)
-                .Inflate(layout, parent, false);
+            //            layout = Resource.Layout.item_my_message;
 
+            var itemView = mInflater.Inflate(layout, parent, false);
 
-            var viewHolder = new SucHolder(v);
-
+            var viewHolder = new SucHolder(itemView, OnClick);
             return viewHolder;
         }
+
+        public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
+        {
+            var holder = viewHolder as SucHolder;
+
+            //            var currentCrewMember = _messages[position];
+            //
+            //            //Bind our data from our data source to our View References
+            //            viewHolder.UsernameView.Text = currentCrewMember.Username;
+            //            viewHolder.MessageView.Text = currentCrewMember.Message;
+            //viewHolder._image.Text = currentCrewMember.Username;
+
+            var message = _messages[position];
+            holder.UsernameView.Text = message.Username;
+            holder.MessageView.Text = message.Message;
+
+            //viewHolder.setAvatar(message.getAvatar());
+        }
+
         public void Clear()
         {
             _messages.Clear();
@@ -95,42 +95,32 @@ namespace FamiliaXamarin
                 ItemClick(this, position);
             }
         }
-        //Since this example uses a lot of Bitmaps, we want to do some house cleaning
-        //and make them available for garbage collecting as soon as possible.
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
+        public override int ItemCount => _messages.Count;
 
-            //if (_imageManager != null)
-            //{
-            //    _imageManager.Dispose();
-            //}
-        }
+        //        void OnClick(DevicesRecyclerViewAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
+        void OnLongClick(SucHolderViewAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
+
         class SucHolder : RecyclerView.ViewHolder
         {
-            public TextView UsernameView;
-            public TextView MessageView;
-            public CircleImageView Image;
-            public SucHolder(View itemView)
+            public TextView UsernameView { get; set; }
+            public TextView MessageView { get; set; }
+            //public CircleImageView Image { get; set; }
+            public SucHolder(View itemView, Action<int> listener)
                 : base(itemView)
             {
                 UsernameView = itemView.FindViewById<TextView>(Resource.Id.username);
+//                MessageView = itemView.FindViewById<TextView>(Resource.Id.message);
+//                Image = itemView.FindViewById<CircleImageView>(Resource.Id.profile_image);
+//                UsernameView = itemView.FindViewById<TextView>(Resource.Id.username);
                 MessageView = itemView.FindViewById<TextView>(Resource.Id.message);
-                Image = itemView.FindViewById<CircleImageView>(Resource.Id.profile_image);
-                //sendEmail = itemView.FindViewById<Button>(Resource.Id.cbxStart);
-
-                //itemView.Click += (sender, e) => listener(base.Position);
-                //Add.Click += delegate
-                // {
-                //     var intent = new Intent(this.Activity, typeof(FormularSucursala));
-
-
-                //     //intent.PutExtra("index", position);
-                //     //crewProfileIntent.PutExtra("imageResourceId", SharedData.EmailData[position].PhotoResourceId);
-
-                //     StartActivity(intent);
-                // };
+                //                Image = itemView.FindViewById<CircleImageView>(Resource.Id.profile_image);
+                itemView.Click += (sender, e) => listener(base.Position);
             }
+        }
+        public class SucHolderViewAdapterClickEventArgs : EventArgs
+        {
+            public View View { get; set; }
+            public int Position { get; set; }
         }
     }
 }

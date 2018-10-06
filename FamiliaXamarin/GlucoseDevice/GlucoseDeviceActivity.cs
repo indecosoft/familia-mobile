@@ -27,7 +27,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.GlucoseDevice
 {
-    [Activity(Label = "GlucoseDeviceActivity")]
+    [Activity(Label = "GlucoseDeviceActivity", Theme = "@style/AppTheme.Dark")]
     public class GlucoseDeviceActivity : AppCompatActivity , Animator.IAnimatorListener
     {
 
@@ -67,26 +67,21 @@ namespace FamiliaXamarin.GlucoseDevice
                 Finish();
             };
 
-//        progressDialog = new ProgressDialog(this);
-//        progressDialog.setTitle("Va rugam asteptati ...");
-//        progressDialog.setMessage(getString(R.string.conectare_info));
-//        progressDialog.setCancelable(false);
-//        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                finish();
-//            }
-//        });
+            lbStatus = FindViewById<TextView>(Resource.Id.status);
+            DataContainer = FindViewById<ConstraintLayout>(Resource.Id.dataContainer);
+            bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
+            Context = this;
+
+            scanCallback = new BluetoothScanCallback(Context);
+            gattCallback = new GattCallBack(Context);
+
+            DataContainer.Visibility = ViewStates.Gone;
 
             glucose = FindViewById<TextView>(Resource.Id.GlucoseTextView);
             scanButton = FindViewById<Button>(Resource.Id.ScanButton);
 
             animationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
-            Context = this;
-            DataContainer = FindViewById<ConstraintLayout>(Resource.Id.dataContainer);
-            DataContainer.Visibility = ViewStates.Gone;
-            bluetoothManager = (BluetoothManager) GetSystemService(BluetoothService);
-            lbStatus = FindViewById<TextView>(Resource.Id.status);
+            animationView.AddAnimatorListener(this);
             animationView.PlayAnimation();
 
 
@@ -131,6 +126,7 @@ namespace FamiliaXamarin.GlucoseDevice
         public void OnAnimationStart(Animator animation)
         {
             handler = new Handler();
+            lbStatus.Text = "Se efectueaza masuratoarea...";
             if (bluetoothManager != null)
             {
                 bluetoothAdapter = bluetoothManager.Adapter;
@@ -151,7 +147,9 @@ namespace FamiliaXamarin.GlucoseDevice
                 }
                 //bluetoothAdapter.startLeScan(scanCallback);
                 //scanButton.setEnabled(false);
+             
             }
+
         }
         protected override void OnPostResume()
         {
@@ -185,6 +183,7 @@ namespace FamiliaXamarin.GlucoseDevice
                     bluetoothScanner.StartScan(scanCallback);
                     scanButton.Enabled = false;
                     animationView.PlayAnimation();
+
                 }
                 else
                 {

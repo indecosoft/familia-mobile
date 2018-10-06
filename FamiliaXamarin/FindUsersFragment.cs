@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Android.Animation;
 using Android.App;
 using Android.Content;
@@ -21,7 +22,6 @@ namespace FamiliaXamarin
     {
         private UserCardAdapter _adapter;
 
-        // TODO: Rename and change types of parameters
         private CardStackView _cardStackView;
         private LottieAnimationView _animationView;
         private TextView _lbNobody;
@@ -30,39 +30,9 @@ namespace FamiliaXamarin
         private View _mView;
         private List<UserCard> _people;
         private readonly IWebServices _webServices = new WebServices();
+
         private readonly IWebSocketClient _webSocket = new WebSocketClient();
 
-        public override void OnCreate(Bundle savedInstanceState)
-        {
-            base.OnCreate(savedInstanceState);
-
-            // Create your fragment here
-        }
-
-        //        private List<UserCard> createTouristSpots()
-        //        {
-        //            List<UserCard> spots = new List<UserCard>();
-        //            spots.Add(new UserCard("Yasaka Shrine", "Kyoto", "https://source.unsplash.com/Xq1ntWruZQI/600x800"));
-        //            spots.Add(new UserCard("Fushimi Inari Shrine", "Kyoto", "https://source.unsplash.com/NYyCqdBOKwc/600x800"));
-        //            spots.Add(new UserCard("Bamboo Forest", "Kyoto", "https://source.unsplash.com/buF62ewDLcQ/600x800"));
-        //            spots.Add(new UserCard("Brooklyn Bridge", "New York", "https://source.unsplash.com/THozNzxEP3g/600x800"));
-        //            spots.Add(new UserCard("Empire State Building", "New York",
-        //                "https://source.unsplash.com/USrZRcRS2Lw/600x800"));
-        //            spots.Add(new UserCard("The statue of Liberty", "New York",
-        //                "https://source.unsplash.com/PeFk7fzxTdk/600x800"));
-        //            spots.Add(new UserCard("Louvre Museum", "Paris", "https://source.unsplash.com/LrMWHKqilUw/600x800"));
-        //            spots.Add(new UserCard("Eiffel Tower", "Paris", "https://source.unsplash.com/HN-5Z6AmxrM/600x800"));
-        //            spots.Add(new UserCard("Big Ben", "London", "https://source.unsplash.com/CdVAUAddqEc/600x800"));
-        //            spots.Add(new UserCard("Great Wall of China", "China", "https://source.unsplash.com/AWh9C-QjhE4/600x800"));
-        //            return spots;
-        //        }
-
-        //        private UserCardAdapter createTouristSpotCardAdapter()
-        //        {
-        //            UserCardAdapter adapter = new UserCardAdapter(Application.Context);
-        //            adapter.AddAll(createTouristSpots());
-        //            return adapter;
-        //        }
         private UserCardAdapter CreateUserCardAdapter()
         {
             var userCardAdapter = new UserCardAdapter(Activity);
@@ -92,11 +62,11 @@ namespace FamiliaXamarin
                 {
                     try
                     {
-                        string EmailFrom = Utils.GetDefaults("Email", Activity);
+                        string emailFrom = Utils.GetDefaults("Email", Activity);
                         Activity.StartActivity(typeof(ChatActivity));
 //                        Chat.EmailDest = _people[_cardStackView.TopIndex - 1].Email;
 //                        Chat.Avatar = _people[_cardStackView.TopIndex - 1].Avatar;
-                        var emailObject = new JSONObject().Put("dest", _people[_cardStackView.TopIndex - 1].Email).Put("from", EmailFrom);
+                        var emailObject = new JSONObject().Put("dest", _people[_cardStackView.TopIndex - 1].Email).Put("from", emailFrom);
                         WebSocketClient.Client.Emit("chat request", emailObject);
                     }
                     catch (JSONException e)
@@ -127,114 +97,106 @@ namespace FamiliaXamarin
 
         private async void SearchPeople()
         {
-
-            //search for people
-            //        GetLocation location = new GetLocation(Activity);
-            //        //location.getLocation();
-            //        location.startGetLocation(5000);
-            //end animation
-            //            Handler handler = new Handler();
-            //            handler.postDelayed(new Runnable() {
-            //                @Override
-            //                public void run()
-            //                {
-            //                animationView.cancelAnimation();
-            //            }
-            //            }, 5000);
-            // Acquire a reference to the system Location Manager
-
-            var dataToSent = new JSONObject().Put("email", Utils.GetDefaults("Email", Activity));
-            var response = await _webServices.Post(Constants.PublicServerAddress + "api/nearMe", dataToSent,
-                Utils.GetDefaults("Token", Activity));
-            Log.Error("Response: ", "" + response);
-            try
-            {
-                if (response != null)
+            await Task.Run(async () => {
+                var dataToSent = new JSONObject().Put("email", Utils.GetDefaults("Email", Activity));
+                var response = await _webServices.Post(Constants.PublicServerAddress + "api/nearMe", dataToSent,
+                    Utils.GetDefaults("Token", Activity));
+                Log.Error("Response: ", "" + response);
+                try
                 {
-
-                    var nearMe = new JSONArray(response);
-                    _people = new List<UserCard>();
-                    var r = new Random();
-                    if (nearMe.Length() != 0)
+                    if (response != null)
                     {
-                        for (var i = 0; i < nearMe.Length(); i++)
-                        {
-                            var imageId = r.Next(1, 10);
-                            var nearMeObj = (JSONObject) (nearMe.Get(i));
-                            switch (imageId)
-                            {
-                                case 1:
-                                    _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                        "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                        Resource.Drawable.image_1));
-                                    break;
-                                case 2:
-                                    _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                        "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                        Resource.Drawable.image_2));
-                                    break;
-                                case 3:
-                                    _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                        "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                        Resource.Drawable.image_3));
-                                    break;
-                                case 4:
-                                    _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                        "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                        Resource.Drawable.image_4));
-                                    break;
-                                case 5:
-                                    _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                        "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                        Resource.Drawable.image_5));
-                                    break;
-                                case 6:
-                                    _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                        "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                        Resource.Drawable.image_6));
-                                    break;
-                                case 7:
-                                    _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                        "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                        Resource.Drawable.image_7));
-                                    break;
-                                case 8:
-                                    _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                        "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                        Resource.Drawable.image_8));
-                                    break;
-                                case 9:
-                                    _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                        "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                        Resource.Drawable.image_9));
-                                    break;
-                                case 10:
-                                    _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                        "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                        Resource.Drawable.image_10));
-                                    break;
-                            }
 
+                        var nearMe = new JSONArray(response);
+                        _people = new List<UserCard>();
+                        var r = new Random();
+                        if (nearMe.Length() != 0)
+                        {
+                            for (var i = 0; i < nearMe.Length(); i++)
+                            {
+                                var imageId = r.Next(1, 10);
+                                var nearMeObj = (JSONObject)(nearMe.Get(i));
+                                switch (imageId)
+                                {
+                                    case 1:
+                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
+                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            Resource.Drawable.image_1));
+                                        break;
+                                    case 2:
+                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
+                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            Resource.Drawable.image_2));
+                                        break;
+                                    case 3:
+                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
+                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            Resource.Drawable.image_3));
+                                        break;
+                                    case 4:
+                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
+                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            Resource.Drawable.image_4));
+                                        break;
+                                    case 5:
+                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
+                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            Resource.Drawable.image_5));
+                                        break;
+                                    case 6:
+                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
+                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            Resource.Drawable.image_6));
+                                        break;
+                                    case 7:
+                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
+                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            Resource.Drawable.image_7));
+                                        break;
+                                    case 8:
+                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
+                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            Resource.Drawable.image_8));
+                                        break;
+                                    case 9:
+                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
+                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            Resource.Drawable.image_9));
+                                        break;
+                                    case 10:
+                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
+                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            Resource.Drawable.image_10));
+                                        break;
+                                }
+
+                            }
                         }
+                        Activity.RunOnUiThread(() => {
+                            Setup(_mView);
+                            Reload();
+                        });
+                        
+
+                    }
+                    else
+                    {
+                        Activity.RunOnUiThread(() => { _lbNobody.Text = "A fost intampinata o eroare in timpul conectarii la server!"; });
+                        
+                        //Utils.DisplayNotification(Activity, "Eroare", "A fost intampinata o eroare in timpul conectarii la server!");
                     }
 
-                    Setup(_mView);
-                    Reload();
 
                 }
-                else
+                catch (JSONException e)
                 {
-                    _lbNobody.Text = "A fost intampinata o eroare in timpul conectarii la server!";
-                    //Utils.DisplayNotification(Activity, "Eroare", "A fost intampinata o eroare in timpul conectarii la server!");
+                    e.PrintStackTrace();
                 }
+            });
 
-
-            }
-            catch (JSONException e)
-            {
-                e.PrintStackTrace();
-            }
-            if(_animationView.IsAnimating)
+             
+            
+            if (_animationView.IsAnimating)
                 _animationView.CancelAnimation();
         }
 
@@ -259,8 +221,25 @@ namespace FamiliaXamarin
             _animationView.PlayAnimation();
             
 
-            _leftButton.Click += delegate { };
-            _rightButton.Click += delegate { };
+//            _leftButton.Click += delegate { SwipeLeft();};
+//            _rightButton.Click += delegate { SwipeRight();};
+
+           _rightButton.Click += delegate
+           {
+               try
+               {
+                   string emailFrom = Utils.GetDefaults("Email", Activity);
+                   Activity.StartActivity(typeof(ChatActivity));
+                   //                        Chat.EmailDest = _people[_cardStackView.TopIndex - 1].Email;
+                   //                        Chat.Avatar = _people[_cardStackView.TopIndex - 1].Avatar;
+                   var emailObject = new JSONObject().Put("dest", "voicu.babiciu@indecosoft.ro").Put("from", emailFrom);
+                   WebSocketClient.Client.Emit("chat request", emailObject);
+               }
+               catch (JSONException e)
+               {
+                   e.PrintStackTrace();
+               }
+           };
 
             
             return view;
@@ -289,6 +268,80 @@ namespace FamiliaXamarin
             _lbNobody.Text = string.Empty;
             SearchPeople();
 
+        }
+        public void SwipeLeft()
+        {
+            List<UserCard> spots = ExtractRemainingUserCards();
+            if (spots.Count == 0)
+            {
+                return;
+            }
+
+            View target = _cardStackView.TopView;
+            View targetOverlay = _cardStackView.TopView.OverlayContainer;
+
+            ValueAnimator rotation = ObjectAnimator.OfPropertyValuesHolder(
+                    target, PropertyValuesHolder.OfFloat("rotation", -10f));
+            rotation.SetDuration(200);
+            ValueAnimator translateX = ObjectAnimator.OfPropertyValuesHolder(
+                    target, PropertyValuesHolder.OfFloat("translationX", 0f, -2000f));
+            ValueAnimator translateY = ObjectAnimator.OfPropertyValuesHolder(
+                    target, PropertyValuesHolder.OfFloat("translationY", 0f, 500f));
+            translateX.StartDelay = 100;
+            translateY.StartDelay = 100;
+            translateX.SetDuration(500);
+            translateY.SetDuration(500);
+            AnimatorSet cardAnimationSet = new AnimatorSet();
+            cardAnimationSet.PlayTogether(rotation, translateX, translateY);
+
+            ObjectAnimator overlayAnimator = ObjectAnimator.OfFloat(targetOverlay, "alpha", 0f, 1f);
+            overlayAnimator.SetDuration(200);
+            AnimatorSet overlayAnimationSet = new AnimatorSet();
+            overlayAnimationSet.PlayTogether(overlayAnimator);
+
+            _cardStackView.Swipe(SwipeDirection.Left, cardAnimationSet);
+        }
+
+        public void SwipeRight()
+        {
+            List<UserCard> spots = ExtractRemainingUserCards();
+            if (spots.Count == 0)
+            {
+                return;
+            }
+
+            View target = _cardStackView.TopView;
+            View targetOverlay = _cardStackView.TopView.OverlayContainer;
+
+            ValueAnimator rotation = ObjectAnimator.OfPropertyValuesHolder(
+                    target, PropertyValuesHolder.OfFloat("rotation", 10f));
+            rotation.SetDuration(200);
+            ValueAnimator translateX = ObjectAnimator.OfPropertyValuesHolder(
+                    target, PropertyValuesHolder.OfFloat("translationX", 0f, 2000f));
+            ValueAnimator translateY = ObjectAnimator.OfPropertyValuesHolder(
+                    target, PropertyValuesHolder.OfFloat("translationY", 0f, 500f));
+            translateX.StartDelay = 100;
+            translateY.StartDelay = 100;
+            translateX.SetDuration(500);
+            translateY.SetDuration(500);
+            AnimatorSet cardAnimationSet = new AnimatorSet();
+            cardAnimationSet.PlayTogether(rotation, translateX, translateY);
+
+            ObjectAnimator overlayAnimator = ObjectAnimator.OfFloat(targetOverlay, "alpha", 0f, 1f);
+            overlayAnimator.SetDuration(200);
+            AnimatorSet overlayAnimationSet = new AnimatorSet();
+            overlayAnimationSet.PlayTogether(overlayAnimator);
+
+            _cardStackView.Swipe(SwipeDirection.Right, cardAnimationSet);
+        }
+        private List<UserCard> ExtractRemainingUserCards()
+        {
+            List<UserCard> spots = new List<UserCard>();
+            for (int i = _cardStackView.TopIndex; i < _adapter.Count; i++)
+            {
+                spots.Add(_adapter.GetItem(i));
+            }
+            return spots;
         }
     }
 }

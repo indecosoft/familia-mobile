@@ -7,12 +7,14 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.CustomTabs;
 using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.GlucoseDevice;
 using FamiliaXamarin.PressureDevice;
+using FamiliaXamarin.SmartBand;
 using static FamiliaXamarin.Utils;
 
 namespace FamiliaXamarin
@@ -28,9 +30,11 @@ namespace FamiliaXamarin
         }
         private void StartNewActivity(Type newActivity, string button, View v)
         {
+
             if (GetDefaults(button, Activity) != null)
             {
                 Application.Context.StartActivity(newActivity);
+                //Activity.StartActivity(typeof(AddNewGucoseDeviceActivity));
             }
             else
             {
@@ -59,9 +63,9 @@ namespace FamiliaXamarin
                                              "&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight" +
                                              "&prompt=login" +
                                              "&expires_in=31536000";
-                                //                        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                                //                        CustomTabsIntent customTabsIntent = builder.build();
-                                //                        customTabsIntent.launchUrl(Activity, Uri.Parse(url));
+                                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                                CustomTabsIntent customTabsIntent = builder.Build();
+                                customTabsIntent.LaunchUrl(Activity, Android.Net.Uri.Parse(url));
                                 break;
                         }
                     });
@@ -104,7 +108,7 @@ namespace FamiliaXamarin
                     StartNewActivity(typeof(GlucoseDeviceActivity), GetString(Resource.String.blood_glucose_device), v);
                     break;
                 case Resource.Id.SmartbandButton:
-                    //StartNewActivity(SmartBandDevice.class, getString(R.string.smartband_device), v);
+                    StartNewActivity(typeof(SmartBandDeviceActivity), GetString(Resource.String.smartband_device), v);
                     break;
 
             }

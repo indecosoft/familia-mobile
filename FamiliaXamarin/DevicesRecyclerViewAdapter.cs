@@ -17,14 +17,14 @@ namespace FamiliaXamarin
 
         public DevicesRecyclerViewAdapter(Context context, List<string> data)
         {
-            this.mInflater = LayoutInflater.From(context);
-            this.mData = data;
+            mInflater = LayoutInflater.From(context);
+            mData = data;
         }
 
         // Create new views (invoked by the layout manager)
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-            View itemView = mInflater.Inflate(Resource.Layout.rowlayout, parent, false);
+            var itemView = mInflater.Inflate(Resource.Layout.rowlayout, parent, false);
 
             //Create our ViewHolder to cache the layout view references and register
             //the OnClick event.
@@ -35,7 +35,7 @@ namespace FamiliaXamarin
         // Replace the contents of a view (invoked by the layout manager)
         public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
         {
-            var holder = viewHolder as DevicesRecyclerViewAdapterViewHolder ;
+            var holder = viewHolder as DevicesRecyclerViewAdapterViewHolder;
             var currentCrewMember = mData[position];
             holder.myTextView.Text = currentCrewMember;
 

@@ -32,7 +32,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.PressureDevice
 {
-    [Activity(Label = "BloodPressureDeviceActivity")]
+    [Activity(Label = "BloodPressureDeviceActivity", Theme = "@style/AppTheme.Dark")]
     public class BloodPressureDeviceActivity : AppCompatActivity, Animator.IAnimatorListener, IComparator
     {
         private BluetoothAdapter bluetoothAdapter;
@@ -72,6 +72,7 @@ namespace FamiliaXamarin.PressureDevice
             {
                 Finish();
             };
+
             lbStatus = FindViewById<TextView>(Resource.Id.status);
             DataContainer = FindViewById<ConstraintLayout>(Resource.Id.dataContainer);
             bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
