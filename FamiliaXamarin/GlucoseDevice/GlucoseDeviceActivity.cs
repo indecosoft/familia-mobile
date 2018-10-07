@@ -162,33 +162,26 @@ namespace FamiliaXamarin.GlucoseDevice
             base.OnPause();
             if (bluetoothAdapter != null)
             {
-                if (bluetoothScanner != null)
-                {
-                    bluetoothScanner.StopScan(scanCallback);
-                }
+                bluetoothScanner?.StopScan(scanCallback);
             }
-            //if (bluetoothManager != null) {
-            //    bluetoothAdapter.stopLeScan(scanCallback);
-            //}
+
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
-            if (requestCode == 11)
+            if (requestCode != 11) return;
+            if (resultCode == Result.Ok)
             {
-                if (resultCode == Result.Ok)
-                {
-                    bluetoothScanner = bluetoothAdapter.BluetoothLeScanner;
-                    bluetoothScanner.StartScan(scanCallback);
-                    scanButton.Enabled = false;
-                    animationView.PlayAnimation();
+                bluetoothScanner = bluetoothAdapter.BluetoothLeScanner;
+                bluetoothScanner.StartScan(scanCallback);
+                scanButton.Enabled = false;
+                animationView.PlayAnimation();
 
-                }
-                else
-                {
-                    StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), 11);
-                }
+            }
+            else
+            {
+                StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), 11);
             }
         }
 
@@ -204,12 +197,12 @@ namespace FamiliaXamarin.GlucoseDevice
             {
                 base.OnScanResult(callbackType, result);
                 Log.Error("$$$$$$$$$$$$$$$$$", result.Device.Address);
-                if (result.Device.Address != null && result.Device.Address.Equals(Utils.GetDefaults(Context.GetString(Resource.String.blood_glucose_device), Context)))
-                {
-                    result.Device.ConnectGatt(Context, false, ((GlucoseDeviceActivity)Context).gattCallback);
-                    ((GlucoseDeviceActivity)Context).bluetoothScanner.StopScan(((GlucoseDeviceActivity)Context).scanCallback);
-                    ((GlucoseDeviceActivity) Context).lbStatus.Text = Context.GetString(Resource.String.conectare_info);
-                }
+                if (result.Device.Address == null ||
+                    !result.Device.Address.Equals(
+                        Utils.GetDefaults(Context.GetString(Resource.String.blood_glucose_device), Context))) return;
+                result.Device.ConnectGatt(Context, false, ((GlucoseDeviceActivity)Context).gattCallback);
+                ((GlucoseDeviceActivity)Context).bluetoothScanner.StopScan(((GlucoseDeviceActivity)Context).scanCallback);
+                ((GlucoseDeviceActivity) Context).lbStatus.Text = Context.GetString(Resource.String.conectare_info);
             }
         }
         private class GattCallBack : BluetoothGattCallback
@@ -233,104 +226,99 @@ namespace FamiliaXamarin.GlucoseDevice
             {
                 if (status == 0)
                 {
-                    (Context as GlucoseDeviceActivity)?.setCharacteristicNotification(gatt, Constants.UuidGlucServ, Constants.UuidGlucMeasurementChar);
+                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt, Constants.UuidGlucServ, Constants.UuidGlucMeasurementChar);
                 }
             }
 
             public override void OnDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, GattStatus status)
             {
                 base.OnDescriptorWrite(gatt, descriptor, status);
-                if (status == 0)
+                if (status != 0) return;
+                if (descriptor.Characteristic.Uuid.Equals(Constants.UuidGlucMeasurementContextChar))
                 {
-                    if (descriptor.Characteristic.Uuid.Equals(Constants.UuidGlucMeasurementContextChar))
-                    {
-                        (Context as GlucoseDeviceActivity)?.setCharacteristicNotification(gatt, Constants.UuidGlucServ, Constants.UuidGlucRecordAccessControlPointChar);
-                        Log.Error("Aici", "1");
-                    }
-                    if (descriptor.Characteristic.Uuid.Equals(Constants.UuidGlucMeasurementChar))
-                    {
-                        (Context as GlucoseDeviceActivity)?.setCharacteristicNotification(gatt, Constants.UuidGlucServ, Constants.UuidGlucRecordAccessControlPointChar);
-                        //setCharacteristicNotification(gatt, Constants.UUID_GLUC_SERV, Constants.UUID_GLUC_MEASUREMENT_CONTEXT_CHAR);
-                        Log.Error("Aici", "2");
-                    }
-                    if (descriptor.Characteristic.Uuid.Equals(Constants.UuidGlucRecordAccessControlPointChar))
-                    {
-                        Log.Error("Aici", "3");
-                    }
+                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt, Constants.UuidGlucServ, Constants.UuidGlucRecordAccessControlPointChar);
+                    Log.Error("Aici", "1");
+                }
+                if (descriptor.Characteristic.Uuid.Equals(Constants.UuidGlucMeasurementChar))
+                {
+                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt, Constants.UuidGlucServ, Constants.UuidGlucRecordAccessControlPointChar);
+                    //setCharacteristicNotification(gatt, Constants.UUID_GLUC_SERV, Constants.UUID_GLUC_MEASUREMENT_CONTEXT_CHAR);
+                    Log.Error("Aici", "2");
+                }
+                if (descriptor.Characteristic.Uuid.Equals(Constants.UuidGlucRecordAccessControlPointChar))
+                {
+                    Log.Error("Aici", "3");
                 }
             }
 
             public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
             {
                 base.OnCharacteristicChanged(gatt, characteristic);
-                if (Constants.UuidGlucMeasurementChar.Equals(characteristic.Uuid))
+                if (!Constants.UuidGlucMeasurementChar.Equals(characteristic.Uuid)) return;
+                var offset = 0;
+                var flags = characteristic.GetIntValue(GattFormat.Uint8, offset).IntValue();
+                offset += 1;
+
+                var timeOffsetPresent = (flags & 0x01) > 0;
+                var typeAndLocationPresent = (flags & 0x02) > 0;
+                var concentrationUnit = (flags & 0x04) > 0 ? 1 : 0;
+                var sensorStatusAnnunciationPresent = (flags & 0x08) > 0;
+
+                // create and fill the new record
+                var record = new GlucoseDeviceData
                 {
+                    SequenceNumber = characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue()
+                };
+                offset += 2;
 
-                    int offset = 0;
-                    int flags = characteristic.GetIntValue(GattFormat.Uint8, offset).IntValue();
-                    offset += 1;
+                var year = characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue();
+                var month = characteristic.GetIntValue(GattFormat.Uint8, offset + 2).IntValue();
+                var day = characteristic.GetIntValue(GattFormat.Uint8, offset + 3).IntValue();
+                var hours = characteristic.GetIntValue(GattFormat.Uint8, offset + 4).IntValue();
+                var minutes = characteristic.GetIntValue(GattFormat.Uint8, offset + 5).IntValue();
+                var seconds = characteristic.GetIntValue(GattFormat.Uint8, offset + 6).IntValue();
+                offset += 7;
 
-                    bool timeOffsetPresent = (flags & 0x01) > 0;
-                    bool typeAndLocationPresent = (flags & 0x02) > 0;
-                    int concentrationUnit = (flags & 0x04) > 0 ? 1 : 0;
-                    bool sensorStatusAnnunciationPresent = (flags & 0x08) > 0;
+                var calendar = Calendar.Instance;
+                calendar.Set(year, month, day, hours, minutes, seconds);
+                record.Time = calendar;
 
-                    // create and fill the new record
-                    GlucoseDeviceData record = new GlucoseDeviceData
-                    {
-                        SequenceNumber = characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue()
-                    };
+                if (timeOffsetPresent)
+                {
+                    record.TimeOffset = characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue();
                     offset += 2;
+                }
 
-                    int year = characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue();
-                    int month = characteristic.GetIntValue(GattFormat.Uint8, offset + 2).IntValue();
-                    int day = characteristic.GetIntValue(GattFormat.Uint8, offset + 3).IntValue();
-                    int hours = characteristic.GetIntValue(GattFormat.Uint8, offset + 4).IntValue();
-                    int minutes = characteristic.GetIntValue(GattFormat.Uint8, offset + 5).IntValue();
-                    int seconds = characteristic.GetIntValue(GattFormat.Uint8, offset + 6).IntValue();
-                    offset += 7;
+                if (typeAndLocationPresent)
+                {
+                    record.GlucoseConcentration = characteristic.GetFloatValue(GattFormat.Sfloat, offset).FloatValue();
+                    record.Unit = concentrationUnit;
+                    var typeAndLocation = characteristic.GetIntValue(GattFormat.Uint8, offset + 2).IntValue();
+                    record.Type = (typeAndLocation & 0xF0) >> 4;
+                    record.SampleLocation = (typeAndLocation & 0x0F);
+                    offset += 3;
 
-                    Calendar calendar = Calendar.Instance;
-                    calendar.Set(year, month, day, hours, minutes, seconds);
-                    record.Time = calendar;
-
-                    if (timeOffsetPresent)
+                    (Context as GlucoseDeviceActivity)?.RunOnUiThread(() =>
                     {
-                        record.TimeOffset = characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue();
-                        offset += 2;
-                    }
-
-                    if (typeAndLocationPresent)
-                    {
-                        record.GlucoseConcentration = characteristic.GetFloatValue(GattFormat.Sfloat, offset).FloatValue();
-                        record.Unit = concentrationUnit;
-                        int typeAndLocation = characteristic.GetIntValue(GattFormat.Uint8, offset + 2).IntValue();
-                        record.Type = (typeAndLocation & 0xF0) >> 4;
-                        record.SampleLocation = (typeAndLocation & 0x0F);
-                        offset += 3;
-
-                        (Context as GlucoseDeviceActivity)?.RunOnUiThread(() =>
-                        {
-                            (Context as GlucoseDeviceActivity)?.animationView.CancelAnimation();
-                            (Context as GlucoseDeviceActivity)?.UpdateUI(record.GlucoseConcentration * 100000);
-                        });
-                    }
+                        (Context as GlucoseDeviceActivity)?.animationView.CancelAnimation();
+                        (Context as GlucoseDeviceActivity)?.UpdateUi(record.GlucoseConcentration * 100000);
+                    });
+                }
 
                 if (sensorStatusAnnunciationPresent)
                 {
                     record.Status = characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue();
                 }
             }
-        }
 
         }
-        private void UpdateUI(float g)
+        private void UpdateUi(float g)
         {
             Log.Error("UpdateUI", "Aici");
             if (!send)
             {
-                SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
-                JSONObject jsonObject = new JSONObject();
+                var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
+                var jsonObject = new JSONObject();
                 try
                 {
                     jsonObject
@@ -352,16 +340,16 @@ namespace FamiliaXamarin.GlucoseDevice
                     e.PrintStackTrace();
                 }
 
-                writeBloodGlucoseData(jsonObject);
+                WriteBloodGlucoseData(jsonObject);
 
                 //new BGM().execute(Constants.DATA_URL);
             }
 
-            string gl = GetString(Resource.String.glucose) + (int)g;
+            var gl = GetString(Resource.String.glucose) + (int)g;
             glucose.Text = gl;
-            activateScanButton();
+            ActivateScanButton();
         }
-        public void writeBloodGlucoseData(JSONObject jsonObject)
+        public void WriteBloodGlucoseData(JSONObject jsonObject)
         {
             try
             {
@@ -377,7 +365,7 @@ namespace FamiliaXamarin.GlucoseDevice
             }
         }
 
-        public string readBloodGlucoseData()
+        public string ReadBloodGlucoseData()
         {
             Stream fis;
             try
@@ -401,7 +389,7 @@ namespace FamiliaXamarin.GlucoseDevice
             return null;
         }
 
-        public void clearBloodGlucoseData()
+        public void ClearBloodGlucoseData()
         {
 //            Stream fileOutputStream;
 //
@@ -416,52 +404,43 @@ namespace FamiliaXamarin.GlucoseDevice
 //                e.PrintStackTrace();
 //            }
         }
-        private void activateScanButton()
+        private void ActivateScanButton()
         {
             scanButton.Enabled = true;
         }
 
-        protected void setCharacteristicNotification(BluetoothGatt gatt, UUID serviceUUID, UUID characteristicUUID)
+        protected void SetCharacteristicNotification(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
         {
-            setCharacteristicNotificationWithDelay(gatt, serviceUUID, characteristicUUID);
+            SetCharacteristicNotificationWithDelay(gatt, serviceUuid, characteristicUuid);
         }
 
-        protected void setCharacteristicNotificationWithDelay(BluetoothGatt gatt, UUID serviceUUID, UUID characteristicUUID)
+        protected void SetCharacteristicNotificationWithDelay(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
         {
-            this.handler.PostDelayed(
-                () => { setCharacteristicNotification_private(gatt, serviceUUID, characteristicUUID); }, 300);
+            handler.PostDelayed(
+                () => { SetCharacteristicNotification_private(gatt, serviceUuid, characteristicUuid); }, 300);
         }
 
-        private void setCharacteristicNotification_private(BluetoothGatt gatt, UUID serviceUUID, UUID characteristicUUID)
+        private void SetCharacteristicNotification_private(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
         {
             try
             {
                 bool indication;
-                BluetoothGattCharacteristic characteristic = gatt.GetService(serviceUUID).GetCharacteristic(characteristicUUID);
+                var characteristic = gatt.GetService(serviceUuid).GetCharacteristic(characteristicUuid);
                 gatt.SetCharacteristicNotification(characteristic, true);
-                BluetoothGattDescriptor descriptor = characteristic.GetDescriptor(Constants.ClientCharacteristicConfig);
+                var descriptor = characteristic.GetDescriptor(Constants.ClientCharacteristicConfig);
                 //indication = ((int)characteristic.Properties. & 32) != 0;
                 //indication = (characteristic.Properties & GattProperty.Read) != 0;
                 indication = (Convert.ToInt32(characteristic.Properties) & 32) != 0;
                 Log.Error("Indication", indication.ToString());
-                if (indication)
-                {
-                    descriptor.SetValue(BluetoothGattDescriptor.EnableIndicationValue.ToArray());
-                }
-                else
-                {
-                    descriptor.SetValue(BluetoothGattDescriptor.EnableNotificationValue.ToArray());
-                }
-
-                //                BluetoothGattDescriptor descriptor = characteristic.GetDescriptor(UUID.FromString("00002902-0000-1000-8000-00805f9b34fb"));
-                //                descriptor.SetValue(BluetoothGattDescriptor.EnableNotificationValue as byte[]);
-                //                //mBluetoothGatt.writeDescriptor(descriptor);
+                descriptor.SetValue(indication
+                    ? BluetoothGattDescriptor.EnableIndicationValue.ToArray()
+                    : BluetoothGattDescriptor.EnableNotificationValue.ToArray());
 
                 gatt.WriteDescriptor(descriptor);
             }
-            catch (System.Exception e)
+            catch (Java.Lang.Exception e)
             {
-                //e.PrintStackTrace();
+                e.PrintStackTrace();
             }
         }
 }

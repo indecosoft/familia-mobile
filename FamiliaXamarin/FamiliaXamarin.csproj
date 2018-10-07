@@ -110,6 +110,7 @@
     <AndroidResource Include="Resources\raw\map_loading.json" />
     <AndroidResource Include="Resources\raw\new_notification.json" />
     <AndroidResource Include="Resources\raw\notification.json" />
+    <AndroidResource Include="Resources\raw\loading.json" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -493,6 +494,15 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\fitbit_bpm_badge.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\my_message_style.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\message_style.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\message_off.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

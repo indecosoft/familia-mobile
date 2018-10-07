@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Support.Constraints;
 using Android.Support.V7.App;
 using Android.Util;
+using Android.Views;
 using Android.Widget;
 using Java.Util.Concurrent;
 using Org.Json;
@@ -19,7 +22,7 @@ namespace FamiliaXamarin.SmartBand
         Categories = new[] { Intent.CategoryDefault, Intent.CategoryBrowsable },
         DataScheme = "fittauth",
         DataHost = "finish")]
-    public class SmartBandDeviceActivity : AppCompatActivity
+    public  class SmartBandDeviceActivity : AppCompatActivity
     {
         private string _url = string.Empty;
         private string _token = string.Empty;
@@ -30,9 +33,10 @@ namespace FamiliaXamarin.SmartBand
         private TextView _lbFullName;
         private TextView _lbActivity;
         private CircleImageView _avatarImage;
+        private ConstraintLayout _loadingScreen;
         private readonly IWebServices _webServices = new WebServices();
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_smart_band_device);
@@ -43,6 +47,7 @@ namespace FamiliaXamarin.SmartBand
             _lbFullName = FindViewById<TextView>(Resource.Id.lbFullName);
             _lbActivity = FindViewById<TextView>(Resource.Id.lbActivTime);
             _avatarImage = FindViewById<CircleImageView>(Resource.Id.FitBitprofileImage);
+            _loadingScreen = FindViewById<ConstraintLayout>(Resource.Id.loading);
 
 
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
@@ -86,13 +91,14 @@ namespace FamiliaXamarin.SmartBand
                 _token = Utils.GetDefaults(GetString(Resource.String.smartband_device), this);
                 Log.Error("TokenFromShared", _token);
             }
-
-            PopulateFields();
+            _loadingScreen.Visibility = ViewStates.Visible;
+            await Task.Run(function: async () => await PopulateFields());
+            _loadingScreen.Visibility = ViewStates.Gone;
 
             // Create your application here
         }
 
-        private async void PopulateFields()
+        private async Task PopulateFields()
         {
             await GetProfileData();
             await GetSteps();
@@ -111,17 +117,24 @@ namespace FamiliaXamarin.SmartBand
                 try
                 {
                     var displayName = new JSONObject(data).GetJSONObject("user").GetString("displayName");
-                    _lbDisplayName.Text = displayName;
+                    
                     var fullName = new JSONObject(data).GetJSONObject("user").GetString("fullName");
-                    _lbFullName.Text = fullName;
+
 
                     var avatarUrl = new JSONObject(data).GetJSONObject("user").GetString("avatar640");
                     Log.Error("Fitbit Avatar", avatarUrl);
-                    Picasso.With(this)
-                        .Load(avatarUrl)
-                        .Resize(640, 640)
-                        .CenterCrop()
-                        .Into(_avatarImage);
+                    
+                    RunOnUiThread(() =>
+                    {
+                        _lbDisplayName.Text = displayName;
+                        _lbFullName.Text = fullName;
+                        Picasso.With(this)
+                            .Load(avatarUrl)
+                            .Resize(640, 640)
+                            .CenterCrop()
+                            .Into(_avatarImage);
+                    });
+                    
                 }
                 catch (JSONException e)
                 {
@@ -141,9 +154,14 @@ namespace FamiliaXamarin.SmartBand
                     var fairlyActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("fairlyActiveMinutes");
                     var veryActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("veryActiveMinutes");
                     var activeMinutes = fairlyActiveMinutes + veryActiveMinutes;
-                    _lbActivity.Text = $"{activeMinutes}";
+                    
                     var steps = new JSONObject(data).GetJSONObject("summary").GetInt("steps");
-                    _lbSteps.Text = $"{steps}";
+                    
+                    RunOnUiThread(() =>
+                    {
+                        _lbSteps.Text = $"{steps}";
+                        _lbActivity.Text = $"{activeMinutes}";
+                    });
                 }
                 catch (JSONException e)
                 {
@@ -163,7 +181,11 @@ namespace FamiliaXamarin.SmartBand
                     var h = (int)TimeUnit.Minutes.ToHours(totalMinutesAsleep);
                     var min = (int)(((float)totalMinutesAsleep / 60 - h) * 100) * 60 / 100;
 
-                    _lbSleep.Text = $"{h} hr {min} min";
+                    
+                    RunOnUiThread(() =>
+                    {
+                        _lbSleep.Text = $"{h} hr {min} min";
+                    });
                 }
                 catch (JSONException e)
                 {
@@ -181,7 +203,11 @@ namespace FamiliaXamarin.SmartBand
                 {
                     var bpm = ((JSONObject)new JSONObject(data).GetJSONArray("activities-heart").Get(0)).GetJSONObject("value").GetInt("restingHeartRate");
                     var bmpText = $"{bpm} bpm";
-                    _lbBpm.Text = bmpText;
+                    
+                    RunOnUiThread(() =>
+                    {
+                        _lbBpm.Text = bmpText;
+                    });
                 }
                 catch (JSONException e)
                 {

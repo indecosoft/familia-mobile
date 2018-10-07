@@ -74,7 +74,7 @@ namespace FamiliaXamarin
             //viewHolder._image.Text = currentCrewMember.Username;
 
             var message = _messages[position];
-            holder.UsernameView.Text = message.Username;
+            holder.Time.Text = DateTime.Now.ToShortTimeString();
             holder.MessageView.Text = message.Message;
 
             //viewHolder.setAvatar(message.getAvatar());
@@ -102,13 +102,13 @@ namespace FamiliaXamarin
 
         class SucHolder : RecyclerView.ViewHolder
         {
-            public TextView UsernameView { get; set; }
+            public TextView Time { get; set; }
             public TextView MessageView { get; set; }
             //public CircleImageView Image { get; set; }
             public SucHolder(View itemView, Action<int> listener)
                 : base(itemView)
             {
-                UsernameView = itemView.FindViewById<TextView>(Resource.Id.username);
+                Time = itemView.FindViewById<TextView>(Resource.Id.time);
 //                MessageView = itemView.FindViewById<TextView>(Resource.Id.message);
 //                Image = itemView.FindViewById<CircleImageView>(Resource.Id.profile_image);
 //                UsernameView = itemView.FindViewById<TextView>(Resource.Id.username);

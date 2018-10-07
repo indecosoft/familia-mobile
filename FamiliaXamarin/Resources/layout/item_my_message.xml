@@ -1,75 +1,52 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
     android:paddingTop="@dimen/spacing">
-    <!--<de.hdodenhof.circleimageview.CircleImageView-->
-        <!--android:id="@+id/profile_image"-->
-        <!--android:layout_width="50dp"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:src="@drawable/profile" />-->
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="vertical"-->
-        <!--android:layout_marginEnd="50dp">-->
-        <!--<TextView-->
-            <!--android:id="@+id/username"-->
-            <!--android:textSize="18sp"-->
-            <!--android:paddingLeft="@dimen/spacing"-->
-            <!--android:paddingRight="@dimen/spacing"-->
-            <!--android:textColor="@color/customDark"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:singleLine="true"-->
-            <!--android:textStyle="bold"-->
-            <!--android:text="dudi@dudi.com"/>-->
-
-    <!--</LinearLayout>-->
-    <LinearLayout
-        android:id="@+id/content"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="#ddd"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintVertical_chainStyle="spread"
-        app:layout_constraintRight_toLeftOf="@+id/profile_image"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-        <TextView
-            android:id="@+id/username"
-            android:textSize="18sp"
-            android:paddingLeft="@dimen/spacing"
-            android:paddingRight="@dimen/spacing"
-            android:textColor="@color/customDark"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textStyle="bold"
-            android:textAlignment="viewEnd"/>
-        <TextView
-            android:id="@+id/message"
-            android:textSize="14sp"
-            android:textAlignment="textEnd"
-            android:textColor="@color/black"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/spacing"
-            android:paddingRight="@dimen/spacing"/>
-    </LinearLayout>
-
-  <refractored.controls.CircleImageView
-      android:id="@+id/profile_image"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/profile"
-
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/content"/>
+  <LinearLayout
+      android:id="@+id/content"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:background="@drawable/my_message_style"
+      android:padding="5dp"
 
 
+      app:layout_constrainedWidth="true"
+      app:layout_constraintWidth_percent="0.7"
+      app:layout_constraintRight_toRightOf="parent"
+      app:layout_constraintTop_toTopOf="parent">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+            >
+      <TextView
+          android:id="@+id/message"
+          android:paddingLeft="@dimen/spacing"
+          android:paddingRight="@dimen/spacing"
+          android:textColor="@color/customBG"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textAlignment="viewEnd"
+          android:layout_marginStart="10dp"
+                />
+      <TextView
+          android:id="@+id/time"
+          android:textSize="9sp"
+          android:paddingLeft="@dimen/spacing"
+          android:paddingRight="@dimen/spacing"
+          android:textColor="@color/customBG"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:singleLine="true"
+          android:textAlignment="viewEnd"
+          android:text="20:40"
+          android:layout_marginStart="5dp"
+
+          android:layout_below="@+id/message"/>
+    </RelativeLayout>
+
+
+  </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

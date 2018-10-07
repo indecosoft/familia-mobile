@@ -181,7 +181,7 @@
                 android:background="@drawable/health_button"
                 android:textColor="#F88A67"
                 android:textAllCaps="false"
-                android:text="Inregistrare" />
+                android:text="Vizualizare" />
 
 
             <!--<TextView-->

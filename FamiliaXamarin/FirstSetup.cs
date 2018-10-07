@@ -5,7 +5,6 @@ using Android.App;
 using Android.Content;
 using Android.Graphics.Drawables;
 using Android.OS;
-using Android.Preferences;
 using Android.Provider;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
@@ -33,7 +32,7 @@ namespace FamiliaXamarin
         private FirstSetupViewPager _viewPager;
         private readonly FirstSetupModel _firstSetupModel = new FirstSetupModel();
         private readonly  IWebServices _webServices = new WebServices();
-        private ConstraintLayout MainContent;
+        private ConstraintLayout _mainContent;
         public static FirstSetup FragmentContext;
 #pragma warning disable 618
         private ProgressDialog _progressDialog;
@@ -50,7 +49,7 @@ namespace FamiliaXamarin
         {
             FragmentContext = this;
             _sectionsPagerAdapter = new SectionsPagerAdapter(SupportFragmentManager);
-            MainContent = FindViewById<ConstraintLayout>(Resource.Id.main_content);
+            _mainContent = FindViewById<ConstraintLayout>(Resource.Id.main_content);
             _viewPager = FindViewById<FirstSetupViewPager>(Resource.Id.container);
             _viewPager.SetPagingEnabled(false);
             _viewPager.Adapter = _sectionsPagerAdapter;
@@ -371,27 +370,16 @@ namespace FamiliaXamarin
                                 Toast.MakeText(FragmentContext, "Alege o imagine!", ToastLength.Short).Show();
                             break;
                         case 2:
-////                            _firstSetupModel.Gender = _genderSpinner.SelectedItem.ToString();
-//                            PreferenceManager.GetDefaultSharedPreferences(FragmentContext)
-//                                .Edit()
-//                                .PutString("Avatar",
-//                                    Constants.PUBLIC_SERVER_ADDRESS +
-//                                    PreferenceManager.GetDefaultSharedPreferences(FragmentContext).GetString("Email", "") +
-//                                    "." + _imageExtension)
-//                                .Apply();
                             FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber);
-//                            Log.Error("Avatar",
-//                                PreferenceManager.GetDefaultSharedPreferences(FragmentContext).GetString("Email", ""));
                             break;
                         case 3:
                             FragmentContext._progressDialog.Show();
                             FragmentContext._firstSetupModel.ImageName = Utils.GetDefaults("Email", Activity);
-                            
 
                             await Task.Run(async () => {
 
-                                string jsonData = JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
-                                string response = await FragmentContext._webServices.Post(Constants.PublicServerAddress + "api/firstSetup", new JSONObject(jsonData), Utils.GetDefaults("Token", Activity));
+                                var jsonData = JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
+                                var response = await FragmentContext._webServices.Post(Constants.PublicServerAddress + "api/firstSetup", new JSONObject(jsonData), Utils.GetDefaults("Token", Activity));
                                 if (response != null)
                                 {
                                     Snackbar snack;
@@ -399,11 +387,11 @@ namespace FamiliaXamarin
                                     switch (responseJson.GetInt("status"))
                                     {
                                         case 0:
-                                            snack = Snackbar.Make(FragmentContext.MainContent, "Wrong Data", Snackbar.LengthLong);
+                                            snack = Snackbar.Make(FragmentContext._mainContent, "Wrong Data", Snackbar.LengthLong);
                                             snack.Show();
                                             break;
                                         case 1:
-                                            snack = Snackbar.Make(FragmentContext.MainContent, "Internal Server Error", Snackbar.LengthLong);
+                                            snack = Snackbar.Make(FragmentContext._mainContent, "Internal Server Error", Snackbar.LengthLong);
                                             snack.Show();
                                             break;
                                         case 2:
@@ -416,7 +404,7 @@ namespace FamiliaXamarin
                                 }
                                 else
                                 {
-                                    var snack = Snackbar.Make(FragmentContext.MainContent, "Unable to reach the server!", Snackbar.LengthLong);
+                                    var snack = Snackbar.Make(FragmentContext._mainContent, "Unable to reach the server!", Snackbar.LengthLong);
                                     snack.Show();
                                 }
                             });

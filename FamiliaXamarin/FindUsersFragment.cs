@@ -193,9 +193,9 @@ namespace FamiliaXamarin
                     e.PrintStackTrace();
                 }
             });
+            _animationView.Progress = 1f;
 
-             
-            
+
             if (_animationView.IsAnimating)
                 _animationView.CancelAnimation();
         }
