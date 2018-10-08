@@ -52,11 +52,11 @@ namespace FamiliaXamarin
             {
                 RequestPermissions(_permissionsLocation, 0);
             }
-            Utils.SetDefaults("Token", "FFF", this);
-            Utils.SetDefaults("Imei", Utils.GetImei(this), this);
-            Utils.SetDefaults("Email", "voicu.babiciu@indecosoft.ro", this);
-            Utils.SetDefaults("Logins", true.ToString(), this);
-            Utils.SetDefaults("Avatar", Constants.PublicServerAddress + "sds", this);
+//            Utils.SetDefaults("Token", "FFF", this);
+//            Utils.SetDefaults("Imei", Utils.GetImei(this), this);
+//            Utils.SetDefaults("Email", "voicu.babiciu@indecosoft.ro", this);
+//            Utils.SetDefaults("Logins", true.ToString(), this);
+//            Utils.SetDefaults("Avatar", Constants.PublicServerAddress + "sds", this);
 
             try
             {

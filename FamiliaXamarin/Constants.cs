@@ -27,7 +27,7 @@ namespace FamiliaXamarin
         public static UUID ClientCharacteristicConfig { get; } =
             UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
 
-        //public static final UUID UUID_GLUC_FEATURE = UUID.fromString("00002a51-0000-1000-8000-00805f9b34fb");
+        //public static final UUID UUID_GLUC_FEATURE = UUID.FromString("00002a51-0000-1000-8000-00805f9b34fb");
         public static UUID UuidGlucMeasurementChar { get; } = UUID.FromString("00002a18-0000-1000-8000-00805f9b34fb");
 
         public static UUID UuidGlucMeasurementContextChar { get; } =
@@ -49,13 +49,24 @@ namespace FamiliaXamarin
         public static UUID TransferWearableSleepcontentUuid { get; } =
             UUID.FromString("0a0ae00b-0a00-1000-8000-00805f9b34fb");
 
+        #region Medication Constants
+        public static string ChannelId { get; } = "my chanel id";
+        public static string NotificationTitle { get; } = "Este timpul sa iti iei medicamentele";
+        public static string NotifContent { get; } = "";
+        public static int NotifId { get; } = 667;
+        public static string File { get; } = "data.txt";
+
+
+        #endregion
+
+
         public static string DataUrl { get; } = "https://devgis.sigma.team/devices/save-device-measurements";
 
         public static string ServerAddress { get; } = "http://192.168.101.192:3000/";
 
-        //public static string PublicServerAddress { get; } = "http://192.168.101.192:3000/";
-        public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/ws/";
-        public static string WebSocketAddress { get; } = "http://192.168.0.115";
+        public static string PublicServerAddress { get; } = "http://192.168.101.192:3000/";
+        //public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/ws/";
+        public static string WebSocketAddress { get; } = "http://192.168.101.192";
         public static int WebSocketPort { get; } = 3000;
         public static string ImageDirectory { get; } = "/demonuts";
         public static int RequestGallery { get; } = 2;

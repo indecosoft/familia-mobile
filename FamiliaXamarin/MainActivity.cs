@@ -8,6 +8,7 @@ using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Medicatie;
 using Refractored.Controls;
 using Square.Picasso;
 
@@ -118,6 +119,14 @@ namespace FamiliaXamarin
                     beginTransaction.Replace(Resource.Id.fragment_container, devicesFragment);
                     beginTransaction.AddToBackStack(null);
                     beginTransaction.Commit();
+                    break;
+                case Resource.Id.medicatie:
+                    var medFragment = new MedicineFragment();
+                    var medsupportFragmentManager = SupportFragmentManager;
+                    var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
+                    medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
+                    medbeginTransaction.AddToBackStack(null);
+                    medbeginTransaction.Commit();
                     break;
                 case Resource.Id.chat:
                     break;

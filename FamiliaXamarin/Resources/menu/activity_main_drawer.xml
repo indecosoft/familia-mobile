@@ -25,6 +25,10 @@
       android:icon="@drawable/heart_pulse"
       android:title="Dispozitive de masurare" />
     <item
+      android:id="@+id/medicatie"
+      android:icon="@drawable/pill"
+      android:title="Medicatie" />
+    <item
       android:id="@+id/nav_manage"
       android:icon="@drawable/ic_menu_manage"
       android:title="Setari" />

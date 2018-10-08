@@ -81,6 +81,19 @@
     <Compile Include="LocationService.cs" />
     <Compile Include="LoginActivity.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Medicatie\BoalaActivity.cs" />
+    <Compile Include="Medicatie\BoalaAdapter.cs" />
+    <Compile Include="Medicatie\CustomDialogDeleteBoala.cs" />
+    <Compile Include="Medicatie\CustomDialogDeleteMedicament.cs" />
+    <Compile Include="Medicatie\CustomDialogMedicamentDetails.cs" />
+    <Compile Include="Medicatie\Data\Storage.cs" />
+    <Compile Include="Medicatie\Entities\Boala.cs" />
+    <Compile Include="Medicatie\Entities\Hour.cs" />
+    <Compile Include="Medicatie\Entities\Medicament.cs" />
+    <Compile Include="Medicatie\Entities\MedicationSchedule.cs" />
+    <Compile Include="Medicatie\HourAdapter.cs" />
+    <Compile Include="Medicatie\MedicamentAdapter.cs" />
+    <Compile Include="Medicatie\MedicineFragment.cs" />
     <Compile Include="PressureDevice\AddNewBloodPressureDeviceActivity.cs" />
     <Compile Include="PressureDevice\BloodPressureData.cs" />
     <Compile Include="PressureDevice\BloodPressureDeviceActivity.cs" />
@@ -503,6 +516,49 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\message_off.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\buttonshape.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\delete_circle.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\delete_circle_white.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\delete_empty.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\pill.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_boala.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\custom_dialog_delete_boala.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\custom_dialog.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\custom_dialog_delete_medicament.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_medicine.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_boala.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_hour.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_med.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

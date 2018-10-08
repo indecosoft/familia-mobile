@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_meds"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".medicatie.gestiune.ui.BoalaActivity">
+
+    <RelativeLayout
+        android:id="@+id/rl_up"
+        android:layout_width="match_parent"
+        android:layout_height="160dp">
+
+        <TextView
+            android:id="@+id/tv_label_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="Introduceti datele:"
+            android:textColor="@android:color/black"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_label_nume_boala"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_label_title"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="30dp"
+            android:text="Denumire afectiune:"
+            android:textColor="@android:color/black"
+            android:textSize="15dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/et_nume_boala"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_label_nume_boala"
+            android:hint="denumire afectiune.."
+            android:padding="15dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/secondary_text_light_nodisable" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rl_up">
+
+
+        <TextView
+            android:id="@+id/tv_label_medicamente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="30dp"
+            android:text="Medicamente: "
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_meds"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btn_save"
+            android:layout_below="@+id/tv_label_medicamente"
+            android:layout_marginTop="20dp"
+            android:paddingBottom="80dp"
+            android:paddingLeft="20dp"
+            android:paddingStart="20dp"
+            android:paddingTop="15dp"
+            android:scrollbars="vertical" />
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_add_med"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="16dp"
+            android:layout_marginTop="25dp"
+            android:elevation="4dp"
+            android:src="@android:drawable/ic_input_add" />
+
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/button_style"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:text="Salveaza"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/btn_update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/button_style"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:text="Modifica"
+            android:textColor="@android:color/white" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
+
