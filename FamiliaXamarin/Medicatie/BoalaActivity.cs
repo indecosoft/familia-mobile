@@ -13,6 +13,7 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Medicatie.Alarm;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
 using Java.Util;
@@ -128,7 +129,12 @@ namespace FamiliaXamarin.Medicatie
 
             setupAlarm();
 
-            Finish();
+            Intent intent = new Intent(Application.Context, typeof(MainActivity));
+            intent.AddFlags(ActivityFlags.ClearTop);
+            MainActivity.FromBoala = true;
+            StartActivity(intent);
+
+            //Finish();
         }
 
         private void addNewBoala()
@@ -145,7 +151,12 @@ namespace FamiliaXamarin.Medicatie
 
             setupAlarm();
 
-            Finish();
+            var intent = new Intent(Application.Context, typeof(MainActivity));
+            intent.AddFlags(ActivityFlags.ClearTop);
+            MainActivity.FromBoala = true;
+            StartActivity(intent);
+
+            //Finish();
         }
 
         private void setupAlarm()
@@ -163,35 +174,35 @@ namespace FamiliaXamarin.Medicatie
 
         private void setAlarm(Hour hour, Medicament med, Boala boala)
         {
-//
-//            AlarmManager am = (AlarmManager)GetSystemService(Context.AlarmService);
-//
-//            Intent i = new Intent(this, typeof(AlarmBroadcastReceiver));
-//            i.PutExtra(BOALA_ID, boala.Id);
-//            i.PutExtra(MED_ID, med.IdMed);
-//
-//            int _id = (int)System.CurrentTimeMillis();
-//            PendingIntent pi = PendingIntent.GetBroadcast(this, _id, i, PendingIntentFlags.OneShot);
-//
-//
-//            if (am != null)
-//            {
-//                String hourString = hour.Nume;
-//                String[] parts = hourString.Split(':');
-//                int timeHour = int.Parse(parts[0]);
-//                int timeMinute = int.Parse(parts[1]);
-//                Calendar calendar = Calendar.Instance;
-//                Log.Error("DATAAAA", med.Date);
-//                Calendar setcalendar = Calendar.Instance;
-//                setcalendar.Set(Calendar.HourOfDay, timeHour);
-//                setcalendar.Set(Calendar.Minute, timeMinute);
-//                setcalendar.Set(Calendar.Second, 0);
-//
-//                if (setcalendar.Before(calendar))
-//                    setcalendar.Add(Calendar.Date, 1);
-//
-//                am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
-//            }
+
+            AlarmManager am = (AlarmManager)GetSystemService(AlarmService);
+
+            Intent i = new Intent(this, typeof(AlarmBroadcastReceiver));
+            i.PutExtra(BOALA_ID, boala.Id);
+            i.PutExtra(MED_ID, med.IdMed);
+
+            int _id = DateTime.Now.Millisecond;
+            PendingIntent pi = PendingIntent.GetBroadcast(this, _id, i, PendingIntentFlags.OneShot);
+
+
+            if (am != null)
+            {
+                string hourString = hour.Nume;
+                string[] parts = hourString.Split(':');
+                int timeHour = int.Parse(parts[0]);
+                int timeMinute = int.Parse(parts[1]);
+                Calendar calendar = Calendar.Instance;
+                Log.Error("DATAAAA", med.Date);
+                Calendar setcalendar = Calendar.Instance;
+                setcalendar.Set(CalendarField.HourOfDay, timeHour);
+                setcalendar.Set(CalendarField.Minute, timeMinute);
+                setcalendar.Set(CalendarField.Second, 0);
+
+                if (setcalendar.Before(calendar))
+                    setcalendar.Add(CalendarField.Date, 1);
+
+                am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
+            }
         }
 
         public void onMedSaved(Medicament medicament)

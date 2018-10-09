@@ -19,7 +19,8 @@ namespace FamiliaXamarin
     {
         private Intent _loacationServiceIntent;
         private Intent _webSocketServiceIntent;
-        
+        public static bool FromBoala = false;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -70,6 +71,18 @@ namespace FamiliaXamarin
             {
 //                startActivity(new Intent(MenuActivity.this, ProfileActivity.class));
             };
+
+             if (FromBoala)
+                {
+                    var medFragment = new MedicineFragment();
+                    var medsupportFragmentManager = SupportFragmentManager;
+                    var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
+                    medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
+                    medbeginTransaction.AddToBackStack(null);
+                    medbeginTransaction.Commit();
+                    FromBoala = false;
+                }
+            
         }
 
         public override void OnBackPressed()

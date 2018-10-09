@@ -81,12 +81,16 @@
     <Compile Include="LocationService.cs" />
     <Compile Include="LoginActivity.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Medicatie\Alarm\AlarmActivity.cs" />
+    <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiver.cs" />
+    <Compile Include="Medicatie\Alarm\App.cs" />
     <Compile Include="Medicatie\BoalaActivity.cs" />
     <Compile Include="Medicatie\BoalaAdapter.cs" />
     <Compile Include="Medicatie\CustomDialogDeleteBoala.cs" />
     <Compile Include="Medicatie\CustomDialogDeleteMedicament.cs" />
     <Compile Include="Medicatie\CustomDialogMedicamentDetails.cs" />
     <Compile Include="Medicatie\Data\Storage.cs" />
+    <Compile Include="Medicatie\DatePickerMedicine.cs" />
     <Compile Include="Medicatie\Entities\Boala.cs" />
     <Compile Include="Medicatie\Entities\Hour.cs" />
     <Compile Include="Medicatie\Entities\Medicament.cs" />
@@ -559,6 +563,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\item_med.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_alarm.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

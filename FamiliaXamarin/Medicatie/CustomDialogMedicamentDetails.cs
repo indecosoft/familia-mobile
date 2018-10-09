@@ -266,11 +266,11 @@ namespace FamiliaXamarin.Medicatie
 //            datePickerDialog.Window.SetBackgroundDrawable(new ColorDrawable(Color.Transparent));
 //            datePickerDialog.Show();
 
-            var frag = DatePickerFragment.NewInstance(delegate (DateTime time)
+            var frag = DatePickerMedicine.NewInstance(delegate (DateTime time)
             {
                 tvStartDate.Text = time.ToShortDateString();
             });
-            frag.Show(activity.FragmentManager, DatePickerFragment.TAG);
+            frag.Show(activity.FragmentManager, DatePickerMedicine.TAG);
         }
 
         private void onSaveClicked()
