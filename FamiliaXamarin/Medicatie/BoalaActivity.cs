@@ -171,7 +171,13 @@ namespace FamiliaXamarin.Medicatie
                 }
             }
         }
+        private readonly DateTime Jan1st1970 = new DateTime
+            (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
+        public int CurrentTimeMillis()
+        {
+            return (int)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
+        }
         private void setAlarm(Hour hour, Medicament med, Boala boala)
         {
 
@@ -181,28 +187,67 @@ namespace FamiliaXamarin.Medicatie
             i.PutExtra(BOALA_ID, boala.Id);
             i.PutExtra(MED_ID, med.IdMed);
 
-            int _id = DateTime.Now.Millisecond;
+            int _id = CurrentTimeMillis();
             PendingIntent pi = PendingIntent.GetBroadcast(this, _id, i, PendingIntentFlags.OneShot);
 
 
-            if (am != null)
-            {
-                string hourString = hour.Nume;
-                string[] parts = hourString.Split(':');
-                int timeHour = int.Parse(parts[0]);
-                int timeMinute = int.Parse(parts[1]);
-                Calendar calendar = Calendar.Instance;
-                Log.Error("DATAAAA", med.Date);
-                Calendar setcalendar = Calendar.Instance;
-                setcalendar.Set(CalendarField.HourOfDay, timeHour);
-                setcalendar.Set(CalendarField.Minute, timeMinute);
-                setcalendar.Set(CalendarField.Second, 0);
+                        if (am != null)
+                        {
+                            var d = DateTime.Now;
+                            string hourString = hour.Nume;
+                            string[] parts = hourString.Split(':');
+                            int timeHour = int.Parse(parts[0]);
+                            int timeMinute = int.Parse(parts[1]);
+                            Calendar calendar = Calendar.Instance;
+                            Log.Error("DATAAAA", med.Date);
+                            string[] daterparts = med.Date.Split('/');
+            //                Calendar setcalendar = Calendar.Instance;
+            //                setcalendar.Set((CalendarField)d.Hour, timeHour);
+            //                setcalendar.Set((CalendarField)d.Minute, timeMinute);
+            //                setcalendar.Set((CalendarField)d.Second, 0);
+            //
+            //                if (setcalendar.Before(calendar))
+            //                    setcalendar.Add(CalendarField.Date, 1);
+                            DateTime dt = new DateTime(int.Parse(daterparts[2]), int.Parse(daterparts[0]), int.Parse(daterparts[1]),timeHour,timeMinute,0);
+            
+                            //var durata = dt.Millisecond - DateTime.Now.Millisecond;
+                            if (dt < DateTime.Now)
+                            {
+                                dt = dt.AddDays(1);
+                            }
 
-                if (setcalendar.Before(calendar))
-                    setcalendar.Add(CalendarField.Date, 1);
+                            var c = dt.TimeOfDay;
+                            var durata = dt.Millisecond - SystemClock.ElapsedRealtime();
+                            long ms = (long)(dt - DateTime.MinValue).TotalMilliseconds;
+                            System.Diagnostics.Debug.WriteLine("Milliseconds since the alleged birth of Jesus Christ: " + ms);
+                //long a = setcalendar.TimeInMillis;
+                am.Set(AlarmType.ElapsedRealtime, triggerAtMillis: SystemClock.ElapsedRealtime() + ms, operation: pi);
+            
+                            //am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
+                        }
 
-                am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
-            }
+//            if (am != null)
+//            {
+//                String dateString = med.Date;
+//
+//
+//                String hourString = hour.Nume;
+//                String[] parts = hourString.Split(':');
+//                int timeHour = int.Parse(parts[0]);
+//                int timeMinute = int.Parse(parts[1]);
+//                Calendar calendar = Calendar.Instance;
+//                Log.Error("DATAAAA", med.Date);
+//
+//                Calendar setcalendar = Calendar.Instance;
+//                setcalendar.Set(Calendar.HourOfDay, timeHour);
+//                setcalendar.Set(Calendar.Minute, timeMinute);
+//                setcalendar.Set(Calendar.Second, 0);
+//                if (setcalendar.Before(calendar))
+//                    setcalendar.Add(Calendar.Date, 1);
+//
+//                am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
+//            }
+
         }
 
         public void onMedSaved(Medicament medicament)

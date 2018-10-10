@@ -233,17 +233,19 @@ namespace FamiliaXamarin
             var rejectintent = new Intent(context, typeof(ChatActivity));
             //intent.setAction("ro.indecosoft.familia_ingrijire_paleativ");
             //intent.putExtra("100", 0);
-            var acceptIntent = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
-            var rejectIntent = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
+            
             switch (type)
             {
                 //1 => request
                 //2 => accept
                 //3 => message
                 case 1:
+                   
                     intent.PutExtra("AcceptClick", true);
-                    rejectintent.PutExtra("RejectClick", true);
                     intent.PutExtra("EmailFrom", body.Replace(" doreste sa ia legatura cu tine!", ""));
+                    rejectintent.PutExtra("RejectClick", true);
+                    var acceptIntent = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
+                    var rejectIntent = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
 
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
@@ -263,9 +265,11 @@ namespace FamiliaXamarin
                     break;
 
                 case 2:
-
-                    //intent.putExtra("ConversationClick",true);
                     intent.PutExtra("Conv", true);
+                    var acceptIntent1 = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
+                    //var rejectIntent1 = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
+                    //intent.putExtra("ConversationClick",true);
+                    
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
 
@@ -276,9 +280,9 @@ namespace FamiliaXamarin
                             .SetStyle(new NotificationCompat.BigTextStyle()
                                 .BigText(body))
                             .SetPriority(NotificationCompat.PriorityDefault)
-                            .SetContentIntent(acceptIntent)
+                            .SetContentIntent(acceptIntent1)
                             .SetAutoCancel(true)
-                            .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent);
+                            .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent1);
                     }
 
                     break;

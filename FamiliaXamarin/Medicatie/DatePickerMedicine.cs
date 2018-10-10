@@ -34,7 +34,7 @@ namespace FamiliaXamarin.Medicatie
             DatePickerDialog dialog = new DatePickerDialog(Activity,
                 this,
                 currently.Year,
-                currently.Month - 1,
+                currently.Month,
                 currently.Day);
 
             //DateTime origin = new DateTime(1970, 1, 1);
@@ -47,7 +47,7 @@ namespace FamiliaXamarin.Medicatie
         public void OnDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
         {
             // Note: monthOfYear is a value between 0 and 11, not 1 and 12!
-            DateTime selectedDate = new DateTime(year, monthOfYear + 1, dayOfMonth);
+            DateTime selectedDate = new DateTime(year, monthOfYear, dayOfMonth);
             Log.Debug(TAG, selectedDate.ToLongDateString());
             _dateSelectedHandler(selectedDate);
         }

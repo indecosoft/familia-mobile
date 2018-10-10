@@ -13,6 +13,7 @@ using Android.Widget;
 
 namespace FamiliaXamarin.Medicatie.Alarm
 {
+    [BroadcastReceiver(Enabled = true, Exported = true)]
     class AlarmBroadcastReceiver : BroadcastReceiver
     {
         public override void OnReceive(Context context, Intent intent)

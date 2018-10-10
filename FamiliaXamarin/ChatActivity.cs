@@ -33,19 +33,20 @@ namespace FamiliaXamarin
 
         public static RecyclerView _recyclerView;
         public static EditText mInputMessageView;
-        private List<ChatModel> mMessages;
-        private  ChatAdapter mAdapter;
+        private static List<ChatModel> mMessages;
+        private static ChatAdapter mAdapter;
         public static string Email;
         public static string RoomName = "";
         public static bool FromNotify = false;
         private bool mTyping = false;
         private Handler mTypingHandler = new Handler();
-        private string mUsername;
-        private string Token;
+        private static string mUsername;
+        private static string Token;
         public static string EmailDest;
         public static ChatActivity Ctx;
         public static string Avatar;
         public static string NewMessage = "";
+        IWebSocketClient _socketClient = new WebSocketClient();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -58,10 +59,10 @@ namespace FamiliaXamarin
             mMessages = new List<ChatModel>();
 
             mAdapter = new ChatAdapter(this,mMessages);
-            mAdapter.ItemClick += delegate (object sender, int i)
-            {
-                Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
-            };
+//            mAdapter.ItemClick += delegate (object sender, int i)
+//            {
+//                Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
+//            };
 
 
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.messages);
@@ -130,20 +131,20 @@ namespace FamiliaXamarin
                 string message = mInputMessageView.Text;
                 mInputMessageView.Text = string.Empty;
                 addMessage("Eu", message, 1);
-//                JSONObject messageToSend = null;
-//                try
-//                {
-//                    messageToSend = new JSONObject().Put("message", message).Put("username", mUsername).Put("room", RoomName);
-//                }
-//                catch (JSONException e)
-//                {
-//                    e.PrintStackTrace();
-//                }
+                JSONObject messageToSend = null;
+                try
+                {
+                    messageToSend = new JSONObject().Put("message", message).Put("username", mUsername).Put("room", RoomName);
+                }
+                catch (JSONException e)
+                {
+                    e.PrintStackTrace();
+                }
                 // perform the sending message attempt.
-                //WebSocketClient.Client.Emit("send message", messageToSend);
+                WebSocketClient.Client.Emit("send message", messageToSend);
             }
         }
-        public void addMessage(string username, string message, int type)
+        public static void addMessage(string username, string message, int type)
         {
 
 //                if (type == 0)
@@ -167,7 +168,7 @@ namespace FamiliaXamarin
 
 
         }
-        private void scrollToBottom()
+        private static void scrollToBottom()
         {
             _recyclerView.ScrollToPosition(mAdapter.ItemCount - 1);
         }

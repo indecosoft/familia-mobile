@@ -63,7 +63,7 @@ namespace FamiliaXamarin
                     try
                     {
                         string emailFrom = Utils.GetDefaults("Email", Activity);
-                        Activity.StartActivity(typeof(ChatActivity));
+                        //Activity.StartActivity(typeof(ChatActivity));
 //                        Chat.EmailDest = _people[_cardStackView.TopIndex - 1].Email;
 //                        Chat.Avatar = _people[_cardStackView.TopIndex - 1].Avatar;
                         var emailObject = new JSONObject().Put("dest", _people[_cardStackView.TopIndex - 1].Email).Put("from", emailFrom);
@@ -221,25 +221,25 @@ namespace FamiliaXamarin
             _animationView.PlayAnimation();
             
 
-//            _leftButton.Click += delegate { SwipeLeft();};
-//            _rightButton.Click += delegate { SwipeRight();};
+            _leftButton.Click += delegate { SwipeLeft();};
+            _rightButton.Click += delegate { SwipeRight();};
 
-           _rightButton.Click += delegate
-           {
-               try
-               {
-                   string emailFrom = Utils.GetDefaults("Email", Activity);
-                   Activity.StartActivity(typeof(ChatActivity));
-                   //                        Chat.EmailDest = _people[_cardStackView.TopIndex - 1].Email;
-                   //                        Chat.Avatar = _people[_cardStackView.TopIndex - 1].Avatar;
-                   var emailObject = new JSONObject().Put("dest", "voicu.babiciu@indecosoft.ro").Put("from", emailFrom);
-                   WebSocketClient.Client.Emit("chat request", emailObject);
-               }
-               catch (JSONException e)
-               {
-                   e.PrintStackTrace();
-               }
-           };
+//           _rightButton.Click += delegate
+//           {
+//               try
+//               {
+//                   string emailFrom = Utils.GetDefaults("Email", Activity);
+//                   Activity.StartActivity(typeof(ChatActivity));
+//                   //                        Chat.EmailDest = _people[_cardStackView.TopIndex - 1].Email;
+//                   //                        Chat.Avatar = _people[_cardStackView.TopIndex - 1].Avatar;
+//                   var emailObject = new JSONObject().Put("dest", "voicu.babiciu@indecosoft.ro").Put("from", emailFrom);
+//                   WebSocketClient.Client.Emit("chat request", emailObject);
+//               }
+//               catch (JSONException e)
+//               {
+//                   e.PrintStackTrace();
+//               }
+//           };
 
             
             return view;

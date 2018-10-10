@@ -65,8 +65,8 @@ namespace FamiliaXamarin
         public static string ServerAddress { get; } = "http://192.168.101.192:3000/";
 
         public static string PublicServerAddress { get; } = "http://192.168.101.192:3000/";
-        //public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/ws/";
-        public static string WebSocketAddress { get; } = "http://192.168.101.192";
+        //public static string PublicServerAddress { get; } = "http://gisdev.indecosoft.net/";
+        public static string WebSocketAddress { get; } = "http://192.168.101.147:4000";
         public static int WebSocketPort { get; } = 3000;
         public static string ImageDirectory { get; } = "/demonuts";
         public static int RequestGallery { get; } = 2;

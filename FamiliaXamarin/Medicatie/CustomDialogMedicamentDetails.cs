@@ -69,7 +69,7 @@ namespace FamiliaXamarin.Medicatie
             int year = cal.Get(CalendarField.Year);
             int month = cal.Get(CalendarField.Month);
             int day = cal.Get(CalendarField.DayOfMonth);
-            return day + "/" + month + "/" + year;
+            return $"{day}/{(month + 1)}/{year}";
         }
        
 

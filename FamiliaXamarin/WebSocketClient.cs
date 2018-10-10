@@ -1,13 +1,15 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using Android.App;
 using Android.Content;
 using Android.Preferences;
 using Android.Support.V4.App;
 using Android.Util;
+using Java.Net;
 using Org.Json;
 using SocketIO.Client;
 using Object = Java.Lang.Object;
+using Socket = SocketIO.Client.Socket;
 
 namespace FamiliaXamarin
 {
@@ -25,16 +27,20 @@ namespace FamiliaXamarin
             _context = context;
             try
             {
-                
+
                 var options = new IO.Options
                 {
                     ForceNew = true,
                     Reconnection = true,
-                    Query =
-                        $"token={Utils.GetDefaults("Token", Application.Context)}&imei={Utils.GetImei(Application.Context)}"
+                    Query = $"token={Utils.GetDefaults("Token", Application.Context)}&imei={Utils.GetImei(Application.Context)}",
+                    Upgrade = false,
+                    Transports = new List<string>() {"websocket"},
+                    ReconnectionAttempts = 0,
+                    Path = "/ws"
+                    
                 };
-
-                _socket = IO.Socket($"{hostname}:{port}/", options);
+                URI url = new URI(Constants.WebSocketAddress);
+                _socket = IO.Socket(url, options);
 
                 _socket.On(Socket.EventConnect, OnConnect);
                 _socket.On(Socket.EventDisconnect, OnDisconnect);
@@ -47,17 +53,22 @@ namespace FamiliaXamarin
 
                 _socket.Connect();
                 Client = _socket;
+                //_socket = IO.Socket($"{hostname});:ket;
             }
             catch (Exception e)
-            {
+            {     
+                                                                           
+                
+ //               _socket = IO.Socket("http://192.168.100.52:ocket(n3000");
+
                 Log.Error("WSConnectionError: ", e.ToString());
             }
-        }
+        }                                      
 
-//        public Socket Client()
-//        {
-//            return _socket;
-//        }
+        public void Emit(string eventName, JSONObject value)
+        {
+            _socket.Emit(eventName, value);
+        }
 
         private static void OnConnect(Object[] obj)
         {
@@ -69,7 +80,7 @@ namespace FamiliaXamarin
         }
         private static void OnConnectError(Object[] obj)
         {
-            Log.Error("WebSocket", "Connection Error");
+            Log.Error("WebSocket", "Connection Error" + obj[0]);
         }
         private static void OnConnectTimeout(Object[] obj)
         {
@@ -127,7 +138,7 @@ namespace FamiliaXamarin
 //                    //removeTyping(username);
 //                    Log.Error("Mesaj: ", message);
 //                    //if(!data2[0].replace(":","").equals(Email))
-//                    Chat.addMessage(username, Chat.Avatar, message, 0);
+                    ChatActivity.addMessage(username, message, 0);
 //
 //                }
             }
@@ -138,7 +149,7 @@ namespace FamiliaXamarin
         }
         private void OnChatAccepted(Object[] obj)
         {
-            Log.Error("WebSocket", "Hat Accepted");
+            Log.Error("WebSocket", "Chat Accepted");
             var data = (JSONObject)obj[0];
             string email;
             string room;
