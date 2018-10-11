@@ -4,25 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.constraint.ConstraintLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:fitsSystemWindows="false">
+   <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="false">
 
-		<android.support.design.widget.AppBarLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:theme="@style/AppTheme.AppBarOverlay">
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/AppTheme.AppBarOverlay">
 
-			<android.support.v7.widget.Toolbar
-				android:id="@+id/toolbar"
-				android:layout_width="match_parent"
-				android:layout_height="?attr/actionBarSize"
-				style="@style/HeaderBar">
-			</android.support.v7.widget.Toolbar>
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    style="@style/HeaderBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:popupTheme="@style/ActionBarPopupThemeOverlay"
+                    app:theme="@style/ActionBarThemeOverlay" />
 
-		</android.support.design.widget.AppBarLayout>
-	</android.support.constraint.ConstraintLayout>
+            </android.support.design.widget.AppBarLayout>
+        </android.support.constraint.ConstraintLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/messages"
         android:layout_width="match_parent"

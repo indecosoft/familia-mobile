@@ -12,8 +12,6 @@ namespace FamiliaXamarin
 {
     class ChatAdapter : RecyclerView.Adapter
     {
-        public event EventHandler<int> ItemClick;
-        public event EventHandler<SucHolderViewAdapterClickEventArgs> ItemLongClick;
 
         private List<ChatModel> _messages;
         private LayoutInflater mInflater;
@@ -58,7 +56,7 @@ namespace FamiliaXamarin
 
             var itemView = mInflater.Inflate(layout, parent, false);
 
-            var viewHolder = new SucHolder(itemView, OnClick);
+            var viewHolder = new SucHolder(itemView);
             return viewHolder;
         }
 
@@ -88,24 +86,15 @@ namespace FamiliaXamarin
 
         //This will fire any event handlers that are registered with our ItemClick
         //event.
-        private void OnClick(int position)
-        {
-            if (ItemClick != null)
-            {
-                ItemClick(this, position);
-            }
-        }
         public override int ItemCount => _messages.Count;
 
-        //        void OnClick(DevicesRecyclerViewAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
-        void OnLongClick(SucHolderViewAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
 
         class SucHolder : RecyclerView.ViewHolder
         {
             public TextView Time { get; set; }
             public TextView MessageView { get; set; }
             //public CircleImageView Image { get; set; }
-            public SucHolder(View itemView, Action<int> listener)
+            public SucHolder(View itemView)
                 : base(itemView)
             {
                 Time = itemView.FindViewById<TextView>(Resource.Id.time);
@@ -114,13 +103,7 @@ namespace FamiliaXamarin
 //                UsernameView = itemView.FindViewById<TextView>(Resource.Id.username);
                 MessageView = itemView.FindViewById<TextView>(Resource.Id.message);
                 //                Image = itemView.FindViewById<CircleImageView>(Resource.Id.profile_image);
-                itemView.Click += (sender, e) => listener(base.Position);
             }
-        }
-        public class SucHolderViewAdapterClickEventArgs : EventArgs
-        {
-            public View View { get; set; }
-            public int Position { get; set; }
         }
     }
 }

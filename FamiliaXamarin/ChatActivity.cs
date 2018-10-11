@@ -45,7 +45,7 @@ namespace FamiliaXamarin
         private static string mUsername;
         private static string Token;
         public static string EmailDest;
-        public static ChatActivity Ctx;
+        private static ChatActivity Ctx;
         public static string Avatar;
         public static string NewMessage = "";
         IWebSocketClient _socketClient = new WebSocketClient();
@@ -66,7 +66,7 @@ namespace FamiliaXamarin
             //                Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
             //            };
 
-
+            mAdapter.Clear();
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.messages);
             _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
             _recyclerView.SetAdapter(mAdapter);
@@ -185,26 +185,26 @@ namespace FamiliaXamarin
         }
         public static void addMessage(string message, int type)
         {
-
-            //                if (type == 0)
-            //                {
-            mMessages.Add(new ChatModel { Message = message, Type =  type});
-            //mMessages.Add(new ChatModel { Username = username, Message = message, Type = ChatModel.TypeMessage });
-            //mMessages.Add(new ChatModel.Builder(ChatModel.TypeMessage)
-            //                .Username(username).Message(message).Build());
-            //mMessages.Add(new ChatModel.Builder(ChatModel.TypeMyMessage)
-            //                .Username(username).Message(message).Build());
-            //                }
-            //                else if (type == 1)
-            //                {
-            //                    mMessages.Add(new ChatModel.Builder(ChatModel.TypeMyMessage)
-            //                        .Username(username).Message(message).Avatar(avatar).Build());
-            //                }
-            mAdapter.NotifyItemInserted(mMessages.Count - 1);
-            mAdapter.NotifyDataSetChanged();
-            // scrollToBottom();
-
-
+            Ctx.RunOnUiThread(() =>
+            {
+                //                if (type == 0)
+                //                {
+                mMessages.Add(new ChatModel { Message = message, Type = type });
+                //mMessages.Add(new ChatModel { Username = username, Message = message, Type = ChatModel.TypeMessage });
+                //mMessages.Add(new ChatModel.Builder(ChatModel.TypeMessage)
+                //                .Username(username).Message(message).Build());
+                //mMessages.Add(new ChatModel.Builder(ChatModel.TypeMyMessage)
+                //                .Username(username).Message(message).Build());
+                //                }
+                //                else if (type == 1)
+                //                {
+                //                    mMessages.Add(new ChatModel.Builder(ChatModel.TypeMyMessage)
+                //                        .Username(username).Message(message).Avatar(avatar).Build());
+                //                }
+                mAdapter.NotifyItemInserted(mMessages.Count - 1);
+                mAdapter.NotifyDataSetChanged();
+                 scrollToBottom();
+            });
 
         }
         private static void scrollToBottom()
