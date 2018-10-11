@@ -12,7 +12,10 @@ using Android.Widget;
 
 namespace FamiliaXamarin.Medicatie.Alarm
 {
-    class App  :Application
+
+    
+
+    class App : Application
     {
         public override void OnCreate()
         {

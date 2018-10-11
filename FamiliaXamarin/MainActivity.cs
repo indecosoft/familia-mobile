@@ -82,7 +82,10 @@ namespace FamiliaXamarin
                     medbeginTransaction.Commit();
                     FromBoala = false;
                 }
-            
+
+            Utils.CreateNotificationChannel();
+
+
         }
 
         public override void OnBackPressed()

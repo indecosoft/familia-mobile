@@ -20,7 +20,7 @@ using Java.Util;
 
 namespace FamiliaXamarin.Medicatie
 {
-    [Activity(Label = "BoalaActivity")]
+    [Activity(Label = "BoalaActivity", Theme = "@style/AppTheme.Dark")]
     public class BoalaActivity : AppCompatActivity, View.IOnClickListener, CustomDialogMedicamentDetails.IMedSaveListener, OnMedicamentClickListener, CustomDialogDeleteMedicament.ICustomDialogDeleteMedicamentListener
     {
         public static string MED_ID = "medId";
@@ -46,16 +46,20 @@ namespace FamiliaXamarin.Medicatie
         private void SetupViews()
         {
             save = FindViewById<Button>(Resource.Id.btn_save);
-            save.SetOnClickListener(this);
+            //save.SetOnClickListener(this);
+            save.Click += delegate(object sender, EventArgs args) { addNewBoala(); };
 
             update = FindViewById<Button>(Resource.Id.btn_update);
-            update.SetOnClickListener(this);
+            //update.SetOnClickListener(this);
+            update.Click += delegate (object sender, EventArgs args) { updateBoala(); };
 
             FloatingActionButton addMed = FindViewById<FloatingActionButton>(Resource.Id.fab_add_med);
-            addMed.SetOnClickListener(this);
+            //addMed.SetOnClickListener(this);
+            addMed.Click += delegate (object sender, EventArgs args) { openMedDialog(null); };
             etNumeBoala = FindViewById<EditText>(Resource.Id.et_nume_boala);
 
             setRecyclerView();
+
         }
 
         private void setRecyclerView()
@@ -122,19 +126,19 @@ namespace FamiliaXamarin.Medicatie
         private void updateBoala()
         {
             string numeBoala = etNumeBoala.Text;
-            
+
             boala.MedicamentList = medicamentAdapter.getMedicaments();
             boala.NumeBoala = numeBoala;
             Storage.getInstance().updateBoala(this, boala);
 
             setupAlarm();
 
-            Intent intent = new Intent(Application.Context, typeof(MainActivity));
-            intent.AddFlags(ActivityFlags.ClearTop);
-            MainActivity.FromBoala = true;
-            StartActivity(intent);
+//            Intent intent = new Intent(Application.Context, typeof(MainActivity));
+//            intent.AddFlags(ActivityFlags.ClearTop);
+//            MainActivity.FromBoala = true;
+//            StartActivity(intent);
 
-            //Finish();
+            Finish();
         }
 
         private void addNewBoala()
@@ -151,12 +155,12 @@ namespace FamiliaXamarin.Medicatie
 
             setupAlarm();
 
-            var intent = new Intent(Application.Context, typeof(MainActivity));
-            intent.AddFlags(ActivityFlags.ClearTop);
-            MainActivity.FromBoala = true;
-            StartActivity(intent);
+//            var intent = new Intent(Application.Context, typeof(MainActivity));
+//            intent.AddFlags(ActivityFlags.ClearTop);
+//            MainActivity.FromBoala = true;
+//            StartActivity(intent);
 
-            //Finish();
+            Finish();
         }
 
         private void setupAlarm()
@@ -181,77 +185,40 @@ namespace FamiliaXamarin.Medicatie
         private void setAlarm(Hour hour, Medicament med, Boala boala)
         {
 
-            AlarmManager am = (AlarmManager)GetSystemService(AlarmService);
+            var am = (AlarmManager)GetSystemService(AlarmService);
 
-            Intent i = new Intent(this, typeof(AlarmBroadcastReceiver));
+            var i = new Intent(this, typeof(AlarmBroadcastReceiver));
             i.PutExtra(BOALA_ID, boala.Id);
             i.PutExtra(MED_ID, med.IdMed);
 
-            int _id = CurrentTimeMillis();
-            PendingIntent pi = PendingIntent.GetBroadcast(this, _id, i, PendingIntentFlags.OneShot);
+            var id = CurrentTimeMillis();
+            var pi = PendingIntent.GetBroadcast(this, id, i, PendingIntentFlags.OneShot);
+
+            if (am == null) return;
+            var hourString = hour.Nume;
+            var parts = hourString.Split(':');
+            var timeHour = Convert.ToInt32(parts[0]);
+            var timeMinute = Convert.ToInt32(parts[1]);
+            var calendar = Calendar.Instance;
+            var setCalendar = Calendar.Instance;
+            setCalendar.Set(CalendarField.HourOfDay, timeHour);
+            setCalendar.Set(CalendarField.Minute, timeMinute);
+            setCalendar.Set(CalendarField.Second, 0);
+
+            var dateString = med.Date;
+            parts = dateString.Split('/');
+            var day = Convert.ToInt32(parts[0]);
+            var month = Convert.ToInt32(parts[1]) - 1;
+            var year = Convert.ToInt32(parts[2]);
 
 
-                        if (am != null)
-                        {
-                            var d = DateTime.Now;
-                            string hourString = hour.Nume;
-                            string[] parts = hourString.Split(':');
-                            int timeHour = int.Parse(parts[0]);
-                            int timeMinute = int.Parse(parts[1]);
-                            
-                            Log.Error("DATAAAA", med.Date);
-                            string[] daterparts = med.Date.Split('/');
-                            Calendar setcalendar = Calendar.Instance;
-                            setcalendar.Set(int.Parse(daterparts[2]), int.Parse(daterparts[0]), int.Parse(daterparts[1]), timeHour, timeMinute, 0);
-            //                setcalendar.Set((CalendarField)d.Hour, timeHour);
-            //                setcalendar.Set((CalendarField)d.Minute, timeMinute);
-            //                setcalendar.Set((CalendarField)d.Second, 0);
-            //
-            //                if (setcalendar.Before(calendar))
-            //                    setcalendar.Add(CalendarField.Date, 1);
-                            DateTime dt = new DateTime(int.Parse(daterparts[2]), int.Parse(daterparts[0]), int.Parse(daterparts[1]),timeHour,timeMinute,0);
+            setCalendar.Set(CalendarField.Year, year);
+            setCalendar.Set(CalendarField.Month, month);
+            setCalendar.Set(CalendarField.DayOfMonth, day);
+            Log.Error("DATE", dateString);
 
-                            DateTime dtNow = DateTime.Now;
-                            int DayOfMonth = dtNow.Day;
-                            int Month = dtNow.Month;
-                            int Year = dtNow.Year;
-                            int Hour = dtNow.Hour;
-                            int minute = dtNow.Minute;
+            am.SetInexactRepeating(AlarmType.RtcWakeup, setCalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
 
-                            Calendar calendar = Calendar.Instance;
-                            calendar.Set(Year, Month, DayOfMonth, Hour, minute, 0);
-
-                            Calendar cl = Calendar.Instance;
-                            cl.Set(Year, Month, DayOfMonth, timeHour, timeMinute, 0);
-                //long a = setcalendar.TimeInMillis;
-                            long a = cl.TimeInMillis - calendar.TimeInMillis;
-                            //am.SetExact(AlarmType.RtcWakeup, a, pi);
-                           am.SetExact(AlarmType.ElapsedRealtime, triggerAtMillis: SystemClock.ElapsedRealtime() + a, operation: pi);
-            
-                           //am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, a, AlarmManager.IntervalDay, pi);
-                        }
-
-//            if (am != null)
-//            {
-//                String dateString = med.Date;
-//
-//
-//                String hourString = hour.Nume;
-//                String[] parts = hourString.Split(':');
-//                int timeHour = int.Parse(parts[0]);
-//                int timeMinute = int.Parse(parts[1]);
-//                Calendar calendar = Calendar.Instance;
-//                Log.Error("DATAAAA", med.Date);
-//
-//                Calendar setcalendar = Calendar.Instance;
-//                setcalendar.Set(Calendar.HourOfDay, timeHour);
-//                setcalendar.Set(Calendar.Minute, timeMinute);
-//                setcalendar.Set(Calendar.Second, 0);
-//                if (setcalendar.Before(calendar))
-//                    setcalendar.Add(Calendar.Date, 1);
-//
-//                am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
-//            }
 
         }
 

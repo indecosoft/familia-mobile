@@ -46,22 +46,13 @@ namespace FamiliaXamarin.Medicatie
             var holder = viewHolder as BoalaAdapterViewHolder;
             Boala boala = boalaList[position];
             holder.tvBoala.Text = boala.NumeBoala;
-            holder.rlBoliContainer.Click += delegate {
-                if (listenerBoala != null)
-                {
-                    listenerBoala.OnBoalaClick(boala);
-                }
-            };
+            holder.Boala = boala;
+            holder.listenerBoala = listenerBoala;
 
-            holder.btnDelete.Click += delegate
-            {
-                if (listenerBoala != null)
-                {
-                    listenerBoala.OnBoalaDelete(boala);
-                }
-            };
+
         }
 
+      
         public override int ItemCount => boalaList.Count;
         public void addBoala(Boala boala)
         {
@@ -80,16 +71,31 @@ namespace FamiliaXamarin.Medicatie
         public TextView tvBoala;
         public RelativeLayout rlBoliContainer;
         public Button btnDelete;
+        public Boala Boala;
+        public IOnBoalaClickListener listenerBoala;
 
     public BoalaAdapterViewHolder(View itemView) : base(itemView)
         {
             tvBoala = itemView.FindViewById<TextView>(Resource.Id.tv_boala);
             rlBoliContainer = itemView.FindViewById<RelativeLayout>(Resource.Id.rv_boala_container);
             btnDelete = itemView.FindViewById<Button>(Resource.Id.btn_delete_boala);
+            rlBoliContainer.Click += delegate {
+                if (listenerBoala != null)
+                {
+                    listenerBoala.OnBoalaClick(Boala);
+                }
+            };
 
+            btnDelete.Click += delegate
+            {
+                if (listenerBoala != null)
+                {
+                    listenerBoala.OnBoalaDelete(Boala);
+                }
+            };
             //TextView = v;
-//            itemView.Click += (sender, e) => clickListener(new BoalaAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
-//            itemView.LongClick += (sender, e) => longClickListener(new BoalaAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
+            //            itemView.Click += (sender, e) => clickListener(new BoalaAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
+            //            itemView.LongClick += (sender, e) => longClickListener(new BoalaAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
         }
     }
 
