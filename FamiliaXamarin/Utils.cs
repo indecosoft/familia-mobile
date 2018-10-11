@@ -227,7 +227,7 @@ namespace FamiliaXamarin
             return _notificationManager ??
                    (_notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService));
         }
-        public static NotificationCompat.Builder GetAndroidChannelNotification(string title, string body, string buttonTitle, int type, Context context)
+        public static NotificationCompat.Builder GetAndroidChannelNotification(string title, string body, string buttonTitle, int type, Context context, string room)
         {
             var intent = new Intent(context, typeof(ChatActivity));
             var rejectintent = new Intent(context, typeof(ChatActivity));
@@ -243,6 +243,7 @@ namespace FamiliaXamarin
                    
                     intent.PutExtra("AcceptClick", true);
                     intent.PutExtra("EmailFrom", body.Replace(" doreste sa ia legatura cu tine!", ""));
+                    intent.PutExtra("Room", room);
                     rejectintent.PutExtra("RejectClick", true);
                     var acceptIntent = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
                     var rejectIntent = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
@@ -266,6 +267,9 @@ namespace FamiliaXamarin
 
                 case 2:
                     intent.PutExtra("Conv", true);
+                    intent.PutExtra("Room", room);
+                    intent.PutExtra("EmailFrom", body.Replace(" ti-a acceptat cererea de chat!", ""));
+
                     var acceptIntent1 = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
                     //var rejectIntent1 = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
                     //intent.putExtra("ConversationClick",true);

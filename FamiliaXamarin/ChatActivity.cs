@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -14,29 +14,31 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.JsonModels;
 using Java.Lang;
+using Newtonsoft.Json;
 using Org.Json;
 using String = System.String;
 using Toolbar = Android.Widget.Toolbar;
 
 namespace FamiliaXamarin
 {
-    [Activity(Label = "ChatActivity")]
+    [Activity(Label = "ChatActivity", Theme = "@style/AppTheme.Dark")]
     public class ChatActivity : AppCompatActivity
     {
 
         private Button start;
         private Button send;
-        private static  int REQUEST_LOGIN = 0;
+        private static int REQUEST_LOGIN = 0;
 
-        private static  int TYPING_TIMER_LENGTH = 600;
+        private static int TYPING_TIMER_LENGTH = 600;
 
         public static RecyclerView _recyclerView;
         public static EditText mInputMessageView;
         private static List<ChatModel> mMessages;
         private static ChatAdapter mAdapter;
         public static string Email;
-        public static string RoomName = "";
+        private static string RoomName = "";
         public static bool FromNotify = false;
         private bool mTyping = false;
         private Handler mTypingHandler = new Handler();
@@ -58,17 +60,17 @@ namespace FamiliaXamarin
 
             mMessages = new List<ChatModel>();
 
-            mAdapter = new ChatAdapter(this,mMessages);
-//            mAdapter.ItemClick += delegate (object sender, int i)
-//            {
-//                Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
-//            };
+            mAdapter = new ChatAdapter(this, mMessages);
+            //            mAdapter.ItemClick += delegate (object sender, int i)
+            //            {
+            //                Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
+            //            };
 
 
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.messages);
             _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
             _recyclerView.SetAdapter(mAdapter);
-
+            //ChangedData();
 
             mInputMessageView = (EditText)FindViewById(Resource.Id.tbMessage);
             send = FindViewById<Button>(Resource.Id.Send);
@@ -82,6 +84,34 @@ namespace FamiliaXamarin
                 }
                 else if (extras.GetBoolean("AcceptClick"))
                 {
+                    try
+                    {
+                        string SharedRooms = Utils.GetDefaults("Rooms", this);
+                        if (!string.IsNullOrEmpty(SharedRooms))
+                        {
+                            var model = JsonConvert.DeserializeObject<ConverstionsModel>(SharedRooms);
+
+                            if (!model.Conversations.Contains(extras.GetString("EmailFrom")))
+                            {
+                                model.Conversations.Add(extras.GetString("EmailFrom"));
+                                model.Rooms.Add(extras.GetString("Room"));
+
+                            }
+
+                            string serialized = JsonConvert.SerializeObject(model);
+                            Utils.SetDefaults("Rooms", serialized, this);
+                        }
+                    }
+                    catch
+                    {
+                        //ignored
+                    }
+                
+                    
+
+                    RoomName = extras.GetString("Room");
+                    mUsername = extras.GetString("EmailFrom");
+
                     var emailFrom = Utils.GetDefaults("Email", this);
                     try
                     {
@@ -98,28 +128,37 @@ namespace FamiliaXamarin
                     }
 
 
-                    SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-                    SupportActionBar.SetDisplayShowHomeEnabled(true);
-                    toolbar.NavigationClick += delegate { Finish(); };
-          
-                //finish();
-            } else if (extras.GetBoolean("RejectClick")) {
-                var emailFrom = Utils.GetDefaults("Email",this);
-                try
-                {
-                    var mailObject = new JSONObject().Put("from", extras.GetString("EmailFrom")).Put("dest", emailFrom).Put("accepted", false);
-                    Log.Error("aici", mailObject.ToString());
-                    WebSocketClient.Client.Emit("chat accepted", mailObject);
-                    //finish();
-                } catch (JSONException e) {
-                    e.PrintStackTrace();
-                }
-                Finish();
-            } else if (extras.GetBoolean("Conv")) {
+                    
 
-                
+                    //finish();
+                }
+                else if (extras.GetBoolean("RejectClick"))
+                {
+                    var emailFrom = Utils.GetDefaults("Email", this);
+                    RoomName = extras.GetString("Room");
+                    try
+                    {
+                        var mailObject = new JSONObject().Put("from", extras.GetString("EmailFrom")).Put("dest", emailFrom).Put("accepted", false);
+                        Log.Error("aici", mailObject.ToString());
+                        WebSocketClient.Client.Emit("chat accepted", mailObject);
+                        //finish();
+                    }
+                    catch (JSONException e)
+                    {
+                        e.PrintStackTrace();
+                    }
+                    Finish();
+                }
+                else if (extras.GetBoolean("Conv"))
+                {
+                    RoomName = extras.GetString("Room");
+                    mUsername = extras.GetString("EmailFrom");
+                }
             }
-        }
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetDisplayShowHomeEnabled(true);
+            toolbar.NavigationClick += delegate { Finish(); };
+            Title = mUsername;
 
 
             // Create your application here
@@ -130,7 +169,7 @@ namespace FamiliaXamarin
             {
                 string message = mInputMessageView.Text;
                 mInputMessageView.Text = string.Empty;
-                addMessage("Eu", message, 1);
+                addMessage(message, ChatModel.TypeMyMessage);
                 JSONObject messageToSend = null;
                 try
                 {
@@ -144,33 +183,41 @@ namespace FamiliaXamarin
                 WebSocketClient.Client.Emit("send message", messageToSend);
             }
         }
-        public static void addMessage(string username, string message, int type)
+        public static void addMessage(string message, int type)
         {
 
-//                if (type == 0)
-//                {
-                    mMessages.Add(new ChatModel {Username = username, Message = message, Type = ChatModel.TypeMyMessage});
-                    mMessages.Add(new ChatModel {Username = username, Message = message, Type = ChatModel.TypeMessage});
-//mMessages.Add(new ChatModel.Builder(ChatModel.TypeMessage)
-//                .Username(username).Message(message).Build());
-//mMessages.Add(new ChatModel.Builder(ChatModel.TypeMyMessage)
-//                .Username(username).Message(message).Build());
+            //                if (type == 0)
+            //                {
+            mMessages.Add(new ChatModel { Message = message, Type =  type});
+            //mMessages.Add(new ChatModel { Username = username, Message = message, Type = ChatModel.TypeMessage });
+            //mMessages.Add(new ChatModel.Builder(ChatModel.TypeMessage)
+            //                .Username(username).Message(message).Build());
+            //mMessages.Add(new ChatModel.Builder(ChatModel.TypeMyMessage)
+            //                .Username(username).Message(message).Build());
             //                }
             //                else if (type == 1)
             //                {
             //                    mMessages.Add(new ChatModel.Builder(ChatModel.TypeMyMessage)
             //                        .Username(username).Message(message).Avatar(avatar).Build());
             //                }
-                mAdapter.NotifyItemInserted(mMessages.Count - 1);
-                mAdapter.NotifyDataSetChanged();
-                scrollToBottom();
-            
+            mAdapter.NotifyItemInserted(mMessages.Count - 1);
+            mAdapter.NotifyDataSetChanged();
+            // scrollToBottom();
+
 
 
         }
         private static void scrollToBottom()
         {
             _recyclerView.ScrollToPosition(mAdapter.ItemCount - 1);
+        }
+        void ChangedData()
+        {
+            Task.Delay(100).ContinueWith(t =>
+            {
+                mAdapter.NotifyDataSetChanged();
+                ChangedData();//This is for repeate every 5s.
+            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
     }
 }

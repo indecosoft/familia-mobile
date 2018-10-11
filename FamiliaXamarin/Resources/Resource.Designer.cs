@@ -3170,8 +3170,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a00b7
 			public const int ScanButton = 2131361975;
 			
-			// aapt resource value: 0x7f0a00c6
-			public const int Send = 2131361990;
+			// aapt resource value: 0x7f0a00c5
+			public const int Send = 2131361989;
 			
 			// aapt resource value: 0x7f0a00d0
 			public const int Signup = 2131362000;
@@ -3431,8 +3431,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a013e
 			public const int contact_name = 2131362110;
 			
-			// aapt resource value: 0x7f0a00c9
-			public const int container = 2131361993;
+			// aapt resource value: 0x7f0a00c8
+			public const int container = 2131361992;
 			
 			// aapt resource value: 0x7f0a00d3
 			public const int content = 2131362003;
@@ -3650,8 +3650,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0110
 			public const int largeLabel = 2131362064;
 			
-			// aapt resource value: 0x7f0a00ca
-			public const int layout = 2131361994;
+			// aapt resource value: 0x7f0a00c9
+			public const int layout = 2131361993;
 			
 			// aapt resource value: 0x7f0a00e8
 			public const int lbActivTime = 2131362024;
@@ -3710,8 +3710,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a001d
 			public const int lottie_layer_name = 2131361821;
 			
-			// aapt resource value: 0x7f0a00c8
-			public const int main_content = 2131361992;
+			// aapt resource value: 0x7f0a00c7
+			public const int main_content = 2131361991;
 			
 			// aapt resource value: 0x7f0a0161
 			public const int masked = 2131362145;
@@ -3728,8 +3728,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0141
 			public const int message = 2131362113;
 			
-			// aapt resource value: 0x7f0a00c4
-			public const int messages = 2131361988;
+			// aapt resource value: 0x7f0a00c3
+			public const int messages = 2131361987;
 			
 			// aapt resource value: 0x7f0a0043
 			public const int middle = 2131361859;
@@ -4016,11 +4016,11 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0133
 			public const int tbDate_layout = 2131362099;
 			
-			// aapt resource value: 0x7f0a00c7
-			public const int tbMessage = 2131361991;
+			// aapt resource value: 0x7f0a00c6
+			public const int tbMessage = 2131361990;
 			
-			// aapt resource value: 0x7f0a00c5
-			public const int tbMessage_layout = 2131361989;
+			// aapt resource value: 0x7f0a00c4
+			public const int tbMessage_layout = 2131361988;
 			
 			// aapt resource value: 0x7f0a0028
 			public const int terrain = 2131361832;
@@ -4067,8 +4067,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a00aa
 			public const int toolbar = 2131361962;
 			
-			// aapt resource value: 0x7f0a00c3
-			public const int toolbar_title = 2131361987;
+			// aapt resource value: 0x7f0a00ca
+			public const int toolbar_title = 2131361994;
 			
 			// aapt resource value: 0x7f0a001f
 			public const int top = 2131361823;

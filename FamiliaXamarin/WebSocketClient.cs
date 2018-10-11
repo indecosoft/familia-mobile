@@ -5,7 +5,9 @@ using Android.Content;
 using Android.Preferences;
 using Android.Support.V4.App;
 using Android.Util;
+using FamiliaXamarin.JsonModels;
 using Java.Net;
+using Newtonsoft.Json;
 using Org.Json;
 using SocketIO.Client;
 using Object = Java.Lang.Object;
@@ -18,8 +20,8 @@ namespace FamiliaXamarin
         private Socket _socket;
         public static Socket Client;
 
-        private JSONArray _rooms = new JSONArray();
-        private JSONObject _newRoom = new JSONObject();
+//        private JSONArray _rooms = new JSONArray();
+//        private JSONObject _newRoom = new JSONObject();
         private Context _context;
         public void Connect(string hostname, int port, Context context)
         {
@@ -102,6 +104,7 @@ namespace FamiliaXamarin
             }
             try
             {
+
                 //Log.Error("Active", "" + Chat.active);
 //                if (!Chat.RoomName.equals(room))
 //                {
@@ -134,7 +137,7 @@ namespace FamiliaXamarin
 //                    //removeTyping(username);
 //                    Log.Error("Mesaj: ", message);
 //                    //if(!data2[0].replace(":","").equals(Email))
-                    ChatActivity.addMessage(username, message, 0);
+                    ChatActivity.addMessage(message, ChatModel.TypeMessage);
 //
 //                }
             }
@@ -165,23 +168,31 @@ namespace FamiliaXamarin
 //            Chat.Email = email;
 //            Chat.FromNotify = false;
             // aici adaugi in array-ul de room-uri
-            var mPrefs = PreferenceManager.GetDefaultSharedPreferences(_context);
-            var sharedRooms = mPrefs.GetString("Rooms", "[]");
             try
             {
-                _newRoom.Put("dest", email).Put("room", room);
-                _rooms = new JSONArray(sharedRooms);
-                _rooms.Put(_newRoom);
+                string SharedRooms = Utils.GetDefaults("Rooms", _context);
+                if (string.IsNullOrEmpty(SharedRooms))
+                {
+                    var model = JsonConvert.DeserializeObject<ConverstionsModel>(SharedRooms);
 
-                var editor = mPrefs.Edit();
-                editor.PutString("Rooms", _rooms.ToString());
-                editor.Apply();
+                    if (!model.Conversations.Contains(email))
+                    {
+                        model.Conversations.Add(email);
+                        model.Rooms.Add(room);
+                    }
+
+                    string serialized = JsonConvert.SerializeObject(model);
+                    Utils.SetDefaults("Rooms", serialized, _context);
+                }
             }
-            catch (JSONException e)
+            catch
             {
-                e.PrintStackTrace();
+                //ignored
             }
-            var nb = Utils.GetAndroidChannelNotification("Cerere acceptata", email + " ti-a acceptat cererea de chat!", "Converseaza", 2,_context);
+           
+            
+            
+            var nb = Utils.GetAndroidChannelNotification("Cerere acceptata", email + " ti-a acceptat cererea de chat!", "Converseaza", 2,_context, room);
             Utils.GetManager().Notify(100, nb.Build());
         }
         private void OnChatRequest(Object[] obj)
@@ -207,25 +218,25 @@ namespace FamiliaXamarin
 //            Chat.Email = email;
 //            Chat.RoomName = room;
             // Chat.Avatar = avatar;
-            var mPrefs = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
-            var sharedRooms = mPrefs.GetString("Rooms", "[]");
-            try
-            {
-                _newRoom.Put("dest", email).Put("room", room);
-                _rooms = new JSONArray(sharedRooms);
-                _rooms.Put(_newRoom);
+//            var mPrefs = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+//            var sharedRooms = mPrefs.GetString("Rooms", "[]");
+//            try
+//            {
+//                _newRoom.Put("dest", email).Put("room", room);
+//                _rooms = new JSONArray(sharedRooms);
+//                _rooms.Put(_newRoom);
+//
+//                var editor = mPrefs.Edit();
+//                editor.PutString("Rooms", _rooms.ToString());
+//                editor.Apply();
+//            }
+//            catch (JSONException e)
+//            {
+//                e.PrintStackTrace();
+//            }
 
-                var editor = mPrefs.Edit();
-                editor.PutString("Rooms", _rooms.ToString());
-                editor.Apply();
-            }
-            catch (JSONException e)
-            {
-                e.PrintStackTrace();
-            }
 
-
-            var nb = Utils.GetAndroidChannelNotification("Cerere de chat", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context);
+            var nb = Utils.GetAndroidChannelNotification("Cerere de chat", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
             Utils.GetManager().Notify(100, nb.Build());
         }
     }

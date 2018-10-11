@@ -77,6 +77,7 @@
     <Compile Include="HealthDevicesFragment.cs" />
     <Compile Include="IWebServices.cs" />
     <Compile Include="IWebSocketClient.cs" />
+    <Compile Include="JsonModels\ConverstionsModel.cs" />
     <Compile Include="JsonModels\FirstSetupModel.cs" />
     <Compile Include="LocationService.cs" />
     <Compile Include="LoginActivity.cs" />
