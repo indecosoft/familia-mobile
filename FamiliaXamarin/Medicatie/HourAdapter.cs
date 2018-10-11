@@ -46,13 +46,9 @@ namespace FamiliaXamarin.Medicatie
             if (holder != null)
             {
                 holder.tvHour.Text = hour.Nume;
-                holder.rlHour.Click += delegate
-                {
-                    if (listener != null)
-                    {
-                        listener.onHourClicked(hour);
-                    }
-                };
+                holder.Hour = hour;
+                holder.Listener = listener;
+
             }
         }
 
@@ -105,11 +101,20 @@ namespace FamiliaXamarin.Medicatie
             //public TextView TextView { get; set; }
             public RelativeLayout rlHour;
             public TextView tvHour;
+            public OnHourClickListener Listener;
+            public Hour Hour;
 
             public HourAdapterViewHolder(View itemView) : base(itemView)
             {
                 rlHour = itemView.FindViewById<RelativeLayout>(Resource.Id.rl_hours);
                 tvHour = itemView.FindViewById<TextView>(Resource.Id.tv_hour);
+                rlHour.Click += delegate
+                {
+                    if (Listener != null)
+                    {
+                        Listener.onHourClicked(Hour);
+                    }
+                };
             }
         }
 

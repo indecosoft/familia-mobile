@@ -357,6 +357,7 @@ namespace FamiliaXamarin.Medicatie
                     onTimeSelected(sender as TimePicker, args.HourOfDay, args.Minute, myHour);
                 }, hour,minute,true);
             mTimePicker.SetTitle("Select Time");
+
             mTimePicker.Show();
         }
 
@@ -367,6 +368,7 @@ namespace FamiliaXamarin.Medicatie
             hourAdapter.updateHour(myHour);
             hourAdapter.NotifyDataSetChanged();
             Calendar calendar = getCalendar(timePicker, selectedHour, selectedMinute);
+            
             // setAlarm(calendar.getTimeInMillis());
         }
 

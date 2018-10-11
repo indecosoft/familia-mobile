@@ -52,30 +52,18 @@ namespace FamiliaXamarin.Medicatie
             var holder = viewHolder as MedicamentAdapterViewHolder;
             Medicament medicament = medicaments[position];
             holder.tvTitle.Text =medicament.Name;
-            //        holder.tvTime.setText(medicament.getTime());
-
-            holder.container.Click += delegate
-            {
-                if (listener != null)
-                {
-
-                    listener.OnMedicamentClick(medicament);
-
-                }
-            };
-            holder.btnDelete.Click += delegate
-            {
-                if (listener != null)
-                {
-                    listener.OnMedicamentDeleteClick(medicament);
-                }
-            };
+            holder.Medicament = medicament;
+            holder.Listener = listener;
         }
 
         public override int ItemCount => medicaments.Count;
         public void addMedicament(Medicament medicament)
         {
-            medicaments.Add(medicament);
+            
+            if (!medicaments.Contains(medicament))
+            {
+                medicaments.Add(medicament);
+            }
         }
 
         public void removeMedicament(Medicament medicament)
@@ -100,6 +88,9 @@ namespace FamiliaXamarin.Medicatie
         }
     }
 
+
+
+
     public class MedicamentAdapterViewHolder : RecyclerView.ViewHolder
     {
         //public TextView TextView { get; set; }
@@ -107,7 +98,8 @@ namespace FamiliaXamarin.Medicatie
         public TextView tvTime;
         public RelativeLayout container;
         public Button btnDelete;
-
+        public OnMedicamentClickListener Listener;
+        public Medicament Medicament;
         public MedicamentAdapterViewHolder(View itemView) : base(itemView)
         {
             //TextView = v;
@@ -115,6 +107,24 @@ namespace FamiliaXamarin.Medicatie
             tvTime = itemView.FindViewById<TextView>(Resource.Id.tv_time);
             container = itemView.FindViewById<RelativeLayout>(Resource.Id.container);
             btnDelete = itemView.FindViewById<Button>(Resource.Id.btn_delete);
+            container.Click += delegate
+            {
+                if (Listener != null)
+                {
+
+                    Listener.OnMedicamentClick(Medicament);
+
+                }
+            };
+
+
+            btnDelete.Click += delegate
+            {
+                if (Listener != null)
+                {
+                    Listener.OnMedicamentDeleteClick(Medicament);
+                }
+            };
         }
     }
 

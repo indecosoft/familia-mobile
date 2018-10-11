@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.Widget;
@@ -64,9 +65,9 @@ namespace FamiliaXamarin.Medicatie
 
         public void OnBoalaClick(Boala boala)
         {
-            Intent intent = new Intent(Activity, typeof(BoalaActivity));
+            Intent intent = new Intent(Application.Context, typeof(BoalaActivity));
             intent.PutExtra(IdBoala, boala.Id);
-            Activity.StartActivity(intent);
+            StartActivity(intent);
         }
 
         public void OnBoalaDelete(Boala boala)
