@@ -198,10 +198,11 @@ namespace FamiliaXamarin.Medicatie
                             string[] parts = hourString.Split(':');
                             int timeHour = int.Parse(parts[0]);
                             int timeMinute = int.Parse(parts[1]);
-                            Calendar calendar = Calendar.Instance;
+                            
                             Log.Error("DATAAAA", med.Date);
                             string[] daterparts = med.Date.Split('/');
-            //                Calendar setcalendar = Calendar.Instance;
+                            Calendar setcalendar = Calendar.Instance;
+                            setcalendar.Set(int.Parse(daterparts[2]), int.Parse(daterparts[0]), int.Parse(daterparts[1]), timeHour, timeMinute, 0);
             //                setcalendar.Set((CalendarField)d.Hour, timeHour);
             //                setcalendar.Set((CalendarField)d.Minute, timeMinute);
             //                setcalendar.Set((CalendarField)d.Second, 0);
@@ -209,21 +210,25 @@ namespace FamiliaXamarin.Medicatie
             //                if (setcalendar.Before(calendar))
             //                    setcalendar.Add(CalendarField.Date, 1);
                             DateTime dt = new DateTime(int.Parse(daterparts[2]), int.Parse(daterparts[0]), int.Parse(daterparts[1]),timeHour,timeMinute,0);
-            
-                            //var durata = dt.Millisecond - DateTime.Now.Millisecond;
-                            if (dt < DateTime.Now)
-                            {
-                                dt = dt.AddDays(1);
-                            }
 
-                            var c = dt.TimeOfDay;
-                            var durata = dt.Millisecond - SystemClock.ElapsedRealtime();
-                            long ms = (long)(dt - DateTime.MinValue).TotalMilliseconds;
-                            System.Diagnostics.Debug.WriteLine("Milliseconds since the alleged birth of Jesus Christ: " + ms);
+                            DateTime dtNow = DateTime.Now;
+                            int DayOfMonth = dtNow.Day;
+                            int Month = dtNow.Month;
+                            int Year = dtNow.Year;
+                            int Hour = dtNow.Hour;
+                            int minute = dtNow.Minute;
+
+                            Calendar calendar = Calendar.Instance;
+                            calendar.Set(Year, Month, DayOfMonth, Hour, minute, 0);
+
+                            Calendar cl = Calendar.Instance;
+                            cl.Set(Year, Month, DayOfMonth, timeHour, timeMinute, 0);
                 //long a = setcalendar.TimeInMillis;
-                am.Set(AlarmType.ElapsedRealtime, triggerAtMillis: SystemClock.ElapsedRealtime() + ms, operation: pi);
+                            long a = cl.TimeInMillis - calendar.TimeInMillis;
+                            //am.SetExact(AlarmType.RtcWakeup, a, pi);
+                           am.SetExact(AlarmType.ElapsedRealtime, triggerAtMillis: SystemClock.ElapsedRealtime() + a, operation: pi);
             
-                            //am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
+                           //am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, a, AlarmManager.IntervalDay, pi);
                         }
 
 //            if (am != null)

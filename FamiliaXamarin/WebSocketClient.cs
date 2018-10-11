@@ -32,15 +32,11 @@ namespace FamiliaXamarin
                 {
                     ForceNew = true,
                     Reconnection = true,
-                    Query = $"token={Utils.GetDefaults("Token", Application.Context)}&imei={Utils.GetImei(Application.Context)}",
-                    Upgrade = false,
-                    Transports = new List<string>() {"websocket"},
-                    ReconnectionAttempts = 0,
-                    Path = "/ws"
+                    Query = $"token={Utils.GetDefaults("Token", Application.Context)}&imei={Utils.GetImei(Application.Context)}"
                     
                 };
-                URI url = new URI(Constants.WebSocketAddress);
-                _socket = IO.Socket(url, options);
+                //URI url = new URI(Constants.WebSocketAddress);
+                _socket = IO.Socket(Constants.WebSocketAddress, options);
 
                 _socket.On(Socket.EventConnect, OnConnect);
                 _socket.On(Socket.EventDisconnect, OnDisconnect);
