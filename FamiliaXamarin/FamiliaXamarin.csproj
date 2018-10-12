@@ -64,6 +64,8 @@
     <Compile Include="ChatAdapter.cs" />
     <Compile Include="ChatModel.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="ConvAdapter.cs" />
+    <Compile Include="ConversationsFragment.cs" />
     <Compile Include="DatePickerFragment.cs" />
     <Compile Include="DevicesRecyclerViewAdapter.cs" />
     <Compile Include="DistanceCalculator.cs" />
@@ -567,6 +569,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_alarm.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_conversations.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

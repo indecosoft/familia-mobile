@@ -106,40 +106,35 @@ namespace FamiliaXamarin
             {
 
                 //Log.Error("Active", "" + Chat.active);
-//                if (!Chat.RoomName.equals(room))
-//                {
-//                    Chat.RoomName = room;
-//                    Chat.Email = username;
-//                    Chat.FromNotify = true;
-//                    Chat.NewMessage = message;
-//
-//                    NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 2, _context);
-//                    Utils.GetManager().Notify(100, nb.Build());
-//                }
-//                else if (!Chat.active)
-//                {
-//                    Log.Error("Caz 2", "*********************");
-//                    //String[] data2 = message.split(" ");
-//                    Chat.RoomName = room;
-//                    Chat.Email = username;
-//                    Chat.FromNotify = true;
-//
-//                    Chat.NewMessage = message;
-//                    NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 2, _context);
-//                    Utils.GetManager().Notify(100, nb.Build());
-//                }
-//                else if (Chat.RoomName.equals(room) && Chat.active)
-//                {
-//
-//                    Log.Error("Caz 3", "*********************");
-//
-//                    //String[] data2 = message.split(" ");
-//                    //removeTyping(username);
-//                    Log.Error("Mesaj: ", message);
-//                    //if(!data2[0].replace(":","").equals(Email))
+                if (!ChatActivity.RoomName.Equals(room))
+                {
+                    //Chat.RoomName = room;
+                    //Chat.Email = username;
+                    //Chat.NewMessage = message;
+
+                    NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
+                    Utils.GetManager().Notify(100, nb.Build());
+                }
+                else if (!ChatActivity.Active)
+                {
+                    Log.Error("Caz 2", "*********************");
+                    //String[] data2 = message.split(" ");
+                    NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
+                    Utils.GetManager().Notify(100, nb.Build());
+                }
+                else if (ChatActivity.RoomName.Equals(room) && ChatActivity.Active)
+                {
+
+                    Log.Error("Caz 3", "*********************");
+
+                    //String[] data2 = message.split(" ");
+                    //removeTyping(username);
+                    Log.Error("Mesaj: ", message);
+                    //if(!data2[0].replace(":","").equals(Email))
                     ChatActivity.addMessage(message, ChatModel.TypeMessage);
-//
-//                }
+
+
+                }
             }
             catch (Exception ex)
             {

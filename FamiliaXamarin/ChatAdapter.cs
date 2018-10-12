@@ -13,7 +13,7 @@ namespace FamiliaXamarin
     class ChatAdapter : RecyclerView.Adapter
     {
 
-        private List<ChatModel> _messages;
+        private static List<ChatModel> _messages;
         private LayoutInflater mInflater;
 
         public ChatAdapter(Context context, List<ChatModel> messages)
@@ -81,6 +81,16 @@ namespace FamiliaXamarin
         public void Clear()
         {
             _messages.Clear();
+        }
+
+        public void AddMessage(ChatModel model)
+        {
+            _messages.Add(model);
+        }
+        public static void AddReceivedMessage(ChatModel model)
+        {
+            if(_messages != null ||_messages.Count>0)
+            _messages.Add(model);
         }
         //private readonly ImageManager _imageManager;
 

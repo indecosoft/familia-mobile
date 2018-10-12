@@ -38,7 +38,7 @@ namespace FamiliaXamarin
         private static List<ChatModel> mMessages;
         private static ChatAdapter mAdapter;
         public static string Email;
-        private static string RoomName = "";
+        public static string RoomName = "";
         public static bool FromNotify = false;
         private bool mTyping = false;
         private Handler mTypingHandler = new Handler();
@@ -48,7 +48,39 @@ namespace FamiliaXamarin
         private static ChatActivity Ctx;
         public static string Avatar;
         public static string NewMessage = "";
+        public static bool Active = false;
         IWebSocketClient _socketClient = new WebSocketClient();
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            Active = true;
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            Active = false;
+            mAdapter.Clear();
+            OnBackPressed();
+        }
+
+        public override void OnBackPressed()
+        {
+            base.OnBackPressed();
+            Utils.HideKeyboard(this);
+            Finish();
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -59,14 +91,13 @@ namespace FamiliaXamarin
             Title = string.Empty;
 
             mMessages = new List<ChatModel>();
-
-            mAdapter = new ChatAdapter(this, mMessages);
+            Active = true;
+          mAdapter = new ChatAdapter(this, mMessages);
             //            mAdapter.ItemClick += delegate (object sender, int i)
             //            {
             //                Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
             //            };
-
-            mAdapter.Clear();
+            Ctx = this;
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.messages);
             _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
             _recyclerView.SetAdapter(mAdapter);
@@ -153,6 +184,14 @@ namespace FamiliaXamarin
                 {
                     RoomName = extras.GetString("Room");
                     mUsername = extras.GetString("EmailFrom");
+                    string message = extras.GetString("NewMessage");
+                }
+                else if (extras.GetBoolean("Conv2"))
+                {
+                    RoomName = extras.GetString("Room");
+                    mUsername = extras.GetString("EmailFrom");
+                    string message = extras.GetString("NewMessage");
+                    addMessage(message, ChatModel.TypeMessage);
                 }
             }
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
@@ -185,11 +224,15 @@ namespace FamiliaXamarin
         }
         public static void addMessage(string message, int type)
         {
-            Ctx.RunOnUiThread(() =>
-            {
+                    Ctx.RunOnUiThread(() =>
+                    {
+                        mAdapter.AddMessage(new ChatModel { Message = message, Type = type });
+                        mAdapter.NotifyDataSetChanged();
+                        scrollToBottom();
+                    });
                 //                if (type == 0)
                 //                {
-                mMessages.Add(new ChatModel { Message = message, Type = type });
+                //mMessages.Add(new ChatModel { Message = message, Type = type });
                 //mMessages.Add(new ChatModel { Username = username, Message = message, Type = ChatModel.TypeMessage });
                 //mMessages.Add(new ChatModel.Builder(ChatModel.TypeMessage)
                 //                .Username(username).Message(message).Build());
@@ -201,10 +244,9 @@ namespace FamiliaXamarin
                 //                    mMessages.Add(new ChatModel.Builder(ChatModel.TypeMyMessage)
                 //                        .Username(username).Message(message).Avatar(avatar).Build());
                 //                }
-                mAdapter.NotifyItemInserted(mMessages.Count - 1);
-                mAdapter.NotifyDataSetChanged();
-                 scrollToBottom();
-            });
+                //mAdapter.NotifyItemInserted(mMessages.Count - 1);
+                
+            
 
         }
         private static void scrollToBottom()
