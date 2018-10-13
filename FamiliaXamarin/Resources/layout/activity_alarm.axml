@@ -36,15 +36,27 @@
             android:textColor="@android:color/black"/>
 
 
+       <Button
+        android:id="@+id/btn_ok_alarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_med_name_alarm"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/button_style"
+        android:text="ok"
+        android:textColor="@android:color/white"/>
+
         <Button
-            android:id="@+id/btn_ok_alarm"
+            android:id="@+id/btn_snooze_alarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_med_name_alarm"
-            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="30dp"
+            android:layout_alignParentEnd="true"
             android:layout_marginTop="20dp"
             android:background="@drawable/button_style"
-            android:text="ok"
+            android:text="Amana"
             android:textColor="@android:color/white"/>
 
     </RelativeLayout>

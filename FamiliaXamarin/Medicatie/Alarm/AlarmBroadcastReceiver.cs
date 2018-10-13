@@ -22,7 +22,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
             string medId = intent.GetStringExtra(BoalaActivity.MED_ID);
             string boalaId = intent.GetStringExtra(BoalaActivity.BOALA_ID);
             Intent i = new Intent(context, typeof(AlarmActivity));
-            Intent intentNotification = new Intent(context, typeof(BoalaActivity));
+            Intent intentNotification = new Intent(context, typeof(MedicineFragment));
             //context.startActivity(new Intent(context, AlarmActivity.class));
             i.PutExtra(BoalaActivity.MED_ID, medId);
             i.PutExtra(BoalaActivity.BOALA_ID, boalaId);

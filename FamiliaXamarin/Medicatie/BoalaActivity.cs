@@ -25,6 +25,7 @@ namespace FamiliaXamarin.Medicatie
     {
         public static string MED_ID = "medId";
         public static string BOALA_ID = "boalaId";
+        public static string ALARM_ID = "alarmId";
         public static string MED_NAME = "medName";
         private Button save;
         private Button update;
@@ -47,7 +48,7 @@ namespace FamiliaXamarin.Medicatie
         {
             save = FindViewById<Button>(Resource.Id.btn_save);
             //save.SetOnClickListener(this);
-            save.Click += delegate(object sender, EventArgs args) { addNewBoala(); };
+            save.Click += delegate (object sender, EventArgs args) { addNewBoala(); };
 
             update = FindViewById<Button>(Resource.Id.btn_update);
             //update.SetOnClickListener(this);
@@ -133,10 +134,10 @@ namespace FamiliaXamarin.Medicatie
 
             setupAlarm();
 
-//            Intent intent = new Intent(Application.Context, typeof(MainActivity));
-//            intent.AddFlags(ActivityFlags.ClearTop);
-//            MainActivity.FromBoala = true;
-//            StartActivity(intent);
+            //            Intent intent = new Intent(Application.Context, typeof(MainActivity));
+            //            intent.AddFlags(ActivityFlags.ClearTop);
+            //            MainActivity.FromBoala = true;
+            //            StartActivity(intent);
 
             Finish();
         }
@@ -155,10 +156,10 @@ namespace FamiliaXamarin.Medicatie
 
             setupAlarm();
 
-//            var intent = new Intent(Application.Context, typeof(MainActivity));
-//            intent.AddFlags(ActivityFlags.ClearTop);
-//            MainActivity.FromBoala = true;
-//            StartActivity(intent);
+            //            var intent = new Intent(Application.Context, typeof(MainActivity));
+            //            intent.AddFlags(ActivityFlags.ClearTop);
+            //            MainActivity.FromBoala = true;
+            //            StartActivity(intent);
 
             Finish();
         }
@@ -169,10 +170,17 @@ namespace FamiliaXamarin.Medicatie
             foreach (Medicament med in meds)
             {
                 List<Hour> hours = med.Hours;
+                List<int> alarms = new List<int>();
                 foreach (Hour itemHour in hours)
                 {
-                    setAlarm(itemHour, med, boala);
+                    setAlarm(itemHour, med, boala, ref alarms);
                 }
+
+                med.Alarms = alarms;
+
+
+
+
             }
         }
         private readonly DateTime Jan1st1970 = new DateTime
@@ -182,7 +190,7 @@ namespace FamiliaXamarin.Medicatie
         {
             return (int)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
         }
-        private void setAlarm(Hour hour, Medicament med, Boala boala)
+        private void setAlarm(Hour hour, Medicament med, Boala boala, ref List<int> alarms)
         {
 
             var am = (AlarmManager)GetSystemService(AlarmService);
@@ -190,9 +198,15 @@ namespace FamiliaXamarin.Medicatie
             var i = new Intent(this, typeof(AlarmBroadcastReceiver));
             i.PutExtra(BOALA_ID, boala.Id);
             i.PutExtra(MED_ID, med.IdMed);
-
+           
             var id = CurrentTimeMillis();
+            alarms.Add(id);
+            i.PutExtra(ALARM_ID, id);
+
             var pi = PendingIntent.GetBroadcast(this, id, i, PendingIntentFlags.OneShot);
+
+
+            
 
             if (am == null) return;
             var hourString = hour.Nume;
@@ -205,6 +219,8 @@ namespace FamiliaXamarin.Medicatie
             setCalendar.Set(CalendarField.Minute, timeMinute);
             setCalendar.Set(CalendarField.Second, 0);
 
+            
+
             var dateString = med.Date;
             parts = dateString.Split('/');
             var day = Convert.ToInt32(parts[0]);
@@ -216,6 +232,12 @@ namespace FamiliaXamarin.Medicatie
             setCalendar.Set(CalendarField.Month, month);
             setCalendar.Set(CalendarField.DayOfMonth, day);
             Log.Error("DATE", dateString);
+
+            if (setCalendar.Before(calendar))
+            {
+                setCalendar.Add(CalendarField.Date, 1);
+            }
+
 
             am.SetInexactRepeating(AlarmType.RtcWakeup, setCalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
 
