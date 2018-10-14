@@ -82,6 +82,10 @@ namespace FamiliaXamarin
         {
             _messages.Clear();
         }
+        public void AddMessage(ChatModel model)
+        {
+            _messages.Add(model);
+        }
         //private readonly ImageManager _imageManager;
 
         //This will fire any event handlers that are registered with our ItemClick

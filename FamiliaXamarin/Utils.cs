@@ -290,6 +290,36 @@ namespace FamiliaXamarin
                     }
 
                     break;
+                case 3:
+                    
+                    intent.PutExtra("Conv", true);
+                    intent.PutExtra("Room", room);
+                    intent.PutExtra("Email", title);
+                    intent.PutExtra("FromNotify", true);
+                    intent.PutExtra("Message", body);
+                    //intent.PutExtra("EmailFrom", body.Replace(" ti-a acceptat cererea de chat!", ""));
+
+                    var acceptIntent3 = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
+                    //var rejectIntent1 = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
+                    //intent.putExtra("ConversationClick",true);
+
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    {
+
+                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                            .SetContentTitle(title)
+                            .SetContentText(body)
+                            .SetSmallIcon(Resource.Drawable.logo)
+                            .SetStyle(new NotificationCompat.BigTextStyle()
+                                .BigText(body))
+                            .SetPriority(NotificationCompat.PriorityDefault)
+                            .SetContentIntent(acceptIntent3)
+                            .SetAutoCancel(true)
+                            .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent3);
+                    }
+
+
+                    break;
             }
 
             return null;
