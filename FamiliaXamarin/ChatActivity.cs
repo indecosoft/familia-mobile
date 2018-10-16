@@ -39,6 +39,10 @@ namespace FamiliaXamarin
         private static ChatAdapter mAdapter;
         public static string Email;
         public static string RoomName = "";
+<<<<<<< HEAD
+=======
+        public static bool Active = false;
+>>>>>>> master
         public static bool FromNotify = false;
         private bool mTyping = false;
         private Handler mTypingHandler = new Handler();
@@ -51,11 +55,19 @@ namespace FamiliaXamarin
         public static bool Active = false;
         IWebSocketClient _socketClient = new WebSocketClient();
 
+<<<<<<< HEAD
+=======
+        protected override void OnPause()
+        {
+            base.OnPause();
+        }
+>>>>>>> master
         protected override void OnResume()
         {
             base.OnResume();
             Active = true;
         }
+<<<<<<< HEAD
 
         protected override void OnPause()
         {
@@ -70,15 +82,30 @@ namespace FamiliaXamarin
         protected override void OnStop()
         {
             base.OnStop();
+=======
+        protected override void OnStop()
+        {
+            base.OnStop();
+        }
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+>>>>>>> master
             Active = false;
             mAdapter.Clear();
             OnBackPressed();
         }
+<<<<<<< HEAD
 
         public override void OnBackPressed()
         {
             base.OnBackPressed();
             Utils.HideKeyboard(this);
+=======
+        public override void OnBackPressed()
+        {
+            base.OnBackPressed();
+>>>>>>> master
             Finish();
         }
 
@@ -102,7 +129,7 @@ namespace FamiliaXamarin
             _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
             _recyclerView.SetAdapter(mAdapter);
             //ChangedData();
-
+            Ctx = this;
             mInputMessageView = (EditText)FindViewById(Resource.Id.tbMessage);
             send = FindViewById<Button>(Resource.Id.Send);
             send.Click += delegate { attemptSend(); };
@@ -120,13 +147,12 @@ namespace FamiliaXamarin
                         string SharedRooms = Utils.GetDefaults("Rooms", this);
                         if (!string.IsNullOrEmpty(SharedRooms))
                         {
-                            var model = JsonConvert.DeserializeObject<ConverstionsModel>(SharedRooms);
+                            var model = JsonConvert.DeserializeObject<List<ConverstionsModel>>(SharedRooms);
 
-                            if (!model.Conversations.Contains(extras.GetString("EmailFrom")))
+                            var currentModel = new ConverstionsModel { Username = extras.GetString("EmailFrom"), Room = extras.GetString("Room") };
+                            if (!model.Contains(currentModel))
                             {
-                                model.Conversations.Add(extras.GetString("EmailFrom"));
-                                model.Rooms.Add(extras.GetString("Room"));
-
+                                model.Add(currentModel);
                             }
 
                             string serialized = JsonConvert.SerializeObject(model);
@@ -137,9 +163,6 @@ namespace FamiliaXamarin
                     {
                         //ignored
                     }
-                
-                    
-
                     RoomName = extras.GetString("Room");
                     mUsername = extras.GetString("EmailFrom");
 
@@ -232,7 +255,11 @@ namespace FamiliaXamarin
                     });
                 //                if (type == 0)
                 //                {
+<<<<<<< HEAD
                 //mMessages.Add(new ChatModel { Message = message, Type = type });
+=======
+                mAdapter.AddMessage(new ChatModel { Message = message, Type = type });
+>>>>>>> master
                 //mMessages.Add(new ChatModel { Username = username, Message = message, Type = ChatModel.TypeMessage });
                 //mMessages.Add(new ChatModel.Builder(ChatModel.TypeMessage)
                 //                .Username(username).Message(message).Build());
@@ -245,13 +272,19 @@ namespace FamiliaXamarin
                 //                        .Username(username).Message(message).Avatar(avatar).Build());
                 //                }
                 //mAdapter.NotifyItemInserted(mMessages.Count - 1);
+<<<<<<< HEAD
                 
             
+=======
+                mAdapter.NotifyDataSetChanged();
+                 scrollToBottom();
+            });
+>>>>>>> master
 
         }
         private static void scrollToBottom()
         {
-            _recyclerView.ScrollToPosition(mAdapter.ItemCount - 1);
+            _recyclerView.ScrollToPosition(mAdapter.ItemCount);
         }
         void ChangedData()
         {

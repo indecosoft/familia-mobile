@@ -108,9 +108,12 @@ namespace FamiliaXamarin
                 //Log.Error("Active", "" + Chat.active);
                 if (!ChatActivity.RoomName.Equals(room))
                 {
+<<<<<<< HEAD
                     //Chat.RoomName = room;
                     //Chat.Email = username;
                     //Chat.NewMessage = message;
+=======
+>>>>>>> master
 
                     NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
                     Utils.GetManager().Notify(100, nb.Build());
@@ -118,7 +121,11 @@ namespace FamiliaXamarin
                 else if (!ChatActivity.Active)
                 {
                     Log.Error("Caz 2", "*********************");
+<<<<<<< HEAD
                     //String[] data2 = message.split(" ");
+=======
+
+>>>>>>> master
                     NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
                     Utils.GetManager().Notify(100, nb.Build());
                 }
@@ -133,7 +140,10 @@ namespace FamiliaXamarin
                     //if(!data2[0].replace(":","").equals(Email))
                     ChatActivity.addMessage(message, ChatModel.TypeMessage);
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
                 }
             }
             catch (Exception ex)
@@ -168,12 +178,11 @@ namespace FamiliaXamarin
                 string SharedRooms = Utils.GetDefaults("Rooms", _context);
                 if (string.IsNullOrEmpty(SharedRooms))
                 {
-                    var model = JsonConvert.DeserializeObject<ConverstionsModel>(SharedRooms);
-
-                    if (!model.Conversations.Contains(email))
+                    var model = JsonConvert.DeserializeObject<List<ConverstionsModel>>(SharedRooms);
+                    var currentModel = new ConverstionsModel { Username = email, Room = room };
+                    if (!model.Contains(currentModel))
                     {
-                        model.Conversations.Add(email);
-                        model.Rooms.Add(room);
+                        model.Add(currentModel);   
                     }
 
                     string serialized = JsonConvert.SerializeObject(model);
@@ -187,7 +196,7 @@ namespace FamiliaXamarin
            
             
             
-            var nb = Utils.GetAndroidChannelNotification("Cerere acceptata", email + " ti-a acceptat cererea de chat!", "Converseaza", 2,_context, room);
+            var nb = Utils.GetAndroidChannelNotification("Cerere acceptata", email + " ti-a acceptat cererea de chat!", "Converseaza", 2, _context, room);
             Utils.GetManager().Notify(100, nb.Build());
         }
         private void OnChatRequest(Object[] obj)

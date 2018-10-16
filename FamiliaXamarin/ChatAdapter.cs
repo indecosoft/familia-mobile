@@ -82,16 +82,22 @@ namespace FamiliaXamarin
         {
             _messages.Clear();
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
         public void AddMessage(ChatModel model)
         {
             _messages.Add(model);
         }
+<<<<<<< HEAD
         public static void AddReceivedMessage(ChatModel model)
         {
             if(_messages != null ||_messages.Count>0)
             _messages.Add(model);
         }
+=======
+>>>>>>> master
         //private readonly ImageManager _imageManager;
 
         //This will fire any event handlers that are registered with our ItemClick

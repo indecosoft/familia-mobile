@@ -14,7 +14,9 @@ namespace FamiliaXamarin.JsonModels
 {
     public class ConverstionsModel
     {
-        public List<string> Conversations { get; set; }
-        public List<string> Rooms { get; set; }
+        //public List<string> Conversations { get; set; }
+        //public List<string> Rooms { get; set; }
+        public string Username { get; set; }
+        public string Room { get; set; }
     }
 }

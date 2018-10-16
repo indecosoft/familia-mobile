@@ -13,17 +13,28 @@ using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.JsonModels;
 using Java.Lang;
+<<<<<<< HEAD
+=======
+using Newtonsoft.Json;
+>>>>>>> master
 using Org.Json;
 using String = System.String;
 
 namespace FamiliaXamarin
 {
+<<<<<<< HEAD
     public class ConversationsFragment : Fragment
     {
         private RecyclerView conversations;
         JSONArray SharedRooms;
 
 
+=======
+    public class ConversationsFragment : Android.Support.V4.App.Fragment
+    {
+        private RecyclerView conversations;
+        JSONArray SharedRooms;
+>>>>>>> master
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -39,6 +50,7 @@ namespace FamiliaXamarin
             // Inflate the layout for this fragment
             conversations = view.FindViewById<RecyclerView>(Resource.Id.conversations);
 
+<<<<<<< HEAD
 
 
             try
@@ -77,6 +89,32 @@ namespace FamiliaXamarin
 //                StartActivity(new Intent(Activity, typeof(ChatActivity)));
 //            };
 
+=======
+            // Initialize contacts
+            string conv = Utils.GetDefaults("Rooms", Activity);
+            Log.Error("lung", SharedRooms.Length() + "");
+            List<ConverstionsModel> contacts = JsonConvert.DeserializeObject<List<ConverstionsModel>>(conv);
+            // Create adapter passing in the sample user data
+            ConvAdapter adapter = new ConvAdapter(contacts);
+            // Attach the adapter to the recyclerview to populate items
+            conversations.SetAdapter(adapter);
+            // Set layout manager to position the items
+            conversations.SetLayoutManager(new LinearLayoutManager(Activity));
+
+
+
+            adapter.ItemClick += delegate (object sender, ConvAdapterClickEventArgs args)
+            {
+                string name = contacts[args.Position].Username;
+                string room = contacts[args.Position].Room;
+                //Toast.makeText(getActivity(), name + " was clicked!", Toast.LENGTH_SHORT).show()
+                var intent = new Intent(Activity, typeof(ChatActivity));
+                intent.PutExtra("Room", room);
+                intent.PutExtra("EmailFrom", name);
+
+                StartActivity(intent);
+            };
+>>>>>>> master
             return view;
         }
     }
