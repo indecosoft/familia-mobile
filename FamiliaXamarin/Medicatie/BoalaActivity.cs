@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -17,6 +18,7 @@ using FamiliaXamarin.Medicatie.Alarm;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
 using Java.Util;
+using Calendar = Java.Util.Calendar;
 
 namespace FamiliaXamarin.Medicatie
 {
@@ -26,7 +28,7 @@ namespace FamiliaXamarin.Medicatie
         public static string MED_ID = "medId";
         public static string BOALA_ID = "boalaId";
         public static string ALARM_ID = "alarmId";
-        public static string MED_NAME = "medName";
+        public static string HOUR_ID = "hourId";
         private Button save;
         private Button update;
         private EditText etNumeBoala;
@@ -156,11 +158,6 @@ namespace FamiliaXamarin.Medicatie
 
             setupAlarm();
 
-            //            var intent = new Intent(Application.Context, typeof(MainActivity));
-            //            intent.AddFlags(ActivityFlags.ClearTop);
-            //            MainActivity.FromBoala = true;
-            //            StartActivity(intent);
-
             Finish();
         }
 
@@ -171,15 +168,12 @@ namespace FamiliaXamarin.Medicatie
             {
                 List<Hour> hours = med.Hours;
                 List<int> alarms = new List<int>();
-                foreach (Hour itemHour in hours)
+                for (int i = 0; i < hours.Count; i++)
                 {
-                    setAlarm(itemHour, med, boala, ref alarms);
+                    setAlarm(hours[i], med, boala, ref alarms, i);
                 }
 
                 med.Alarms = alarms;
-
-
-
 
             }
         }
@@ -190,23 +184,25 @@ namespace FamiliaXamarin.Medicatie
         {
             return (int)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
         }
-        private void setAlarm(Hour hour, Medicament med, Boala boala, ref List<int> alarms)
+        private void setAlarm(Hour hour, Medicament med, Boala boala, ref List<int> alarms, int position)
         {
-
+            var id = CurrentTimeMillis(); ;
             var am = (AlarmManager)GetSystemService(AlarmService);
 
             var i = new Intent(this, typeof(AlarmBroadcastReceiver));
             i.PutExtra(BOALA_ID, boala.Id);
             i.PutExtra(MED_ID, med.IdMed);
-           
-            var id = CurrentTimeMillis();
+            i.PutExtra(HOUR_ID, hour.Id);
+            if (med.Alarms != null)
+            {
+                id = med.Alarms[position];
+
+            }
+            
             alarms.Add(id);
             i.PutExtra(ALARM_ID, id);
 
             var pi = PendingIntent.GetBroadcast(this, id, i, PendingIntentFlags.OneShot);
-
-
-            
 
             if (am == null) return;
             var hourString = hour.Nume;
@@ -231,7 +227,8 @@ namespace FamiliaXamarin.Medicatie
             setCalendar.Set(CalendarField.Year, year);
             setCalendar.Set(CalendarField.Month, month);
             setCalendar.Set(CalendarField.DayOfMonth, day);
-            Log.Error("DATE", dateString);
+
+            
 
             if (setCalendar.Before(calendar))
             {

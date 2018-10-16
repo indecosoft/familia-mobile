@@ -42,12 +42,14 @@ namespace FamiliaXamarin.Medicatie.Alarm
             medId = intent.GetStringExtra(BoalaActivity.MED_ID);
             boli = Storage.getInstance().getBoliTest(this);
             mBoala = Storage.getInstance().getBoala(boalaId);
-            mMed = mBoala.getMedicamentById(medId);
-           
-            mIdAlarm = intent.GetIntExtra(BoalaActivity.ALARM_ID, -1);
-            
+            if (mBoala != null)
+            {
+                mMed = mBoala.getMedicamentById(medId);
+                mIdAlarm = intent.GetIntExtra(BoalaActivity.ALARM_ID, -1);
+                tvMedName.Text = mMed.Name;
+            }
 
-            tvMedName.Text = mMed.Name;
+            
             // Create your application here
         }
 

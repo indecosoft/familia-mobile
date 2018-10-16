@@ -118,7 +118,7 @@
             android:background="@drawable/button_style"
             android:paddingLeft="50dp"
             android:paddingRight="50dp"
-            android:text="Modifica"
+            android:text="Salveaza"
             android:textColor="@android:color/white" />
 
     </RelativeLayout>

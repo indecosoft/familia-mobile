@@ -4,6 +4,7 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Views;
+using FamiliaXamarin.Medicatie.Alarm;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
 
@@ -84,8 +85,31 @@ namespace FamiliaXamarin.Medicatie
             if (result.Equals("yes"))
             {
                 Storage.getInstance().removeBoala(Activity, boala);
+                List<Medicament> meds = boala.MedicamentList;
+                CancelAlarms(meds);
+
                 _boalaAdapter.removeBoala(boala);
                 _boalaAdapter.NotifyDataSetChanged();
+
+            }
+        }
+
+        private void CancelAlarms(List<Medicament> meds)
+        {
+            foreach (var med in meds)
+            {
+                if (med.Alarms != null)
+                {
+                    foreach (var alarm in med.Alarms)
+                    {
+                        AlarmManager am = (AlarmManager) Context.GetSystemService(Context.AlarmService);
+
+                        Intent i = new Intent(Activity, typeof(AlarmBroadcastReceiver));
+                        PendingIntent pi =
+                            PendingIntent.GetActivity(Context, alarm, i, PendingIntentFlags.UpdateCurrent);
+                        am.Cancel(pi);
+                    }
+                }
             }
         }
 //        public override void OnMedicationScheduleLoaded(List<MedicationSchedule> msList)
