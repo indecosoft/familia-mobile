@@ -24,4 +24,6 @@ namespace FamiliaXamarin.Medicatie.Entities
         }
         public Hour() { }
     }
+
+
 }

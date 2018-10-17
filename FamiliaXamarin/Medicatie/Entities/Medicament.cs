@@ -9,6 +9,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Java.Lang;
+using Java.Util;
 using Object = System.Object;
 
 namespace FamiliaXamarin.Medicatie.Entities
@@ -22,6 +23,8 @@ namespace FamiliaXamarin.Medicatie.Entities
         public int NrZile { get; set; }
         public string Date { get; set; }
         public List<int> Alarms { get; set; }
+
+        public Calendar FinishCalendar { get; set; }
 
         public Medicament()
         {
@@ -46,6 +49,21 @@ namespace FamiliaXamarin.Medicatie.Entities
             }
              return 0;
         }
+
+        public Hour FindHourById(string mId)
+        {
+            foreach (var hour in Hours)
+            {
+                if (hour.Id.Equals(mId))
+                {
+                    return hour;
+                }
+                
+            }
+
+            return null;
+        }
+
 
         public override bool Equals(Object obj)
         {
