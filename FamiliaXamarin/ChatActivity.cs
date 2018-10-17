@@ -61,12 +61,7 @@ namespace FamiliaXamarin
         {
             base.OnResume();
             Active = true;
-        }
-
-  
-
- 
-
+        }      
 
         protected override void OnStop()
         {
