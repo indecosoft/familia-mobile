@@ -75,6 +75,7 @@ namespace FamiliaXamarin
         protected override void OnDestroy()
         {
             base.OnDestroy();
+
             Active = false;
             mAdapter.Clear();
             OnBackPressed();
@@ -232,6 +233,7 @@ namespace FamiliaXamarin
                         scrollToBottom();
                     });
                 //                if (type == 0)
+
                 //                {
                 //mMessages.Add(new ChatModel { Message = message, Type = type });
 //                mAdapter.AddMessage(new ChatModel { Message = message, Type = type });
@@ -249,6 +251,9 @@ namespace FamiliaXamarin
                 //mAdapter.NotifyItemInserted(mMessages.Count - 1);
                 
             
+
+
+
 
         }
         private static void scrollToBottom()

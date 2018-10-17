@@ -144,14 +144,14 @@ namespace FamiliaXamarin
                     medbeginTransaction.AddToBackStack(null);
                     medbeginTransaction.Commit();
                     break;
-//                case Resource.Id.chat:
-//                    var convFragment = new ConversationsFragment();
-//                    var fragmentManagerConv = SupportFragmentManager;
-//                    var fragmentTransactionConv = fragmentManagerConv.BeginTransaction();
-//                    fragmentTransactionConv.Replace(Resource.Id.fragment_container, convFragment);
-//                    fragmentTransactionConv.AddToBackStack(null);
-//                    fragmentTransactionConv.Commit();
-//                    break;
+                case Resource.Id.chat:
+                    //var convFragment = new ConversationsFragment();
+                    //var fragmentManagerConv = SupportFragmentManager;
+                    //var fragmentTransactionConv = fragmentManagerConv.BeginTransaction();
+                    //fragmentTransactionConv.Replace(Resource.Id.fragment_container, convFragment);
+                    //fragmentTransactionConv.AddToBackStack(null);
+                    //fragmentTransactionConv.Commit();
+                    break;
                 case Resource.Id.nav_manage:
                     break;
                 case Resource.Id.nav_asistenta:
