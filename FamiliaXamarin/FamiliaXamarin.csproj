@@ -64,8 +64,6 @@
     <Compile Include="ChatAdapter.cs" />
     <Compile Include="ChatModel.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="ConvAdapter.cs" />
-    <Compile Include="ConversationsFragment.cs" />
     <Compile Include="DatePickerFragment.cs" />
     <Compile Include="DevicesRecyclerViewAdapter.cs" />
     <Compile Include="DistanceCalculator.cs" />
@@ -571,18 +569,6 @@
     <AndroidResource Include="Resources\layout\activity_alarm.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-<<<<<<< HEAD
-    <AndroidResource Include="Resources\layout\fragment_conversations.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-=======
-    <AndroidResource Include="Resources\layout\fragment_conversations.axml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\item_conversations.xml" />
->>>>>>> master
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
