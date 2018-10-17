@@ -74,7 +74,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                         setCalendar.Add(CalendarField.Date, mMed.NrZile);
 
                         if (setCalendar.After(calendar))
-                        {
+                        {                                     
                             LaunchAlarm(context, intent, medId, boalaId);
                         }
 
