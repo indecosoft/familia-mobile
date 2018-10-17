@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using FamiliaXamarin.Medicatie.Alarm;
 using FamiliaXamarin.Medicatie.Data;
@@ -27,10 +28,20 @@ namespace FamiliaXamarin.Medicatie
             // Use this to return your custom view for this Fragment
             // return inflater.Inflate(Resource.Layout.YourFragment, container, false);
             View view = inflater.Inflate(Resource.Layout.fragment_medicine, container, false);
-            view.FindViewById(Resource.Id.btn_add).SetOnClickListener(this);
+            view.FindViewById(Resource.Id.btn_add_disease).SetOnClickListener(this);
             setupRecycleView(view);
+           
+            test();
+
             return view;
         }
+
+        private async void test()
+        {
+            var res = await Tasks.Tasks.GetMedicine(Constants.PublicServerAddress, Utils.GetDefaults("Token", Activity));
+            Log.Error("Result", res);
+        }
+
         public override void OnResume()
         {
             base.OnResume();
@@ -57,7 +68,7 @@ namespace FamiliaXamarin.Medicatie
         {
             switch (v.Id)
             {
-                case Resource.Id.btn_add:
+                case Resource.Id.btn_add_disease:
                     Activity.StartActivity(typeof(BoalaActivity));
                     break;
             }
