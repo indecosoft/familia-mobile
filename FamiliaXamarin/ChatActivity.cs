@@ -39,10 +39,8 @@ namespace FamiliaXamarin
         private static ChatAdapter mAdapter;
         public static string Email;
         public static string RoomName = "";
-<<<<<<< HEAD
-=======
+
         public static bool Active = false;
->>>>>>> master
         public static bool FromNotify = false;
         private bool mTyping = false;
         private Handler mTypingHandler = new Handler();
@@ -52,37 +50,24 @@ namespace FamiliaXamarin
         private static ChatActivity Ctx;
         public static string Avatar;
         public static string NewMessage = "";
-        public static bool Active = false;
         IWebSocketClient _socketClient = new WebSocketClient();
 
-<<<<<<< HEAD
-=======
+
         protected override void OnPause()
         {
             base.OnPause();
         }
->>>>>>> master
         protected override void OnResume()
         {
             base.OnResume();
             Active = true;
         }
-<<<<<<< HEAD
 
-        protected override void OnPause()
-        {
-            base.OnPause();
-        }
+  
 
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-        }
+ 
 
-        protected override void OnStop()
-        {
-            base.OnStop();
-=======
+
         protected override void OnStop()
         {
             base.OnStop();
@@ -90,22 +75,15 @@ namespace FamiliaXamarin
         protected override void OnDestroy()
         {
             base.OnDestroy();
->>>>>>> master
             Active = false;
             mAdapter.Clear();
             OnBackPressed();
         }
-<<<<<<< HEAD
 
         public override void OnBackPressed()
         {
             base.OnBackPressed();
             Utils.HideKeyboard(this);
-=======
-        public override void OnBackPressed()
-        {
-            base.OnBackPressed();
->>>>>>> master
             Finish();
         }
 
@@ -255,11 +233,8 @@ namespace FamiliaXamarin
                     });
                 //                if (type == 0)
                 //                {
-<<<<<<< HEAD
                 //mMessages.Add(new ChatModel { Message = message, Type = type });
-=======
-                mAdapter.AddMessage(new ChatModel { Message = message, Type = type });
->>>>>>> master
+//                mAdapter.AddMessage(new ChatModel { Message = message, Type = type });
                 //mMessages.Add(new ChatModel { Username = username, Message = message, Type = ChatModel.TypeMessage });
                 //mMessages.Add(new ChatModel.Builder(ChatModel.TypeMessage)
                 //                .Username(username).Message(message).Build());
@@ -272,14 +247,8 @@ namespace FamiliaXamarin
                 //                        .Username(username).Message(message).Avatar(avatar).Build());
                 //                }
                 //mAdapter.NotifyItemInserted(mMessages.Count - 1);
-<<<<<<< HEAD
                 
             
-=======
-                mAdapter.NotifyDataSetChanged();
-                 scrollToBottom();
-            });
->>>>>>> master
 
         }
         private static void scrollToBottom()
