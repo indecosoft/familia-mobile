@@ -259,6 +259,7 @@ namespace FamiliaXamarin
                             .SetPriority(NotificationCompat.PriorityDefault)
                             .SetContentIntent(acceptIntent)
                             .SetAutoCancel(true)
+                            .SetOngoing(false)
                             .AddAction(Resource.Drawable.logo, "Refuza", rejectIntent)
                             .AddAction(Resource.Drawable.logo, "Accepta", acceptIntent);
                     }
@@ -285,9 +286,68 @@ namespace FamiliaXamarin
                                 .BigText(body))
                             .SetPriority(NotificationCompat.PriorityDefault)
                             .SetContentIntent(acceptIntent1)
+                            .SetOngoing(false)
                             .SetAutoCancel(true)
                             .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent1);
                     }
+                   
+
+                    break;
+                case 3:
+                    intent.PutExtra("Conv2", true);
+                    intent.PutExtra("Room", room);
+                    intent.PutExtra("Notify", true);
+                    intent.PutExtra("NewMessage", body);
+                    intent.PutExtra("EmailFrom", title);
+
+                    var acceptIntent2 = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
+                    //var rejectIntent1 = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
+                    //intent.putExtra("ConversationClick",true);
+
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    {
+
+                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                            .SetContentTitle(title)
+                            .SetContentText(body)
+                            .SetSmallIcon(Resource.Drawable.logo)
+                            .SetStyle(new NotificationCompat.BigTextStyle()
+                                .BigText(body))
+                            .SetOngoing(false)
+                            .SetPriority(NotificationCompat.PriorityDefault)
+                            .SetContentIntent(acceptIntent2)
+                            .SetAutoCancel(true)
+                            .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent2);
+                    }
+                    break;
+                case 3:
+                    
+                    intent.PutExtra("Conv", true);
+                    intent.PutExtra("Room", room);
+                    intent.PutExtra("Email", title);
+                    intent.PutExtra("FromNotify", true);
+                    intent.PutExtra("Message", body);
+                    //intent.PutExtra("EmailFrom", body.Replace(" ti-a acceptat cererea de chat!", ""));
+
+                    var acceptIntent3 = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
+                    //var rejectIntent1 = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
+                    //intent.putExtra("ConversationClick",true);
+
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    {
+
+                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                            .SetContentTitle(title)
+                            .SetContentText(body)
+                            .SetSmallIcon(Resource.Drawable.logo)
+                            .SetStyle(new NotificationCompat.BigTextStyle()
+                                .BigText(body))
+                            .SetPriority(NotificationCompat.PriorityDefault)
+                            .SetContentIntent(acceptIntent3)
+                            .SetAutoCancel(true)
+                            .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent3);
+                    }
+
 
                     break;
             }
