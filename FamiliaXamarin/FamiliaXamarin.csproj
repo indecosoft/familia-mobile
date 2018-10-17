@@ -99,6 +99,7 @@
     <Compile Include="Medicatie\HourAdapter.cs" />
     <Compile Include="Medicatie\MedicamentAdapter.cs" />
     <Compile Include="Medicatie\MedicineFragment.cs" />
+    <Compile Include="Medicatie\Tasks\Tasks.cs" />
     <Compile Include="PressureDevice\AddNewBloodPressureDeviceActivity.cs" />
     <Compile Include="PressureDevice\BloodPressureData.cs" />
     <Compile Include="PressureDevice\BloodPressureDeviceActivity.cs" />
@@ -183,6 +184,9 @@
     </PackageReference>
     <PackageReference Include="Glide.Xamarin">
       <Version>4.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Net.Http">
+      <Version>2.2.29</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>11.0.2</Version>

@@ -108,12 +108,9 @@ namespace FamiliaXamarin
                 //Log.Error("Active", "" + Chat.active);
                 if (!ChatActivity.RoomName.Equals(room))
                 {
-<<<<<<< HEAD
                     //Chat.RoomName = room;
                     //Chat.Email = username;
                     //Chat.NewMessage = message;
-=======
->>>>>>> master
 
                     NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
                     Utils.GetManager().Notify(100, nb.Build());
@@ -121,11 +118,8 @@ namespace FamiliaXamarin
                 else if (!ChatActivity.Active)
                 {
                     Log.Error("Caz 2", "*********************");
-<<<<<<< HEAD
                     //String[] data2 = message.split(" ");
-=======
 
->>>>>>> master
                     NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
                     Utils.GetManager().Notify(100, nb.Build());
                 }
@@ -139,11 +133,6 @@ namespace FamiliaXamarin
                     Log.Error("Mesaj: ", message);
                     //if(!data2[0].replace(":","").equals(Email))
                     ChatActivity.addMessage(message, ChatModel.TypeMessage);
-
-<<<<<<< HEAD
-
-=======
->>>>>>> master
                 }
             }
             catch (Exception ex)
