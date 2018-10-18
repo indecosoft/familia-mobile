@@ -1,27 +1,65 @@
 ﻿
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using FamiliaXamarin.Medicatie.Entities;
+using Java.Util;
 
 
 namespace FamiliaXamarin.Medicatie.Tasks
 {
     class Tasks
     {
+
+        
         public static HttpClient httpClient = new HttpClient();
         public static async Task<string> GetMedicine(string url, string token)
         {
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            using (var res = await httpClient.GetAsync(url))
+            try
             {
-                if (!res.IsSuccessStatusCode) return null;
-
-                using (var content = res.Content)
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                using (var res = await httpClient.GetAsync(url))
                 {
-                    return await content.ReadAsStringAsync();
+                    if (!res.IsSuccessStatusCode) return null;
+
+                    using (var content = res.Content)
+                    {
+                        return await content.ReadAsStringAsync();
+                    }
+
+                }
+            }
+            catch (HttpRequestException e)
+            {
+                return null;
+            }
+        }
+
+        public static async Task<string> PostMedicine(string url,string uuid, Date date, string token)
+        {
+            try
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                using (var response = await httpClient.PostAsync(url, new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("uuid", uuid), new KeyValuePair<string, string>("date", date.ToString()) })))
+                {
+                    if (!response.IsSuccessStatusCode) return null;
+                    using (var content = response.Content)
+                    {
+                        return await content.ReadAsStringAsync();
+                    }
+
                 }
 
             }
+            catch (HttpRequestException e)
+            {
+                return null;
+            }
+
         }
+
+
+     
     }
 }
