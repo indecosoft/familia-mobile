@@ -49,7 +49,10 @@ namespace FamiliaXamarin
         }
 
         public override int ItemCount => mContacts.Count;
-          
+        public void DeleteConversation(int position)
+        {
+            mContacts.RemoveAt(position);
+        }
 
         void OnClick(ConvAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
         void OnLongClick(ConvAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
