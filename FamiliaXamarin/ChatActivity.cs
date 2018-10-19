@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Preferences;
 using Android.Provider;
 using Android.Runtime;
+using Android.Support.V4.App;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Util;
@@ -107,9 +108,10 @@ namespace FamiliaXamarin
             mInputMessageView = (EditText)FindViewById(Resource.Id.tbMessage);
             send = FindViewById<Button>(Resource.Id.Send);
             send.Click += delegate { attemptSend(); };
+            NotificationManagerCompat.From(this).Cancel(100);
+
             if (savedInstanceState == null)
-            {
-                Bundle extras = Intent.Extras;
+            {Bundle extras = Intent.Extras;
                 if (extras == null)
                 {
 
