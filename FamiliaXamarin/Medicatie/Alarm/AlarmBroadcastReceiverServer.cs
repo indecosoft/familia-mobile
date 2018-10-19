@@ -12,6 +12,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Java.Util;
+using Random = Java.Util.Random;
 
 namespace FamiliaXamarin.Medicatie.Alarm
 {
@@ -24,59 +25,82 @@ namespace FamiliaXamarin.Medicatie.Alarm
         private static readonly String OK = "OK";
         public static readonly String ACTION_OK = "actionOk";
         public static readonly String ACTION_RECEIVE = "actionReceive";
-
+        public static int notifyId = Constants.NotifId;
 
         public override void OnReceive(Context context, Intent intent)
         {
             String action = intent.Action;
-            //TODO de ce nu intra pe else  
-            if (ACTION_RECEIVE.Equals(action))
+            Log.Error("ACTIONSARTONRECEIVE", ""+ action);
+            if (action != null)
             {
-                Toast.MakeText(context, "ALARM SERVER!!!", ToastLength.Long).Show();
-                Log.Error("VINE ALARMA DIN SERVICE", "DADADAD");
-                var uuid = intent.GetStringExtra(UUID);
-                var title = intent.GetStringExtra(TITLE);
-                var content = intent.GetStringExtra(CONTENT);
-                var Channel = uuid;
+                Log.Error("ACTION", action);
+                //TODO de ce nu intra pe else  
+                if (ACTION_RECEIVE.Equals(action))
+                {
+                    Toast.MakeText(context, "ALARM SERVER!!!", ToastLength.Long).Show();
+                    Log.Error("VINE ALARMA DIN SERVICE", "DADADAD");
+                    var uuid = intent.GetStringExtra(UUID);
+                    var title = intent.GetStringExtra(TITLE);
+                    var content = intent.GetStringExtra(CONTENT);
+                    var Channel = uuid;
 
-                createNotificationChannel(Channel, title, content);
+                    createNotificationChannel(Channel, title, content);
 
-                Intent okIntent = new Intent();
-                okIntent.PutExtra(UUID, uuid);
-                okIntent.SetAction(ACTION_OK);
+                    notifyId += 1;
 
-                PendingIntent piNotification = PendingIntent.GetBroadcast(context, 12345, okIntent, PendingIntentFlags.OneShot);
+                    Intent okIntent = new Intent(context, typeof(AlarmBroadcastReceiverServer));
+                    okIntent.PutExtra(UUID, uuid);
+                    okIntent.PutExtra("notifyId", notifyId);
+                    okIntent.SetAction(ACTION_OK);
 
 
-                NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(context, Channel)
-                        .SetSmallIcon(Resource.Mipmap.ic_launcher_round)
-                        .SetWhen(DateTime.Now.Millisecond)
-                        .SetContentTitle(title)
-                        .SetContentText(content)
-                        .SetAutoCancel(true)
-                        .SetPriority(NotificationCompat.PriorityDefault)
-                        .AddAction(Resource.Drawable.account, OK,
-                            piNotification);
+                    PendingIntent piNotification =
+                        PendingIntent.GetBroadcast(context, notifyId, okIntent, PendingIntentFlags.UpdateCurrent);
 
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
+                    
 
-                notificationManager.Notify(Constants.NotifIdServer + 1, mBuilder.Build());
+                    NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(context, Channel)
+                            .SetSmallIcon(Resource.Mipmap.ic_launcher_round)
+                            .SetWhen(DateTime.Now.Millisecond)
+                            .SetContentTitle(title)
+                            .SetContentText(content)
+                            .SetAutoCancel(true)
+                            .SetPriority(NotificationCompat.PriorityHigh)
+                            .AddAction(Resource.Drawable.account, OK, piNotification);
 
-            }
-            else if (ACTION_OK.Equals(action))
-            {
+                    NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
+                    
+                    notificationManager.Notify(notifyId, mBuilder.Build());
 
-                long timestamp = DateTime.Now.Millisecond;
-                Date date = new Date(timestamp);
-                String uuid = intent.GetStringExtra(UUID);
+                }
 
-                //TODO post to server
-                SendData(uuid, date, context);
+                else 
+                if (ACTION_OK.Equals(action))
+                {
+                    Toast.MakeText(context, "Action ok!!!", ToastLength.Long).Show();
+//                    long timestamp = CurrentTimeMillis();
+//                    Date date = new Date(timestamp);
+                    DateTime now = DateTime.Now;
+                    String uuid = intent.GetStringExtra(UUID);
+
+                    //TODO post to server
+                    SendData(uuid, now, context);
+                    NotificationManagerCompat.From(context).Cancel(intent.GetIntExtra("notifyId", 0));
+
+                    
+                }
             }
         }
+        public int CurrentTimeMillis()
+        {
+            return (int)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
+        }
 
-        private async void SendData(string uuid, Date date, Context context)
+        private readonly DateTime Jan1st1970 = new DateTime
+            (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        private async void SendData(string uuid, DateTime date, Context context)
         {
             var res = await Tasks.Tasks.PostMedicine($"{Constants.PublicServerAddress}/api/medicine", uuid, date, Utils.GetDefaults("Token", context));
 
