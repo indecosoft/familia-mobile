@@ -57,7 +57,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     PendingIntent piNotification =
                         PendingIntent.GetBroadcast(context, notifyId, okIntent, PendingIntentFlags.UpdateCurrent);
 
-                    
+
 
                     NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(context, Channel)
@@ -67,7 +67,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
                             .SetContentText(content)
                             .SetAutoCancel(true)
                             .SetPriority(NotificationCompat.PriorityHigh)
-                            .AddAction(Resource.Drawable.account, OK, piNotification);
+                            .AddAction(Resource.Drawable.account, OK, piNotification)
+                            .SetOngoing(true);
 
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
                     
