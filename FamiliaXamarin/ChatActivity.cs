@@ -73,7 +73,7 @@ namespace FamiliaXamarin
 
             Active = false;
             mAdapter.Clear();
-            OnBackPressed();
+            //OnBackPressed();
         }
 
         public override void OnBackPressed()
@@ -119,15 +119,36 @@ namespace FamiliaXamarin
                     try
                     {
                         string SharedRooms = Utils.GetDefaults("Rooms", this);
-                        if (!string.IsNullOrEmpty(SharedRooms))
-                        {
+                        //if (!string.IsNullOrEmpty(SharedRooms))
+                        if (SharedRooms != null)
+                            {
                             var model = JsonConvert.DeserializeObject<List<ConverstionsModel>>(SharedRooms);
 
                             var currentModel = new ConverstionsModel { Username = extras.GetString("EmailFrom"), Room = extras.GetString("Room") };
-                            if (!model.Contains(currentModel))
+                            bool existingElement = false;
+                            foreach (var conversation in model)
+                            {
+                                if (conversation.Username.Equals(currentModel.Username))
+                                {
+                                    existingElement = true;
+                                    break;
+                                }
+                            }
+                            if (!existingElement)
                             {
                                 model.Add(currentModel);
                             }
+
+                            string serialized = JsonConvert.SerializeObject(model);
+                            Utils.SetDefaults("Rooms", serialized, this);
+                        }
+                        else
+                        {
+                            List<ConverstionsModel> model = new List<ConverstionsModel>();
+                            var currentModel = new ConverstionsModel { Username = extras.GetString("EmailFrom"), Room = extras.GetString("Room") };
+                      
+                            model.Add(currentModel);
+                          
 
                             string serialized = JsonConvert.SerializeObject(model);
                             Utils.SetDefaults("Rooms", serialized, this);
