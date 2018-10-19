@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -36,12 +37,12 @@ namespace FamiliaXamarin.Medicatie.Tasks
             }
         }
 
-        public static async Task<string> PostMedicine(string url,string uuid, Date date, string token)
+        public static async Task<string> PostMedicine(string url,string uuid, DateTime date, string token)
         {
             try
             {
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                using (var response = await httpClient.PostAsync(url, new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("uuid", uuid), new KeyValuePair<string, string>("date", date.ToString()) })))
+                using (var response = await httpClient.PostAsync(url, new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("uuid", uuid), new KeyValuePair<string, string>("date", date.ToString("yyyy-MM-dd HH:mm:ss")) })))
                 {
                     if (!response.IsSuccessStatusCode) return null;
                     using (var content = response.Content)

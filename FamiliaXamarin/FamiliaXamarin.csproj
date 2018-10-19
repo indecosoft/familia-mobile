@@ -86,6 +86,7 @@
     <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiver.cs" />
     <Compile Include="Medicatie\Alarm\App.cs" />
     <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiverServer.cs" />
+    <Compile Include="Medicatie\Alarm\NotificationSettings.cs" />
     <Compile Include="Medicatie\BoalaActivity.cs" />
     <Compile Include="Medicatie\BoalaAdapter.cs" />
     <Compile Include="Medicatie\CustomDialogDeleteBoala.cs" />
