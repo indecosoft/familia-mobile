@@ -165,14 +165,34 @@ namespace FamiliaXamarin
             try
             {
                 string SharedRooms = Utils.GetDefaults("Rooms", _context);
-                if (string.IsNullOrEmpty(SharedRooms))
+                if (SharedRooms != null)
                 {
                     var model = JsonConvert.DeserializeObject<List<ConverstionsModel>>(SharedRooms);
                     var currentModel = new ConverstionsModel { Username = email, Room = room };
-                    if (!model.Contains(currentModel))
+                    bool existingElement = false;
+                    foreach (var conversation in model)
                     {
-                        model.Add(currentModel);   
+                        if (conversation.Username.Equals(currentModel.Username))
+                        {
+                            existingElement = true;
+                            break;
+                        }
                     }
+                    if (!existingElement)
+                    {
+                        model.Add(currentModel);
+                    }
+                  
+
+                    string serialized = JsonConvert.SerializeObject(model);
+                    Utils.SetDefaults("Rooms", serialized, _context);
+                }
+                else
+                {
+                    List<ConverstionsModel> model = new List<ConverstionsModel>();
+                    var currentModel = new ConverstionsModel { Username = email, Room = room };
+                    model.Add(currentModel);
+                   
 
                     string serialized = JsonConvert.SerializeObject(model);
                     Utils.SetDefaults("Rooms", serialized, _context);

@@ -85,6 +85,8 @@
     <Compile Include="Medicatie\Alarm\AlarmActivity.cs" />
     <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiver.cs" />
     <Compile Include="Medicatie\Alarm\App.cs" />
+    <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiverServer.cs" />
+    <Compile Include="Medicatie\Alarm\NotificationSettings.cs" />
     <Compile Include="Medicatie\BoalaActivity.cs" />
     <Compile Include="Medicatie\BoalaAdapter.cs" />
     <Compile Include="Medicatie\CustomDialogDeleteBoala.cs" />
@@ -116,6 +118,8 @@
     <Compile Include="WebServices.cs" />
     <Compile Include="WebSocketClient.cs" />
     <Compile Include="WebSocketService.cs" />
+    <Compile Include="ConversationsFragment.cs" />
+    <Compile Include="ConvAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -130,6 +134,8 @@
     <AndroidResource Include="Resources\raw\new_notification.json" />
     <AndroidResource Include="Resources\raw\notification.json" />
     <AndroidResource Include="Resources\raw\loading.json" />
+    <AndroidResource Include="Resources\layout\fragment_conversations.axml" />
+    <AndroidResource Include="Resources\layout\item_conversations.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
