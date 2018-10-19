@@ -25,10 +25,10 @@ namespace FamiliaXamarin.Medicatie
     [Activity(Label = "BoalaActivity", Theme = "@style/AppTheme.Dark")]
     public class BoalaActivity : AppCompatActivity, View.IOnClickListener, CustomDialogMedicamentDetails.IMedSaveListener, OnMedicamentClickListener, CustomDialogDeleteMedicament.ICustomDialogDeleteMedicamentListener
     {
-        public static string MED_ID = "medId";
-        public static string BOALA_ID = "boalaId";
-        public static string ALARM_ID = "alarmId";
-        public static string HOUR_ID = "hourId";
+        public static readonly string MED_ID = "medId";
+        public static readonly string BOALA_ID = "boalaId";
+        public static readonly string ALARM_ID = "alarmId";
+        public static readonly string HOUR_ID = "hourId";
         private Button save;
         private Button update;
         private EditText etNumeBoala;

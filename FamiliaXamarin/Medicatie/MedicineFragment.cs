@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -8,6 +9,9 @@ using Android.Views;
 using FamiliaXamarin.Medicatie.Alarm;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
+using Java.Text;
+using Java.Util;
+using Org.Json;
 
 namespace FamiliaXamarin.Medicatie
 {
@@ -15,7 +19,7 @@ namespace FamiliaXamarin.Medicatie
     {
         public static string IdBoala = "id_boala";
         private BoalaAdapter _boalaAdapter;
-
+        private List<MedicationSchedule> medications;
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -30,17 +34,114 @@ namespace FamiliaXamarin.Medicatie
             View view = inflater.Inflate(Resource.Layout.fragment_medicine, container, false);
             view.FindViewById(Resource.Id.btn_add_disease).SetOnClickListener(this);
             setupRecycleView(view);
-           
-            test();
+
+            GetData();
 
             return view;
         }
 
-        private async void test()
+        private async void GetData()
         {
-            var res = await Tasks.Tasks.GetMedicine(Constants.PublicServerAddress, Utils.GetDefaults("Token", Activity));
+            var res = await Tasks.Tasks.GetMedicine($"{Constants.PublicServerAddress}/api/userMeds/15", Utils.GetDefaults("Token", Activity));
             Log.Error("Result", res);
+            if (res.Equals("[]")) return;
+            medications = ParseResultFromUrl(res);
+            //TODO setAlarm for each item of medications and parse the timestampString to a real timestamp
+            foreach (var ms in medications)
+            {
+                var am =(AlarmManager)Activity.GetSystemService(Context.AlarmService);
+                var i = new Intent(Activity, typeof(AlarmBroadcastReceiverServer));
+
+
+                i.PutExtra(AlarmBroadcastReceiverServer.UUID, ms.Uuid);
+                i.PutExtra(AlarmBroadcastReceiverServer.TITLE, ms.Title);
+                i.PutExtra(AlarmBroadcastReceiverServer.CONTENT, ms.Content);
+                i.SetAction(AlarmBroadcastReceiverServer.ACTION_RECEIVE);
+
+                var id = CurrentTimeMillis();
+                var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.OneShot);
+                if (am != null)
+                {
+                    var date = parseTimestampStringToDate(ms);
+
+                    Calendar calendar = Calendar.Instance;
+                    Calendar setcalendar = Calendar.Instance;
+
+                    setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour,date.Minute,date.Second);
+                    //setcalendar.Time = date.;
+                    Log.Error("Calendarul", setcalendar.ToString());
+
+                    if (setcalendar.Before(calendar)) return;
+
+                    am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
+                }
+            }
         }
+
+
+
+        private DateTime parseTimestampStringToDate(MedicationSchedule ms)
+        {
+            DateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            {
+                TimeZone = Java.Util.TimeZone.GetTimeZone("UTC")
+            };
+
+            DateTime date = new DateTime();
+            try
+            {
+                date = DateTime.Parse(ms.Timestampstring);
+
+                DateFormat pstFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
+                {
+                    TimeZone = Java.Util.TimeZone.GetTimeZone("PST")
+                };
+                Log.Error("TIMESTAMPSTRING", date.ToLocalTime().ToString());
+            }
+            catch (ParseException e)
+            {
+                e.PrintStackTrace();
+                Log.Error("EROARE", "nu intra in try");
+            }
+            return date.ToLocalTime();
+        }
+
+        private readonly DateTime Jan1st1970 = new DateTime
+            (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        public int CurrentTimeMillis()
+        {
+            return (int)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
+        }
+
+        private List<MedicationSchedule> ParseResultFromUrl(string res)
+        {
+            if (res != null)
+            {
+
+
+                var medicationScheduleList = new List<MedicationSchedule>();
+                var results = new JSONArray(res);
+
+                for (var i = 0; i < results.Length(); i++)
+                {
+                    var obj = (JSONObject) results.Get(i);
+                    var uuid = obj.GetString("uuid");
+                    var timestampString = obj.GetString("timestamp");
+                    var title = obj.GetString("title");
+                    var content = obj.GetString("content");
+                    var postpone = Convert.ToInt32(obj.GetString("postpone"));
+                    medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone));
+                }
+
+                return medicationScheduleList;
+            }
+
+            return null;
+        }
+        
+        
+        
 
         public override void OnResume()
         {
