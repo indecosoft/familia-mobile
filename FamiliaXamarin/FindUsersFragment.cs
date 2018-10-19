@@ -99,8 +99,7 @@ namespace FamiliaXamarin
         {
             await Task.Run(async () => {
                 var dataToSent = new JSONObject().Put("email", Utils.GetDefaults("Email", Activity));
-                var response = await _webServices.Post(Constants.PublicServerAddress + "api/nearMe", dataToSent,
-                    Utils.GetDefaults("Token", Activity));
+                var response = await _webServices.Post(Constants.PublicServerAddress + "api/nearMe", dataToSent, Utils.GetDefaults("Token", Activity));
                 Log.Error("Response: ", "" + response);
                 try
                 {
