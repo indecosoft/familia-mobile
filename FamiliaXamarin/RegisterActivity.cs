@@ -198,7 +198,7 @@ namespace FamiliaXamarin
 
                 var dataToSend = new JSONObject().Put("name", _nameEditText.Text).Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text).Put("type", 4).Put("imei", Utils.GetImei(this));
 
-                var response = await _webServices.Post(Constants.PublicServerAddress + "api/register", dataToSend);
+                var response = await _webServices.Post(Constants.PublicServerAddress + "/api/register", dataToSend);
                 if (response != null)
                 {
                     Snackbar snack;
