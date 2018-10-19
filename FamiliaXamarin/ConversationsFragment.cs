@@ -8,6 +8,7 @@ using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
 using Android.Support.V7.Widget;
+using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -41,7 +42,7 @@ namespace FamiliaXamarin
 
             try
             {
-                string Data = Utils.GetDefaults("Rooms", Activity);
+                //string Data = Utils.GetDefaults("Rooms", Activity);
                 //SharedPreferences mPrefs = PreferenceManager.GetDefaultSharedPreferences(Activity);
                 //String Rooms = mPrefs.getString("Rooms", "[]");
                 // Log.Error("**************************************", Rooms);
@@ -73,29 +74,65 @@ namespace FamiliaXamarin
 
                 // Initialize contacts
                 string conv = Utils.GetDefaults("Rooms", Activity);
-                //Log.Error("lung", SharedRooms.Length() + "");
-                List<ConverstionsModel> contacts = JsonConvert.DeserializeObject<List<ConverstionsModel>>(conv);
-                // Create adapter passing in the sample user data
-                ConvAdapter adapter = new ConvAdapter(contacts);
-                // Attach the adapter to the recyclerview to populate items
-                conversations.SetAdapter(adapter);
-                // Set layout manager to position the items
-                conversations.SetLayoutManager(new LinearLayoutManager(Activity));
-                adapter.ItemClick += delegate (object sender, ConvAdapterClickEventArgs args)
+                if (conv != null)
                 {
-                    string name = contacts[args.Position].Username;
-                    string room = contacts[args.Position].Room;
-                    //Toast.makeText(getActivity(), name + " was clicked!", Toast.LENGTH_SHORT).show()
-                    var intent = new Intent(Activity, typeof(ChatActivity));
-                    intent.PutExtra("Room", room);
-                    intent.PutExtra("EmailFrom", name);
+                    //Log.Error("lung", SharedRooms.Length() + "");
+                    List<ConverstionsModel> contacts = JsonConvert.DeserializeObject<List<ConverstionsModel>>(conv);
+                    // Create adapter passing in the sample user data
+                    ConvAdapter adapter = new ConvAdapter(contacts);
+                    // Attach the adapter to the recyclerview to populate items
+                    conversations.SetAdapter(adapter);
+                    // Set layout manager to position the items
+                    conversations.SetLayoutManager(new LinearLayoutManager(Activity));
+                    adapter.ItemClick += delegate (object sender, ConvAdapterClickEventArgs args)
+                    {
+                        string name = contacts[args.Position].Username;
+                        string room = contacts[args.Position].Room;
+                        //Toast.makeText(getActivity(), name + " was clicked!", Toast.LENGTH_SHORT).show()
+                        var intent = new Intent(Activity, typeof(ChatActivity));
+                        intent.PutExtra("Room", room);
+                        intent.PutExtra("EmailFrom", name);
 
-                    StartActivity(intent);
-                };
-                adapter.ItemLongClick += delegate (object sender, ConvAdapterClickEventArgs args) {
+                        StartActivity(intent);
+                    };
+                    adapter.ItemLongClick += delegate (object sender, ConvAdapterClickEventArgs args) {
 
-                    Toast.MakeText(Activity, $"Ai apasat pe {args.Position}", ToastLength.Short).Show();
-                };
+                        //Toast.MakeText(Activity, $"Ai apasat pe {args.Position}", ToastLength.Short).Show();
+                        if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                        {
+                            // Do something for Oreo and above versions
+                            AlertDialog alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
+                            alertDialog.SetTitle(Html.FromHtml("<p style = 'text-align: center; color: #F47445;'>Avertisment</p>", FromHtmlOptions.ModeLegacy));
+                            alertDialog.SetMessage(Html.FromHtml("<br/><p style = 'text-align: center; color: #000000;'>Doriti sa stergeti aceasta conversatie?</p>", FromHtmlOptions.ModeLegacy));
+                            alertDialog.SetButton("Da", delegate
+                            {
+                                adapter.DeleteConversation(args.Position);
+                                adapter.NotifyDataSetChanged();
+                                string serialized = JsonConvert.SerializeObject(contacts);
+                                Utils.SetDefaults("Rooms", serialized, Activity);
+                            });
+                            alertDialog.SetButton2("Nu", delegate { });
+                            alertDialog.Show();
+                        }
+                        else
+                        {
+                            AlertDialog alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
+                            alertDialog.SetTitle("Avertisment");
+                            alertDialog.SetMessage("Doriti sa stergeti aceasta conversatie?");
+                            alertDialog.SetButton("Da", delegate
+                            {
+                                adapter.DeleteConversation(args.Position);
+                                adapter.NotifyDataSetChanged();
+                                string serialized = JsonConvert.SerializeObject(contacts);
+                                Utils.SetDefaults("Rooms", serialized, Activity);
+                            });
+                            alertDialog.SetButton2("Nu", delegate { });
+                            alertDialog.Show();
+                        }
+
+                    };
+                }
+               
 
 
             }
