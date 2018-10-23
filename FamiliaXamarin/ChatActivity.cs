@@ -56,6 +56,7 @@ namespace FamiliaXamarin
 
         protected override void OnPause()
         {
+            Active = false;
             base.OnPause();
         }
         protected override void OnResume()
@@ -94,16 +95,14 @@ namespace FamiliaXamarin
 
             mMessages = new List<ChatModel>();
             Active = true;
-          mAdapter = new ChatAdapter(this, mMessages);
+            mAdapter = new ChatAdapter(this, mMessages);
             //            mAdapter.ItemClick += delegate (object sender, int i)
             //            {
             //                Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
             //            };
-            Ctx = this;
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.messages);
             _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
             _recyclerView.SetAdapter(mAdapter);
-            //ChangedData();
             Ctx = this;
             mInputMessageView = (EditText)FindViewById(Resource.Id.tbMessage);
             send = FindViewById<Button>(Resource.Id.Send);
@@ -120,10 +119,12 @@ namespace FamiliaXamarin
                 {
                     try
                     {
+                        //adaugare la lista de pretini
                         string SharedRooms = Utils.GetDefaults("Rooms", this);
                         //if (!string.IsNullOrEmpty(SharedRooms))
                         if (SharedRooms != null)
                             {
+                                
                             var model = JsonConvert.DeserializeObject<List<ConverstionsModel>>(SharedRooms);
 
                             var currentModel = new ConverstionsModel { Username = extras.GetString("EmailFrom"), Room = extras.GetString("Room") };
@@ -162,7 +163,6 @@ namespace FamiliaXamarin
                     }
                     RoomName = extras.GetString("Room");
                     mUsername = extras.GetString("EmailFrom");
-
                     var emailFrom = Utils.GetDefaults("Email", this);
                     try
                     {
@@ -170,17 +170,11 @@ namespace FamiliaXamarin
                         var mailObject = new JSONObject().Put("dest", dest).Put("from", emailFrom).Put("accepted", true);
                         Log.Error("aici", mailObject.ToString());
                         WebSocketClient.Client.Emit("chat accepted", mailObject);
-                        //finish();
-
                     }
                     catch (JSONException e)
                     {
                         e.PrintStackTrace();
                     }
-
-
-
-                    //finish();
                 }
                 else if (extras.GetBoolean("RejectClick"))
                 {
@@ -199,19 +193,11 @@ namespace FamiliaXamarin
                     }
                     Finish();
                 }
-                else if (extras.GetBoolean("Conv"))
-                {
-                    RoomName = extras.GetString("Room");
-                    mUsername = extras.GetString("EmailFrom");
-                    string message = extras.GetString("NewMessage");
-                }
-                else if (extras.GetBoolean("Conv2"))
-                {
-                    RoomName = extras.GetString("Room");
-                    mUsername = extras.GetString("EmailFrom");
-                    string message = extras.GetString("NewMessage");
-                    addMessage(message, ChatModel.TypeMessage);
-                }
+      
+                RoomName = extras.GetString("Room");
+                mUsername = extras.GetString("EmailFrom");
+                if(extras.ContainsKey("NewMessage"))
+                    addMessage(extras.GetString("NewMessage"), ChatModel.TypeMessage);
             }
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
@@ -231,7 +217,7 @@ namespace FamiliaXamarin
                 JSONObject messageToSend = null;
                 try
                 {
-                    messageToSend = new JSONObject().Put("message", message).Put("username", mUsername).Put("room", RoomName);
+                    messageToSend = new JSONObject().Put("message", message).Put("username", Utils.GetDefaults("Email", this)).Put("room", RoomName);
                 }
                 catch (JSONException e)
                 {
@@ -249,29 +235,6 @@ namespace FamiliaXamarin
                         mAdapter.NotifyDataSetChanged();
                         scrollToBottom();
                     });
-                //                if (type == 0)
-
-                //                {
-                //mMessages.Add(new ChatModel { Message = message, Type = type });
-//                mAdapter.AddMessage(new ChatModel { Message = message, Type = type });
-                //mMessages.Add(new ChatModel { Username = username, Message = message, Type = ChatModel.TypeMessage });
-                //mMessages.Add(new ChatModel.Builder(ChatModel.TypeMessage)
-                //                .Username(username).Message(message).Build());
-                //mMessages.Add(new ChatModel.Builder(ChatModel.TypeMyMessage)
-                //                .Username(username).Message(message).Build());
-                //                }
-                //                else if (type == 1)
-                //                {
-                //                    mMessages.Add(new ChatModel.Builder(ChatModel.TypeMyMessage)
-                //                        .Username(username).Message(message).Avatar(avatar).Build());
-                //                }
-                //mAdapter.NotifyItemInserted(mMessages.Count - 1);
-                
-            
-
-
-
-
         }
         private static void scrollToBottom()
         {

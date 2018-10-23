@@ -110,17 +110,17 @@ namespace FamiliaXamarin
             try
             {
 
-                //Log.Error("Active", "" + Chat.active);
-                if (!ChatActivity.RoomName.Equals(room))
+               //CAZUL 1 chat simplu intre 2 useri
+                if (ChatActivity.Active &&  ChatActivity.RoomName.Equals(room))
                 {
-                    //Chat.RoomName = room;
-                    //Chat.Email = username;
-                    //Chat.NewMessage = message;
+                    Log.Error("Caz 1", "*********************");
+                    ChatActivity.addMessage(message, ChatModel.TypeMessage);
 
-                    NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
-                    Utils.GetManager().Notify(100, nb.Build());
+//                    NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
+//                    Utils.GetManager().Notify(100, nb.Build());
                 }
-                else if (!ChatActivity.Active)
+                //CAZUL 2 user offline primeste chat
+                else if (!ChatActivity.Active && ChatActivity.RoomName.Equals(room))
                 {
                     Log.Error("Caz 2", "*********************");
                     //String[] data2 = message.split(" ");
@@ -128,17 +128,16 @@ namespace FamiliaXamarin
                     NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
                     Utils.GetManager().Notify(100, nb.Build());
                 }
-                else if (ChatActivity.RoomName.Equals(room) && ChatActivity.Active)
+                //CAZUL 3 user 1, user 2 converseaza, al3lea se baga in seama
+                else if (!ChatActivity.RoomName.Equals(room))
                 {
 
                     Log.Error("Caz 3", "*********************");
 
-                    //String[] data2 = message.split(" ");
-                    //removeTyping(username);
-                    Log.Error("Mesaj: ", message);
-                    //if(!data2[0].replace(":","").equals(Email))
-                    ChatActivity.addMessage(message, ChatModel.TypeMessage);
+                    NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
+                    Utils.GetManager().Notify(100, nb.Build());
                 }
+
             }
             catch (Exception ex)
             {
