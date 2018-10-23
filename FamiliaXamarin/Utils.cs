@@ -244,6 +244,7 @@ namespace FamiliaXamarin
                     intent.PutExtra("AcceptClick", true);
                     intent.PutExtra("EmailFrom", body.Replace(" doreste sa ia legatura cu tine!", ""));
                     intent.PutExtra("Room", room);
+                    intent.AddFlags(ActivityFlags.ClearTop);
                     rejectintent.PutExtra("RejectClick", true);
                     var acceptIntent = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
                     var rejectIntent = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
@@ -267,7 +268,7 @@ namespace FamiliaXamarin
                     break;
 
                 case 2:
-                    intent.PutExtra("Conv", true);
+                    intent.AddFlags(ActivityFlags.ClearTop);
                     intent.PutExtra("Room", room);
                     intent.PutExtra("EmailFrom", body.Replace(" ti-a acceptat cererea de chat!", ""));
 
@@ -294,9 +295,8 @@ namespace FamiliaXamarin
 
                     break;
                 case 3:
-                    intent.PutExtra("Conv2", true);
+                    intent.AddFlags(ActivityFlags.ClearTop);
                     intent.PutExtra("Room", room);
-                    intent.PutExtra("Notify", true);
                     intent.PutExtra("NewMessage", body);
                     intent.PutExtra("EmailFrom", title);
 
