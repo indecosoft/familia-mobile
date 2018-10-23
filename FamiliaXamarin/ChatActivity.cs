@@ -179,7 +179,6 @@ namespace FamiliaXamarin
                     }
 
 
-                    
 
                     //finish();
                 }
