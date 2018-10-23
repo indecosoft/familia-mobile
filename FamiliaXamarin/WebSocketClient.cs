@@ -63,6 +63,11 @@ namespace FamiliaXamarin
             }
         }                                      
 
+        public static void Disconect()
+        {
+            Client.Disconnect();
+        }
+
         public void Emit(string eventName, JSONObject value)
         {
             _socket.Emit(eventName, value);
