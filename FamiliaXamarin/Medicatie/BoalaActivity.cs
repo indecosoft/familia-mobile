@@ -218,7 +218,8 @@ namespace FamiliaXamarin.Medicatie
             
 
             var dateString = med.Date;
-            parts = dateString.Split('/');
+            Log.Error("MY DATE", med.Date);
+            parts = dateString.Split('.');
             var day = Convert.ToInt32(parts[0]);
             var month = Convert.ToInt32(parts[1]) - 1;
             var year = Convert.ToInt32(parts[2]);

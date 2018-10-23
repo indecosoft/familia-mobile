@@ -69,7 +69,7 @@ namespace FamiliaXamarin.Medicatie
             int year = cal.Get(CalendarField.Year);
             int month = cal.Get(CalendarField.Month);
             int day = cal.Get(CalendarField.DayOfMonth);
-            return $"{day}/{(month + 1)}/{year}";
+            return $"{day}.{(month + 1)}.{year}";
         }
        
 
@@ -304,6 +304,7 @@ namespace FamiliaXamarin.Medicatie
                     medicament.Name = name;
                     medicament.Hours = hourAdapter.GetList();
                     medicament.IntervalZi= intervalZi;
+                    medicament.Date = tvStartDate.Text;
                     string zile = etNumarZile.Text;
                     if (!zile.Equals(string.Empty))
                     {
@@ -390,7 +391,7 @@ namespace FamiliaXamarin.Medicatie
 
         public void OnDateSet(DatePicker view, int year, int month, int dayOfMonth)
         {
-            string dateSaved = $"{dayOfMonth}/ {(month + 1)} /{year}";
+            string dateSaved = $"{dayOfMonth}.{(month + 1)}.{year}";
             tvStartDate.Text = dateSaved;
             this.medicament.Date = dateSaved;
         }
