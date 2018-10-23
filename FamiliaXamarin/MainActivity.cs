@@ -175,6 +175,10 @@ namespace FamiliaXamarin
                     Utils.SetDefaults("Token", null, this);
                     //WebSoketClientClass.mSocket.disconnect();
                     //stopService(new Intent(this, WebSoketService.class));
+
+                        StopService(_loacationServiceIntent);
+                        StopService(_webSocketServiceIntent);
+   
                     StartActivity(typeof(LoginActivity));
                     Finish();
                     break;
