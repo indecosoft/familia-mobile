@@ -57,30 +57,9 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsistentForm.cs" />
-    <Compile Include="BenefitAdapter.cs" />
-    <Compile Include="BenefitSpinnerState.cs" />
-    <Compile Include="ChatActivity.cs" />
-    <Compile Include="ChatAdapter.cs" />
-    <Compile Include="ChatModel.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="DatePickerFragment.cs" />
-    <Compile Include="DevicesRecyclerViewAdapter.cs" />
-    <Compile Include="DistanceCalculator.cs" />
-    <Compile Include="FindUsersFragment.cs" />
-    <Compile Include="FirstSetup.cs" />
-    <Compile Include="FirstSetupViewPager.cs" />
-    <Compile Include="FusedLocationProviderCallback.cs" />
-    <Compile Include="GlucoseDevice\AddNewGucoseDeviceActivity.cs" />
-    <Compile Include="GlucoseDevice\GlucoseDeviceActivity.cs" />
-    <Compile Include="GlucoseDevice\GlucoseDeviceData.cs" />
-    <Compile Include="HealthDevicesFragment.cs" />
-    <Compile Include="IWebServices.cs" />
-    <Compile Include="IWebSocketClient.cs" />
     <Compile Include="JsonModels\ConverstionsModel.cs" />
     <Compile Include="JsonModels\FirstSetupModel.cs" />
-    <Compile Include="LocationService.cs" />
-    <Compile Include="LoginActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Medicatie\Alarm\AlarmActivity.cs" />
     <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiver.cs" />
@@ -102,24 +81,45 @@
     <Compile Include="Medicatie\MedicamentAdapter.cs" />
     <Compile Include="Medicatie\MedicineFragment.cs" />
     <Compile Include="Medicatie\Tasks\Tasks.cs" />
-    <Compile Include="PressureDevice\AddNewBloodPressureDeviceActivity.cs" />
-    <Compile Include="PressureDevice\BloodPressureData.cs" />
-    <Compile Include="PressureDevice\BloodPressureDeviceActivity.cs" />
-    <Compile Include="PwdResetActivity.cs" />
-    <Compile Include="QrCodeGenerator.cs" />
-    <Compile Include="RegisterActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SmartBand\AddSmartBandDeviceActivity.cs" />
-    <Compile Include="SmartBand\SmartBandDeviceActivity.cs" />
-    <Compile Include="UserCard.cs" />
-    <Compile Include="UserCardAdapter.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="WebServices.cs" />
-    <Compile Include="WebSocketClient.cs" />
-    <Compile Include="WebSocketService.cs" />
-    <Compile Include="ConversationsFragment.cs" />
-    <Compile Include="ConvAdapter.cs" />
+    <Compile Include="Chat\ChatActivity.cs" />
+    <Compile Include="Chat\ChatAdapter.cs" />
+    <Compile Include="Chat\ChatModel.cs" />
+    <Compile Include="WebSocket\WebServices.cs" />
+    <Compile Include="WebSocket\WebSocketClient.cs" />
+    <Compile Include="WebSocket\WebSocketService.cs" />
+    <Compile Include="WebSocket\IWebServices.cs" />
+    <Compile Include="WebSocket\IWebSocketClient.cs" />
+    <Compile Include="Devices\GlucoseDevice\AddNewGucoseDeviceActivity.cs" />
+    <Compile Include="Devices\GlucoseDevice\GlucoseDeviceActivity.cs" />
+    <Compile Include="Devices\GlucoseDevice\GlucoseDeviceData.cs" />
+    <Compile Include="Devices\PressureDevice\AddNewBloodPressureDeviceActivity.cs" />
+    <Compile Include="Devices\PressureDevice\BloodPressureData.cs" />
+    <Compile Include="Devices\PressureDevice\BloodPressureDeviceActivity.cs" />
+    <Compile Include="Devices\SmartBand\AddSmartBandDeviceActivity.cs" />
+    <Compile Include="Devices\SmartBand\SmartBandDeviceActivity.cs" />
+    <Compile Include="Devices\DevicesRecyclerViewAdapter.cs" />
+    <Compile Include="Devices\HealthDevicesFragment.cs" />
+    <Compile Include="Location\DistanceCalculator.cs" />
+    <Compile Include="Location\FusedLocationProviderCallback.cs" />
+    <Compile Include="Location\LocationService.cs" />
+    <Compile Include="Chat\UserCard.cs" />
+    <Compile Include="Chat\UserCardAdapter.cs" />
+    <Compile Include="Chat\FindUsersFragment.cs" />
+    <Compile Include="Active Conversations\ConvAdapter.cs" />
+    <Compile Include="Active Conversations\ConversationsFragment.cs" />
+    <Compile Include="Asistenta sociala\AsistentForm.cs" />
+    <Compile Include="Asistenta sociala\BenefitAdapter.cs" />
+    <Compile Include="Asistenta sociala\BenefitSpinnerState.cs" />
+    <Compile Include="Asistenta sociala\QrCodeGenerator.cs" />
+    <Compile Include="Login System\FirstSetup.cs" />
+    <Compile Include="Login System\FirstSetupViewPager.cs" />
+    <Compile Include="Login System\LoginActivity.cs" />
+    <Compile Include="Login System\PwdResetActivity.cs" />
+    <Compile Include="Login System\RegisterActivity.cs" />
+    <Compile Include="Helpers\DatePickerFragment.cs" />
+    <Compile Include="Helpers\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -579,6 +579,19 @@
     <AndroidResource Include="Resources\layout\activity_alarm.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Chat\" />
+    <Folder Include="WebSocket\" />
+    <Folder Include="Location\" />
+    <Folder Include="Devices\" />
+    <Folder Include="Devices\GlucoseDevice\" />
+    <Folder Include="Devices\PressureDevice\" />
+    <Folder Include="Devices\SmartBand\" />
+    <Folder Include="Active Conversations\" />
+    <Folder Include="Asistenta sociala\" />
+    <Folder Include="Login System\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
