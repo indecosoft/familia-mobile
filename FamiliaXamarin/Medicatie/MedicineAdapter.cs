@@ -7,27 +7,27 @@ using FamiliaXamarin.Medicatie.Entities;
 
 namespace FamiliaXamarin.Medicatie
 {
-    class MedicamentAdapter : RecyclerView.Adapter
+    class MedicineAdapter : RecyclerView.Adapter
     {
-        private List<Medicament> medicaments;
+        private List<Medicine> medicaments;
         private OnMedicamentClickListener listener;
 
-        public MedicamentAdapter(List<Medicament> medicaments)
+        public MedicineAdapter(List<Medicine> medicaments)
         {
-            this.medicaments = new List<Medicament>();
+            this.medicaments = new List<Medicine>();
             this.medicaments = medicaments;
         }
 
-        public MedicamentAdapter()
+        public MedicineAdapter()
         {
-            this.medicaments = new List<Medicament>();
+            this.medicaments = new List<Medicine>();
         }
-        public void setMedicaments(List<Medicament> medicaments)
+        public void setMedicaments(List<Medicine> medicaments)
         {
             this.medicaments.Clear();
             this.medicaments = medicaments;
         }
-        public List<Medicament> getMedicaments()
+        public List<Medicine> getMedicaments()
         {
             return medicaments;
         }
@@ -50,14 +50,14 @@ namespace FamiliaXamarin.Medicatie
         public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
         {
             var holder = viewHolder as MedicamentAdapterViewHolder;
-            Medicament medicament = medicaments[position];
+            Medicine medicament = medicaments[position];
             holder.tvTitle.Text =medicament.Name;
             holder.Medicament = medicament;
             holder.Listener = listener;
         }
 
         public override int ItemCount => medicaments.Count;
-        public void addMedicament(Medicament medicament)
+        public void addMedicament(Medicine medicament)
         {
             
             if (!medicaments.Contains(medicament))
@@ -66,18 +66,18 @@ namespace FamiliaXamarin.Medicatie
             }
         }
 
-        public void removeMedicament(Medicament medicament)
+        public void removeMedicament(Medicine medicament)
         {
             medicaments.Remove(medicament);
         }
-        public void updateMedicament(Medicament medicament, String idMed)
+        public void updateMedicament(Medicine medicament, String idMed)
         {
-            Medicament m = getMedicamentById(idMed);
+            Medicine m = getMedicamentById(idMed);
             m.Name = medicament.Name;
         }
-        public Medicament getMedicamentById(string idMed)
+        public Medicine getMedicamentById(string idMed)
         {
-            foreach (Medicament item in medicaments)
+            foreach (Medicine item in medicaments)
             {
                 if (item.IdMed.Equals(idMed))
                 {
@@ -99,7 +99,7 @@ namespace FamiliaXamarin.Medicatie
         public RelativeLayout container;
         public Button btnDelete;
         public OnMedicamentClickListener Listener;
-        public Medicament Medicament;
+        public Medicine Medicament;
         public MedicamentAdapterViewHolder(View itemView) : base(itemView)
         {
             //TextView = v;
@@ -135,8 +135,8 @@ namespace FamiliaXamarin.Medicatie
     }
     public interface OnMedicamentClickListener
     {
-        void OnMedicamentClick(Medicament medicament);
+        void OnMedicamentClick(Medicine medicament);
 
-        void OnMedicamentDeleteClick(Medicament medicament);
+        void OnMedicamentDeleteClick(Medicine medicament);
     }
 }

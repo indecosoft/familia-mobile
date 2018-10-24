@@ -17,7 +17,7 @@ namespace FamiliaXamarin.Medicatie
         private Button _btnDa;
         private Button _btnNu;
         private ICustomDialogDeleteBoalaListener _listener;
-        private Boala _boala;
+        private Disease _boala;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -35,7 +35,7 @@ namespace FamiliaXamarin.Medicatie
             _listener = listener;
         }
 
-        public void SetBoala(Boala boala)
+        public void SetBoala(Disease boala)
         {
             _boala = boala;
         }
@@ -61,7 +61,7 @@ namespace FamiliaXamarin.Medicatie
         }
         public interface ICustomDialogDeleteBoalaListener
         {
-            void OnYesClicked(string result, Boala boala);
+            void OnYesClicked(string result, Disease boala);
         }
     }
 }

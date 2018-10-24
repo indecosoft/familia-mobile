@@ -65,20 +65,19 @@
     <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiver.cs" />
     <Compile Include="Medicatie\Alarm\App.cs" />
     <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiverServer.cs" />
-    <Compile Include="Medicatie\Alarm\NotificationSettings.cs" />
-    <Compile Include="Medicatie\BoalaActivity.cs" />
-    <Compile Include="Medicatie\BoalaAdapter.cs" />
+    <Compile Include="Medicatie\DiseaseActivity.cs" />
+    <Compile Include="Medicatie\DiseaseAdapter.cs" />
     <Compile Include="Medicatie\CustomDialogDeleteBoala.cs" />
     <Compile Include="Medicatie\CustomDialogDeleteMedicament.cs" />
     <Compile Include="Medicatie\CustomDialogMedicamentDetails.cs" />
     <Compile Include="Medicatie\Data\Storage.cs" />
     <Compile Include="Medicatie\DatePickerMedicine.cs" />
-    <Compile Include="Medicatie\Entities\Boala.cs" />
+    <Compile Include="Medicatie\Entities\Disease.cs" />
     <Compile Include="Medicatie\Entities\Hour.cs" />
-    <Compile Include="Medicatie\Entities\Medicament.cs" />
+    <Compile Include="Medicatie\Entities\Medicine.cs" />
     <Compile Include="Medicatie\Entities\MedicationSchedule.cs" />
     <Compile Include="Medicatie\HourAdapter.cs" />
-    <Compile Include="Medicatie\MedicamentAdapter.cs" />
+    <Compile Include="Medicatie\MedicineAdapter.cs" />
     <Compile Include="Medicatie\MedicineFragment.cs" />
     <Compile Include="Medicatie\Tasks\Tasks.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
@@ -97,7 +96,6 @@
     <Compile Include="Devices\PressureDevice\AddNewBloodPressureDeviceActivity.cs" />
     <Compile Include="Devices\PressureDevice\BloodPressureData.cs" />
     <Compile Include="Devices\PressureDevice\BloodPressureDeviceActivity.cs" />
-    <Compile Include="Devices\SmartBand\AddSmartBandDeviceActivity.cs" />
     <Compile Include="Devices\SmartBand\SmartBandDeviceActivity.cs" />
     <Compile Include="Devices\DevicesRecyclerViewAdapter.cs" />
     <Compile Include="Devices\HealthDevicesFragment.cs" />
@@ -580,19 +578,7 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Chat\" />
-    <Folder Include="WebSocket\" />
-    <Folder Include="Location\" />
-    <Folder Include="Devices\" />
-    <Folder Include="Devices\GlucoseDevice\" />
-    <Folder Include="Devices\PressureDevice\" />
-    <Folder Include="Devices\SmartBand\" />
-    <Folder Include="Active Conversations\" />
-    <Folder Include="Asistenta sociala\" />
-    <Folder Include="Login System\" />
-    <Folder Include="Helpers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.

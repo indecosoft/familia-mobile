@@ -7,22 +7,22 @@ using FamiliaXamarin.Medicatie.Entities;
 
 namespace FamiliaXamarin.Medicatie
 {
-    class BoalaAdapter : RecyclerView.Adapter
+    class DiseaseAdapter : RecyclerView.Adapter
     {
 
         private IOnBoalaClickListener listenerBoala;
-        private List<Boala> boalaList;
+        private List<Disease> boalaList;
 
-        public BoalaAdapter(List<Boala> data)
+        public DiseaseAdapter(List<Disease> data)
         {
             boalaList= data;
             
         }
-        public BoalaAdapter()
+        public DiseaseAdapter()
         {
-            boalaList = new List<Boala>();
+            boalaList = new List<Disease>();
         }
-        public void setBoli(List<Boala> data)
+        public void setBoli(List<Disease> data)
         {
             boalaList.Clear();
             boalaList= data;
@@ -44,8 +44,8 @@ namespace FamiliaXamarin.Medicatie
         public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
         {
             var holder = viewHolder as BoalaAdapterViewHolder;
-            Boala boala = boalaList[position];
-            holder.tvBoala.Text = boala.NumeBoala;
+            Disease boala = boalaList[position];
+            holder.tvBoala.Text = boala.DiseaseName;
             holder.Boala = boala;
             holder.listenerBoala = listenerBoala;
 
@@ -54,11 +54,11 @@ namespace FamiliaXamarin.Medicatie
 
       
         public override int ItemCount => boalaList.Count;
-        public void addBoala(Boala boala)
+        public void addBoala(Disease boala)
         {
             boalaList.Add(boala);
         }
-        public void removeBoala(Boala boala) { boalaList.Remove(boala); }
+        public void removeBoala(Disease boala) { boalaList.Remove(boala); }
         //        void OnClick(BoalaAdapterClickEventArgs args) => listenerBoala?.Invoke(this, args);
         //
         //       
@@ -71,7 +71,7 @@ namespace FamiliaXamarin.Medicatie
         public TextView tvBoala;
         public RelativeLayout rlBoliContainer;
         public Button btnDelete;
-        public Boala Boala;
+        public Disease Boala;
         public IOnBoalaClickListener listenerBoala;
 
     public BoalaAdapterViewHolder(View itemView) : base(itemView)
@@ -101,8 +101,8 @@ namespace FamiliaXamarin.Medicatie
 
     public interface IOnBoalaClickListener
     {
-        void OnBoalaClick(Boala boala);
-        void OnBoalaDelete(Boala boala);
+        void OnBoalaClick(Disease boala);
+        void OnBoalaDelete(Disease boala);
     }
 
 }

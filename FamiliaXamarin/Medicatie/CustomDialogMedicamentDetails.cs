@@ -27,7 +27,7 @@ namespace FamiliaXamarin.Medicatie
         private RadioButton rbNrZile;
         private HourAdapter hourAdapter;
         private IMedSaveListener listener;
-        private Medicament medicament;
+        private Medicine medicament;
         private IMode mode;
         private int intervalZi;
         private Activity activity;
@@ -37,7 +37,7 @@ namespace FamiliaXamarin.Medicatie
         private TextView tvStartDate;
         private bool listmode = true;
 
-        public CustomDialogMedicamentDetails(Context context, Medicament medicament) : base(context)
+        public CustomDialogMedicamentDetails(Context context, Medicine medicament) : base(context)
         {
             this.activity = (Activity)context;
             mode = medicament == null ? IMode.SAVE : IMode.UPDATE;
@@ -111,15 +111,15 @@ namespace FamiliaXamarin.Medicatie
     private void setViewOnUpdate()
     {
         listmode = false;
-        spinner.SetSelection(medicament.IntervalZi - 1);
+        spinner.SetSelection(medicament.IntervalOfDay - 1);
 
         hourAdapter.SetList(medicament.Hours);
         hourAdapter.NotifyDataSetChanged();
-        if (medicament.NrZile != 0)
+        if (medicament.NumberOfDays != 0)
         {
             rbNrZile.Checked =true;
             etNumarZile.Visibility = ViewStates.Visible;
-            etNumarZile.Text = medicament.NrZile + "";
+            etNumarZile.Text = medicament.NumberOfDays + "";
 
         }
         else
@@ -182,7 +182,7 @@ namespace FamiliaXamarin.Medicatie
 
             if (medicament == null)
             {
-                medicament = new Medicament(etMedicamentName.Text);
+                medicament = new Medicine(etMedicamentName.Text);
                 medicament.Date = getCurrentDate();
             }
 
@@ -212,9 +212,9 @@ namespace FamiliaXamarin.Medicatie
     }
         public interface IMedSaveListener
         {
-            void onMedSaved(Medicament medicament);
+            void onMedSaved(Medicine medicament);
 
-            void onMedUpdated(Medicament medicament);
+            void onMedUpdated(Medicine medicament);
 
         }
 
@@ -297,24 +297,24 @@ namespace FamiliaXamarin.Medicatie
             {
                 if (medicament == null)
                 {
-                    medicament = new Medicament(name);
+                    medicament = new Medicine(name);
                 }
                 else
                 {
                     medicament.Name = name;
                     medicament.Hours = hourAdapter.GetList();
-                    medicament.IntervalZi= intervalZi;
+                    medicament.IntervalOfDay= intervalZi;
                     medicament.Date = tvStartDate.Text;
                     string zile = etNumarZile.Text;
                     if (!zile.Equals(string.Empty))
                     {
                         int nrZile = int.Parse(zile);
-                        medicament.NrZile = nrZile;
+                        medicament.NumberOfDays = nrZile;
                         
                     }
                     else
                     {
-                        medicament.NrZile = 0;
+                        medicament.NumberOfDays = 0;
                     }
                 }
                 switch (mode)
@@ -365,7 +365,7 @@ namespace FamiliaXamarin.Medicatie
         private void onTimeSelected(TimePicker timePicker, int selectedHour, int selectedMinute, Hour myHour)
         {
             timeSelected = selectedHour + ":" + selectedMinute;
-            myHour.Nume = timeSelected;
+            myHour.HourName = timeSelected;
             hourAdapter.updateHour(myHour);
             hourAdapter.NotifyDataSetChanged();
             Calendar calendar = getCalendar(timePicker, selectedHour, selectedMinute);
