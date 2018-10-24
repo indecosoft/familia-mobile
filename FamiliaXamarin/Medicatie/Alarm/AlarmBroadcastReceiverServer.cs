@@ -107,7 +107,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
         {
             var res = await Tasks.Tasks.PostMedicine($"{Constants.PublicServerAddress}/api/medicine", uuid, date, Utils.GetDefaults("Token", context));
 
-            Log.Error("#################", res);
+            Log.Error("#################", ""+res);
         }
 
         void createNotificationChannel(string mChannel, string mTitle, string mContent)

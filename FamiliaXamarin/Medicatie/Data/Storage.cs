@@ -21,7 +21,7 @@ namespace FamiliaXamarin.Medicatie.Data
 {
     class Storage
     {
-        private int Id;
+       
         private static Storage Instance;
         private List<Disease> DiseaseList;
         private static readonly object padlock = new object();
@@ -30,7 +30,7 @@ namespace FamiliaXamarin.Medicatie.Data
         {
             this.DiseaseList = new List<Disease>();
         }
-//        [MethodImpl(MethodImplOptions.Synchronized)]
+
         public static Storage GetInstance()
         {
             lock (padlock)
@@ -53,9 +53,6 @@ namespace FamiliaXamarin.Medicatie.Data
 
         public void AddDisease(Context context, Disease disease)
         {
-            //disease.setId("disease" + Id++);
-            //Random r = new Random();
-            //disease.Id = r.Next(0, int.MaxValue) * r.Next(0, int.MaxValue);
             DiseaseList.Add(disease);
             disease.Id = DiseaseList.IndexOf(disease).ToString();
             SaveData(context, disease);
@@ -96,18 +93,6 @@ namespace FamiliaXamarin.Medicatie.Data
             }
             SaveCurrentData(context);
             return disease;
-
-//            for (Boala item : DiseaseList)
-//            {
-//                if (item.getId().equals(disease.getId()))
-//                {
-//                    item.setNumeBoala(disease.getNumeBoala());
-//                    item.setMedicamentList(disease.getMedicamentList());
-//                }
-//            }
-//            SaveCurrentData(context);
-//            return disease;
-        
     }
 
         public void SaveCurrentData(Context context)
