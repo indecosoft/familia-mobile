@@ -31,7 +31,7 @@ namespace FamiliaXamarin.Medicatie.Tasks
 
                 }
             }
-            catch (HttpRequestException e)
+            catch (HttpRequestException)
             {
                 return null;
             }
@@ -53,7 +53,7 @@ namespace FamiliaXamarin.Medicatie.Tasks
                 }
 
             }
-            catch (HttpRequestException e)
+            catch (HttpRequestException)
             {
                 return null;
             }

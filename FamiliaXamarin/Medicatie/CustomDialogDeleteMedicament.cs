@@ -18,7 +18,7 @@ namespace FamiliaXamarin.Medicatie
         private Button btnDa;
         private Button btnNu;
         private ICustomDialogDeleteMedicamentListener listener;
-        private Medicament medicament;
+        private Medicine medicament;
 
         public CustomDialogDeleteMedicament(Context context) : base(context)
         {
@@ -40,14 +40,14 @@ namespace FamiliaXamarin.Medicatie
             this.listener = listener;
         }
 
-        public void setMedicament(Medicament medicament)
+        public void setMedicament(Medicine medicament)
         {
             this.medicament = medicament;
         }
 
         public interface ICustomDialogDeleteMedicamentListener
         {
-            void onYesClicked(String result, Medicament medicament);
+            void onYesClicked(String result, Medicine medicament);
         }
 
         public void OnClick(View v)

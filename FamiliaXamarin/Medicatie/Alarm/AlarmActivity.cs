@@ -23,10 +23,10 @@ namespace FamiliaXamarin.Medicatie.Alarm
         private Button btnOk;
         private Button btnSnooze;
         private string boalaId;
-        private List<Boala> boli;
+        private List<Disease> boli;
 
-        private Boala mBoala;
-        private Medicament mMed;
+        private Disease mBoala;
+        private Medicine mMed;
         private int mIdAlarm;
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -38,14 +38,14 @@ namespace FamiliaXamarin.Medicatie.Alarm
             btnSnooze = FindViewById<Button>(Resource.Id.btn_snooze_alarm);
             btnSnooze.SetOnClickListener(this);
             Intent intent = Intent;
-            boalaId = intent.GetStringExtra(BoalaActivity.BOALA_ID);
-            medId = intent.GetStringExtra(BoalaActivity.MED_ID);
-            boli = Storage.getInstance().getBoliTest(this);
-            mBoala = Storage.getInstance().getBoala(boalaId);
+            boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
+            medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
+            boli = Storage.GetInstance().GetListOfDiseasesFromFile(this);
+            mBoala = Storage.GetInstance().GetDisease(boalaId);
             if (mBoala != null)
             {
-                mMed = mBoala.getMedicamentById(medId);
-                mIdAlarm = intent.GetIntExtra(BoalaActivity.ALARM_ID, -1);
+                mMed = mBoala.GetMedicineById(medId);
+                mIdAlarm = intent.GetIntExtra(DiseaseActivity.ALARM_ID, -1);
                 tvMedName.Text = mMed.Name;
             }
 
@@ -68,9 +68,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     var am = (AlarmManager)GetSystemService(AlarmService);
 
                     var i = new Intent(this, typeof(AlarmBroadcastReceiver));
-                    i.PutExtra(BoalaActivity.BOALA_ID, mBoala.Id);
-                    i.PutExtra(BoalaActivity.MED_ID, mMed.IdMed);
-                    i.PutExtra(BoalaActivity.ALARM_ID, mIdAlarm);
+                    i.PutExtra(DiseaseActivity.BOALA_ID, mBoala.Id);
+                    i.PutExtra(DiseaseActivity.MED_ID, mMed.IdMed);
+                    i.PutExtra(DiseaseActivity.ALARM_ID, mIdAlarm);
 
                     var pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
                     var afterFiveMins = 2 * 60000;

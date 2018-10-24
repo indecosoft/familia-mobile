@@ -22,24 +22,24 @@ namespace FamiliaXamarin.Medicatie.Alarm
     [BroadcastReceiver(Enabled = true, Exported = true)]
     class AlarmBroadcastReceiver : BroadcastReceiver
     {
-        private List<Boala> boli;
+        private List<Disease> boli;
         
         private Hour mHour;
-        private Boala mBoala;
-        private Medicament mMed;
+        private Disease mBoala;
+        private Medicine mMed;
         public override void OnReceive(Context context, Intent intent)
         {
 
-            string medId = intent.GetStringExtra(BoalaActivity.MED_ID);
-            string boalaId = intent.GetStringExtra(BoalaActivity.BOALA_ID);
-            string hourId = intent.GetStringExtra(BoalaActivity.HOUR_ID);
+            string medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
+            string boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
+            string hourId = intent.GetStringExtra(DiseaseActivity.HOUR_ID);
 
-            boli = Storage.getInstance().getBoliTest(context);
-            mBoala = Storage.getInstance().getBoala(boalaId);
+            boli = Storage.GetInstance().GetListOfDiseasesFromFile(context);
+            mBoala = Storage.GetInstance().GetDisease(boalaId);
              
             if (mBoala != null)
             {
-                mMed = mBoala.getMedicamentById(medId);
+                mMed = mBoala.GetMedicineById(medId);
 
                 if (mMed != null)
                 {
@@ -48,9 +48,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
 
 
-                    if (mMed.NrZile != 0)
+                    if (mMed.NumberOfDays != 0)
                     {   
-                        var hourString = mHour.Nume;
+                        var hourString = mHour.HourName;
                         var parts = hourString.Split(':');
                         var timeHour = Convert.ToInt32(parts[0]);
                         var timeMinute = Convert.ToInt32(parts[1]);
@@ -71,7 +71,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                         setCalendar.Set(CalendarField.DayOfMonth, day);
 
                         
-                        setCalendar.Add(CalendarField.Date, mMed.NrZile);
+                        setCalendar.Add(CalendarField.Date, mMed.NumberOfDays);
 
                         if (setCalendar.After(calendar))
                         {                                     
@@ -98,8 +98,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
             Intent i = new Intent(context, typeof(AlarmActivity));
             Intent intentNotification = new Intent(context, typeof(MedicineFragment));
             //context.startActivity(new Intent(context, AlarmActivity.class));
-            i.PutExtra(BoalaActivity.MED_ID, medId);
-            i.PutExtra(BoalaActivity.BOALA_ID, boalaId);
+            i.PutExtra(DiseaseActivity.MED_ID, medId);
+            i.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
             
 
             context.StartActivity(i);
