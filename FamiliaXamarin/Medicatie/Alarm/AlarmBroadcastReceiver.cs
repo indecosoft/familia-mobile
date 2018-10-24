@@ -60,7 +60,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                         setCalendar.Set(CalendarField.Minute, timeMinute);
                         setCalendar.Set(CalendarField.Second, 0);
                         var dateString = mMed.Date;
-                        parts = dateString.Split('/');
+                        parts = dateString.Split('.');
                         var day = Convert.ToInt32(parts[0]);
                         var month = Convert.ToInt32(parts[1]) - 1;
                         var year = Convert.ToInt32(parts[2]);
