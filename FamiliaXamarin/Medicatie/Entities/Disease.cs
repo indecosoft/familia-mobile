@@ -64,14 +64,5 @@ namespace FamiliaXamarin.Medicatie.Entities
 
             return DiseaseName.Equals(m?.DiseaseName);
         }
-
-        public override int GetHashCode()
-        {
-            var hashCode = -872716237;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Id);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(DiseaseName);
-            hashCode = hashCode * -1521134295 + EqualityComparer<List<Medicine>>.Default.GetHashCode(ListOfMedicines);
-            return hashCode;
-        }
     }
 }
