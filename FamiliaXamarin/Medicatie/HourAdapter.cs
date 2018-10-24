@@ -9,8 +9,8 @@ namespace FamiliaXamarin.Medicatie
 {
     class HourAdapter : RecyclerView.Adapter
     {
-        public event EventHandler<HourAdapterClickEventArgs> ItemClick;
-        public event EventHandler<HourAdapterClickEventArgs> ItemLongClick;
+       //public event EventHandler<HourAdapterClickEventArgs> ItemClick;
+       // public event EventHandler<HourAdapterClickEventArgs> ItemLongClick;
         private List<Hour> hours;
 
         private OnHourClickListener listener;
@@ -45,7 +45,7 @@ namespace FamiliaXamarin.Medicatie
             Hour hour = hours[position];
             if (holder != null)
             {
-                holder.tvHour.Text = hour.Nume;
+                holder.tvHour.Text = hour.HourName;
                 holder.Hour = hour;
                 holder.Listener = listener;
 
