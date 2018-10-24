@@ -28,11 +28,11 @@ namespace FamiliaXamarin
     public class ChatActivity : AppCompatActivity
     {
 
-        private Button start;
+        //private Button start;
         private Button send;
-        private static int REQUEST_LOGIN = 0;
+        //private static int REQUEST_LOGIN = 0;
 
-        private static int TYPING_TIMER_LENGTH = 600;
+        //private static int TYPING_TIMER_LENGTH = 600;
 
         public static RecyclerView _recyclerView;
         public static EditText mInputMessageView;
@@ -43,10 +43,10 @@ namespace FamiliaXamarin
 
         public static bool Active = false;
         public static bool FromNotify = false;
-        private bool mTyping = false;
+        //private bool mTyping = false;
         private Handler mTypingHandler = new Handler();
         private static string mUsername;
-        private static string Token;
+       //private static string Token;
         public static string EmailDest;
         private static ChatActivity Ctx;
         public static string Avatar;
@@ -96,10 +96,10 @@ namespace FamiliaXamarin
             mMessages = new List<ChatModel>();
             Active = true;
             mAdapter = new ChatAdapter(this, mMessages);
-            //            mAdapter.ItemClick += delegate (object sender, int i)
-            //            {
-            //                Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
-            //            };
+                        //mAdapter.ItemClick += delegate (object sender, int i)
+                        //{
+                        //    Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
+                        //};
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.messages);
             _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
             _recyclerView.SetAdapter(mAdapter);
