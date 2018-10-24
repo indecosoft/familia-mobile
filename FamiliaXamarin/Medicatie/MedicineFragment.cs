@@ -18,7 +18,7 @@ namespace FamiliaXamarin.Medicatie
     public class MedicineFragment : Android.Support.V4.App.Fragment ,View.IOnClickListener, IOnBoalaClickListener, CustomDialogDeleteBoala.ICustomDialogDeleteBoalaListener
     {
         public static string IdBoala = "id_boala";
-        private BoalaAdapter _boalaAdapter;
+        private DiseaseAdapter _boalaAdapter;
         private List<MedicationSchedule> medications;
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -151,7 +151,7 @@ namespace FamiliaXamarin.Medicatie
 
         private void SetListForAdapter()
         {
-            _boalaAdapter.setBoli(Storage.getInstance().getBoliTest(Activity));
+            _boalaAdapter.setBoli(Storage.GetInstance().GetListOfDiseasesFromFile(Activity));
             _boalaAdapter.NotifyDataSetChanged();
         }
 
@@ -161,7 +161,7 @@ namespace FamiliaXamarin.Medicatie
             RecyclerView rvBoli = view.FindViewById<RecyclerView>(Resource.Id.rv_notes);
             LinearLayoutManager layoutManager = new LinearLayoutManager(Activity);
             rvBoli.SetLayoutManager(layoutManager);
-            _boalaAdapter = new BoalaAdapter();
+            _boalaAdapter = new DiseaseAdapter();
             _boalaAdapter.SetListenerBoala(this);
             rvBoli.SetAdapter(_boalaAdapter);
         }
@@ -170,20 +170,20 @@ namespace FamiliaXamarin.Medicatie
             switch (v.Id)
             {
                 case Resource.Id.btn_add_disease:
-                    Activity.StartActivity(typeof(BoalaActivity));
+                    Activity.StartActivity(typeof(DiseaseActivity));
                     break;
             }
         }
 
 
-        public void OnBoalaClick(Boala boala)
+        public void OnBoalaClick(Disease boala)
         {
-            Intent intent = new Intent(Application.Context, typeof(BoalaActivity));
+            Intent intent = new Intent(Application.Context, typeof(DiseaseActivity));
             intent.PutExtra(IdBoala, boala.Id);
             StartActivity(intent);
         }
 
-        public void OnBoalaDelete(Boala boala)
+        public void OnBoalaDelete(Disease boala)
         {
             CustomDialogDeleteBoala cddb = new CustomDialogDeleteBoala(Activity);
             cddb.SetListener(this);
@@ -192,12 +192,12 @@ namespace FamiliaXamarin.Medicatie
         }
 
 
-        public void OnYesClicked(string result, Boala boala)
+        public void OnYesClicked(string result, Disease boala)
         {
             if (result.Equals("yes"))
             {
-                Storage.getInstance().removeBoala(Activity, boala);
-                List<Medicament> meds = boala.MedicamentList;
+                Storage.GetInstance().removeBoala(Activity, boala);
+                List<Medicine> meds = boala.ListOfMedicines;
                 CancelAlarms(meds);
 
                 _boalaAdapter.removeBoala(boala);
@@ -206,7 +206,7 @@ namespace FamiliaXamarin.Medicatie
             }
         }
 
-        private void CancelAlarms(List<Medicament> meds)
+        private void CancelAlarms(List<Medicine> meds)
         {
             foreach (var med in meds)
             {

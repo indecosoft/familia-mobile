@@ -23,7 +23,7 @@ using Calendar = Java.Util.Calendar;
 namespace FamiliaXamarin.Medicatie
 {
     [Activity(Label = "BoalaActivity", Theme = "@style/AppTheme.Dark")]
-    public class BoalaActivity : AppCompatActivity, View.IOnClickListener, CustomDialogMedicamentDetails.IMedSaveListener, OnMedicamentClickListener, CustomDialogDeleteMedicament.ICustomDialogDeleteMedicamentListener
+    public class DiseaseActivity : AppCompatActivity, View.IOnClickListener, CustomDialogMedicamentDetails.IMedSaveListener, OnMedicamentClickListener, CustomDialogDeleteMedicament.ICustomDialogDeleteMedicamentListener
     {
         public static readonly string MED_ID = "medId";
         public static readonly string BOALA_ID = "boalaId";
@@ -33,9 +33,9 @@ namespace FamiliaXamarin.Medicatie
         private Button update;
         private EditText etNumeBoala;
 
-        private MedicamentAdapter medicamentAdapter;
+        private MedicineAdapter medicamentAdapter;
 
-        private Boala boala;
+        private Disease boala;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -70,7 +70,7 @@ namespace FamiliaXamarin.Medicatie
             RecyclerView rvMeds = FindViewById<RecyclerView>(Resource.Id.rv_meds);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             rvMeds.SetLayoutManager(layoutManager);
-            medicamentAdapter = new MedicamentAdapter();
+            medicamentAdapter = new MedicineAdapter();
             medicamentAdapter.setListener(this);
 
             rvMeds.SetAdapter(medicamentAdapter);
@@ -83,15 +83,15 @@ namespace FamiliaXamarin.Medicatie
             if (intent.HasExtra(MedicineFragment.IdBoala))
             {
                 string idBoala = intent.GetStringExtra(MedicineFragment.IdBoala);
-                boala = Storage.getInstance().getBoala(idBoala);
-                medicamentAdapter.setMedicaments(boala.MedicamentList);
+                boala = Storage.GetInstance().GetDisease(idBoala);
+                medicamentAdapter.setMedicaments(boala.ListOfMedicines);
                 medicamentAdapter.NotifyDataSetChanged();
-                etNumeBoala.Text = boala.NumeBoala;
+                etNumeBoala.Text = boala.DiseaseName;
                 save.Visibility = ViewStates.Gone;
             }
             else
             {
-                boala = new Boala();
+                boala = new Disease();
                 update.Visibility = ViewStates.Gone;
             }
         }
@@ -110,7 +110,7 @@ namespace FamiliaXamarin.Medicatie
                     break;
             }
         }
-        private CustomDialogMedicamentDetails openMedDialog(Medicament medicament)
+        private CustomDialogMedicamentDetails openMedDialog(Medicine medicament)
         {
             CustomDialogMedicamentDetails cdd = new CustomDialogMedicamentDetails(this, medicament);
             cdd.SetListener(this);
@@ -119,9 +119,9 @@ namespace FamiliaXamarin.Medicatie
             return cdd;
         }
 
-        private void addNewMed(Medicament medicament)
+        private void addNewMed(Medicine medicament)
         {
-            boala.addMedicament(medicament);
+            boala.AddMedicine(medicament);
             medicamentAdapter.addMedicament(medicament);
             medicamentAdapter.NotifyDataSetChanged();
         }
@@ -130,9 +130,9 @@ namespace FamiliaXamarin.Medicatie
         {
             string numeBoala = etNumeBoala.Text;
 
-            boala.MedicamentList = medicamentAdapter.getMedicaments();
-            boala.NumeBoala = numeBoala;
-            Storage.getInstance().updateBoala(this, boala);
+            boala.ListOfMedicines = medicamentAdapter.getMedicaments();
+            boala.DiseaseName = numeBoala;
+            Storage.GetInstance().updateBoala(this, boala);
 
             setupAlarm();
 
@@ -152,9 +152,9 @@ namespace FamiliaXamarin.Medicatie
                 Toast.MakeText(this, "Nu ati introdus numele BOLII", ToastLength.Short).Show();
                 return;
             }
-            boala.MedicamentList = medicamentAdapter.getMedicaments();
-            boala.NumeBoala = numeBoala;
-            Storage.getInstance().addBoala(this, boala);
+            boala.ListOfMedicines = medicamentAdapter.getMedicaments();
+            boala.DiseaseName = numeBoala;
+            Storage.GetInstance().AddDisease(this, boala);
 
             setupAlarm();
 
@@ -163,8 +163,8 @@ namespace FamiliaXamarin.Medicatie
 
         private void setupAlarm()
         {
-            List<Medicament> meds = boala.MedicamentList;
-            foreach (Medicament med in meds)
+            List<Medicine> meds = boala.ListOfMedicines;
+            foreach (Medicine med in meds)
             {
                 List<Hour> hours = med.Hours;
                 List<int> alarms = new List<int>();
@@ -184,7 +184,7 @@ namespace FamiliaXamarin.Medicatie
         {
             return (int)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
         }
-        private void setAlarm(Hour hour, Medicament med, Boala boala, ref List<int> alarms, int position)
+        private void setAlarm(Hour hour, Medicine med, Disease boala, ref List<int> alarms, int position)
         {
             var id = CurrentTimeMillis(); ;
             var am = (AlarmManager)GetSystemService(AlarmService);
@@ -205,7 +205,7 @@ namespace FamiliaXamarin.Medicatie
             var pi = PendingIntent.GetBroadcast(this, id, i, PendingIntentFlags.OneShot);
 
             if (am == null) return;
-            var hourString = hour.Nume;
+            var hourString = hour.HourName;
             var parts = hourString.Split(':');
             var timeHour = Convert.ToInt32(parts[0]);
             var timeMinute = Convert.ToInt32(parts[1]);
@@ -242,23 +242,23 @@ namespace FamiliaXamarin.Medicatie
 
         }
 
-        public void onMedSaved(Medicament medicament)
+        public void onMedSaved(Medicine medicament)
         {
             addNewMed(medicament);
         }
 
-        public void onMedUpdated(Medicament medicament)
+        public void onMedUpdated(Medicine medicament)
         {
             medicamentAdapter.updateMedicament(medicament, medicament.IdMed);
             medicamentAdapter.NotifyDataSetChanged();
         }
 
-        public void OnMedicamentClick(Medicament medicament)
+        public void OnMedicamentClick(Medicine medicament)
         {
             openMedDialog(medicament);
         }
 
-        public void OnMedicamentDeleteClick(Medicament medicament)
+        public void OnMedicamentDeleteClick(Medicine medicament)
         {
             CustomDialogDeleteMedicament cddb = new CustomDialogDeleteMedicament(this);
             cddb.setListener(this);
@@ -266,11 +266,11 @@ namespace FamiliaXamarin.Medicatie
             cddb.Show();
         }
 
-        public void onYesClicked(string result, Medicament medicament)
+        public void onYesClicked(string result, Medicine medicament)
         {
             if (result.Equals("yes"))
             {
-                boala.removeMedicament(medicament);
+                boala.RemoveMedicine(medicament);
                 medicamentAdapter.removeMedicament(medicament);
                 medicamentAdapter.NotifyDataSetChanged();
             }
