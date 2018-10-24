@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Android.Widget;
 using FamiliaXamarin.Medicatie.Entities;
 using Java.Util;
 
@@ -31,7 +32,7 @@ namespace FamiliaXamarin.Medicatie.Tasks
 
                 }
             }
-            catch (HttpRequestException)
+            catch (Exception)
             {
                 return null;
             }
@@ -53,7 +54,7 @@ namespace FamiliaXamarin.Medicatie.Tasks
                 }
 
             }
-            catch (HttpRequestException)
+            catch (Exception)
             {
                 return null;
             }
