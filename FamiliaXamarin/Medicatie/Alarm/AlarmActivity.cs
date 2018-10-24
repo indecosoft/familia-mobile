@@ -73,7 +73,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     i.PutExtra(DiseaseActivity.ALARM_ID, mIdAlarm);
 
                     var pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
-                    var afterFiveMins = 2 * 60000;
+                    var afterFiveMins = 5 * 60000;
 
                     if (am != null)
                     {
