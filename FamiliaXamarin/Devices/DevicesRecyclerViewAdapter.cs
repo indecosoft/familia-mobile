@@ -12,8 +12,8 @@ namespace FamiliaXamarin
         public event EventHandler<int> ItemClick;
         public event EventHandler<DevicesRecyclerViewAdapterClickEventArgs> ItemLongClick;
         //string[] items;
-        private List<string> mData;
-        private LayoutInflater mInflater;
+        List<string> mData;
+        LayoutInflater mInflater;
 
         public DevicesRecyclerViewAdapter(Context context, List<string> data)
         {
@@ -33,22 +33,19 @@ namespace FamiliaXamarin
         }
 
         // Replace the contents of a view (invoked by the layout manager)
-        public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
+        public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            var holder = viewHolder as DevicesRecyclerViewAdapterViewHolder;
+            var viewholder = holder as DevicesRecyclerViewAdapterViewHolder;
             var currentCrewMember = mData[position];
-            holder.myTextView.Text = currentCrewMember;
+            viewholder.TextViewName.Text = currentCrewMember;
 
             // Replace the contents of the view with that element
             //var holder = viewHolder as DevicesRecyclerViewAdapterViewHolder;
             //holder.TextView.Text = items[position];
         }
-        private void OnClick(int position)
+        void OnClick(int position)
         {
-            if (ItemClick != null)
-            {
-                ItemClick(this, position);
-            }
+            ItemClick?.Invoke(this, position);
         }
         public override int ItemCount => mData.Count;
 
@@ -59,23 +56,15 @@ namespace FamiliaXamarin
 
     public class DevicesRecyclerViewAdapterViewHolder : RecyclerView.ViewHolder
     {
-        //public TextView TextView { get; set; }
-        public TextView myTextView { get; set; }
+        public TextView TextViewName { get; set; }
 
         public DevicesRecyclerViewAdapterViewHolder(View itemView, Action<int> listener) : base(itemView)
         {
-            myTextView = (TextView) itemView.FindViewById(Resource.Id.name);
-            itemView.Click += (sender, e) => listener(base.Position);
-            //itemView.SetOnClickListener(this);
+            TextViewName = (TextView) itemView.FindViewById(Resource.Id.name);
+#pragma warning disable CS0618 // Type or member is obsolete
+            itemView.Click += (sender, e) => listener(obj: base.Position);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
-
-//        public DevicesRecyclerViewAdapterViewHolder(View itemView, Action<DevicesRecyclerViewAdapterClickEventArgs> clickListener,
-//                            Action<DevicesRecyclerViewAdapterClickEventArgs> longClickListener) : base(itemView)
-//        {
-//            //TextView = v;
-//            itemView.Click += (sender, e) => clickListener(new DevicesRecyclerViewAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
-//            itemView.LongClick += (sender, e) => longClickListener(new DevicesRecyclerViewAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
-//        }
 
     }
 

@@ -33,7 +33,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 namespace FamiliaXamarin.PressureDevice
 {
     [Activity(Label = "BloodPressureDeviceActivity", Theme = "@style/AppTheme.Dark")]
-    public class BloodPressureDeviceActivity : AppCompatActivity, Animator.IAnimatorListener, IComparator
+    public class BloodPressureDeviceActivity : AppCompatActivity, Animator.IAnimatorListener
     {
         private BluetoothAdapter bluetoothAdapter;
         private BluetoothLeScanner bluetoothScanner;
@@ -515,7 +515,7 @@ namespace FamiliaXamarin.PressureDevice
 
                 gatt.WriteDescriptor(descriptor);
             }
-            catch (System.Exception e)
+            catch (System.Exception)
             {
                 //e.PrintStackTrace();
             }
@@ -578,15 +578,6 @@ namespace FamiliaXamarin.PressureDevice
 //            }
         }
 
-
-        public int Compare(Object o1, Object o2)
-        {
-            var d1 = o1 as BloodPressureData;
-            var d2 = o2 as BloodPressureData;
-
-            Debug.Assert(d1 != null, nameof(d1) + " != null");
-            return d1.Data.CompareTo(d2?.Data);
-        }
     }
 
 

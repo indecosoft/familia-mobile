@@ -1,44 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using Android;
+﻿using System.Text.RegularExpressions;
 using Android.App;
 using Android.Content;
-using Android.Content.PM;
 using Android.Gms.Common;
 using Android.Graphics;
 using Android.Media;
 using Android.OS;
 using Android.Preferences;
-using Android.Runtime;
 using Android.Support.V4.App;
-using Android.Support.V4.Content;
 using Android.Telephony;
-using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
-using Java.Lang;
 using Java.Text;
 using Java.Util;
-using Java.Util.Regex;
 using Org.Json;
 using ZXing;
 using ZXing.Common;
 using ZXing.Mobile;
 using Exception = System.Exception;
 using Math = System.Math;
-using Orientation = Android.Widget.Orientation;
 
 
 namespace FamiliaXamarin
 {
-    internal class Utils
+    public static class Utils
     {
-        private static NotificationManager _notificationManager;
+        static NotificationManager _notificationManager;
         public static void SetDefaults(string key, string value, Context context)
         {
             var preferences = PreferenceManager.GetDefaultSharedPreferences(context);
@@ -213,13 +200,17 @@ namespace FamiliaXamarin
         public static void CreateChannels()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
+#pragma warning disable XA0001 // Find issues with Android API usage
             var androidChannel = new NotificationChannel("ANDROID_CHANNEL_ID", "ANDROID_CHANNEL_NAME", NotificationImportance.High);
+#pragma warning restore XA0001 // Find issues with Android API usage
             androidChannel.EnableLights(true);
             androidChannel.EnableVibration(true);
             androidChannel.LightColor = Color.Green;
             androidChannel.LockscreenVisibility = NotificationVisibility.Private;
 
+#pragma warning disable XA0001 // Find issues with Android API usage
             GetManager().CreateNotificationChannel(androidChannel);
+#pragma warning restore XA0001 // Find issues with Android API usage
         }
 
         public static NotificationManager GetManager()
@@ -233,14 +224,14 @@ namespace FamiliaXamarin
             var rejectintent = new Intent(context, typeof(ChatActivity));
             //intent.setAction("ro.indecosoft.familia_ingrijire_paleativ");
             //intent.putExtra("100", 0);
-            
+
             switch (type)
             {
                 //1 => request
                 //2 => accept
                 //3 => message
                 case 1:
-                   
+
                     intent.PutExtra("AcceptClick", true);
                     intent.PutExtra("EmailFrom", body.Replace(" doreste sa ia legatura cu tine!", ""));
                     intent.PutExtra("Room", room);
@@ -273,9 +264,7 @@ namespace FamiliaXamarin
                     intent.PutExtra("EmailFrom", body.Replace(" ti-a acceptat cererea de chat!", ""));
 
                     var acceptIntent1 = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
-                    //var rejectIntent1 = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
-                    //intent.putExtra("ConversationClick",true);
-                    
+
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
 
@@ -291,7 +280,7 @@ namespace FamiliaXamarin
                             .SetAutoCancel(true)
                             .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent1);
                     }
-                   
+
 
                     break;
                 case 3:
@@ -301,8 +290,6 @@ namespace FamiliaXamarin
                     intent.PutExtra("EmailFrom", title);
 
                     var acceptIntent2 = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
-                    //var rejectIntent1 = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
-                    //intent.putExtra("ConversationClick",true);
 
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
@@ -320,7 +307,7 @@ namespace FamiliaXamarin
                             .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent2);
                     }
                     break;
-          
+
             }
 
             return null;
@@ -328,20 +315,28 @@ namespace FamiliaXamarin
 
         public static void CreateNotificationChannel()
         {
-            // Create the NotificationChannel, but only on API 26+ because
-            // the NotificationChannel class is new and not in the support library
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                return;
+            string name = Constants.ChannelId;
+            string description = "my channel desc";
+#pragma warning disable CS0618 // Type or member is obsolete
+#pragma warning disable XA0001 // Find issues with Android API usage
+            var importance = NotificationManager.ImportanceDefault;
+#pragma warning restore XA0001 // Find issues with Android API usage
+#pragma warning restore CS0618 // Type or member is obsolete
+#pragma warning disable XA0001 // Find issues with Android API usage
+            using (var channel = new NotificationChannel(Constants.ChannelId, name, importance)
+#pragma warning restore XA0001 // Find issues with Android API usage
             {
-                string name = Constants.ChannelId;
-                string description = "my channel desc";
-                var importance = NotificationManager.ImportanceDefault;
-                NotificationChannel channel = new NotificationChannel(Constants.ChannelId, name, importance);
-                channel.Description = description;
+                Description = description
+            })
+            {
                 // Register the channel with the system; you can't change the importance
                 // or other notification behaviors after this
                 var notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
+#pragma warning disable XA0001 // Find issues with Android API usage
                 notificationManager.CreateNotificationChannel(channel);
-
+#pragma warning restore XA0001 // Find issues with Android API usage
             }
         }
 

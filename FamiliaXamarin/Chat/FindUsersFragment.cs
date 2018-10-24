@@ -1,45 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using Android.Animation;
-using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Airbnb.Lottie;
 using Com.Yuyakaido.Android.CardStackView;
-using Java.Lang;
 using Org.Json;
 
 namespace FamiliaXamarin
 {
     public class FindUsersFragment : Android.Support.V4.App.Fragment, Animator.IAnimatorListener
     {
-        private UserCardAdapter _adapter;
+        UserCardAdapter _adapter;
 
-        private CardStackView _cardStackView;
-        private LottieAnimationView _animationView;
-        private TextView _lbNobody;
-        private Button _leftButton;
-        private Button _rightButton;
-        private View _mView;
-        private List<UserCard> _people;
-        private readonly IWebServices _webServices = new WebServices();
+        CardStackView _cardStackView;
+        LottieAnimationView _animationView;
+        TextView _lbNobody;
+        Button _leftButton;
+        Button _rightButton;
+        View _mView;
+        List<UserCard> _people;
+        readonly IWebServices _webServices = new WebServices();
 
-        private readonly IWebSocketClient _webSocket = new WebSocketClient();
+        readonly IWebSocketClient _webSocket = new WebSocketClient();
 
-        private UserCardAdapter CreateUserCardAdapter()
+        UserCardAdapter CreateUserCardAdapter()
         {
             var userCardAdapter = new UserCardAdapter(Activity);
             userCardAdapter.AddAll(_people);
             return userCardAdapter;
         }
-        private void Setup(View view)
+        void Setup(View view)
         {
             //progressBar = (ProgressBar)findViewById(R.id.activity_main_progress_bar);
 
@@ -48,14 +43,14 @@ namespace FamiliaXamarin
             {
                 Log.Error("CardStackView", "onCardDragging");
             };
-            _cardStackView.CardSwiped += delegate(object sender, CardStackView.CardSwipedEventArgs args)
+            _cardStackView.CardSwiped += delegate (object sender, CardStackView.CardSwipedEventArgs args)
             {
+                Contract.Requires(sender != null);
                 Log.Error("CardStackView", $"onCardSwiped: {args.Direction}");
                 Log.Error("CardStackView", $"topIndex: {_cardStackView.TopIndex}");
                 if (_cardStackView.TopIndex == _adapter.Count - 5)
                 {
                     Log.Error("CardStackView", "Paginate: " + _cardStackView.TopIndex);
-                    //paginate();
                 }
 
                 if (args.Direction.ToString() == "Right")
@@ -63,9 +58,7 @@ namespace FamiliaXamarin
                     try
                     {
                         string emailFrom = Utils.GetDefaults("Email", Activity);
-                        //Activity.StartActivity(typeof(ChatActivity));
-//                        Chat.EmailDest = _people[_cardStackView.TopIndex - 1].Email;
-//                        Chat.Avatar = _people[_cardStackView.TopIndex - 1].Avatar;
+
                         var emailObject = new JSONObject().Put("dest", _people[_cardStackView.TopIndex - 1].Email).Put("from", emailFrom);
                         WebSocketClient.Client.Emit("chat request", emailObject);
                     }
@@ -73,8 +66,7 @@ namespace FamiliaXamarin
                     {
                         e.PrintStackTrace();
                     }
-                    
-                    //startActivity(new Intent(getActivity(), Chat.class));
+
                 }
 
                 if (_cardStackView.TopIndex != _people.Count) return;
@@ -87,7 +79,7 @@ namespace FamiliaXamarin
             };
         }
 
-        private void Reload()
+        void Reload()
         {
 
             _adapter = CreateUserCardAdapter();
@@ -95,9 +87,10 @@ namespace FamiliaXamarin
             _cardStackView.Visibility = ViewStates.Visible;
         }
 
-        private async void SearchPeople()
+        async void SearchPeople()
         {
-            await Task.Run(async () => {
+            await Task.Run(async () =>
+            {
                 var dataToSent = new JSONObject().Put("email", Utils.GetDefaults("Email", Activity));
                 var response = await _webServices.Post(Constants.PublicServerAddress + "/api/nearMe", dataToSent, Utils.GetDefaults("Token", Activity));
                 Log.Error("Response: ", "" + response);
@@ -171,17 +164,18 @@ namespace FamiliaXamarin
 
                             }
                         }
-                        Activity.RunOnUiThread(() => {
+                        Activity.RunOnUiThread(() =>
+                        {
                             Setup(_mView);
                             Reload();
                         });
-                        
+
 
                     }
                     else
                     {
                         Activity.RunOnUiThread(() => { _lbNobody.Text = "A fost intampinata o eroare in timpul conectarii la server!"; });
-                        
+
                         //Utils.DisplayNotification(Activity, "Eroare", "A fost intampinata o eroare in timpul conectarii la server!");
                     }
 
@@ -199,7 +193,7 @@ namespace FamiliaXamarin
                 _animationView.CancelAnimation();
         }
 
-        private void InitUi(View view)
+        void InitUi(View view)
         {
             _cardStackView = view.FindViewById<CardStackView>(Resource.Id.activity_main_card_stack_view);
             _animationView = view.FindViewById<LottieAnimationView>(Resource.Id.animation_view);
@@ -333,7 +327,7 @@ namespace FamiliaXamarin
 
             _cardStackView.Swipe(SwipeDirection.Right, cardAnimationSet);
         }
-        private List<UserCard> ExtractRemainingUserCards()
+        List<UserCard> ExtractRemainingUserCards()
         {
             List<UserCard> spots = new List<UserCard>();
             for (int i = _cardStackView.TopIndex; i < _adapter.Count; i++)

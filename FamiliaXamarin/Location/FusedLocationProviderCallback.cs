@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Linq;
+﻿using System.Linq;
 using Android.Content;
 using Android.Gms.Location;
 using Android.Util;

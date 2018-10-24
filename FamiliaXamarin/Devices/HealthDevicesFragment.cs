@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Android;
 using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.CustomTabs;
 using Android.Text;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.GlucoseDevice;
@@ -43,8 +36,12 @@ namespace FamiliaXamarin
                 {
                     // Do something for Oreo and above versions
                     AlertDialog alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
+#pragma warning disable XA0001 // Find issues with Android API usage
                     alertDialog.SetTitle(Html.FromHtml("<p style = 'text-align: center; color: #F47445;'>Avertisment</p>", FromHtmlOptions.ModeLegacy));
+#pragma warning restore XA0001 // Find issues with Android API usage
+#pragma warning disable XA0001 // Find issues with Android API usage
                     alertDialog.SetMessage(Html.FromHtml("<br/><p style = 'text-align: center; color: #000000;'>Nu aveti niciun dispozitiv inregistrat!</br>Doriti sa adaugati unul acum?</p>", FromHtmlOptions.ModeLegacy));
+#pragma warning restore XA0001 // Find issues with Android API usage
                     alertDialog.SetButton("OK", delegate
                     {
                         switch (v.Id)

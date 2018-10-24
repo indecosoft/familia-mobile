@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Android.Content;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using Android.Support.V7.Widget;
 using FamiliaXamarin.JsonModels;
 
 namespace FamiliaXamarin
@@ -12,10 +12,10 @@ namespace FamiliaXamarin
     {
         public event EventHandler<ConvAdapterClickEventArgs> ItemClick;
         public event EventHandler<ConvAdapterClickEventArgs> ItemLongClick;
-        private List<ConverstionsModel> mContacts;
+        private List<ConverstionsModel> _listOfActiveConversations;
         public ConvAdapter(List<ConverstionsModel> data)
         {
-            mContacts = data;
+            _listOfActiveConversations = data;
         }
 
         // Create new views (invoked by the layout manager)
@@ -35,23 +35,19 @@ namespace FamiliaXamarin
         }
 
         // Replace the contents of a view (invoked by the layout manager)
-        public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
+        public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
  
-            var item = mContacts[position];
+            var item = _listOfActiveConversations[position];
+            var viewHolder = holder as ConvAdapterViewHolder;
 
-            // Replace the contents of the view with that element
-            var holder = viewHolder as ConvAdapterViewHolder;
-
-            holder.nameTextView.Text = item.Username;
-            // Set item views based on your views and data model
-            //holder.TextView.Text = items[position];
+            viewHolder.NameTextView.Text = item.Username;
         }
 
-        public override int ItemCount => mContacts.Count;
+        public override int ItemCount => _listOfActiveConversations.Count;
         public void DeleteConversation(int position)
         {
-            mContacts.RemoveAt(position);
+            _listOfActiveConversations.RemoveAt(position);
         }
 
         void OnClick(ConvAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
@@ -61,14 +57,12 @@ namespace FamiliaXamarin
 
     public class ConvAdapterViewHolder : RecyclerView.ViewHolder
     {
-        //public TextView TextView { get; set; }
-        public TextView nameTextView;
+        public TextView NameTextView { get; set; }
 
         public ConvAdapterViewHolder(View itemView, Action<ConvAdapterClickEventArgs> clickListener,
                             Action<ConvAdapterClickEventArgs> longClickListener) : base(itemView)
         {
-            //TextView = v;
-            nameTextView = itemView.FindViewById<TextView>(Resource.Id.contact_name);
+            NameTextView = itemView.FindViewById<TextView>(Resource.Id.contact_name);
             itemView.Click += (sender, e) => clickListener(new ConvAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
             itemView.LongClick += (sender, e) => longClickListener(new ConvAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
         }

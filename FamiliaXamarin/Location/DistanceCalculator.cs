@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using Android.App;
 using Android.Content;
-using Android.Icu.Text;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Util;
-using Android.Views;
 using Android.Widget;
 using Java.Lang;
 using Math = System.Math;
@@ -21,18 +15,20 @@ namespace FamiliaXamarin
     [Service]
     class DistanceCalculator : Service
     {
-        private double Latitude, Longitude, CurrentLongitude, CurrentLatitude;
-        private bool started;
-        private Handler handler = new Handler();
-        private NotificationManager mNotificationManager;
-        private int Verifications;
-        private int RefreshTime = 1000;
-        private static DistanceCalculator _ctx;
+        double Latitude, Longitude, CurrentLongitude, CurrentLatitude;
+        bool started;
+        Handler handler = new Handler();
+        NotificationManager mNotificationManager;
+        int Verifications;
+        int RefreshTime = 1000;
+        static DistanceCalculator _ctx;
         public const int SERVICE_RUNNING_NOTIFICATION_ID = 10000;
 
         public override IBinder OnBind(Intent intent)
         {
+#pragma warning disable RECS0083 // Shows NotImplementedException throws in the quick task bar
             throw new NotImplementedException();
+#pragma warning restore RECS0083 // Shows NotImplementedException throws in the quick task bar
         }
 
         public override void OnCreate()
@@ -47,7 +43,9 @@ namespace FamiliaXamarin
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             var notification = new Notification.Builder(this)
+#pragma warning restore CS0618 // Type or member is obsolete
                 .SetContentTitle(Resources.GetString(Resource.String.app_name))
                 .SetContentText("Ruleaza in fundal")
                 .SetSmallIcon(Resource.Drawable.logo)
@@ -59,28 +57,32 @@ namespace FamiliaXamarin
             return StartCommandResult.Sticky;
         }
 
-        private void CreateChannels()
+        void CreateChannels()
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
+#pragma warning disable XA0001 // Find issues with Android API usage
                 NotificationChannel androidChannel = new NotificationChannel("ANDROID_CHANNEL_ID", "ANDROID_CHANNEL_NAME", NotificationImportance.High);
+#pragma warning restore XA0001 // Find issues with Android API usage
                 androidChannel.EnableLights(true);
                 androidChannel.EnableVibration(true);
                 androidChannel.LightColor = Android.Resource.Color.HoloRedLight;
                 androidChannel.LockscreenVisibility = NotificationVisibility.Private;
 
+#pragma warning disable XA0001 // Find issues with Android API usage
                 GetManager().CreateNotificationChannel(androidChannel);
+#pragma warning restore XA0001 // Find issues with Android API usage
             }
         }
-        private NotificationManager GetManager()
+        NotificationManager GetManager()
         {
             if (mNotificationManager == null)
             {
-                mNotificationManager = (NotificationManager)GetSystemService(Context.NotificationService);
+                mNotificationManager = (NotificationManager)GetSystemService(NotificationService);
             }
             return mNotificationManager;
         }
-        private static NotificationCompat.Builder GetAndroidChannelNotification(String title, String body)
+        static NotificationCompat.Builder GetAndroidChannelNotification(String title, String body)
         {
             Intent intent = new Intent(_ctx, typeof(MainActivity));
             //Intent rejectintent = new Intent(this, MenuActivity.class);
@@ -113,7 +115,7 @@ namespace FamiliaXamarin
             }
         }
 
-        private Runnable runnable = new Runnable(() =>
+        Runnable runnable = new Runnable(() =>
         {
             if (!Utils.GetDefaults("ActivityStart", _ctx).Equals(""))
             {
@@ -127,10 +129,10 @@ namespace FamiliaXamarin
                 Log.Debug("ConsultLongitude", _ctx.Longitude.ToString());
                 Log.Debug("CurrentLatitude ", _ctx.CurrentLatitude.ToString());
                 Log.Debug("CurrentLongitude", _ctx.CurrentLongitude.ToString());
-                Toast.MakeText(_ctx, "" + distance + " metri", ToastLength.Short).Show();
+                //Toast.MakeText(_ctx, "" + distance + " metri", ToastLength.Short).Show();
                 if (distance > 180 && distance < 220)
                 {
-                    Log.Error("No bulan", "mai mult de 200 metri.Esti la " + Math.Round(distance) + " metrii distanta");
+                    Log.Warn("Distance warning", "mai mult de 200 metri.Esti la " + Math.Round(distance) + " metrii distanta");
                     //Toast.makeText(DistanceCalculator.this, "" + distance, Toast.LENGTH_SHORT).show();
                     _ctx.Verifications = 0;
                     NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment", "Ai plecat de la pacient? Esti la " + Math.Round(distance) + " metrii distanta");
@@ -141,7 +143,7 @@ namespace FamiliaXamarin
                 else if (distance > 220)
                 {
                     _ctx.RefreshTime = 60000;
-                    Toast.MakeText(_ctx, "" + distance + " metri " + _ctx.Verifications, ToastLength.Short).Show();
+                    //Toast.MakeText(_ctx, "" + distance + " metri " + _ctx.Verifications, ToastLength.Short).Show();
 
                     if (_ctx.Verifications == 15)
                     {

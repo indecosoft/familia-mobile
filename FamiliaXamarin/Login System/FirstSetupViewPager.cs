@@ -13,7 +13,7 @@ namespace FamiliaXamarin
 {
     public class FirstSetupViewPager : ViewPager, View.IOnTouchListener
     {
-        private bool _enabled;
+        bool _enabled;
         protected FirstSetupViewPager(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
         }
@@ -29,7 +29,7 @@ namespace FamiliaXamarin
         }
 
        
-        public override bool OnInterceptTouchEvent(MotionEvent e)
+        public override bool OnInterceptTouchEvent(MotionEvent ev)
         {
             // Never allow swiping to switch between pages
             return _enabled;
@@ -44,7 +44,7 @@ namespace FamiliaXamarin
         {
             _enabled = enabled;
         }
-        private void SetMyScroller()
+        void SetMyScroller()
         {
             try
             {
@@ -63,7 +63,7 @@ namespace FamiliaXamarin
             }
         }
 
-        private class MyScroller : Scroller
+        class MyScroller : Scroller
         {
             public MyScroller(Context context) : base(context, new DecelerateInterpolator())
             {

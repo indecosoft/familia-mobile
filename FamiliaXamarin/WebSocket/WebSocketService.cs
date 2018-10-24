@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using Android.App;
 using Android.Content;
-using Android.Graphics;
 using Android.OS;
-using Android.Runtime;
-using Android.Support.V4.App;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
-using Org.Json;
 
 namespace FamiliaXamarin
 {
@@ -20,24 +11,20 @@ namespace FamiliaXamarin
     class WebSocketService : Service
     {
         //private NotificationManager _notificationManager;
-        private readonly IWebSocketClient _socketClient = new WebSocketClient();
+        readonly IWebSocketClient _socketClient = new WebSocketClient();
         public const int ServiceRunningNotificationId = 10000;
-
-        Context Ctx;
 
         public override IBinder OnBind(Intent intent)
         {
+#pragma warning disable RECS0083 // Shows NotImplementedException throws in the quick task bar
             throw new NotImplementedException();
+#pragma warning restore RECS0083 // Shows NotImplementedException throws in the quick task bar
         }
 
         public override void OnCreate()
         {
             base.OnCreate();
-            //Utils.CreateChannels();
             Log.Error("Service:", "STARTED");
-            //        WebSoketClientClass.ChatSocket.on("start chat", onStartChat);
-            //        WebSoketClientClass.ChatSocket.on("join room", onJoinRoom);
-            //        WebSoketClientClass.ChatSocket.on("send room", onSendRoom);
             _socketClient.Connect(Constants.WebSocketAddress, Constants.WebSocketPort, this);
         }
 
@@ -45,7 +32,9 @@ namespace FamiliaXamarin
         {
             Log.Error("Location Service", "Started");
 
+#pragma warning disable CS0618 // Type or member is obsolete
             var notification = new Notification.Builder(this)
+#pragma warning restore CS0618 // Type or member is obsolete
                 .SetContentTitle(Resources.GetString(Resource.String.app_name))
                 .SetContentText("Ruleaza in fundal")
                 .SetSmallIcon(Resource.Drawable.logo)

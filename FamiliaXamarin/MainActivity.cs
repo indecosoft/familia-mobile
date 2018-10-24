@@ -5,7 +5,6 @@ using Android.Support.Design.Widget;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.V7.App;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Medicatie;
@@ -17,9 +16,9 @@ namespace FamiliaXamarin
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Dark")]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-        private Intent _loacationServiceIntent;
-        private Intent _webSocketServiceIntent;
-        public static bool FromBoala = false;
+        Intent _loacationServiceIntent;
+        Intent _webSocketServiceIntent;
+        public static bool FromBoala;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -28,8 +27,6 @@ namespace FamiliaXamarin
             var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
-//            var fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
-//            fab.Click += FabOnClick;
 
             var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             var toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
@@ -41,9 +38,7 @@ namespace FamiliaXamarin
             var headerView = navigationView.GetHeaderView(0);
             var profileImageView = headerView.FindViewById<CircleImageView>(Resource.Id.menu_profile_image);
             var avatar = Utils.GetDefaults("Avatar", this);
-            Log.Error("Avatar", avatar);
-            //            StartService(new Intent(this, typeof(LocationService)));
-            //            StartForegroundService(new Intent(this, typeof(LocationService)));
+
             _loacationServiceIntent = new Intent(this, typeof(LocationService));
             _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
@@ -56,7 +51,7 @@ namespace FamiliaXamarin
                     StartService(_loacationServiceIntent);
                     StartService(_webSocketServiceIntent);
             }
-            //_socketClient.Connect(Constants.WebSocketAddress, Constants.WebSocketPort);
+          
             Picasso.With(this)
                 .Load(avatar)
                 .Resize(100, 100)
@@ -69,7 +64,7 @@ namespace FamiliaXamarin
             lbEmail.Text = Utils.GetDefaults("Email", this);
             profileImageView.Click += delegate
             {
-//                startActivity(new Intent(MenuActivity.this, ProfileActivity.class));
+                //TODO: Implementateaza acivitaste pentru profil 
             };
 
              if (FromBoala)
@@ -173,8 +168,6 @@ namespace FamiliaXamarin
                 case Resource.Id.logout:
 
                     Utils.SetDefaults("Token", null, this);
-                    //WebSoketClientClass.mSocket.disconnect();
-                    //stopService(new Intent(this, WebSoketService.class));
                     WebSocketClient.Disconect();
                         StopService(_loacationServiceIntent);
                         StopService(_webSocketServiceIntent);

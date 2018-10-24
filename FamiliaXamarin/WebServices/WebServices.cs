@@ -7,7 +7,7 @@ using Org.Json;
 
 namespace FamiliaXamarin
 {
-    internal class WebServices : IWebServices
+    public class WebServices : IWebServices
     {
         public async Task<string> Get(string url)
         {

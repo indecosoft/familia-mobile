@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
@@ -12,9 +9,7 @@ using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Util;
-using Android.Views;
 using Android.Widget;
-using FamiliaXamarin.GlucoseDevice;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.PressureDevice
@@ -22,15 +17,17 @@ namespace FamiliaXamarin.PressureDevice
     [Activity(Label = "AddNewBloodPressureDeviceActivity", Theme = "@style/AppTheme.Dark")]
     public class AddNewBloodPressureDeviceActivity : AppCompatActivity
     {
-        private RecyclerView recyclerView;
-        private List<string> devices;
-        private List<string> devicesAddress;
-        private int ENABLE_BT = 11;
-        private BluetoothAdapter bluetoothAdapter;
-        private BluetoothLeScanner scanner;
-        private DevicesRecyclerViewAdapter adapter;
-        private ProgressDialog progressDialog;
-        private static AddNewBloodPressureDeviceActivity _context;
+        RecyclerView recyclerView;
+        List<string> devices;
+        List<string> devicesAddress;
+        readonly int ENABLE_BT = 11;
+        BluetoothAdapter bluetoothAdapter;
+        BluetoothLeScanner scanner;
+        DevicesRecyclerViewAdapter adapter;
+#pragma warning disable CS0618 // Type or member is obsolete
+        ProgressDialog progressDialog;
+#pragma warning restore CS0618 // Type or member is obsolete
+        static AddNewBloodPressureDeviceActivity _context;
         BluetoothScanCallback scanCallback = new BluetoothScanCallback();
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -48,7 +45,9 @@ namespace FamiliaXamarin.PressureDevice
                 Finish();
             };
 
+#pragma warning disable CS0618 // Type or member is obsolete
             progressDialog = new ProgressDialog(this);
+#pragma warning restore CS0618 // Type or member is obsolete
             progressDialog.SetTitle("Va rugam asteptati ...");
             progressDialog.SetMessage("Se cauta dispozitive");
             progressDialog.SetCancelable(false);
@@ -59,8 +58,9 @@ namespace FamiliaXamarin.PressureDevice
             devicesAddress = new List<string>();
 
             adapter = new DevicesRecyclerViewAdapter(this, devices);
-            adapter.ItemClick += delegate(object sender, int i)
+            adapter.ItemClick += delegate (object sender, int i)
             {
+                Contract.Requires(sender != null);
                 Log.Error("Address", devicesAddress[i]);
                 Utils.SetDefaults(GetString(Resource.String.blood_pressure_device), devicesAddress[i], this);
                 StartActivity(typeof(BloodPressureDeviceActivity));
@@ -111,7 +111,7 @@ namespace FamiliaXamarin.PressureDevice
                 }
             }
         }
-        private void ScanDevices()
+        void ScanDevices()
         {
             scanner = bluetoothAdapter.BluetoothLeScanner;
             scanner.StartScan(scanCallback);

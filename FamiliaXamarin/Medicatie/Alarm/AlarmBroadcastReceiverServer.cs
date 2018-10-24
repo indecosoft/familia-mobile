@@ -22,7 +22,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
         public static readonly String UUID = "uuid";
         public static readonly String TITLE = "title";
         public static readonly String CONTENT = "content";
-        private static readonly String OK = "OK";
+        static readonly String OK = "OK";
         public static readonly String ACTION_OK = "actionOk";
         public static readonly String ACTION_RECEIVE = "actionReceive";
         public static int notifyId = Constants.NotifId;
@@ -98,17 +98,19 @@ namespace FamiliaXamarin.Medicatie.Alarm
             return (int)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
         }
 
-        private readonly DateTime Jan1st1970 = new DateTime
+        readonly DateTime Jan1st1970 = new DateTime
             (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        private async void SendData(string uuid, DateTime date, Context context)
+#pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
+        async void SendData(string uuid, DateTime date, Context context)
+#pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
         {
             var res = await Tasks.Tasks.PostMedicine($"{Constants.PublicServerAddress}/api/medicine", uuid, date, Utils.GetDefaults("Token", context));
 
             Log.Error("#################", res);
         }
 
-        private void createNotificationChannel(string mChannel, string mTitle, string mContent)
+        void createNotificationChannel(string mChannel, string mTitle, string mContent)
         {
             // Create the NotificationChannel, but only on API 26+ because
             // the NotificationChannel class is new and not in the support library
@@ -116,13 +118,21 @@ namespace FamiliaXamarin.Medicatie.Alarm
             {
                 string name = mTitle;
                 string description = mContent;
+#pragma warning disable CS0618 // Type or member is obsolete
+#pragma warning disable XA0001 // Find issues with Android API usage
                 var importance = NotificationManager.ImportanceDefault;
+#pragma warning restore XA0001 // Find issues with Android API usage
+#pragma warning restore CS0618 // Type or member is obsolete
+#pragma warning disable IDE0017 // Simplify object initialization
                 NotificationChannel channel = new NotificationChannel(mChannel, mTitle, importance);
+#pragma warning restore IDE0017 // Simplify object initialization
                 channel.Description = description;
                 // Register the channel with the system; you can't change the importance
                 // or other notification behaviors after this
                 var notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
+#pragma warning disable XA0001 // Find issues with Android API usage
                 notificationManager.CreateNotificationChannel(channel);
+#pragma warning restore XA0001 // Find issues with Android API usage
 
             }
         }

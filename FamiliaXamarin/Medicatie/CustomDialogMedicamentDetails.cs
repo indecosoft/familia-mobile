@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
@@ -32,8 +33,8 @@ namespace FamiliaXamarin.Medicatie
         private int intervalZi;
         private Activity activity;
         private string timeSelected;
-        private DatePickerDialog datePickerDialog;
-        private DatePickerDialog.IOnDateSetListener mDateSetListener;
+       // private DatePickerDialog datePickerDialog;
+        //private DatePickerDialog.IOnDateSetListener mDateSetListener;
         private TextView tvStartDate;
         private bool listmode = true;
 
@@ -169,6 +170,7 @@ namespace FamiliaXamarin.Medicatie
         spinner = FindViewById<Spinner>(Resource.Id.spinner);
         spinner.ItemSelected += delegate(object sender, AdapterView.ItemSelectedEventArgs args)
         {
+            Contract.Requires(sender != null);
             intervalZi = args.Position + 1;
             if (listmode)
             {
@@ -348,8 +350,8 @@ namespace FamiliaXamarin.Medicatie
         private void onTimeClicked(Hour myHour)
         {
             Calendar mcurrentTime = Calendar.Instance;
-            int hour = mcurrentTime.Get(Calendar.HourOfDay);
-            int minute = mcurrentTime.Get(Calendar.Minute);
+            int hour = mcurrentTime.Get(CalendarField.HourOfDay);
+            int minute = mcurrentTime.Get(CalendarField.Minute);
 
             TimePickerDialog mTimePicker = new TimePickerDialog(
                 Context,
@@ -378,12 +380,12 @@ namespace FamiliaXamarin.Medicatie
             Calendar calendar = Calendar.Instance;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
             {
-                calendar.Set(calendar.Get(Calendar.Year), calendar.Get(Calendar.Month), calendar.Get(Calendar.DayOfMonth),
+                calendar.Set(calendar.Get(CalendarField.Year), calendar.Get(CalendarField.Month), calendar.Get(CalendarField.DayOfMonth),
                     timePicker.Hour, timePicker.Minute, 0);
             }
             else
             {
-                calendar.Set(calendar.Get(Calendar.Year), calendar.Get(Calendar.Month), calendar.Get(Calendar.DayOfMonth),
+                calendar.Set(calendar.Get(CalendarField.Year), calendar.Get(CalendarField.Month), calendar.Get(CalendarField.DayOfMonth),
                     selectedHour, selectedMinute, 0);
             }
             return calendar;

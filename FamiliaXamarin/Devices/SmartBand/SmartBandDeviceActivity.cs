@@ -24,19 +24,21 @@ namespace FamiliaXamarin.SmartBand
         DataHost = "finish")]
     public  class SmartBandDeviceActivity : AppCompatActivity
     {
-        private string _url = string.Empty;
-        private string _token = string.Empty;
-        private TextView _lbBpm;
-        private TextView _lbSleep;
-        private TextView _lbSteps;
-        private TextView _lbDisplayName;
-        private TextView _lbFullName;
-        private TextView _lbActivity;
-        private CircleImageView _avatarImage;
-        private ConstraintLayout _loadingScreen;
-        private readonly IWebServices _webServices = new WebServices();
+        string _url = string.Empty;
+        string _token = string.Empty;
+        TextView _lbBpm;
+        TextView _lbSleep;
+        TextView _lbSteps;
+        TextView _lbDisplayName;
+        TextView _lbFullName;
+        TextView _lbActivity;
+        CircleImageView _avatarImage;
+        ConstraintLayout _loadingScreen;
+        readonly IWebServices _webServices = new WebServices();
 
+#pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
         protected override async void OnCreate(Bundle savedInstanceState)
+#pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_smart_band_device);
@@ -98,7 +100,7 @@ namespace FamiliaXamarin.SmartBand
             // Create your application here
         }
 
-        private async Task PopulateFields()
+        async Task PopulateFields()
         {
             await GetProfileData();
             await GetSteps();
@@ -106,7 +108,7 @@ namespace FamiliaXamarin.SmartBand
             await GetHeartRatePulse();
         }
 
-        
+
         private async Task GetProfileData()
         {
             var data = await _webServices.Get("https://api.fitbit.com/1/user/-/profile.json", _token);
@@ -142,7 +144,7 @@ namespace FamiliaXamarin.SmartBand
                 }
             }
         }
-        private async Task GetSteps()
+        async Task GetSteps()
         {
             var data = await _webServices.Get("https://api.fitbit.com/1.2/user/-/sleep/date/today.json", _token);
             if (!string.IsNullOrEmpty(data))
@@ -154,9 +156,9 @@ namespace FamiliaXamarin.SmartBand
                     var fairlyActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("fairlyActiveMinutes");
                     var veryActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("veryActiveMinutes");
                     var activeMinutes = fairlyActiveMinutes + veryActiveMinutes;
-                    
+
                     var steps = new JSONObject(data).GetJSONObject("summary").GetInt("steps");
-                    
+
                     RunOnUiThread(() =>
                     {
                         _lbSteps.Text = $"{steps}";
@@ -169,7 +171,7 @@ namespace FamiliaXamarin.SmartBand
                 }
             }
         }
-        private async Task GetSleepData()
+        async Task GetSleepData()
         {
             var data = await _webServices.Get("https://api.fitbit.com/1/user/-/activities/date/today.json", _token);
             Log.Error("Sleep Result", data);
@@ -181,7 +183,7 @@ namespace FamiliaXamarin.SmartBand
                     var h = (int)TimeUnit.Minutes.ToHours(totalMinutesAsleep);
                     var min = (int)(((float)totalMinutesAsleep / 60 - h) * 100) * 60 / 100;
 
-                    
+
                     RunOnUiThread(() =>
                     {
                         _lbSleep.Text = $"{h} hr {min} min";
@@ -193,7 +195,7 @@ namespace FamiliaXamarin.SmartBand
                 }
             }
         }
-        private async Task GetHeartRatePulse()
+        async Task GetHeartRatePulse()
         {
             var data = await _webServices.Get("https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json", _token);
             if (!string.IsNullOrEmpty(data))
@@ -203,7 +205,7 @@ namespace FamiliaXamarin.SmartBand
                 {
                     var bpm = ((JSONObject)new JSONObject(data).GetJSONArray("activities-heart").Get(0)).GetJSONObject("value").GetInt("restingHeartRate");
                     var bmpText = $"{bpm} bpm";
-                    
+
                     RunOnUiThread(() =>
                     {
                         _lbBpm.Text = bmpText;

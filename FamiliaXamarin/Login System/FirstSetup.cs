@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Threading.Tasks;
 using Android.App;
@@ -28,14 +29,14 @@ namespace FamiliaXamarin
     public class FirstSetup : FragmentActivity
     {
 
-        private SectionsPagerAdapter _sectionsPagerAdapter;
-        private FirstSetupViewPager _viewPager;
-        private readonly FirstSetupModel _firstSetupModel = new FirstSetupModel();
-        private readonly  IWebServices _webServices = new WebServices();
-        private ConstraintLayout _mainContent;
+        SectionsPagerAdapter _sectionsPagerAdapter;
+        FirstSetupViewPager _viewPager;
+        readonly FirstSetupModel _firstSetupModel = new FirstSetupModel();
+        readonly IWebServices _webServices = new WebServices();
+        ConstraintLayout _mainContent;
         public static FirstSetup FragmentContext;
 #pragma warning disable 618
-        private ProgressDialog _progressDialog;
+        ProgressDialog _progressDialog;
 #pragma warning restore 618
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -45,7 +46,7 @@ namespace FamiliaXamarin
             InitUi();
         }
 
-        private void InitUi()
+        void InitUi()
         {
             FragmentContext = this;
             _sectionsPagerAdapter = new SectionsPagerAdapter(SupportFragmentManager);
@@ -59,7 +60,7 @@ namespace FamiliaXamarin
             _progressDialog.SetTitle("Va rugam asteptati ...");
             _progressDialog.SetMessage("Trimitere date");
             _progressDialog.SetCancelable(false);
-            
+
             Utils.SetDefaults("Logins", true.ToString(), this);
         }
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -75,21 +76,21 @@ namespace FamiliaXamarin
 
         public class PlaceholderFragment : Android.Support.V4.App.Fragment
         {
-            private const string ArgSectionNumber = "section_number";
-            private Button _btnNext;
-            private Button _btnBack;
-            private Button _btnUpload;
-            private Button _btnDate;
-            private EditText _tbDate;
-            private Spinner _genderSpinner;
-            private Spinner _diseaseSpinner;
-            private CircleImageView _profileImage;
-            private bool _imageValidator;
-            private Android.Net.Uri _photoUri;
-            private FileInfo _fileInformations;
-            private string _imageExtension, _imagePath;
+            const string ArgSectionNumber = "section_number";
+            Button _btnNext;
+            Button _btnBack;
+            Button _btnUpload;
+            Button _btnDate;
+            EditText _tbDate;
+            Spinner _genderSpinner;
+            Spinner _diseaseSpinner;
+            CircleImageView _profileImage;
+            bool _imageValidator;
+            Android.Net.Uri _photoUri;
+            FileInfo _fileInformations;
+            string _imageExtension, _imagePath;
 
-            
+
 
             public static PlaceholderFragment NewInstance(int sectionNumber)
             {
@@ -109,6 +110,7 @@ namespace FamiliaXamarin
                 pictureDialog.SetItems(pictureDialogItems,
                     delegate (object sender, DialogClickEventArgs args)
                     {
+                        Contract.Requires(sender != null);
                         switch (args.Which)
                         {
                             case 0:
@@ -122,7 +124,7 @@ namespace FamiliaXamarin
                 pictureDialog.Show();
             }
 
-            private void ChoosePhotoFromGallary()
+            void ChoosePhotoFromGallary()
             {
                 var a = new Intent();
                 a.SetType("image/*");
@@ -131,7 +133,7 @@ namespace FamiliaXamarin
 
             }
 
-            private void TakePhotoFromCamera()
+            void TakePhotoFromCamera()
             {
                 var intentCamera = new Intent(MediaStore.ActionImageCapture);
                 var filePhoto = new File(Environment.ExternalStorageDirectory + "/Familia", "Avatar [" + DateTime.Now + "].jpg");
@@ -139,7 +141,7 @@ namespace FamiliaXamarin
                 intentCamera.PutExtra(MediaStore.ExtraOutput, _photoUri);
                 StartActivityForResult(intentCamera, Constants.RequestCamera);
             }
-            private static string GetPathToImage(Android.Net.Uri uri)
+            static string GetPathToImage(Android.Net.Uri uri)
             {
                 string docId;
                 using (var c1 = FragmentContext.ContentResolver.Query(uri, null, null, null, null))
@@ -214,10 +216,6 @@ namespace FamiliaXamarin
                         _imageExtension = "jpg";
                     FragmentContext._firstSetupModel.Base64Image = "data:image/" + _imageExtension + ";base64," + Convert.ToBase64String(System.IO.File.ReadAllBytes(_imagePath));
                     FragmentContext._firstSetupModel.ImageExtension = _imageExtension;
-//                    Log.Error("Base64Image", FragmentContext._firstSetupModel.Base64Image);
-//                    Log.Error("BImage_EXT", _imageExtension);
-
-
                 }
                 else
                 {
@@ -226,7 +224,7 @@ namespace FamiliaXamarin
 
             }
 
-            private void ImageTooLargeWarning()
+            void ImageTooLargeWarning()
             {
                 Toast.MakeText(FragmentContext, "Fotografie prea mare! Dimensiunea maxima acceptata este de 10 Mb.", ToastLength.Long).Show();
                 string resourcePath = "@drawable/profile";  // where myresource (without the extension) is the file
@@ -239,7 +237,7 @@ namespace FamiliaXamarin
                 _profileImage.SetImageDrawable(res);
             }
 
-            private void GalleryAddPic()
+            void GalleryAddPic()
             {
                 var mediaScanIntent = new Intent(Intent.ActionMediaScannerScanFile);
                 var f = new File(_photoUri.Path);
@@ -248,14 +246,14 @@ namespace FamiliaXamarin
                 FragmentContext.SendBroadcast(mediaScanIntent);
             }
 
-            private void InitFirstViewUi(View v)
+            void InitFirstViewUi(View v)
             {
                 _btnUpload = v.FindViewById<Button>(Resource.Id.btnUpload);
                 _profileImage = v.FindViewById<CircleImageView>(Resource.Id.ProfileImage);
 
             }
 
-            private void InitSecondViewUi(View v)
+            void InitSecondViewUi(View v)
             {
                 _genderSpinner = v.FindViewById<Spinner>(Resource.Id.gender_spinner);
                 _tbDate = v.FindViewById<EditText>(Resource.Id.tbDate);
@@ -263,12 +261,12 @@ namespace FamiliaXamarin
                 _btnDate = v.FindViewById<Button>(Resource.Id.btnDate);
 
             }
-            private void IniThirdViewUi(View v)
+            void IniThirdViewUi(View v)
             {
                 _diseaseSpinner = v.FindViewById<Spinner>(Resource.Id.Disease_spinner);
             }
 
-            private void InitDefaultUi(View v)
+            void InitDefaultUi(View v)
             {
                 _btnBack = v.FindViewById<Button>(Resource.Id.btnBack);
                 _btnNext = v.FindViewById<Button>(Resource.Id.btnNext);
@@ -359,65 +357,68 @@ namespace FamiliaXamarin
                         break;
                 }
 
-                _btnNext.Click += async delegate
-                {
-                    switch (Arguments.GetInt(ArgSectionNumber))
-                    {
-                        case 1:
-                            if (_imageValidator)
-                                FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber);
-                            else
-                                Toast.MakeText(FragmentContext, "Alege o imagine!", ToastLength.Short).Show();
-                            break;
-                        case 2:
-                            FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber);
-                            break;
-                        case 3:
-                            FragmentContext._progressDialog.Show();
-                            FragmentContext._firstSetupModel.ImageName = Utils.GetDefaults("Email", Activity);
-
-                            await Task.Run(async () => {
-
-                                var jsonData = JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
-                                var response = await FragmentContext._webServices.Post(Constants.PublicServerAddress + "/api/firstSetup", new JSONObject(jsonData), Utils.GetDefaults("Token", Activity));
-                                if (response != null)
-                                {
-                                    Snackbar snack;
-                                    var responseJson = new JSONObject(response);
-                                    switch (responseJson.GetInt("status"))
-                                    {
-                                        case 0:
-                                            snack = Snackbar.Make(FragmentContext._mainContent, "Wrong Data", Snackbar.LengthLong);
-                                            snack.Show();
-                                            break;
-                                        case 1:
-                                            snack = Snackbar.Make(FragmentContext._mainContent, "Internal Server Error", Snackbar.LengthLong);
-                                            snack.Show();
-                                            break;
-                                        case 2:
-                                            
-                                            FragmentContext.StartActivity(typeof(MainActivity));
-                                            FragmentContext.Finish();
-                                            //snack.Show();
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    var snack = Snackbar.Make(FragmentContext._mainContent, "Unable to reach the server!", Snackbar.LengthLong);
-                                    snack.Show();
-                                }
-                            });
-                            FragmentContext._progressDialog.Dismiss();
-                            
-                            break;
-                    }
-                };
+                _btnNext.Click += _btnNext_Click;
 
                 if (Arguments.GetInt(ArgSectionNumber) == 3)
                     _btnNext.Text = "Gata";
                 return rootView;
             }
+
+            async void _btnNext_Click(object sender, EventArgs e)
+            {
+                switch (Arguments.GetInt(ArgSectionNumber))
+                {
+                    case 1:
+                        if (_imageValidator)
+                            FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber);
+                        else
+                            Toast.MakeText(FragmentContext, "Alege o imagine!", ToastLength.Short).Show();
+                        break;
+                    case 2:
+                        FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber);
+                        break;
+                    case 3:
+                        FragmentContext._progressDialog.Show();
+                        FragmentContext._firstSetupModel.ImageName = Utils.GetDefaults("Email", Activity);
+
+                        await Task.Run(async () =>
+                        {
+
+                            var jsonData = JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
+                            var response = await FragmentContext._webServices.Post(Constants.PublicServerAddress + "/api/firstSetup", new JSONObject(jsonData), Utils.GetDefaults("Token", Activity));
+                            if (response != null)
+                            {
+                                Snackbar snack;
+                                var responseJson = new JSONObject(response);
+                                switch (responseJson.GetInt("status"))
+                                {
+                                    case 0:
+                                        snack = Snackbar.Make(FragmentContext._mainContent, "Wrong Data", Snackbar.LengthLong);
+                                        snack.Show();
+                                        break;
+                                    case 1:
+                                        snack = Snackbar.Make(FragmentContext._mainContent, "Internal Server Error", Snackbar.LengthLong);
+                                        snack.Show();
+                                        break;
+                                    case 2:
+
+                                        FragmentContext.StartActivity(typeof(MainActivity));
+                                        FragmentContext.Finish();
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                var snack = Snackbar.Make(FragmentContext._mainContent, "Unable to reach the server!", Snackbar.LengthLong);
+                                snack.Show();
+                            }
+                        });
+                        FragmentContext._progressDialog.Dismiss();
+
+                        break;
+                }
+            }
+
         }
 
         public class SectionsPagerAdapter : FragmentPagerAdapter

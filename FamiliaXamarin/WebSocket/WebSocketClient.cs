@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using Android.App;
 using Android.Content;
-using Android.Preferences;
 using Android.Support.V4.App;
 using Android.Util;
 using FamiliaXamarin.JsonModels;
-using Java.Net;
 using Newtonsoft.Json;
 using Org.Json;
 using SocketIO.Client;
@@ -15,14 +13,12 @@ using Socket = SocketIO.Client.Socket;
 
 namespace FamiliaXamarin
 {
-    internal class WebSocketClient : IWebSocketClient
+    public class WebSocketClient : IWebSocketClient
     {
-        private Socket _socket;
+        Socket _socket;
         public static Socket Client;
 
-//        private JSONArray _rooms = new JSONArray();
-//        private JSONObject _newRoom = new JSONObject();
-        private Context _context;
+        Context _context;
         public void Connect(string hostname, int port, Context context)
         {
             Utils.CreateChannels();
@@ -37,7 +33,6 @@ namespace FamiliaXamarin
                     Query = $"token={Utils.GetDefaults("Token", Application.Context)}&imei={Utils.GetImei(Application.Context)}"
                     
                 };
-                //URI url = new URI(Constants.WebSocketAddress);
                 _socket = IO.Socket(Constants.WebSocketAddress, options);
 
                 _socket.On(Socket.EventConnect, OnConnect);
@@ -51,13 +46,10 @@ namespace FamiliaXamarin
 
                 _socket.Connect();
                 Client = _socket;
-                //_socket = IO.Socket($"{hostname});:ket;
             }
             catch (Exception e)
             {     
-                                                                           
-                
- //               _socket = IO.Socket("http://192.168.100.52:ocket(n3000");
+
 
                 Log.Error("WSConnectionError: ", e.ToString());
             }
@@ -73,23 +65,23 @@ namespace FamiliaXamarin
             _socket.Emit(eventName, value);
         }
 
-        private static void OnConnect(Object[] obj)
+        static void OnConnect(Object[] obj)
         {
             Log.Error("WebSocket", "Client Connected");
         }
-        private static void OnDisconnect(Object[] obj)
+        static void OnDisconnect(Object[] obj)
         {
             Log.Error("WebSocket", "Client Diconnected");
         }
-        private static void OnConnectError(Object[] obj)
+        static void OnConnectError(Object[] obj)
         {
             Log.Error("WebSocket", "Connection Error" + obj[0]);
         }
-        private static void OnConnectTimeout(Object[] obj)
+        static void OnConnectTimeout(Object[] obj)
         {
             Log.Error("WebSocket", "Connection Timeout");
         }
-        private void OnConversation(Object[] obj)
+        void OnConversation(Object[] obj)
         {
             Log.Error("WebSocket", "OnConversation");
             var data = (JSONObject)obj[0];
@@ -110,20 +102,16 @@ namespace FamiliaXamarin
             try
             {
 
-               //CAZUL 1 chat simplu intre 2 useri
-                if (ChatActivity.Active &&  ChatActivity.RoomName.Equals(room))
+                //CAZUL 1 chat simplu intre 2 useri
+                if (ChatActivity.Active && ChatActivity.RoomName.Equals(room))
                 {
                     Log.Error("Caz 1", "*********************");
-                    ChatActivity.addMessage(message, ChatModel.TypeMessage);
-
-//                    NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
-//                    Utils.GetManager().Notify(100, nb.Build());
+                    ChatActivity.AddMessage(message, ChatModel.TypeMessage);
                 }
                 //CAZUL 2 user offline primeste chat
                 else if (!ChatActivity.Active && ChatActivity.RoomName.Equals(room))
                 {
                     Log.Error("Caz 2", "*********************");
-                    //String[] data2 = message.split(" ");
 
                     NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
                     Utils.GetManager().Notify(100, nb.Build());
@@ -144,7 +132,7 @@ namespace FamiliaXamarin
                 Log.Error("Eroare da nu ii bai", ex.ToString());
             }
         }
-        private void OnChatAccepted(Object[] obj)
+        void OnChatAccepted(Object[] obj)
         {
             Log.Error("WebSocket", "Chat Accepted");
             var data = (JSONObject)obj[0];
@@ -162,9 +150,6 @@ namespace FamiliaXamarin
                 return;
             }
 
-//            Chat.RoomName = room;
-//            Chat.Email = email;
-//            Chat.FromNotify = false;
             // aici adaugi in array-ul de room-uri
             try
             {
@@ -202,56 +187,32 @@ namespace FamiliaXamarin
                     Utils.SetDefaults("Rooms", serialized, _context);
                 }
             }
-            catch
+            catch (Exception e)
             {
-                //ignored
+                Log.Error("Error OInConversatyion", e.Message);
             }
-           
-            
-            
+
+
+
             var nb = Utils.GetAndroidChannelNotification("Cerere acceptata", email + " ti-a acceptat cererea de chat!", "Converseaza", 2, _context, room);
             Utils.GetManager().Notify(100, nb.Build());
         }
-        private void OnChatRequest(Object[] obj)
+        void OnChatRequest(Object[] obj)
         {
             Log.Error("WebSocket", "Chat Request");
             var data = (JSONObject)obj[0];
             string email;
             string room;
-            //String avatar;
             try
             {
-                //username = data.getString("username");
                 email = data.GetString("from");
                 room = data.GetString("room");
-                //avatar = data.getString("avatar");
             }
             catch (JSONException e)
             {
                 Log.Error("onStartChat: ", e.Message);
                 return;
             }
-
-//            Chat.Email = email;
-//            Chat.RoomName = room;
-            // Chat.Avatar = avatar;
-//            var mPrefs = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
-//            var sharedRooms = mPrefs.GetString("Rooms", "[]");
-//            try
-//            {
-//                _newRoom.Put("dest", email).Put("room", room);
-//                _rooms = new JSONArray(sharedRooms);
-//                _rooms.Put(_newRoom);
-//
-//                var editor = mPrefs.Edit();
-//                editor.PutString("Rooms", _rooms.ToString());
-//                editor.Apply();
-//            }
-//            catch (JSONException e)
-//            {
-//                e.PrintStackTrace();
-//            }
-
 
             var nb = Utils.GetAndroidChannelNotification("Cerere de chat", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
             Utils.GetManager().Notify(100, nb.Build());

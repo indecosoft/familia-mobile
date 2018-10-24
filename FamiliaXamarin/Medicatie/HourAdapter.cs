@@ -9,8 +9,8 @@ namespace FamiliaXamarin.Medicatie
 {
     class HourAdapter : RecyclerView.Adapter
     {
-        public event EventHandler<HourAdapterClickEventArgs> ItemClick;
-        public event EventHandler<HourAdapterClickEventArgs> ItemLongClick;
+       //public event EventHandler<HourAdapterClickEventArgs> ItemClick;
+       // public event EventHandler<HourAdapterClickEventArgs> ItemLongClick;
         private List<Hour> hours;
 
         private OnHourClickListener listener;

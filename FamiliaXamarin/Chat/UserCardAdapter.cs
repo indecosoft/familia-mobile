@@ -58,7 +58,7 @@ namespace FamiliaXamarin
         public TextView Name;
         public TextView Probleme;
         public ImageView Image;
-        private View Curentview;
+        //private View Curentview;
 
             public ViewHolder(View view)
         {

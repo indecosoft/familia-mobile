@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
@@ -11,9 +8,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
-using Android.Views;
 using Android.Widget;
-using FamiliaXamarin.PressureDevice;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.GlucoseDevice
@@ -21,17 +16,19 @@ namespace FamiliaXamarin.GlucoseDevice
     [Activity(Label = "AddNewGucoseDeviceActivity", Theme = "@style/AppTheme.Dark")]
     public class AddNewGucoseDeviceActivity : AppCompatActivity
     {
-        private RecyclerView recyclerView;
-        private BluetoothAdapter bluetoothAdapter;
-        private List<string> devices;
-        private List<string> devicesAddress;
+        RecyclerView recyclerView;
+        BluetoothAdapter bluetoothAdapter;
+        List<string> devices;
+        List<string> devicesAddress;
 
-        private BluetoothLeScanner scanner;
-        private int ENABLE_BT = 11;
-        private ProgressDialog progressDialog;
+        BluetoothLeScanner scanner;
+        readonly int ENABLE_BT = 11;
+#pragma warning disable CS0618 // Type or member is obsolete
+        ProgressDialog progressDialog;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         DevicesRecyclerViewAdapter adapter;
-        private BluetoothScanCallback scanCallback;
+        BluetoothScanCallback scanCallback;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -52,7 +49,9 @@ namespace FamiliaXamarin.GlucoseDevice
             };
             scanCallback = new BluetoothScanCallback(this);
 
+#pragma warning disable CS0618 // Type or member is obsolete
             progressDialog = new ProgressDialog(this);
+#pragma warning restore CS0618 // Type or member is obsolete
             progressDialog.SetTitle("Va rugam asteptati ...");
             progressDialog.SetMessage("Se cauta dispozitive");
             progressDialog.SetCancelable(false);
@@ -68,6 +67,7 @@ namespace FamiliaXamarin.GlucoseDevice
             adapter = new DevicesRecyclerViewAdapter(this, devices);
             adapter.ItemClick += delegate(object sender, int i)
             {
+                Contract.Requires(sender != null);
                 Utils.SetDefaults(GetString(Resource.String.blood_glucose_device), devicesAddress[i], this);
                 StartActivity(typeof(GlucoseDeviceActivity));
                 Finish();
@@ -114,7 +114,7 @@ namespace FamiliaXamarin.GlucoseDevice
                 }
             }
         }
-        private void ScanDevices()
+        void ScanDevices()
         {
             scanner = bluetoothAdapter.BluetoothLeScanner;
             scanner.StartScan(scanCallback);
@@ -128,7 +128,7 @@ namespace FamiliaXamarin.GlucoseDevice
 
         public class BluetoothScanCallback : ScanCallback
         {
-            private Context _context;
+            readonly Context _context;
             public BluetoothScanCallback(Context context)
             {
                 _context = context;
@@ -149,16 +149,5 @@ namespace FamiliaXamarin.GlucoseDevice
             }
         }
 
-        private bool alreadyExist(string e)
-        {
-            for (int i = 0; i < devicesAddress.Count; i++)
-            {
-                if (e.CompareTo(devicesAddress[i]) == 0)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
     }
 }

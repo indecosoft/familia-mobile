@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,7 +15,6 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Airbnb.Lottie;
-using FamiliaXamarin.PressureDevice;
 using Java.IO;
 using Java.Text;
 using Java.Util;
@@ -31,26 +29,26 @@ namespace FamiliaXamarin.GlucoseDevice
     public class GlucoseDeviceActivity : AppCompatActivity , Animator.IAnimatorListener
     {
 
-        private BluetoothAdapter bluetoothAdapter;
-        private BluetoothLeScanner bluetoothScanner;
-        private BluetoothManager bluetoothManager;
+        BluetoothAdapter bluetoothAdapter;
+        BluetoothLeScanner bluetoothScanner;
+        BluetoothManager bluetoothManager;
 
 
-        private Handler handler;
-        private bool send = false;
+        Handler handler;
+        bool send = false;
 
-        private TextView glucose;
-        private Button scanButton;
+        TextView glucose;
+        Button scanButton;
 
         // private ProgressDialog progressDialog;
-        private TextView lbStatus;
-        private ConstraintLayout DataContainer;
+        TextView lbStatus;
+        ConstraintLayout DataContainer;
 
         //private ProgressDialog progressDialog;
-        private LottieAnimationView animationView;
-        private GlucoseDeviceActivity Context;
-        private BluetoothScanCallback scanCallback;
-        private GattCallBack gattCallback;
+        LottieAnimationView animationView;
+        GlucoseDeviceActivity Context;
+        BluetoothScanCallback scanCallback;
+        GattCallBack gattCallback;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -145,9 +143,6 @@ namespace FamiliaXamarin.GlucoseDevice
                         //progressDialog.show();
                     }
                 }
-                //bluetoothAdapter.startLeScan(scanCallback);
-                //scanButton.setEnabled(false);
-             
             }
 
         }
@@ -185,9 +180,9 @@ namespace FamiliaXamarin.GlucoseDevice
             }
         }
 
-        private class BluetoothScanCallback : ScanCallback
+        class BluetoothScanCallback : ScanCallback
         {
-            private Context Context;
+            Context Context;
             public BluetoothScanCallback(Context context)
             {
                 Context = context;
@@ -196,18 +191,17 @@ namespace FamiliaXamarin.GlucoseDevice
             public override void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result)
             {
                 base.OnScanResult(callbackType, result);
-                Log.Error("$$$$$$$$$$$$$$$$$", result.Device.Address);
                 if (result.Device.Address == null ||
                     !result.Device.Address.Equals(
                         Utils.GetDefaults(Context.GetString(Resource.String.blood_glucose_device), Context))) return;
                 result.Device.ConnectGatt(Context, false, ((GlucoseDeviceActivity)Context).gattCallback);
                 ((GlucoseDeviceActivity)Context).bluetoothScanner.StopScan(((GlucoseDeviceActivity)Context).scanCallback);
-                ((GlucoseDeviceActivity) Context).lbStatus.Text = Context.GetString(Resource.String.conectare_info);
+                ((GlucoseDeviceActivity)Context).lbStatus.Text = Context.GetString(Resource.String.conectare_info);
             }
         }
-        private class GattCallBack : BluetoothGattCallback
+        class GattCallBack : BluetoothGattCallback
         {
-            private Context Context;
+            Context Context;
             public GattCallBack(Context context)
             {
                 Context = context;
@@ -312,7 +306,7 @@ namespace FamiliaXamarin.GlucoseDevice
             }
 
         }
-        private void UpdateUi(float g)
+        void UpdateUi(float g)
         {
             Log.Error("UpdateUI", "Aici");
             if (!send)
@@ -404,7 +398,7 @@ namespace FamiliaXamarin.GlucoseDevice
 //                e.PrintStackTrace();
 //            }
         }
-        private void ActivateScanButton()
+        void ActivateScanButton()
         {
             scanButton.Enabled = true;
         }
@@ -420,7 +414,7 @@ namespace FamiliaXamarin.GlucoseDevice
                 () => { SetCharacteristicNotification_private(gatt, serviceUuid, characteristicUuid); }, 300);
         }
 
-        private void SetCharacteristicNotification_private(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
+        void SetCharacteristicNotification_private(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
         {
             try
             {
@@ -443,5 +437,5 @@ namespace FamiliaXamarin.GlucoseDevice
                 e.PrintStackTrace();
             }
         }
-}
+    }
 }

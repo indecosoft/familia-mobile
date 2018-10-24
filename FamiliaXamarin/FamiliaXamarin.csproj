@@ -85,10 +85,8 @@
     <Compile Include="Chat\ChatActivity.cs" />
     <Compile Include="Chat\ChatAdapter.cs" />
     <Compile Include="Chat\ChatModel.cs" />
-    <Compile Include="WebSocket\WebServices.cs" />
     <Compile Include="WebSocket\WebSocketClient.cs" />
     <Compile Include="WebSocket\WebSocketService.cs" />
-    <Compile Include="WebSocket\IWebServices.cs" />
     <Compile Include="WebSocket\IWebSocketClient.cs" />
     <Compile Include="Devices\GlucoseDevice\AddNewGucoseDeviceActivity.cs" />
     <Compile Include="Devices\GlucoseDevice\GlucoseDeviceActivity.cs" />
@@ -118,6 +116,8 @@
     <Compile Include="Login System\RegisterActivity.cs" />
     <Compile Include="Helpers\DatePickerFragment.cs" />
     <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="WebServices\IWebServices.cs" />
+    <Compile Include="WebServices\WebServices.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -579,6 +579,9 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="WebServices\" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Android;
 using Android.App;
@@ -10,16 +6,8 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Locations;
 using Android.OS;
-using Android.Runtime;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
-using Java.Lang;
-using String = System.String;
-using Android.Gms.Common;
 using Android.Gms.Location;
-using Android.Support.Design.Widget;
-using Android.Support.V4.App;
 using Android.Support.V4.Content;
 
 namespace FamiliaXamarin
@@ -27,10 +15,6 @@ namespace FamiliaXamarin
     [Service]
     class LocationService : Service 
     {
-        private LocationManager _locationManager;
-        private string _provider = LocationManager.GpsProvider;
-
-
         FusedLocationProviderClient fusedLocationProviderClient;
         LocationCallback locationCallback;
         LocationRequest locationRequest;
@@ -38,11 +22,6 @@ namespace FamiliaXamarin
         const long ONE_MINUTE = 60 * 1000;
         const long FIVE_MINUTES = 5 * ONE_MINUTE;
         const long TWO_MINUTES = 2 * ONE_MINUTE;
-
-        static readonly int RC_LAST_LOCATION_PERMISSION_CHECK = 1000;
-        static readonly int RC_LOCATION_UPDATES_PERMISSION_CHECK = 1100;
-
-        static readonly string KEY_REQUESTING_LOCATION_UPDATES = "requesting_location_updates";
         bool isGooglePlayServicesInstalled;
         bool isRequestingLocationUpdates;
         public const int ServiceRunningNotificationId = 10000;
@@ -50,7 +29,9 @@ namespace FamiliaXamarin
 
         public override IBinder OnBind(Intent intent)
         {
+#pragma warning disable RECS0083 // Shows NotImplementedException throws in the quick task bar
             throw new NotImplementedException();
+#pragma warning restore RECS0083 // Shows NotImplementedException throws in the quick task bar
         }
 
         public override void OnDestroy()
@@ -80,7 +61,9 @@ namespace FamiliaXamarin
             }
 
         }
+#pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
         async void RequestLocationUpdatesButtonOnClick()
+#pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
         {
             // No need to request location updates if we're already doing so.
             if (isRequestingLocationUpdates)
@@ -95,10 +78,6 @@ namespace FamiliaXamarin
                     await StartRequestingLocationUpdates();
                     isRequestingLocationUpdates = true;
                 }
-                else
-                {
-                    //RequestLocationPermission(RC_LAST_LOCATION_PERMISSION_CHECK);
-                }
             }
         }
         async Task StartRequestingLocationUpdates()
@@ -106,7 +85,9 @@ namespace FamiliaXamarin
             await fusedLocationProviderClient.RequestLocationUpdatesAsync(locationRequest, locationCallback);
         }
 
+#pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
         async void StopRequestionLocationUpdates()
+#pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
         {
 
             if (isRequestingLocationUpdates)
@@ -118,7 +99,7 @@ namespace FamiliaXamarin
         {
             // This method assumes that the necessary run-time permission checks have succeeded.
             //getLastLocationButton.SetText(Resource.String.getting_last_location);
-            Android.Locations.Location location = await fusedLocationProviderClient.GetLastLocationAsync();
+            Location location = await fusedLocationProviderClient.GetLastLocationAsync();
 
             if (location == null)
             {
@@ -134,7 +115,9 @@ namespace FamiliaXamarin
         {
             Log.Error("Location Service", "Started");
 
+#pragma warning disable CS0618 // Type or member is obsolete
             var notification = new Notification.Builder(this)
+#pragma warning restore CS0618 // Type or member is obsolete
                 .SetContentTitle(Resources.GetString(Resource.String.app_name))
                 .SetContentText("Ruleaza in fundal")
                 .SetSmallIcon(Resource.Drawable.logo)

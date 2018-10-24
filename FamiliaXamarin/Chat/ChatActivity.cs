@@ -20,39 +20,31 @@ using Java.Lang;
 using Newtonsoft.Json;
 using Org.Json;
 using String = System.String;
-using Toolbar = Android.Widget.Toolbar;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin
 {
     [Activity(Label = "ChatActivity", Theme = "@style/AppTheme.Dark")]
     public class ChatActivity : AppCompatActivity
     {
-
-        //private Button start;
-        private Button send;
-        //private static int REQUEST_LOGIN = 0;
-
-        //private static int TYPING_TIMER_LENGTH = 600;
+        Button send;
 
         public static RecyclerView _recyclerView;
         public static EditText mInputMessageView;
-        private static List<ChatModel> mMessages;
-        private static ChatAdapter mAdapter;
+        static List<ChatModel> mMessages;
+        static ChatAdapter mAdapter;
         public static string Email;
         public static string RoomName = "";
 
-        public static bool Active = false;
-        public static bool FromNotify = false;
-        //private bool mTyping = false;
-        private Handler mTypingHandler = new Handler();
-        private static string mUsername;
-       //private static string Token;
+        public static bool Active;
+
+        readonly Handler mTypingHandler = new Handler();
+        static string mUsername;
         public static string EmailDest;
-        private static ChatActivity Ctx;
+        static ChatActivity Ctx;
         public static string Avatar;
         public static string NewMessage = "";
-        IWebSocketClient _socketClient = new WebSocketClient();
-
+        readonly IWebSocketClient _socketClient = new WebSocketClient();
 
         protected override void OnPause()
         {
@@ -63,7 +55,7 @@ namespace FamiliaXamarin
         {
             base.OnResume();
             Active = true;
-        }      
+        }
 
         protected override void OnStop()
         {
@@ -75,7 +67,6 @@ namespace FamiliaXamarin
 
             Active = false;
             mAdapter.Clear();
-            //OnBackPressed();
         }
 
         public override void OnBackPressed()
@@ -89,28 +80,29 @@ namespace FamiliaXamarin
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_chat);
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             Title = string.Empty;
 
             mMessages = new List<ChatModel>();
             Active = true;
             mAdapter = new ChatAdapter(this, mMessages);
-                        //mAdapter.ItemClick += delegate (object sender, int i)
-                        //{
-                        //    Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
-                        //};
+            //mAdapter.ItemClick += delegate (object sender, int i)
+            //{
+            //    Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
+            //};
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.messages);
             _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
             _recyclerView.SetAdapter(mAdapter);
             Ctx = this;
             mInputMessageView = (EditText)FindViewById(Resource.Id.tbMessage);
             send = FindViewById<Button>(Resource.Id.Send);
-            send.Click += delegate { attemptSend(); };
+            send.Click += delegate { AttemptSend(); };
             NotificationManagerCompat.From(this).Cancel(100);
 
             if (savedInstanceState == null)
-            {Bundle extras = Intent.Extras;
+            {
+                Bundle extras = Intent.Extras;
                 if (extras == null)
                 {
 
@@ -119,12 +111,11 @@ namespace FamiliaXamarin
                 {
                     try
                     {
-                        //adaugare la lista de pretini
-                        string SharedRooms = Utils.GetDefaults("Rooms", this);
-                        //if (!string.IsNullOrEmpty(SharedRooms))
+                        //adaugare la lista de prieteni
+                        var SharedRooms = Utils.GetDefaults("Rooms", this);
                         if (SharedRooms != null)
-                            {
-                                
+                        {
+
                             var model = JsonConvert.DeserializeObject<List<ConverstionsModel>>(SharedRooms);
 
                             var currentModel = new ConverstionsModel { Username = extras.GetString("EmailFrom"), Room = extras.GetString("Room") };
@@ -142,24 +133,23 @@ namespace FamiliaXamarin
                                 model.Add(currentModel);
                             }
 
-                            string serialized = JsonConvert.SerializeObject(model);
+                            var serialized = JsonConvert.SerializeObject(model);
                             Utils.SetDefaults("Rooms", serialized, this);
                         }
                         else
                         {
-                            List<ConverstionsModel> model = new List<ConverstionsModel>();
+                            var model = new List<ConverstionsModel>();
                             var currentModel = new ConverstionsModel { Username = extras.GetString("EmailFrom"), Room = extras.GetString("Room") };
-                      
-                            model.Add(currentModel);
-                          
 
-                            string serialized = JsonConvert.SerializeObject(model);
+                            model.Add(currentModel);
+
+                            var serialized = JsonConvert.SerializeObject(model);
                             Utils.SetDefaults("Rooms", serialized, this);
                         }
                     }
-                    catch
+                    catch (System.Exception e)
                     {
-                        //ignored
+                        Log.Error("Error", e.Message);
                     }
                     RoomName = extras.GetString("Room");
                     mUsername = extras.GetString("EmailFrom");
@@ -185,7 +175,6 @@ namespace FamiliaXamarin
                         var mailObject = new JSONObject().Put("from", extras.GetString("EmailFrom")).Put("dest", emailFrom).Put("accepted", false);
                         Log.Error("aici", mailObject.ToString());
                         WebSocketClient.Client.Emit("chat accepted", mailObject);
-                        //finish();
                     }
                     catch (JSONException e)
                     {
@@ -193,27 +182,24 @@ namespace FamiliaXamarin
                     }
                     Finish();
                 }
-      
+
                 RoomName = extras.GetString("Room");
                 mUsername = extras.GetString("EmailFrom");
-                if(extras.ContainsKey("NewMessage"))
-                    addMessage(extras.GetString("NewMessage"), ChatModel.TypeMessage);
+                if (extras.ContainsKey("NewMessage"))
+                    AddMessage(extras.GetString("NewMessage"), ChatModel.TypeMessage);
             }
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
             toolbar.NavigationClick += delegate { Finish(); };
             Title = mUsername;
-
-
-            // Create your application here
         }
-        private void attemptSend()
+        void AttemptSend()
         {
             if (!mInputMessageView.Text.Equals(""))
             {
-                string message = mInputMessageView.Text;
+                var message = mInputMessageView.Text;
                 mInputMessageView.Text = string.Empty;
-                addMessage(message, ChatModel.TypeMyMessage);
+                AddMessage(message, ChatModel.TypeMyMessage);
                 JSONObject messageToSend = null;
                 try
                 {
@@ -227,26 +213,18 @@ namespace FamiliaXamarin
                 WebSocketClient.Client.Emit("send message", messageToSend);
             }
         }
-        public static void addMessage(string message, int type)
+        public static void AddMessage(string message, int type)
         {
-                    Ctx.RunOnUiThread(() =>
-                    {
-                        mAdapter.AddMessage(new ChatModel { Message = message, Type = type });
-                        mAdapter.NotifyDataSetChanged();
-                        scrollToBottom();
-                    });
+            Ctx.RunOnUiThread(() =>
+            {
+                mAdapter.AddMessage(new ChatModel { Message = message, Type = type });
+                mAdapter.NotifyDataSetChanged();
+                ScrollToBottom();
+            });
         }
-        private static void scrollToBottom()
+        static void ScrollToBottom()
         {
             _recyclerView.ScrollToPosition(mAdapter.ItemCount);
-        }
-        void ChangedData()
-        {
-            Task.Delay(100).ContinueWith(t =>
-            {
-                mAdapter.NotifyDataSetChanged();
-                ChangedData();//This is for repeate every 5s.
-            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
     }
 }

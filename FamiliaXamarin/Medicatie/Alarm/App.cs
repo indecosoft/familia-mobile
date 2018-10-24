@@ -32,7 +32,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
             {
                 string name = Constants.ChannelId;
                 string description = "my channel desc";
+#pragma warning disable CS0618 // Type or member is obsolete
                 var importance = NotificationManager.ImportanceDefault;
+#pragma warning restore CS0618 // Type or member is obsolete
                 NotificationChannel channel = new NotificationChannel(Constants.ChannelId, name, importance);
                 channel.Description = description;
                 // Register the channel with the system; you can't change the importance
