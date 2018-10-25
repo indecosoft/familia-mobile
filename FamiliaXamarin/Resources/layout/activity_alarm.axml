@@ -21,9 +21,8 @@
             app:layout_constraintTop_toTopOf="parent" />
     <RelativeLayout
         android:id="@+id/rl_alarm"
-        android:layout_width="300dp"
-        android:layout_height="200dp"
-        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@android:color/white"
 		app:layout_constraintVertical_bias="0.6"
 		app:layout_constraintHorizontal_bias="0.5"
@@ -36,9 +35,9 @@
             android:id="@+id/tv_label_med_alarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/tv_med_name_alarm"
+
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp"
+            android:layout_marginTop="30dp"
             android:text="Trebuie sa-ti iei medicamentul:"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -49,8 +48,12 @@
             android:id="@+id/tv_med_name_alarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+			android:layout_centerHorizontal="true"
+            android:layout_below="@+id/tv_label_med_alarm"
             android:textSize="30dp"
+			android:text="sdgdf"
+			android:textAlignment="center"
+			android:layout_marginTop="30dp"
             android:textColor="@android:color/black"/>
 
 

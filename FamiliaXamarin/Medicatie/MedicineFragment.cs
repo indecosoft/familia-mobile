@@ -61,52 +61,60 @@ namespace FamiliaXamarin.Medicatie
         {
             //IWebServices webservices = new WebServices();
             await Task.Run(async () => {
-                var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/15", Utils.GetDefaults("Token", Activity));
-               // var res = await webservices.Get($"{Constants.PublicServerAddress}/api/userMeds/15", Utils.GetDefaults("Token", Activity));
-                Log.Error("Result", "*******************************************************");
-                if (res != null)
+                try
                 {
-                    if (res.Equals("[]")) return;
-                    medications = ParseResultFromUrl(res);
-                    //TODO setAlarm for each item of medications and parse the timestampString to a real timestamp
-                    foreach (var ms in medications)
+                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("IdClient", Activity)}", Utils.GetDefaults("Token", Activity));
+                    // var res = await webservices.Get($"{Constants.PublicServerAddress}/api/userMeds/15", Utils.GetDefaults("Token", Activity));
+                    Log.Error("Result", "*******************************************************");
+                    if (res != null)
                     {
-                        var am = (AlarmManager)Activity.GetSystemService(Context.AlarmService);
-                        var i = new Intent(Activity, typeof(AlarmBroadcastReceiverServer));
-
-
-                        i.PutExtra(AlarmBroadcastReceiverServer.UUID, ms.Uuid);
-                        i.PutExtra(AlarmBroadcastReceiverServer.TITLE, ms.Title);
-                        i.PutExtra(AlarmBroadcastReceiverServer.CONTENT, ms.Content);
-                        i.SetAction(AlarmBroadcastReceiverServer.ACTION_RECEIVE);
-
-                        var id = CurrentTimeMillis();
-                        var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.OneShot);
-                        if (am != null)
+                        if (res.Equals("[]")) return;
+                        medications = ParseResultFromUrl(res);
+                        //TODO setAlarm for each item of medications and parse the timestampString to a real timestamp
+                        foreach (var ms in medications)
                         {
-                            var date = parseTimestampStringToDate(ms);
+                            var am = (AlarmManager)Activity.GetSystemService(Context.AlarmService);
+                            var i = new Intent(Activity, typeof(AlarmBroadcastReceiverServer));
 
-                            Calendar calendar = Calendar.Instance;
-                            Calendar setcalendar = Calendar.Instance;
 
-                            setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
-                            //setcalendar.Time = date.;
-                            Log.Error("Calendarul", setcalendar.ToString());
+                            i.PutExtra(AlarmBroadcastReceiverServer.UUID, ms.Uuid);
+                            i.PutExtra(AlarmBroadcastReceiverServer.TITLE, ms.Title);
+                            i.PutExtra(AlarmBroadcastReceiverServer.CONTENT, ms.Content);
+                            i.SetAction(AlarmBroadcastReceiverServer.ACTION_RECEIVE);
 
-                            if (setcalendar.Before(calendar)) return;
+                            var id = CurrentTimeMillis();
+                            var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.OneShot);
+                            if (am != null)
+                            {
+                                var date = parseTimestampStringToDate(ms);
 
-                            am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
+                                Calendar calendar = Calendar.Instance;
+                                Calendar setcalendar = Calendar.Instance;
+
+                                setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
+                                //setcalendar.Time = date.;
+                                Log.Error("Calendarul", setcalendar.ToString());
+
+                                if (setcalendar.Before(calendar)) return;
+
+                                am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
+                            }
                         }
                     }
-                }
-                else
-                {
-                    Activity.RunOnUiThread(() =>
+                    else
                     {
-                        Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
+                        Activity.RunOnUiThread(() =>
+                        {
+                            Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
 
-                    });
+                        });
+                    }
                 }
+                catch (Exception e)
+                {
+                    Log.Error("AlarmError", e.Message);
+                }
+               
                
             });
             _progressDialog.Dismiss();
