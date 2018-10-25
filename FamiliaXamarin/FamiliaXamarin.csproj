@@ -133,6 +133,7 @@
     <AndroidResource Include="Resources\raw\loading.json" />
     <AndroidResource Include="Resources\layout\fragment_conversations.axml" />
     <AndroidResource Include="Resources\layout\item_conversations.xml" />
+    <AndroidResource Include="Resources\raw\bell.json" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -577,10 +578,10 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Folder Include="WebServices\" />
+    <AndroidResource Include="Resources\drawable\snooze_button.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.
