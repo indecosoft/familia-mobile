@@ -3245,9 +3245,6 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a007b
 			public const int action_mode_close_button = 2131361915;
 			
-			// aapt resource value: 0x7f0a0170
-			public const int action_settings = 2131362160;
-			
 			// aapt resource value: 0x7f0a0155
 			public const int action_text = 2131362133;
 			
