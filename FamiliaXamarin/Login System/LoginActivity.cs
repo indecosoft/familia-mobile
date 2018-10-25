@@ -36,7 +36,7 @@ namespace FamiliaXamarin
             Manifest.Permission.WriteExternalStorage
         };
 
-        private readonly IWebServices _webServices = new WebServices();
+        //private readonly IWebServices _webServices = new WebServices();
 
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -141,7 +141,7 @@ namespace FamiliaXamarin
                 var dataToSend = new JSONObject().Put("email", _usernameEditText.Text)
                     .Put("password", _passwordEditText.Text).Put("imei", Utils.GetImei(this));
 
-                string response = await _webServices.Post(Constants.PublicServerAddress + "/api/login", dataToSend);
+                string response = await WebServices.Post(Constants.PublicServerAddress + "/api/login", dataToSend);
                 if (response != null)
                 {
                     Snackbar snack;

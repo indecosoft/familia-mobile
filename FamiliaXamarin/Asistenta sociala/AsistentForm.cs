@@ -43,7 +43,7 @@ namespace FamiliaXamarin
         public static int hour, minutes;
         readonly Handler handler = new Handler();
         Intent DistanceCalculatorService;
-        readonly IWebServices _webServices = new WebServices();
+        //readonly IWebServices _webServices = new WebServices();
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -256,7 +256,7 @@ namespace FamiliaXamarin
                                         var dataToSend = new JSONObject().Put("dateTimeStart", DateTimeStart)
                                             .Put("dateTimeStop", DateTimeEnd).Put("qrCodeData", QrJsonData)
                                             .Put("location", Location).Put("details", Details);
-                                        var response = await _webServices.Post(Constants.PublicServerAddress + "/api/consult", dataToSend, Utils.GetDefaults("Token", Activity));
+                                        var response = await WebServices.Post(Constants.PublicServerAddress + "/api/consult", dataToSend, Utils.GetDefaults("Token", Activity));
                                         if (response != null)
                                         {
                                             Snackbar snack;

@@ -31,7 +31,7 @@ namespace FamiliaXamarin
         private EditText _pwdRetypeEditText;
         private TextView _signInTextView;
         private ConstraintLayout _layout;
-        private readonly IWebServices _webServices = new WebServices();
+        //private readonly IWebServices _webServices = new WebServices();
 
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -103,7 +103,7 @@ namespace FamiliaXamarin
                     if (FormValidator())
                     {
                         var dataToSent = new JSONObject().Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text);
-                        var response = new JSONObject(await _webServices.Post(Constants.PublicServerAddress + "/api/passwordReset", dataToSent));
+                        var response = new JSONObject(await WebServices.Post(Constants.PublicServerAddress + "/api/passwordReset", dataToSent));
                         
                         try
                         {

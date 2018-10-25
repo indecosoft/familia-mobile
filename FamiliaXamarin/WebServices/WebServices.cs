@@ -7,9 +7,9 @@ using Org.Json;
 
 namespace FamiliaXamarin
 {
-    public class WebServices : IWebServices
+    public class WebServices
     {
-        public async Task<string> Get(string url)
+        public static async Task<string> Get(string url)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace FamiliaXamarin
             }  
         }
 
-        public async Task<string> Get(string url, string token)
+        public static async Task<string> Get(string url, string token)
         {
             using (var client = new HttpClient())
             {
@@ -58,7 +58,7 @@ namespace FamiliaXamarin
             }
         }
 
-        public async Task<string> Post(string url, JSONObject obj)
+        public static async Task<string> Post(string url, JSONObject obj)
         {
             try
             {
@@ -88,7 +88,7 @@ namespace FamiliaXamarin
             }
         }
 
-        public async Task<string> Post(string url, JSONObject obj, string token)
+        public static async Task<string> Post(string url, JSONObject obj, string token)
         {
             try
             {

@@ -59,9 +59,9 @@ namespace FamiliaXamarin.Medicatie
 
         private async void GetData()
         {
-            IWebServices webservices = new WebServices();
+            //IWebServices webservices = new WebServices();
             await Task.Run(async () => {
-                var res = await Tasks.Tasks.GetMedicine($"{Constants.PublicServerAddress}/api/userMeds/15", Utils.GetDefaults("Token", Activity));
+                var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/15", Utils.GetDefaults("Token", Activity));
                // var res = await webservices.Get($"{Constants.PublicServerAddress}/api/userMeds/15", Utils.GetDefaults("Token", Activity));
                 Log.Error("Result", "*******************************************************");
                 if (res != null)
