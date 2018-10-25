@@ -7,6 +7,8 @@ using Android.Support.V4.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Active_Conversations;
+using FamiliaXamarin.Asistenta_sociala;
 using FamiliaXamarin.Medicatie;
 using Refractored.Controls;
 using Square.Picasso;
