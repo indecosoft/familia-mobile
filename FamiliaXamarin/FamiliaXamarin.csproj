@@ -116,7 +116,6 @@
     <Compile Include="Login System\RegisterActivity.cs" />
     <Compile Include="Helpers\DatePickerFragment.cs" />
     <Compile Include="Helpers\Utils.cs" />
-    <Compile Include="WebServices\IWebServices.cs" />
     <Compile Include="WebServices\WebServices.cs" />
   </ItemGroup>
   <ItemGroup>

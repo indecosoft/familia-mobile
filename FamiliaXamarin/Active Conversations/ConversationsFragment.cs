@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -10,15 +9,11 @@ using FamiliaXamarin.JsonModels;
 using Java.Lang;
 using Newtonsoft.Json;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Active_Conversations
 {
     public class ConversationsFragment : Android.Support.V4.App.Fragment
     {
         private RecyclerView _conversationsRecyclerView;
-        public override void OnCreate(Bundle savedInstanceState)
-        {
-            base.OnCreate(savedInstanceState);
-        }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -28,7 +23,7 @@ namespace FamiliaXamarin
             {
 
                 // Initialize contacts
-                string conv = Utils.GetDefaults("Rooms", Activity);
+                var conv = Utils.GetDefaults("Rooms", Activity);
                 if (conv != null)
                 {
                     var contacts = JsonConvert.DeserializeObject<List<ConverstionsModel>>(conv);
@@ -38,7 +33,7 @@ namespace FamiliaXamarin
                     _conversationsRecyclerView.SetAdapter(adapter);
                     // Set layout manager to position the items
                     _conversationsRecyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
-                    adapter.ItemClick += delegate (object sender, ConvAdapterClickEventArgs args)
+                    adapter.ItemClick += delegate(object sender, ConvAdapterClickEventArgs args)
                     {
                         var name = contacts[args.Position].Username;
                         var room = contacts[args.Position].Room;

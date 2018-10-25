@@ -34,7 +34,7 @@ namespace FamiliaXamarin.SmartBand
         TextView _lbActivity;
         CircleImageView _avatarImage;
         ConstraintLayout _loadingScreen;
-        readonly IWebServices _webServices = new WebServices();
+        //readonly IWebServices _webServices = new WebServices();
 
 #pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
         protected override async void OnCreate(Bundle savedInstanceState)
@@ -111,7 +111,7 @@ namespace FamiliaXamarin.SmartBand
 
         private async Task GetProfileData()
         {
-            var data = await _webServices.Get("https://api.fitbit.com/1/user/-/profile.json", _token);
+            var data = await WebServices.Get("https://api.fitbit.com/1/user/-/profile.json", _token);
             if (!string.IsNullOrEmpty(data))
             {
                 Log.Error("Profile result", data);
@@ -146,7 +146,7 @@ namespace FamiliaXamarin.SmartBand
         }
         async Task GetSteps()
         {
-            var data = await _webServices.Get("https://api.fitbit.com/1.2/user/-/sleep/date/today.json", _token);
+            var data = await WebServices.Get("https://api.fitbit.com/1.2/user/-/sleep/date/today.json", _token);
             if (!string.IsNullOrEmpty(data))
             {
                 Log.Error("Steps Result", data);
@@ -173,7 +173,7 @@ namespace FamiliaXamarin.SmartBand
         }
         async Task GetSleepData()
         {
-            var data = await _webServices.Get("https://api.fitbit.com/1/user/-/activities/date/today.json", _token);
+            var data = await WebServices.Get("https://api.fitbit.com/1/user/-/activities/date/today.json", _token);
             Log.Error("Sleep Result", data);
             if (!string.IsNullOrEmpty(data))
             {
@@ -197,7 +197,7 @@ namespace FamiliaXamarin.SmartBand
         }
         async Task GetHeartRatePulse()
         {
-            var data = await _webServices.Get("https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json", _token);
+            var data = await WebServices.Get("https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json", _token);
             if (!string.IsNullOrEmpty(data))
             {
                 Log.Error("Heartrate Result", data);

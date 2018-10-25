@@ -32,7 +32,7 @@ namespace FamiliaXamarin
         SectionsPagerAdapter _sectionsPagerAdapter;
         FirstSetupViewPager _viewPager;
         readonly FirstSetupModel _firstSetupModel = new FirstSetupModel();
-        readonly IWebServices _webServices = new WebServices();
+        //readonly IWebServices _webServices = new WebServices();
         ConstraintLayout _mainContent;
         public static FirstSetup FragmentContext;
 #pragma warning disable 618
@@ -385,7 +385,7 @@ namespace FamiliaXamarin
                         {
 
                             var jsonData = JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
-                            var response = await FragmentContext._webServices.Post(Constants.PublicServerAddress + "/api/firstSetup", new JSONObject(jsonData), Utils.GetDefaults("Token", Activity));
+                            var response = await WebServices.Post(Constants.PublicServerAddress + "/api/firstSetup", new JSONObject(jsonData), Utils.GetDefaults("Token", Activity));
                             if (response != null)
                             {
                                 Snackbar snack;

@@ -19,57 +19,45 @@ using Java.Util;
 using Org.Json;
 using ZXing.Mobile;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Asistenta_sociala
 {
     public class AsistentForm : Android.Support.V4.App.Fragment
     {
-        FusedLocationProviderClient fusedLocationProviderClient;
-        LocationCallback locationCallback;
-        LocationRequest locationRequest;
-        bool isGooglePlayServicesInstalled;
-        Spinner BenefitsSpinner;
-        EditText TbDetails;
-        Button BtnScan;
-        Calendar now;
-        ConstraintLayout FormContainer;
-        string DateTimeStart, DateTimeEnd;
-        double Latitude, Longitude;
+        private FusedLocationProviderClient _fusedLocationProviderClient;
+        private bool _isGooglePlayServicesInstalled;
+        private Spinner _benefitsSpinner;
+        private EditText _tbDetails;
+        private Button _btnScan;
+        private ConstraintLayout _formContainer;
+        private string _dateTimeStart, _dateTimeEnd;
+        private double _latitude, _longitude;
 #pragma warning disable CS0618 // Type or member is obsolete
-        ProgressDialog progressDialog;
+        private ProgressDialog _progressDialog;
 #pragma warning restore CS0618 // Type or member is obsolete
-        JSONObject Location, Details, QrJsonData;
-        JSONArray BenefitsArray;
-        List<BenefitSpinnerState> listVOs;
-        public static int hour, minutes;
-        readonly Handler handler = new Handler();
-        Intent DistanceCalculatorService;
-        readonly IWebServices _webServices = new WebServices();
-        public override void OnCreate(Bundle savedInstanceState)
-        {
-            base.OnCreate(savedInstanceState);
+        private JSONObject _location, _details, _qrJsonData;
+        private JSONArray _benefitsArray;
+        private List<BenefitSpinnerState> _listVOs;
+        private Intent _distanceCalculatorService;
 
-            // Create your fragment here
-        }
-        void IntiUI(View v)
+        private void IntiUi(View v)
         {
-            BenefitsSpinner = v.FindViewById<Spinner>(Resource.Id.benefits_spinner);
-            TbDetails = v.FindViewById<EditText>(Resource.Id.input_details);
-            BtnScan = v.FindViewById<Button>(Resource.Id.btnScan);
-            FormContainer = v.FindViewById<ConstraintLayout>(Resource.Id.container);
+            _benefitsSpinner = v.FindViewById<Spinner>(Resource.Id.benefits_spinner);
+            _tbDetails = v.FindViewById<EditText>(Resource.Id.input_details);
+            _btnScan = v.FindViewById<Button>(Resource.Id.btnScan);
+            _formContainer = v.FindViewById<ConstraintLayout>(Resource.Id.container);
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            progressDialog = new ProgressDialog(Activity);
+            _progressDialog = new ProgressDialog(Activity);
 #pragma warning restore CS0618 // Type or member is obsolete
-            progressDialog.SetTitle("Va rugam asteptati ...");
-            progressDialog.SetMessage("Se trimit datele");
-            progressDialog.SetCancelable(false);
-
-            now = Calendar.Instance;
+            _progressDialog.SetTitle("Va rugam asteptati ...");
+            _progressDialog.SetMessage("Se trimit datele");
+            _progressDialog.SetCancelable(false);
 
         }
-        bool FieldsValidation()
+
+        private bool FieldsValidation()
         {
-            return BenefitsSpinner.SelectedItem != null && !BenefitsSpinner.SelectedItem.Equals("") && !TbDetails.Text.Equals("");
+            return _benefitsSpinner.SelectedItem != null && !_benefitsSpinner.SelectedItem.Equals("") && !_tbDetails.Text.Equals("");
 
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -78,11 +66,11 @@ namespace FamiliaXamarin
             // return inflater.Inflate(Resource.Layout.YourFragment, container, false);
             var view = inflater.Inflate(Resource.Layout.fragment_asistent_form, container, false);
 
-            IntiUI(view);
-            DistanceCalculatorService = new Intent(Activity, typeof(DistanceCalculator));
+            IntiUi(view);
+            _distanceCalculatorService = new Intent(Activity, typeof(DistanceCalculator));
             string[] selectQualification = {
                 "Beneficiu acordat", "Masaj", "Baie", "Perfuzie", "Pansament"};
-            listVOs = new List<BenefitSpinnerState>();
+            _listVOs = new List<BenefitSpinnerState>();
 
             foreach (var t in selectQualification)
             {
@@ -91,34 +79,34 @@ namespace FamiliaXamarin
                     Title = t,
                     IsSelected = false
                 };
-                listVOs.Add(stateVo);
+                _listVOs.Add(stateVo);
             }
-            var myAdapter = new BenefitAdapter(Activity, 0, listVOs);
-            BenefitsSpinner.Adapter = myAdapter;
-            TbDetails.TextChanged += delegate
+            var myAdapter = new BenefitAdapter(Activity, 0, _listVOs);
+            _benefitsSpinner.Adapter = myAdapter;
+            _tbDetails.TextChanged += delegate
             {
-                BtnScan.Enabled = FieldsValidation();
+                _btnScan.Enabled = FieldsValidation();
             };
             var fromPreferences = Utils.GetDefaults("ActivityStart", Activity);
             if (string.IsNullOrEmpty(fromPreferences))
             {
-                FormContainer.Visibility = ViewStates.Gone;
-                BtnScan.Text = "Incepe activitatea";
+                _formContainer.Visibility = ViewStates.Gone;
+                _btnScan.Text = "Incepe activitatea";
             }
             else
             {
-                FormContainer.Visibility = ViewStates.Visible;
+                _formContainer.Visibility = ViewStates.Visible;
                 try
                 {
-                    Location = new JSONObject((new JSONObject(fromPreferences).GetString("Location")));
-                    DateTimeStart = new JSONObject(fromPreferences).GetString("Start");
+                    _location = new JSONObject(new JSONObject(fromPreferences).GetString("Location"));
+                    _dateTimeStart = new JSONObject(fromPreferences).GetString("Start");
                 }
                 catch (JSONException e)
                 {
                     e.PrintStackTrace();
                 }
-                BtnScan.Text = "Finalizeaza activitatea";
-                BtnScan.Enabled = false;
+                _btnScan.Text = "Finalizeaza activitatea";
+                _btnScan.Enabled = false;
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
                     Activity.StartForegroundService(new Intent(Activity, typeof(DistanceCalculator)));
@@ -129,24 +117,24 @@ namespace FamiliaXamarin
                 }
             }
 
-            BtnScan.Click += BtnScan_Click;
-            isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(Activity);
+            _btnScan.Click += BtnScan_Click;
+            _isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(Activity);
 
 
-            if (!isGooglePlayServicesInstalled) return view;
-            locationRequest = new LocationRequest()
+            if (!_isGooglePlayServicesInstalled) return view;
+            new LocationRequest()
                 .SetPriority(LocationRequest.PriorityHighAccuracy)
                 .SetInterval(1000)
                 .SetFastestInterval(1000);
-            locationCallback = new FusedLocationProviderCallback(Activity);
+            new FusedLocationProviderCallback(Activity);
 
-            fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Activity);
+            _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Activity);
 
 
             return view;
         }
 
-        async void BtnScan_Click(object sender, EventArgs e)
+        private async void BtnScan_Click(object sender, EventArgs e)
         {
             //IntentIntegrator.forSupportFragment(this).InitiateScan();
 #if __ANDROID__
@@ -156,171 +144,156 @@ namespace FamiliaXamarin
 #endif
 
             var result = await StartScan();
-            if (result != null)
+            if (result == null) return;
+            try
+            {
+                var sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                var currentDateandTime = sdf.Format(new Date());
+
+                var dateTimeNow = sdf.Parse(currentDateandTime);
+
+
                 try
                 {
-                    var sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                    var currentDateandTime = sdf.Format(new Date());
+                    _qrJsonData = new JSONObject(result.Text);
 
-                    var dateTimeNow = sdf.Parse(currentDateandTime);
+                    Log.Error("QrCode", _qrJsonData.ToString());
 
 
-                    try
+                    var expDateTime = _qrJsonData.GetString("expirationDateTime");
+                    var dateTimeExp = sdf.Parse(expDateTime);
+                    if (dateTimeExp.After(dateTimeNow))
                     {
-                        QrJsonData = new JSONObject(result.Text);
 
-                        Log.Error("QrCode", QrJsonData.ToString());
-
-
-                        var expDateTime = QrJsonData.GetString("expirationDateTime");
-                        var dateTimeExp = sdf.Parse(expDateTime);
-                        if (dateTimeExp.After(dateTimeNow))
+                        if (_btnScan.Text.Equals("Incepe activitatea"))
                         {
-
-                            if (BtnScan.Text.Equals("Incepe activitatea"))
+                            _formContainer.Visibility = ViewStates.Visible;
+                            _btnScan.Text = "Finalizeaza activitatea";
+                            _btnScan.Enabled = false;
+                            try
                             {
-                                FormContainer.Visibility = ViewStates.Visible;
-                                BtnScan.Text = "Finalizeaza activitatea";
-                                BtnScan.Enabled = false;
-                                try
+                                _progressDialog.Show();
+                                _dateTimeStart = currentDateandTime;
+                                _dateTimeEnd = null;
+
+                                _latitude = double.Parse(Utils.GetDefaults("Latitude", Activity));
+                                _longitude = double.Parse(Utils.GetDefaults("Longitude", Activity));
+
+                                Utils.SetDefaults("ConsultLat", _latitude.ToString(), Activity);
+                                Utils.SetDefaults("ConsultLong", _longitude.ToString(), Activity);
+
+                                _location = new JSONObject().Put("latitude", _latitude).Put("longitude", _longitude);
+                                _details = null;
+                                //started = true;
+                                var obj = new JSONObject().Put("QRData", _qrJsonData.ToString()).Put("Start", _dateTimeStart).Put("Location", _location.ToString());
+                                Utils.SetDefaults("ActivityStart", obj.ToString(), Activity);
+
+                                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                                 {
-                                    progressDialog.Show();
-                                    DateTimeStart = currentDateandTime;
-                                    DateTimeEnd = null;
-
-                                    Latitude = double.Parse(Utils.GetDefaults("Latitude", Activity));
-                                    Longitude = double.Parse(Utils.GetDefaults("Longitude", Activity));
-
-                                    Utils.SetDefaults("ConsultLat", Latitude.ToString(), Activity);
-                                    Utils.SetDefaults("ConsultLong", Longitude.ToString(), Activity);
-
-                                    Location = new JSONObject().Put("latitude", Latitude).Put("longitude", Longitude);
-                                    Details = null;
-                                    //started = true;
-                                    var obj = new JSONObject().Put("QRData", QrJsonData.ToString()).Put("Start", DateTimeStart).Put("Location", Location.ToString());
-                                    Utils.SetDefaults("ActivityStart", obj.ToString(), Activity);
-
-                                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                                    {
-                                        Activity.StartForegroundService(DistanceCalculatorService);
-                                    }
-                                    else
-                                    {
-                                        Activity.StartService(DistanceCalculatorService);
-                                    }
-                                    progressDialog.Dismiss();
+                                    Activity.StartForegroundService(_distanceCalculatorService);
                                 }
-                                catch (JSONException ex)
+                                else
                                 {
-                                    ex.PrintStackTrace();
+                                    Activity.StartService(_distanceCalculatorService);
                                 }
+                                _progressDialog.Dismiss();
                             }
-                            else
+                            catch (JSONException ex)
                             {
-                                FormContainer.Visibility = ViewStates.Gone;
-                                BtnScan.Text = "Incepe activitatea";
-                                try
-                                {
-                                    progressDialog.Show();
-                                    //JSONObject obj = new JSONObject().put("dateTimeStop", currentDateandTime).put("QRData", QrJsonData.toString());
-                                    Utils.SetDefaults("ActivityStart", "", Activity);
-                                    //DateTimeStart = null;
-                                    DateTimeEnd = currentDateandTime;
-                                    GetLastLocationButtonOnClick();
-                                    Location = new JSONObject().Put("latitude", Latitude).Put("longitude", Longitude);
-                                    BenefitsArray = new JSONArray();
-                                    foreach (var t in listVOs)
-                                    {
-                                        if (t.IsSelected)
-                                        {
-                                            BenefitsArray = BenefitsArray.Put(t.Title);
-                                        }
-                                        //BenefitAdapter el = listVOs.get(i).isSelected();
-                                    }
-
-                                    Details = new JSONObject().Put("benefit", BenefitsArray).Put("details", TbDetails.Text);
-                                    Log.Error("Details", Details.ToString());
-                                    //started = false;
-                                    //new Consult().execute(Constants.SERVER_ADDRESS + "/api/consult");
-                                    //RetriveLocation.stopGetConsultLocation();
-
-                                    Activity.StopService(new Intent(Activity, typeof(DistanceCalculator)));
-                                    await Task.Run(async () =>
-                                    {
-                                        //GetLastLocationButtonOnClick();
-                                        Latitude = double.Parse(Utils.GetDefaults("Latitude", Activity));
-                                        Longitude = double.Parse(Utils.GetDefaults("Longitude", Activity));
-
-                                        Utils.SetDefaults("ConsultLat", Latitude.ToString(), Activity);
-                                        Utils.SetDefaults("ConsultLong", Longitude.ToString(), Activity);
-                                        var dataToSend = new JSONObject().Put("dateTimeStart", DateTimeStart)
-                                            .Put("dateTimeStop", DateTimeEnd).Put("qrCodeData", QrJsonData)
-                                            .Put("location", Location).Put("details", Details);
-                                        var response = await _webServices.Post(Constants.PublicServerAddress + "/api/consult", dataToSend, Utils.GetDefaults("Token", Activity));
-                                        if (response != null)
-                                        {
-                                            Snackbar snack;
-                                            var responseJson = new JSONObject(response);
-                                            switch (responseJson.GetInt("status"))
-                                            {
-                                                case 0:
-                                                    snack = Snackbar.Make(FormContainer, "Nu esti la pacient!", Snackbar.LengthLong);
-                                                    snack.Show();
-                                                    break;
-                                                case 1:
-                                                    snack = Snackbar.Make(FormContainer, "Internal Server Error", Snackbar.LengthLong);
-                                                    snack.Show();
-                                                    break;
-                                                case 2:
-                                                    break;
-                                            }
-                                            progressDialog.Dismiss();
-                                        }
-                                        else
-                                            Snackbar.Make(FormContainer, "Unable to reach the server!", Snackbar.LengthLong).Show();
-                                    });
-
-                                    Activity.StopService(DistanceCalculatorService);
-                                }
-                                catch (JSONException ex)
-                                {
-                                    ex.PrintStackTrace();
-                                }
+                                ex.PrintStackTrace();
                             }
                         }
                         else
                         {
-                            Snackbar.Make(FormContainer, "QRCode Expirat! Va rugam sa generati alt cod QR!", Snackbar.LengthLong).Show();
-                            progressDialog.Dismiss();
+                            _formContainer.Visibility = ViewStates.Gone;
+                            _btnScan.Text = "Incepe activitatea";
+                            try
+                            {
+                                _progressDialog.Show();
+                                //JSONObject obj = new JSONObject().put("dateTimeStop", currentDateandTime).put("QRData", QrJsonData.toString());
+                                Utils.SetDefaults("ActivityStart", "", Activity);
+                                //DateTimeStart = null;
+                                _dateTimeEnd = currentDateandTime;
+                                GetLastLocationButtonOnClick();
+                                _location = new JSONObject().Put("latitude", _latitude).Put("longitude", _longitude);
+                                _benefitsArray = new JSONArray();
+                                foreach (var t in _listVOs)
+                                {
+                                    if (t.IsSelected)
+                                    {
+                                        _benefitsArray = _benefitsArray.Put(t.Title);
+                                    }
+                                    //BenefitAdapter el = listVOs.get(i).isSelected();
+                                }
+
+                                _details = new JSONObject().Put("benefit", _benefitsArray).Put("details", _tbDetails.Text);
+                                Log.Error("Details", _details.ToString());
+
+                                Activity.StopService(new Intent(Activity, typeof(DistanceCalculator)));
+                                await Task.Run(async () =>
+                                {
+                                    //GetLastLocationButtonOnClick();
+                                    _latitude = double.Parse(Utils.GetDefaults("Latitude", Activity));
+                                    _longitude = double.Parse(Utils.GetDefaults("Longitude", Activity));
+
+                                    Utils.SetDefaults("ConsultLat", _latitude.ToString(), Activity);
+                                    Utils.SetDefaults("ConsultLong", _longitude.ToString(), Activity);
+                                    var dataToSend = new JSONObject().Put("dateTimeStart", _dateTimeStart)
+                                        .Put("dateTimeStop", _dateTimeEnd).Put("qrCodeData", _qrJsonData)
+                                        .Put("location", _location).Put("details", _details);
+                                    var response = await WebServices.Post(Constants.PublicServerAddress + "/api/consult", dataToSend, Utils.GetDefaults("Token", Activity));
+                                    if (response != null)
+                                    {
+                                        Snackbar snack;
+                                        var responseJson = new JSONObject(response);
+                                        switch (responseJson.GetInt("status"))
+                                        {
+                                            case 0:
+                                                snack = Snackbar.Make(_formContainer, "Nu esti la pacient!", Snackbar.LengthLong);
+                                                snack.Show();
+                                                break;
+                                            case 1:
+                                                snack = Snackbar.Make(_formContainer, "Internal Server Error", Snackbar.LengthLong);
+                                                snack.Show();
+                                                break;
+                                            case 2:
+                                                break;
+                                        }
+                                        _progressDialog.Dismiss();
+                                    }
+                                    else
+                                        Snackbar.Make(_formContainer, "Unable to reach the server!", Snackbar.LengthLong).Show();
+                                });
+
+                                Activity.StopService(_distanceCalculatorService);
+                            }
+                            catch (JSONException ex)
+                            {
+                                ex.PrintStackTrace();
+                            }
                         }
-
                     }
-                    catch (JSONException)
+                    else
                     {
-                        Snackbar.Make(FormContainer, "QRCode invalid!", Snackbar.LengthLong).Show();
-                        progressDialog.Dismiss();
-
+                        Snackbar.Make(_formContainer, "QRCode Expirat! Va rugam sa generati alt cod QR!", Snackbar.LengthLong).Show();
+                        _progressDialog.Dismiss();
                     }
+
                 }
-                catch (Exception)
+                catch (JSONException)
                 {
-                    progressDialog.Dismiss();
+                    Snackbar.Make(_formContainer, "QRCode invalid!", Snackbar.LengthLong).Show();
+                    _progressDialog.Dismiss();
+
                 }
+            }
+            catch (Exception)
+            {
+                _progressDialog.Dismiss();
+            }
         }
 
-
-        CameraResolution HandleCameraResolutionSelectorDelegate(List<CameraResolution> availableResolutions)
-        {
-            //Don't know if this will ever be null or empty
-            if (availableResolutions == null || availableResolutions.Count < 1)
-                return new CameraResolution() { Width = 1200, Height = 1000 };
-
-            //Debugging revealed that the last element in the list
-            //expresses the highest resolution. This could probably be more thorough.
-            return availableResolutions[availableResolutions.Count - 1];
-        }
-
-        async Task<ZXing.Result> StartScan()
+        static async Task<ZXing.Result> StartScan()
         {
             var options = new MobileBarcodeScanningOptions
             {
@@ -347,13 +320,13 @@ namespace FamiliaXamarin
                 }
             })).Start();
             result = await scanner.Scan(options);
-            return result ?? null;
+            return result;
 
 
         }
 
 #pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
-        async void GetLastLocationButtonOnClick()
+        private async void GetLastLocationButtonOnClick()
 #pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
         {
             if (ContextCompat.CheckSelfPermission(Activity, Manifest.Permission.AccessFineLocation) == Permission.Granted)
@@ -362,9 +335,9 @@ namespace FamiliaXamarin
             }
         }
 
-        async Task GetLastLocationFromDevice()
+        private async Task GetLastLocationFromDevice()
         {
-            var location = await fusedLocationProviderClient.GetLastLocationAsync();
+            var location = await _fusedLocationProviderClient.GetLastLocationAsync();
 
             if (location == null)
             {
@@ -377,8 +350,8 @@ namespace FamiliaXamarin
                 Log.Debug("Sample", "The Longitude is " + location.Longitude);
                 Utils.SetDefaults("ConsultLat", location.Latitude.ToString(), Activity);
                 Utils.SetDefaults("ConsultLong", location.Longitude.ToString(), Activity);
-                Latitude = location.Latitude;
-                Longitude = location.Longitude;
+                _latitude = location.Latitude;
+                _longitude = location.Longitude;
 
             }
         }
