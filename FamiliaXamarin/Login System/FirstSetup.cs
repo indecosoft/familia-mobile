@@ -71,7 +71,7 @@ namespace FamiliaXamarin
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             var id = item.ItemId;
-            return id == Resource.Id.action_settings || base.OnOptionsItemSelected(item);
+            return base.OnOptionsItemSelected(item);
         }
 
         public class PlaceholderFragment : Android.Support.V4.App.Fragment

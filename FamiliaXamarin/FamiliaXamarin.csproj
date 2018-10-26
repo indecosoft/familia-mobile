@@ -79,12 +79,14 @@
     <Compile Include="Medicatie\HourAdapter.cs" />
     <Compile Include="Medicatie\MedicineAdapter.cs" />
     <Compile Include="Medicatie\MedicineFragment.cs" />
+    <Compile Include="Settings\SnoozePreferences.cs" />
     <Compile Include="Medicatie\Tasks\Tasks.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Chat\ChatActivity.cs" />
     <Compile Include="Chat\ChatAdapter.cs" />
     <Compile Include="Chat\ChatModel.cs" />
+    <Compile Include="Settings\SettingsFragment.cs" />
     <Compile Include="WebSocket\WebSocketClient.cs" />
     <Compile Include="WebSocket\WebSocketService.cs" />
     <Compile Include="WebSocket\IWebSocketClient.cs" />
@@ -133,6 +135,7 @@
     <AndroidResource Include="Resources\raw\loading.json" />
     <AndroidResource Include="Resources\layout\fragment_conversations.axml" />
     <AndroidResource Include="Resources\layout\item_conversations.xml" />
+    <AndroidResource Include="Resources\raw\bell.json" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -577,9 +580,13 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Folder Include="WebServices\" />
+    <AndroidResource Include="Resources\drawable\snooze_button.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_settings.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

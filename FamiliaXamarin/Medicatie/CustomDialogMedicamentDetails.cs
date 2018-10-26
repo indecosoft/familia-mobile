@@ -33,8 +33,6 @@ namespace FamiliaXamarin.Medicatie
         private int intervalZi;
         private Activity activity;
         private string timeSelected;
-       // private DatePickerDialog datePickerDialog;
-        //private DatePickerDialog.IOnDateSetListener mDateSetListener;
         private TextView tvStartDate;
         private bool listmode = true;
 
@@ -55,7 +53,6 @@ namespace FamiliaXamarin.Medicatie
             SetContentView(Resource.Layout.custom_dialog);
             listmode = true;
             setupViews();
-            //setDateListener();
 
         }
         private void setCurrentDate()

@@ -7,7 +7,10 @@ using Android.Support.V4.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Active_Conversations;
+using FamiliaXamarin.Asistenta_sociala;
 using FamiliaXamarin.Medicatie;
+using FamiliaXamarin.Settings;
 using Refractored.Controls;
 using Square.Picasso;
 
@@ -106,7 +109,7 @@ namespace FamiliaXamarin
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             var id = item.ItemId;
-            return id == Resource.Id.action_settings || base.OnOptionsItemSelected(item);
+            return base.OnOptionsItemSelected(item);
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)
@@ -148,6 +151,12 @@ namespace FamiliaXamarin
                     fragmentTransactionConv.Commit();
                     break;
                 case Resource.Id.nav_manage:
+                    var fragmentSettings = new SettingsFragment();
+                    var fragmentManagerSettings = SupportFragmentManager;
+                    var fragmentTransactionSettings = fragmentManagerSettings.BeginTransaction();
+                    fragmentTransactionSettings.Replace(Resource.Id.fragment_container, fragmentSettings);
+                    fragmentTransactionSettings.AddToBackStack(null);
+                    fragmentTransactionSettings.Commit();
                     break;
                 case Resource.Id.nav_asistenta:
                     var fragmentAsist = new AsistentForm();

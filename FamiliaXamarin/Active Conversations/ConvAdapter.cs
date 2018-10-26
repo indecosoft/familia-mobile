@@ -6,13 +6,13 @@ using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.JsonModels;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Active_Conversations
 {
     class ConvAdapter : RecyclerView.Adapter
     {
         public event EventHandler<ConvAdapterClickEventArgs> ItemClick;
         public event EventHandler<ConvAdapterClickEventArgs> ItemLongClick;
-        private List<ConverstionsModel> _listOfActiveConversations;
+        private readonly List<ConverstionsModel> _listOfActiveConversations;
         public ConvAdapter(List<ConverstionsModel> data)
         {
             _listOfActiveConversations = data;
@@ -22,14 +22,14 @@ namespace FamiliaXamarin
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
 
-            Context context = parent.Context;
-            LayoutInflater inflater = LayoutInflater.From(context);
+            var context = parent.Context;
+            var inflater = LayoutInflater.From(context);
 
             // Inflate the custom layout
-            View contactView = inflater.Inflate(Resource.Layout.item_conversations, parent, false);
+            var contactView = inflater.Inflate(Resource.Layout.item_conversations, parent, false);
 
             // Return a new holder instance
-            ConvAdapterViewHolder viewHolder = new ConvAdapterViewHolder(contactView, OnClick, OnLongClick);
+            var viewHolder = new ConvAdapterViewHolder(contactView, OnClick, OnLongClick);
             return viewHolder;
 
         }
@@ -39,9 +39,8 @@ namespace FamiliaXamarin
         {
  
             var item = _listOfActiveConversations[position];
-            var viewHolder = holder as ConvAdapterViewHolder;
 
-            viewHolder.NameTextView.Text = item.Username;
+            if (holder is ConvAdapterViewHolder viewHolder) viewHolder.NameTextView.Text = item.Username;
         }
 
         public override int ItemCount => _listOfActiveConversations.Count;
@@ -57,7 +56,7 @@ namespace FamiliaXamarin
 
     public class ConvAdapterViewHolder : RecyclerView.ViewHolder
     {
-        public TextView NameTextView { get; set; }
+        public TextView NameTextView { get;}
 
         public ConvAdapterViewHolder(View itemView, Action<ConvAdapterClickEventArgs> clickListener,
                             Action<ConvAdapterClickEventArgs> longClickListener) : base(itemView)

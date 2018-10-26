@@ -1,102 +1,96 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V4.App;
-using Android.Util;
-using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
-using Java.Text;
 using Java.Util;
 using Calendar = Java.Util.Calendar;
 
 namespace FamiliaXamarin.Medicatie.Alarm
 {
     [BroadcastReceiver(Enabled = true, Exported = true)]
+    [IntentFilter(new[] { "my.awesome.app.WAKE_DEVICE" })]
     class AlarmBroadcastReceiver : BroadcastReceiver
     {
-        private List<Disease> boli;
-        
-        private Hour mHour;
-        private Disease mBoala;
-        private Medicine mMed;
+        private Hour _mHour;
+        private Disease _mDisease;
+        private Medicine _mMed;
+        private PowerManager.WakeLock _wakeLock;
+
         public override void OnReceive(Context context, Intent intent)
-        {
+        {   
+            var medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
+            var boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
+            var hourId = intent.GetStringExtra(DiseaseActivity.HOUR_ID);
 
-            string medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
-            string boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
-            string hourId = intent.GetStringExtra(DiseaseActivity.HOUR_ID);
+            Storage.GetInstance().GetListOfDiseasesFromFile(context);
+            _mDisease = Storage.GetInstance().GetDisease(boalaId);
 
-            boli = Storage.GetInstance().GetListOfDiseasesFromFile(context);
-            mBoala = Storage.GetInstance().GetDisease(boalaId);
-             
-            if (mBoala != null)
-            {
-                mMed = mBoala.GetMedicineById(medId);
+            if (_mDisease == null) return;
+            _mMed = _mDisease.GetMedicineById(medId);
 
-                if (mMed != null)
+            if (_mMed == null) return;
+            _mHour = _mMed.FindHourById(hourId);
+
+            if (_mMed.NumberOfDays != 0)
+            {   
+                var hourString = _mHour.HourName;
+                var parts = hourString.Split(':');
+                var timeHour = Convert.ToInt32(parts[0]);
+                var timeMinute = Convert.ToInt32(parts[1]);
+                var calendar = Calendar.Instance;
+                var setCalendar = Calendar.Instance;
+                setCalendar.Set(CalendarField.HourOfDay, timeHour);
+                setCalendar.Set(CalendarField.Minute, timeMinute);
+                setCalendar.Set(CalendarField.Second, 0);
+                var dateString = _mMed.Date;
+                parts = dateString.Split('.');
+                var day = Convert.ToInt32(parts[0]);
+                var month = Convert.ToInt32(parts[1]) - 1;
+                var year = Convert.ToInt32(parts[2]);
+
+
+                setCalendar.Set(CalendarField.Year, year);
+                setCalendar.Set(CalendarField.Month, month);
+                setCalendar.Set(CalendarField.DayOfMonth, day);
+
+                        
+                setCalendar.Add(CalendarField.Date, _mMed.NumberOfDays);
+
+                if (setCalendar.After(calendar))
                 {
-                    
-                    mHour = mMed.FindHourById(hourId);
-
-
-
-                    if (mMed.NumberOfDays != 0)
-                    {   
-                        var hourString = mHour.HourName;
-                        var parts = hourString.Split(':');
-                        var timeHour = Convert.ToInt32(parts[0]);
-                        var timeMinute = Convert.ToInt32(parts[1]);
-                        var calendar = Calendar.Instance;
-                        var setCalendar = Calendar.Instance;
-                        setCalendar.Set(CalendarField.HourOfDay, timeHour);
-                        setCalendar.Set(CalendarField.Minute, timeMinute);
-                        setCalendar.Set(CalendarField.Second, 0);
-                        var dateString = mMed.Date;
-                        parts = dateString.Split('.');
-                        var day = Convert.ToInt32(parts[0]);
-                        var month = Convert.ToInt32(parts[1]) - 1;
-                        var year = Convert.ToInt32(parts[2]);
-
-
-                        setCalendar.Set(CalendarField.Year, year);
-                        setCalendar.Set(CalendarField.Month, month);
-                        setCalendar.Set(CalendarField.DayOfMonth, day);
-
-                        
-                        setCalendar.Add(CalendarField.Date, mMed.NumberOfDays);
-
-                        if (setCalendar.After(calendar))
-                        {                                     
-                            LaunchAlarm(context, intent, medId, boalaId);
-                        }
-
-
-
-
-                        
-                        
-                    }
-                    else
-                    {
-                        LaunchAlarm(context, intent, medId, boalaId);
-                    }
-                }
+                    WakeUpScreen(context);
+                    LaunchAlarm(context, intent, medId, boalaId);
+                }          
             }
+            else
+            {
+                WakeUpScreen(context);
+                LaunchAlarm(context, intent, medId, boalaId);
+            }
+        }
+
+        private void WakeUpScreen(Context context)
+        {
+            var pm = (PowerManager) context.ApplicationContext.GetSystemService(Context.PowerService);
+            _wakeLock = pm.NewWakeLock((WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup), "WakeDeviceReceiver");
+
+            _wakeLock.Acquire();
+
+            var dismissKeyguard = new Intent(context, typeof(AlarmActivity));
+            context.StartActivity(dismissKeyguard);
+
+            _wakeLock.Release();
         }
 
         private static void LaunchAlarm(Context context, Intent intent, string medId, string boalaId)
         {
             Toast.MakeText(context, "ALARMA !!!", ToastLength.Long).Show();
-            Intent i = new Intent(context, typeof(AlarmActivity));
-            Intent intentNotification = new Intent(context, typeof(MedicineFragment));
+            var i = new Intent(context, typeof(AlarmActivity));
+            var intentNotification = new Intent(context, typeof(MedicineFragment));
             //context.startActivity(new Intent(context, AlarmActivity.class));
             i.PutExtra(DiseaseActivity.MED_ID, medId);
             i.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
@@ -104,9 +98,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
             context.StartActivity(i);
             intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
-            PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, intentNotification, 0);
+            var pendingIntent = PendingIntent.GetActivity(context, 0, intentNotification, 0);
 
-            NotificationCompat.Builder mBuilder =
+            var mBuilder =
                 new NotificationCompat.Builder(context, Constants.ChannelId)
                     .SetSmallIcon(Resource.Mipmap.ic_launcher_round)
                     .SetWhen(DateTime.Now.Millisecond)
@@ -116,7 +110,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     .SetPriority(NotificationCompat.PriorityDefault)
                     .SetContentIntent(pendingIntent);
 
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
+            var notificationManager = NotificationManagerCompat.From(context);
 
 
             // notificationId is a unique int for each notification that you must define

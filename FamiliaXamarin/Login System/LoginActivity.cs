@@ -161,6 +161,7 @@ namespace FamiliaXamarin
                             var nume = new JSONObject(response).GetString("nume");
                             var logins = new JSONObject(response).GetBoolean("logins");
                             var avatar = new JSONObject(response).GetString("avatar");
+                            var id = new JSONObject(response).GetString("id");
                     
                             Utils.SetDefaults("Token", token, this);
                             Utils.SetDefaults("Imei", Utils.GetImei(this), this);
@@ -168,6 +169,7 @@ namespace FamiliaXamarin
                             Utils.SetDefaults("Logins", logins.ToString(), this);
                             Utils.SetDefaults("HourName", nume, this);
                             Utils.SetDefaults("Avatar", Constants.PublicServerAddress + avatar, this);
+                            Utils.SetDefaults("IdClient", id, this);
 
                             if (logins)
                                 StartActivity(typeof(MainActivity));
