@@ -8,10 +8,12 @@ using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.App;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
+using FamiliaXamarin.Settings;
 
 namespace FamiliaXamarin.Medicatie.Alarm
 {
@@ -28,6 +30,16 @@ namespace FamiliaXamarin.Medicatie.Alarm
         private Disease mBoala;
         private Medicine mMed;
         private int mIdAlarm;
+        protected override void OnPause()
+        {
+            LaunchSnoozeAlarm();
+            Finish();
+            base.OnPause();
+        }
+
+     
+
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -48,9 +60,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 mIdAlarm = intent.GetIntExtra(DiseaseActivity.ALARM_ID, -1);
                 tvMedName.Text = mMed.Name;
             }
-
-            
-            // Create your application here
         }
 
         public void OnClick(View v)
@@ -63,25 +72,33 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     Finish();
                     break;
                 case Resource.Id.btn_snooze_alarm:
-                    Toast.MakeText(this, "Alarma amanata pentru 5 minute.", ToastLength.Short).Show();
-                    btnOk.Visibility = ViewStates.Gone;
-                    var am = (AlarmManager)GetSystemService(AlarmService);
-
-                    var i = new Intent(this, typeof(AlarmBroadcastReceiver));
-                    i.PutExtra(DiseaseActivity.BOALA_ID, mBoala.Id);
-                    i.PutExtra(DiseaseActivity.MED_ID, mMed.IdMed);
-                    i.PutExtra(DiseaseActivity.ALARM_ID, mIdAlarm);
-
-                    var pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
-                    var afterFiveMins = 5 * 60000;
-
-                    if (am != null)
-                    {
-                        am.SetInexactRepeating(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + afterFiveMins, AlarmManager.IntervalDay, pi);
-                        
-                    }
+                    LaunchSnoozeAlarm();
                     Finish();
                     break;
+            }
+        }
+
+        private void LaunchSnoozeAlarm()
+        {
+            var snoozePreferences = new SnoozePreferences(this);
+            var key = snoozePreferences.GetAccessKey();
+            var snoozeInMinutes = Int32.Parse(key) * 60000;
+            Toast.MakeText(this, "Alarma amanata pentru " + key + " minute.", ToastLength.Short).Show();
+            btnOk.Visibility = ViewStates.Gone;
+            var am = (AlarmManager) GetSystemService(AlarmService);
+
+            var i = new Intent(this, typeof(AlarmBroadcastReceiver));
+            i.PutExtra(DiseaseActivity.BOALA_ID, mBoala.Id);
+            i.PutExtra(DiseaseActivity.MED_ID, mMed.IdMed);
+            i.PutExtra(DiseaseActivity.ALARM_ID, mIdAlarm);
+
+            var pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
+           
+
+            if (am != null)
+            {
+                am.SetInexactRepeating(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + snoozeInMinutes,
+                    AlarmManager.IntervalDay, pi);
             }
         }
     }
