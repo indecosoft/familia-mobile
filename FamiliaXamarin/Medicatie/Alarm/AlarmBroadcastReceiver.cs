@@ -1,6 +1,7 @@
 ﻿using System;
 using Android.App;
 using Android.Content;
+using Android.OS;
 using Android.Support.V4.App;
 using Android.Widget;
 using FamiliaXamarin.Medicatie.Data;
@@ -11,13 +12,16 @@ using Calendar = Java.Util.Calendar;
 namespace FamiliaXamarin.Medicatie.Alarm
 {
     [BroadcastReceiver(Enabled = true, Exported = true)]
+    [IntentFilter(new[] { "my.awesome.app.WAKE_DEVICE" })]
     class AlarmBroadcastReceiver : BroadcastReceiver
     {
         private Hour _mHour;
         private Disease _mDisease;
         private Medicine _mMed;
+        private PowerManager.WakeLock _wakeLock;
+
         public override void OnReceive(Context context, Intent intent)
-        {
+        {   
             var medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
             var boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
             var hourId = intent.GetStringExtra(DiseaseActivity.HOUR_ID);
@@ -57,14 +61,29 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 setCalendar.Add(CalendarField.Date, _mMed.NumberOfDays);
 
                 if (setCalendar.After(calendar))
-                {                                     
+                {
+                    WakeUpScreen(context);
                     LaunchAlarm(context, intent, medId, boalaId);
                 }          
             }
             else
             {
+                WakeUpScreen(context);
                 LaunchAlarm(context, intent, medId, boalaId);
             }
+        }
+
+        private void WakeUpScreen(Context context)
+        {
+            var pm = (PowerManager) context.ApplicationContext.GetSystemService(Context.PowerService);
+            _wakeLock = pm.NewWakeLock((WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup), "WakeDeviceReceiver");
+
+            _wakeLock.Acquire();
+
+            var dismissKeyguard = new Intent(context, typeof(AlarmActivity));
+            context.StartActivity(dismissKeyguard);
+
+            _wakeLock.Release();
         }
 
         private static void LaunchAlarm(Context context, Intent intent, string medId, string boalaId)

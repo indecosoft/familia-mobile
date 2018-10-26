@@ -13,6 +13,7 @@ using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
+using FamiliaXamarin.Settings;
 
 namespace FamiliaXamarin.Medicatie.Alarm
 {
@@ -79,7 +80,10 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         private void LaunchSnoozeAlarm()
         {
-            Toast.MakeText(this, "Alarma amanata pentru 5 minute.", ToastLength.Short).Show();
+            var snoozePreferences = new SnoozePreferences(this);
+            var key = snoozePreferences.GetAccessKey();
+            var snoozeInMinutes = Int32.Parse(key) * 60000;
+            Toast.MakeText(this, "Alarma amanata pentru " + key + " minute.", ToastLength.Short).Show();
             btnOk.Visibility = ViewStates.Gone;
             var am = (AlarmManager) GetSystemService(AlarmService);
 
@@ -89,11 +93,11 @@ namespace FamiliaXamarin.Medicatie.Alarm
             i.PutExtra(DiseaseActivity.ALARM_ID, mIdAlarm);
 
             var pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
-            var afterFiveMins = 5 * 60000;
+           
 
             if (am != null)
             {
-                am.SetInexactRepeating(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + afterFiveMins,
+                am.SetInexactRepeating(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + snoozeInMinutes,
                     AlarmManager.IntervalDay, pi);
             }
         }
