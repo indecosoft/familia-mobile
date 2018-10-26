@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -6,19 +7,22 @@ using Android.Support.V4.App;
 using Android.Widget;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
+using Java.Lang;
 using Java.Util;
 using Calendar = Java.Util.Calendar;
 
 namespace FamiliaXamarin.Medicatie.Alarm
 {
     [BroadcastReceiver(Enabled = true, Exported = true)]
-    [IntentFilter(new[] { "my.awesome.app.WAKE_DEVICE" })]
+   
     class AlarmBroadcastReceiver : BroadcastReceiver
     {
         private Hour _mHour;
         private Disease _mDisease;
         private Medicine _mMed;
         private PowerManager.WakeLock _wakeLock;
+
+        public static Class PowerService { get; private set; }
 
         public override void OnReceive(Context context, Intent intent)
         {   
@@ -62,59 +66,29 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
                 if (setCalendar.After(calendar))
                 {
-                    WakeUpScreen(context);
+                    
                     LaunchAlarm(context, intent, medId, boalaId);
                 }          
             }
             else
             {
-                WakeUpScreen(context);
                 LaunchAlarm(context, intent, medId, boalaId);
             }
         }
 
-        private void WakeUpScreen(Context context)
+       
+
+        private void LaunchAlarm(Context context, Intent intent, string medId, string boalaId)
         {
-            var pm = (PowerManager) context.ApplicationContext.GetSystemService(Context.PowerService);
-            _wakeLock = pm.NewWakeLock((WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup), "WakeDeviceReceiver");
-
-            _wakeLock.Acquire();
-
-            var dismissKeyguard = new Intent(context, typeof(AlarmActivity));
-            context.StartActivity(dismissKeyguard);
-
-            _wakeLock.Release();
-        }
-
-        private static void LaunchAlarm(Context context, Intent intent, string medId, string boalaId)
-        {
-            Toast.MakeText(context, "ALARMA !!!", ToastLength.Long).Show();
-            var i = new Intent(context, typeof(AlarmActivity));
-            var intentNotification = new Intent(context, typeof(MedicineFragment));
-            //context.startActivity(new Intent(context, AlarmActivity.class));
-            i.PutExtra(DiseaseActivity.MED_ID, medId);
-            i.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
-            
-
-            context.StartActivity(i);
-            intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
-            var pendingIntent = PendingIntent.GetActivity(context, 0, intentNotification, 0);
-
-            var mBuilder =
-                new NotificationCompat.Builder(context, Constants.ChannelId)
-                    .SetSmallIcon(Resource.Mipmap.ic_launcher_round)
-                    .SetWhen(DateTime.Now.Millisecond)
-                    .SetContentTitle(Constants.NotificationTitle)
-                    .SetContentText(Constants.NotifContent)
-                    .SetAutoCancel(true)
-                    .SetPriority(NotificationCompat.PriorityDefault)
-                    .SetContentIntent(pendingIntent);
-
-            var notificationManager = NotificationManagerCompat.From(context);
-
-
-            // notificationId is a unique int for each notification that you must define
-            notificationManager.Notify(Constants.NotifId, mBuilder.Build());
+           
+                Toast.MakeText(context, "ALARMA !!!", ToastLength.Long).Show();
+                var i = new Intent(context, typeof(AlarmActivity));
+                var intentNotification = new Intent(context, typeof(MedicineFragment));
+                //context.startActivity(new Intent(context, AlarmActivity.class));
+                i.PutExtra(DiseaseActivity.MED_ID, medId);
+                i.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
+                i.SetFlags(ActivityFlags.NewTask);
+                context.StartActivity(i);
         }
     }
 }
