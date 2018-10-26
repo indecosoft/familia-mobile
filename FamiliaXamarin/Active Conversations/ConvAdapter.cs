@@ -8,7 +8,7 @@ using FamiliaXamarin.JsonModels;
 
 namespace FamiliaXamarin.Active_Conversations
 {
-    class ConvAdapter : RecyclerView.Adapter
+    internal class ConvAdapter : RecyclerView.Adapter
     {
         public event EventHandler<ConvAdapterClickEventArgs> ItemClick;
         public event EventHandler<ConvAdapterClickEventArgs> ItemLongClick;
@@ -49,8 +49,8 @@ namespace FamiliaXamarin.Active_Conversations
             _listOfActiveConversations.RemoveAt(position);
         }
 
-        void OnClick(ConvAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
-        void OnLongClick(ConvAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
+        private void OnClick(ConvAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
+        private void OnLongClick(ConvAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
 
     }
 

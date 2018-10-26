@@ -11,6 +11,8 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using System.Diagnostics.Contracts;
+using Android.Preferences;
+using Android.Support.V4.Hardware.Fingerprint;
 using FamiliaXamarin.Medicatie;
 
 namespace FamiliaXamarin.Settings
@@ -19,7 +21,8 @@ namespace FamiliaXamarin.Settings
     {
         private Spinner spinner;
         private int optionOfSnooze;
-        private String key;
+        private string key;
+        private Switch enablefingerprint;
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -31,7 +34,25 @@ namespace FamiliaXamarin.Settings
             View v =  inflater.Inflate(Resource.Layout.fragment_settings, container, false);
 
             SetupSpinner(v);
+            enablefingerprint = v.FindViewById<Switch>(Resource.Id.fingerPrintSwitch);
+            ISharedPreferences prefs;
+            FingerprintManagerCompat checkHardware;
 
+            prefs = PreferenceManager.GetDefaultSharedPreferences(Activity);
+            checkHardware = FingerprintManagerCompat.From(Activity);
+
+
+            bool fingerprint = prefs.GetBoolean("fingerprint", false);
+
+            if (!checkHardware.IsHardwareDetected)
+                enablefingerprint.Enabled = false;
+
+            if (fingerprint)
+                enablefingerprint.Checked = true;
+            else
+                enablefingerprint.Checked = false;
+
+            enablefingerprint.CheckedChange += Enablefingerprint_CheckedChange;
             return v;
         }
 
@@ -68,6 +89,37 @@ namespace FamiliaXamarin.Settings
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(Context, Android.Resource.Layout.SimpleSpinnerItem, categories);
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
             spinner.Adapter = adapter;
+            // Use this to return your custom view for this Fragment
+            // return inflater.Inflate(Resource.Layout.YourFragment, container, false);
+            // Set our view from the "main" layout resource
+
+            
+
+            //return base.OnCreateView(inflater, container, savedInstanceState);
+        }
+        private void Enablefingerprint_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            // this is an Activity
+            if (enablefingerprint.Checked)
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this.Activity);
+                ISharedPreferencesEditor editor = prefs.Edit();
+                editor.PutBoolean("fingerprint", true);
+//                editor.PutString("fingerUser", UserData.user);
+//                editor.PutString("fingerTip", UserData.tip);
+//                editor.PutString("fingerSucursala", UserData.sucursala);
+                editor.Apply();
+
+
+            }
+            else
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this.Activity);
+                ISharedPreferencesEditor editor = prefs.Edit();
+                editor.PutBoolean("fingerprint", false);
+                editor.Apply();
+            }
+
         }
     }
 }

@@ -5,20 +5,20 @@ using Android.Views;
 using Android.Widget;
 using Object = Java.Lang.Object;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Asistenta_sociala
 {
     class BenefitAdapter : ArrayAdapter<BenefitSpinnerState>
     {
-        readonly Context mContext;
-        readonly List<BenefitSpinnerState> listState;
-        readonly BenefitAdapter myAdapter;
-        bool isFromView;
+        private readonly Context _mContext;
+        readonly List<BenefitSpinnerState> _listState;
+        readonly BenefitAdapter _myAdapter;
+        bool _isFromView;
         public BenefitAdapter(Context context, int resource, List<BenefitSpinnerState> objects) : base(context, resource, objects)
         {
 
-            mContext = context;
-            listState = objects;
-            myAdapter = this;
+            _mContext = context;
+            _listState = objects;
+            _myAdapter = this;
         }
 
         public override View GetDropDownView(int position, View convertView,
@@ -46,7 +46,7 @@ namespace FamiliaXamarin
             ViewHolder holder;
             if (convertView == null)
             {
-                LayoutInflater layoutInflator = LayoutInflater.From(mContext);
+                LayoutInflater layoutInflator = LayoutInflater.From(_mContext);
                 convertView = layoutInflator.Inflate(Resource.Layout.item_benefit, null);
                 holder = new ViewHolder
                 {
@@ -62,12 +62,12 @@ namespace FamiliaXamarin
                 holder = (ViewHolder)convertView.Tag;
             }
 
-            holder.mTextView.Text = listState[position].Title;
+            holder.mTextView.Text = _listState[position].Title;
 
             // To check weather checked event fire from getview() or user input
-            isFromView = true;
-            holder.mCheckBox.Checked = listState[position].IsSelected;
-            isFromView = false;
+            _isFromView = true;
+            holder.mCheckBox.Checked = _listState[position].IsSelected;
+            _isFromView = false;
 
             holder.mCheckBox.Visibility = position == 0 ? ViewStates.Invisible : ViewStates.Visible;
             holder.mCheckBox.Tag = position;
@@ -76,9 +76,9 @@ namespace FamiliaXamarin
                 Contract.Requires(sender != null);
                 int getPosition = (int)holder.mCheckBox.Tag;
 
-                if (!isFromView)
+                if (!_isFromView)
                 {
-                    listState[position].IsSelected = args.IsChecked;
+                    _listState[position].IsSelected = args.IsChecked;
                 }
             };
             return convertView;
