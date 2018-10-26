@@ -17,7 +17,7 @@ namespace FamiliaXamarin.Active_Conversations
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View view = inflater.Inflate(Resource.Layout.fragment_conversations, container, false);
+            var view = inflater.Inflate(Resource.Layout.fragment_conversations, container, false);
             _conversationsRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.conversations);
             try
             {
@@ -48,7 +48,7 @@ namespace FamiliaXamarin.Active_Conversations
 
                         if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                         {
-                            AlertDialog alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
+                            var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
                             alertDialog.SetTitle(Html.FromHtml("<p style = 'text-align: center; color: #F47445;'>Avertisment</p>", FromHtmlOptions.ModeLegacy));
                             alertDialog.SetMessage(Html.FromHtml("<br/><p style = 'text-align: center; color: #000000;'>Doriti sa stergeti aceasta conversatie?</p>", FromHtmlOptions.ModeLegacy));
                             alertDialog.SetButton("Da", delegate
@@ -63,7 +63,7 @@ namespace FamiliaXamarin.Active_Conversations
                         }
                         else
                         {
-                            AlertDialog alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
+                            var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
                             alertDialog.SetTitle("Avertisment");
                             alertDialog.SetMessage("Doriti sa stergeti aceasta conversatie?");
                             alertDialog.SetButton("Da", delegate
