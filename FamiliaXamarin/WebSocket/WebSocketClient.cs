@@ -57,12 +57,13 @@ namespace FamiliaXamarin
 
         public static void Disconect()
         {
-            Client.Disconnect();
+            
+            Client?.Disconnect();
         }
 
         public void Emit(string eventName, JSONObject value)
         {
-            _socket.Emit(eventName, value);
+            _socket?.Emit(eventName, value);
         }
 
         static void OnConnect(Object[] obj)

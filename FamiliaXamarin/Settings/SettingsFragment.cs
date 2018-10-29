@@ -35,22 +35,17 @@ namespace FamiliaXamarin.Settings
 
             SetupSpinner(v);
             enablefingerprint = v.FindViewById<Switch>(Resource.Id.fingerPrintSwitch);
-            ISharedPreferences prefs;
             FingerprintManagerCompat checkHardware;
 
-            prefs = PreferenceManager.GetDefaultSharedPreferences(Activity);
             checkHardware = FingerprintManagerCompat.From(Activity);
 
 
-            bool fingerprint = prefs.GetBoolean("fingerprint", false);
+            bool fingerprint = Convert.ToBoolean(Utils.GetDefaults("fingerprint", Activity));
 
             if (!checkHardware.IsHardwareDetected)
                 enablefingerprint.Enabled = false;
 
-            if (fingerprint)
-                enablefingerprint.Checked = true;
-            else
-                enablefingerprint.Checked = false;
+            enablefingerprint.Checked = fingerprint ? true : false;
 
             enablefingerprint.CheckedChange += Enablefingerprint_CheckedChange;
             return v;
@@ -89,35 +84,18 @@ namespace FamiliaXamarin.Settings
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(Context, Android.Resource.Layout.SimpleSpinnerItem, categories);
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
             spinner.Adapter = adapter;
-            // Use this to return your custom view for this Fragment
-            // return inflater.Inflate(Resource.Layout.YourFragment, container, false);
-            // Set our view from the "main" layout resource
-
-            
-
-            //return base.OnCreateView(inflater, container, savedInstanceState);
         }
         private void Enablefingerprint_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
             // this is an Activity
             if (enablefingerprint.Checked)
             {
-                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this.Activity);
-                ISharedPreferencesEditor editor = prefs.Edit();
-                editor.PutBoolean("fingerprint", true);
-//                editor.PutString("fingerUser", UserData.user);
-//                editor.PutString("fingerTip", UserData.tip);
-//                editor.PutString("fingerSucursala", UserData.sucursala);
-                editor.Apply();
-
+                Utils.SetDefaults("fingerprint", true.ToString(), Activity);
 
             }
             else
             {
-                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this.Activity);
-                ISharedPreferencesEditor editor = prefs.Edit();
-                editor.PutBoolean("fingerprint", false);
-                editor.Apply();
+                Utils.SetDefaults("fingerprint", false.ToString(), Activity);
             }
 
         }
