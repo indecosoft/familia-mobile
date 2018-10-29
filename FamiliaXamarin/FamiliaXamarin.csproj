@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="Helpers\FingerprintHandler.cs" />
     <Compile Include="JsonModels\ConverstionsModel.cs" />
     <Compile Include="JsonModels\FirstSetupModel.cs" />
     <Compile Include="MainActivity.cs" />
@@ -136,6 +137,7 @@
     <AndroidResource Include="Resources\layout\fragment_conversations.axml" />
     <AndroidResource Include="Resources\layout\item_conversations.xml" />
     <AndroidResource Include="Resources\raw\bell.json" />
+    <AndroidResource Include="Resources\raw\fingerprint.json" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -585,6 +587,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\fragment_settings.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_finger.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

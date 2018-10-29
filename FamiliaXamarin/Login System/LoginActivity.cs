@@ -2,13 +2,22 @@
 using System.Threading.Tasks;
 using Android;
 using Android.App;
-using Android.Content.PM;
+using Android.Content;
+using Android.Hardware.Fingerprints;
 using Android.OS;
+using Android.Preferences;
+using Android.Security.Keystore;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
+using Android.Support.V4.App;
+using Android.Support.V4.Hardware.Fingerprint;
 using Android.Support.V7.App;
 using Android.Widget;
+using FamiliaXamarin.Helpers;
+using Java.Security;
+using Javax.Crypto;
 using Org.Json;
+using Permission = Android.Content.PM.Permission;
 
 namespace FamiliaXamarin
 {
@@ -25,7 +34,9 @@ namespace FamiliaXamarin
 #pragma warning disable 618
         private ProgressDialog _progressDialog;
 #pragma warning restore 618
-
+        private KeyStore keyStore;
+        private Cipher cipher;
+        private string KEY_NAME = "EDMTDev";
         private readonly string[] _permissionsLocation =
         {
             Manifest.Permission.ReadPhoneState,
@@ -42,32 +53,117 @@ namespace FamiliaXamarin
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_login);
-            // Create your application here
-            InitUi();
-            InitListeners();
 
-            const string permission = Manifest.Permission.ReadPhoneState;
-            if (CheckSelfPermission(permission) != (int)Permission.Granted)
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            string user = prefs.GetString("Username", null);
+            string pass = prefs.GetString("Password", null);
+            string tip = prefs.GetString("type", null);
+            string suc = prefs.GetString("sucursala", null);
+            bool fingerprint = prefs.GetBoolean("fingerprint", false);
+
+            FingerprintManagerCompat checkHardware = FingerprintManagerCompat.From(this);
+            KeyguardManager keyguardManager1 = (KeyguardManager)GetSystemService(KeyguardService);
+
+            if (fingerprint && checkHardware.IsHardwareDetected && keyguardManager1.IsKeyguardSecure)
             {
-                RequestPermissions(_permissionsLocation, 0);
-            }
-//            Utils.SetDefaults("Token", "FFF", this);
-//            Utils.SetDefaults("Imei", Utils.GetImei(this), this);
-//            Utils.SetDefaults("Email", "voicu.babiciu@indecosoft.ro", this);
-//            Utils.SetDefaults("Logins", true.ToString(), this);
-//            Utils.SetDefaults("Avatar", Constants.PublicServerAddress + "sds", this);
+//                UserData.user = prefs.GetString("fingerUser", null);
+//                UserData.tip = prefs.GetString("fingerTip", null);
+//                UserData.sucursala = prefs.GetString("fingerSucursala", null);
+                SetContentView(Resource.Layout.activity_finger);
+                //Using the Android Support Library v4
+                KeyguardManager keyguardManager = (KeyguardManager)GetSystemService(KeyguardService);
+                FingerprintManager fingerprintManager = (FingerprintManager)GetSystemService(FingerprintService);
 
+                if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.UseFingerprint) != (int)Android.Content.PM.Permission.Granted)
+                    return;
+                if (!fingerprintManager.IsHardwareDetected)
+                    Toast.MakeText(this, "Nu exista permisiuni pentru autentificare utilizand amprenta", ToastLength.Long).Show();
+                else
+                {
+                    if (!fingerprintManager.HasEnrolledFingerprints)
+                        Toast.MakeText(this, "Nu ati inregistrat nici o amprenta in setari", ToastLength.Long).Show();
+                    else
+                    {
+                        if (!keyguardManager.IsKeyguardSecure)
+                            Toast.MakeText(this, "Telefonul trebuie sa fie securizat utilizand senzorul de amprente", ToastLength.Long).Show();
+                        else
+                            GenKey();
+                        if (CipherInit())
+                        {
+                            FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
+                            FingerprintHandler helper = new FingerprintHandler(this);
+                            helper.StartAuthentication(fingerprintManager, cryptoObject);
+                        }
+                    }
+                }
+            }
+            else if (!fingerprint)
+            {
+                SetContentView(Resource.Layout.activity_login);
+                // Create your application here
+                InitUi();
+                InitListeners();
+
+                const string permission = Manifest.Permission.ReadPhoneState;
+                if (CheckSelfPermission(permission) != (int)Permission.Granted)
+                {
+                    RequestPermissions(_permissionsLocation, 0);
+                }
+
+
+                try
+                {
+                    if (!bool.Parse(Utils.GetDefaults("Logins", this)) || Utils.GetDefaults("Token", this) == null) return;
+                    StartActivity(typeof(MainActivity));
+                    Finish();
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+            else if (!checkHardware.IsHardwareDetected)
+            {
+                Toast.MakeText(this, "Nu aveti senzor de amprente pe telefon", ToastLength.Long).Show();
+            }
+            else if (!keyguardManager1.IsKeyguardSecure)
+            {
+                Toast.MakeText(this, "Telefonul trebuie sa fie securizat utilizand senzorul de amprente", ToastLength.Long).Show();
+            }
+
+
+        }
+        private bool CipherInit()
+        {
             try
             {
-                if (!bool.Parse(Utils.GetDefaults("Logins", this)) || Utils.GetDefaults("Token", this) == null) return;
-                StartActivity(typeof(MainActivity));
-                Finish();
+                cipher = Cipher.GetInstance(KeyProperties.KeyAlgorithmAes
+                                            + "/"
+                                            + KeyProperties.BlockModeCbc
+                                            + "/"
+                                            + KeyProperties.EncryptionPaddingPkcs7);
+                keyStore.Load(null);
+                IKey key = (IKey)keyStore.GetKey(KEY_NAME, null);
+                cipher.Init(CipherMode.EncryptMode, key);
+                return true;
             }
-            catch
+            catch (Exception ex)
             {
-                // ignored
+                return false;
             }
+        }
+        private void GenKey()
+        {
+            keyStore = KeyStore.GetInstance("AndroidKeyStore");
+            KeyGenerator keyGenerator = null;
+            keyGenerator = KeyGenerator.GetInstance(KeyProperties.KeyAlgorithmAes, "AndroidKeyStore");
+            keyStore.Load(null);
+            keyGenerator.Init(new KeyGenParameterSpec.Builder(KEY_NAME, KeyStorePurpose.Encrypt | KeyStorePurpose.Decrypt)
+                .SetBlockModes(KeyProperties.BlockModeCbc)
+                .SetUserAuthenticationRequired(true)
+                .SetEncryptionPaddings(KeyProperties.EncryptionPaddingPkcs7)
+                .Build());
+            keyGenerator.GenerateKey();
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {

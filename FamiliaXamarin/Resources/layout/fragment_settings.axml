@@ -32,6 +32,7 @@
 			android:textSize="18sp"
 		android:textColor="@color/customDark"/>
 		<Switch 
+			android:id="@+id/fingerPrintSwitch"
 		android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 

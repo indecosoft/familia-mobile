@@ -28,13 +28,13 @@ namespace FamiliaXamarin.Settings
             mPrefsEditor = mSharedPrefs.Edit();
         }
 
-        public void SaveAccesKey(String key)
+        public void SaveAccesKey(string key)
         {
             mPrefsEditor.PutString(PREFERENCE_ACCES_KEY, key);
             mPrefsEditor.Commit();
         }
 
-        public String GetAccessKey()
+        public string GetAccessKey()
         {
             return mSharedPrefs.GetString(PREFERENCE_ACCES_KEY, "");
         }
