@@ -74,7 +74,7 @@ namespace FamiliaXamarin
                 KeyguardManager keyguardManager = (KeyguardManager)GetSystemService(KeyguardService);
                 FingerprintManager fingerprintManager = (FingerprintManager)GetSystemService(FingerprintService);
 
-                if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.UseFingerprint) != (int)Android.Content.PM.Permission.Granted)
+                if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.UseFingerprint) != (int)Permission.Granted)
                     return;
                 if (!fingerprintManager.IsHardwareDetected)
                     Toast.MakeText(this, "Nu exista permisiuni pentru autentificare utilizand amprenta", ToastLength.Long).Show();
