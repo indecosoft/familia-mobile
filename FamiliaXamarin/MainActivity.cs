@@ -177,6 +177,7 @@ namespace FamiliaXamarin
                 case Resource.Id.logout:
 
                     Utils.SetDefaults("Token", null, this);
+                    Utils.SetDefaults("fingerprint", false.ToString(), this);
                     WebSocketClient.Disconect();
                         StopService(_loacationServiceIntent);
                         StopService(_webSocketServiceIntent);

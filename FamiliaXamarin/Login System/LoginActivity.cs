@@ -55,26 +55,26 @@ namespace FamiliaXamarin
             base.OnCreate(savedInstanceState);
 
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-            string user = prefs.GetString("Username", null);
-            string pass = prefs.GetString("Password", null);
-            string tip = prefs.GetString("type", null);
-            string suc = prefs.GetString("sucursala", null);
-            bool fingerprint = prefs.GetBoolean("fingerprint", false);
+
+            bool fingerprint;
+
+            if (string.IsNullOrEmpty(Utils.GetDefaults("fingerprint", this))) 
+                fingerprint = false;
+            else
+                fingerprint = Convert.ToBoolean(Utils.GetDefaults("fingerprint", this));
 
             FingerprintManagerCompat checkHardware = FingerprintManagerCompat.From(this);
             KeyguardManager keyguardManager1 = (KeyguardManager)GetSystemService(KeyguardService);
 
             if (fingerprint && checkHardware.IsHardwareDetected && keyguardManager1.IsKeyguardSecure)
             {
-//                UserData.user = prefs.GetString("fingerUser", null);
-//                UserData.tip = prefs.GetString("fingerTip", null);
-//                UserData.sucursala = prefs.GetString("fingerSucursala", null);
+
                 SetContentView(Resource.Layout.activity_finger);
                 //Using the Android Support Library v4
                 KeyguardManager keyguardManager = (KeyguardManager)GetSystemService(KeyguardService);
                 FingerprintManager fingerprintManager = (FingerprintManager)GetSystemService(FingerprintService);
 
-                if (ActivityCompat.CheckSelfPermission(this, Manifest.Permission.UseFingerprint) != (int)Android.Content.PM.Permission.Granted)
+                if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.UseFingerprint) != (int)Permission.Granted)
                     return;
                 if (!fingerprintManager.IsHardwareDetected)
                     Toast.MakeText(this, "Nu exista permisiuni pentru autentificare utilizand amprenta", ToastLength.Long).Show();
