@@ -36,7 +36,6 @@ namespace FamiliaXamarin.Medicatie
         {
             this.listener = listener;
         }
-        // Create new views (invoked by the layout manager)
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
 
@@ -46,7 +45,6 @@ namespace FamiliaXamarin.Medicatie
             return new MedicamentAdapterViewHolder(v);
         }
 
-        // Replace the contents of a view (invoked by the layout manager)
         public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
         {
             var holder = viewHolder as MedicamentAdapterViewHolder;
@@ -93,7 +91,6 @@ namespace FamiliaXamarin.Medicatie
 
     public class MedicamentAdapterViewHolder : RecyclerView.ViewHolder
     {
-        //public TextView TextView { get; set; }
         public TextView tvTitle;
         public TextView tvTime;
         public RelativeLayout container;
@@ -102,7 +99,6 @@ namespace FamiliaXamarin.Medicatie
         public Medicine Medicament;
         public MedicamentAdapterViewHolder(View itemView) : base(itemView)
         {
-            //TextView = v;
             tvTitle = itemView.FindViewById<TextView>(Resource.Id.tv_title);
             tvTime = itemView.FindViewById<TextView>(Resource.Id.tv_time);
             container = itemView.FindViewById<RelativeLayout>(Resource.Id.container);
@@ -116,8 +112,6 @@ namespace FamiliaXamarin.Medicatie
 
                 }
             };
-
-
             btnDelete.Click += delegate
             {
                 if (Listener != null)
