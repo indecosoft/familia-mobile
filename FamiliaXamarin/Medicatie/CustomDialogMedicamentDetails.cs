@@ -35,6 +35,8 @@ namespace FamiliaXamarin.Medicatie
         private string timeSelected;
         private TextView tvStartDate;
         private bool listmode = true;
+        private bool _isEdited = false;
+        private string currentMed = string.Empty;
 
         public CustomDialogMedicamentDetails(Context context, Medicine medicament) : base(context)
         {
@@ -53,6 +55,30 @@ namespace FamiliaXamarin.Medicatie
             SetContentView(Resource.Layout.custom_dialog);
             listmode = true;
             setupViews();
+
+        }
+
+        public override void OnBackPressed()
+        {
+            if (_isEdited)
+            {
+                Android.Support.V7.App.AlertDialog.Builder alert = new Android.Support.V7.App.AlertDialog.Builder(activity);
+                alert.SetTitle("Avertisment");
+                alert.SetMessage("Esti pe cale sa renunti la modificarile facute. Renuntati?");
+                alert.SetPositiveButton("Da", (senderAlert, args) => {
+                    base.OnBackPressed();
+                });
+
+                alert.SetNegativeButton("Nu", (senderAlert, args) => {
+                });
+
+                Dialog dialog = alert.Create();
+                dialog.Show();
+            }
+            else
+            {
+                base.OnBackPressed();
+            }
 
         }
         private void setCurrentDate()
@@ -92,7 +118,23 @@ namespace FamiliaXamarin.Medicatie
         if (medicament != null)
         {
             etMedicamentName.Text = medicament.Name;
-            hourAdapter.SetList(medicament.Hours);
+            etMedicamentName.TextChanged += delegate (object sender, Android.Text.TextChangedEventArgs args)
+            {
+                try
+                {
+                    if (!currentMed.Equals(etMedicamentName.Text))
+                        _isEdited = true;
+                    else
+                        _isEdited = false;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+
+                }
+
+            };
+                hourAdapter.SetList(medicament.Hours);
         }
 
         switch (mode)
@@ -256,15 +298,6 @@ namespace FamiliaXamarin.Medicatie
 
         private void onDateClick()
         {
-//            Calendar cal = Calendar.Instance;
-//            int year = cal.Get(Calendar.Year);
-//            int month = cal.Get(Calendar.Month);
-//            int day = cal.Get(Calendar.DayOfMonth);
-//
-//            datePickerDialog = new DatePickerDialog(Context, Android.Resource.Style.ThemeHoloDialog, mDateSetListener, year, month, day);
-//            datePickerDialog.Window.SetBackgroundDrawable(new ColorDrawable(Color.Transparent));
-//            datePickerDialog.Show();
-
             var frag = DatePickerMedicine.NewInstance(delegate (DateTime time)
             {
                 tvStartDate.Text = time.ToShortDateString();
@@ -341,7 +374,6 @@ namespace FamiliaXamarin.Medicatie
         private void saveNewMed()
         {
             medicament.Hours = hourAdapter.GetList();
-            //logHourAdapterList();
             listener.onMedSaved(medicament);
         }
         private void onTimeClicked(Hour myHour)
@@ -350,14 +382,12 @@ namespace FamiliaXamarin.Medicatie
             int hour = mcurrentTime.Get(CalendarField.HourOfDay);
             int minute = mcurrentTime.Get(CalendarField.Minute);
 
-            TimePickerDialog mTimePicker = new TimePickerDialog(
-                Context,
-                delegate(object sender, TimePickerDialog.TimeSetEventArgs args)
+            TimePickerDialog mTimePicker = new TimePickerDialog(Context, delegate(object sender, TimePickerDialog.TimeSetEventArgs args)
                 {
                     onTimeSelected(sender as TimePicker, args.HourOfDay, args.Minute, myHour);
                 }, hour,minute,true);
-            mTimePicker.SetTitle("Select Time");
 
+            mTimePicker.SetTitle("Select Time");
             mTimePicker.Show();
         }
 
@@ -369,7 +399,6 @@ namespace FamiliaXamarin.Medicatie
             hourAdapter.NotifyDataSetChanged();
             Calendar calendar = getCalendar(timePicker, selectedHour, selectedMinute);
             
-            // setAlarm(calendar.getTimeInMillis());
         }
 
         private Calendar getCalendar(TimePicker timePicker, int selectedHour, int selectedMinute)
@@ -396,9 +425,9 @@ namespace FamiliaXamarin.Medicatie
         }
 
         public void onHourClicked(Hour hour)
-        {
-            Toast.MakeText(activity, hour.Id + " clicked", ToastLength.Short).Show();
+        {   
             onTimeClicked(hour);
+            _isEdited = true;
         }
     }
 }

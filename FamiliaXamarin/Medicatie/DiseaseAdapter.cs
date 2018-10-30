@@ -31,7 +31,6 @@ namespace FamiliaXamarin.Medicatie
         {
             this.listenerBoala = listenerBoala;
         }
-        // Create new views (invoked by the layout manager)
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
 
@@ -40,7 +39,6 @@ namespace FamiliaXamarin.Medicatie
             return new BoalaAdapterViewHolder(v);
         }
 
-        // Replace the contents of a view (invoked by the layout manager)
         public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
         {
             var holder = viewHolder as BoalaAdapterViewHolder;
@@ -48,8 +46,6 @@ namespace FamiliaXamarin.Medicatie
             holder.tvBoala.Text = boala.DiseaseName;
             holder.Boala = boala;
             holder.listenerBoala = listenerBoala;
-
-
         }
 
       
@@ -59,15 +55,10 @@ namespace FamiliaXamarin.Medicatie
             boalaList.Add(boala);
         }
         public void removeBoala(Disease boala) { boalaList.Remove(boala); }
-        //        void OnClick(BoalaAdapterClickEventArgs args) => listenerBoala?.Invoke(this, args);
-        //
-        //       
-        //        void OnLongClick(BoalaAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
     }
 
     public class BoalaAdapterViewHolder : RecyclerView.ViewHolder
     {
-    //public TextView TextView { get; set; }
         public TextView tvBoala;
         public RelativeLayout rlBoliContainer;
         public Button btnDelete;
@@ -93,9 +84,6 @@ namespace FamiliaXamarin.Medicatie
                     listenerBoala.OnBoalaDelete(Boala);
                 }
             };
-            //TextView = v;
-            //            itemView.Click += (sender, e) => clickListener(new BoalaAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
-            //            itemView.LongClick += (sender, e) => longClickListener(new BoalaAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
         }
     }
 
