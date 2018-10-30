@@ -54,85 +54,95 @@ namespace FamiliaXamarin
         {
             base.OnCreate(savedInstanceState);
 
-            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            var fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint", this)) && Convert.ToBoolean(Utils.GetDefaults("fingerprint", this));
 
-            bool fingerprint;
-
-            if (string.IsNullOrEmpty(Utils.GetDefaults("fingerprint", this))) 
-                fingerprint = false;
-            else
-                fingerprint = Convert.ToBoolean(Utils.GetDefaults("fingerprint", this));
-
-            FingerprintManagerCompat checkHardware = FingerprintManagerCompat.From(this);
-            KeyguardManager keyguardManager1 = (KeyguardManager)GetSystemService(KeyguardService);
+            var checkHardware = FingerprintManagerCompat.From(this);
+            var keyguardManager1 = (KeyguardManager)GetSystemService(KeyguardService);
 
             if (fingerprint && checkHardware.IsHardwareDetected && keyguardManager1.IsKeyguardSecure)
             {
 
                 SetContentView(Resource.Layout.activity_finger);
                 //Using the Android Support Library v4
-                KeyguardManager keyguardManager = (KeyguardManager)GetSystemService(KeyguardService);
-                FingerprintManager fingerprintManager = (FingerprintManager)GetSystemService(FingerprintService);
+                var keyguardManager = (KeyguardManager)GetSystemService(KeyguardService);
+                var fingerprintManager = (FingerprintManager)GetSystemService(FingerprintService);
 
                 if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.UseFingerprint) != (int)Permission.Granted)
                     return;
                 if (!fingerprintManager.IsHardwareDetected)
+                {
                     Toast.MakeText(this, "Nu exista permisiuni pentru autentificare utilizand amprenta", ToastLength.Long).Show();
+                    LoadLoginUi();
+                }
+                    
                 else
                 {
                     if (!fingerprintManager.HasEnrolledFingerprints)
+                    {
                         Toast.MakeText(this, "Nu ati inregistrat nici o amprenta in setari", ToastLength.Long).Show();
+                        LoadLoginUi();
+                    }
                     else
                     {
                         if (!keyguardManager.IsKeyguardSecure)
+                        {
                             Toast.MakeText(this, "Telefonul trebuie sa fie securizat utilizand senzorul de amprente", ToastLength.Long).Show();
+                            LoadLoginUi();
+                        }
+                            
                         else
                             GenKey();
-                        if (CipherInit())
-                        {
-                            FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
-                            FingerprintHandler helper = new FingerprintHandler(this);
-                            helper.StartAuthentication(fingerprintManager, cryptoObject);
-                        }
+
+                        if (!CipherInit()) return;
+                        var cryptoObject = new FingerprintManager.CryptoObject(cipher);
+                        var helper = new FingerprintHandler(this);
+                        helper.StartAuthentication(fingerprintManager, cryptoObject);
                     }
                 }
             }
             else if (!fingerprint)
             {
-                SetContentView(Resource.Layout.activity_login);
-                // Create your application here
-                InitUi();
-                InitListeners();
-
-                const string permission = Manifest.Permission.ReadPhoneState;
-                if (CheckSelfPermission(permission) != (int)Permission.Granted)
-                {
-                    RequestPermissions(_permissionsLocation, 0);
-                }
-
-
-                try
-                {
-                    if (!bool.Parse(Utils.GetDefaults("Logins", this)) || Utils.GetDefaults("Token", this) == null) return;
-                    StartActivity(typeof(MainActivity));
-                    Finish();
-                }
-                catch
-                {
-                    // ignored
-                }
+                LoadLoginUi();
             }
             else if (!checkHardware.IsHardwareDetected)
             {
                 Toast.MakeText(this, "Nu aveti senzor de amprente pe telefon", ToastLength.Long).Show();
+                LoadLoginUi();
             }
             else if (!keyguardManager1.IsKeyguardSecure)
             {
                 Toast.MakeText(this, "Telefonul trebuie sa fie securizat utilizand senzorul de amprente", ToastLength.Long).Show();
+                LoadLoginUi();
+            }
+
+        }
+
+        private void LoadLoginUi()
+        {
+            SetContentView(Resource.Layout.activity_login);
+            // Create your application here
+            InitUi();
+            InitListeners();
+
+            const string permission = Manifest.Permission.ReadPhoneState;
+            if (CheckSelfPermission(permission) != (int)Permission.Granted)
+            {
+                RequestPermissions(_permissionsLocation, 0);
             }
 
 
+            try
+            {
+                if (!bool.Parse(Utils.GetDefaults("Logins", this)) || Utils.GetDefaults("Token", this) == null) return;
+                StartActivity(typeof(MainActivity));
+                Finish();
+            }
+            catch
+            {
+                // ignored
+            }
         }
+
         private bool CipherInit()
         {
             try
