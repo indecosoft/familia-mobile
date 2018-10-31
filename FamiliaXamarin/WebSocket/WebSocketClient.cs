@@ -21,7 +21,7 @@ namespace FamiliaXamarin
         Context _context;
         public void Connect(string hostname, int port, Context context)
         {
-            Utils.CreateChannels();
+            
             _context = context;
             try
             {
@@ -100,6 +100,8 @@ namespace FamiliaXamarin
                 Log.Error("message send error: ", e.Message);
                 return;
             }
+            Utils.CreateChannels(username, username);
+
             try
             {
 
@@ -150,7 +152,7 @@ namespace FamiliaXamarin
                 Log.Error("on Join: ", e.Message);
                 return;
             }
-
+            Utils.CreateChannels(email, email);
             // aici adaugi in array-ul de room-uri
             try
             {
@@ -201,6 +203,7 @@ namespace FamiliaXamarin
         void OnChatRequest(Object[] obj)
         {
             Log.Error("WebSocket", "Chat Request");
+            
             var data = (JSONObject)obj[0];
             string email;
             string room;
@@ -214,6 +217,8 @@ namespace FamiliaXamarin
                 Log.Error("onStartChat: ", e.Message);
                 return;
             }
+
+            Utils.CreateChannels(email, email);
 
             var nb = Utils.GetAndroidChannelNotification("Cerere de chat", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
             Utils.GetManager().Notify(100, nb.Build());
