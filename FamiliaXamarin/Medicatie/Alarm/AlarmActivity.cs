@@ -104,10 +104,10 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         private void LaunchSnoozeAlarm()
         {
-            var snoozePreferences = new SnoozePreferences(this);
-            var key = snoozePreferences.GetAccessKey();
-            var snoozeInMinutes = int.Parse(key) * 60000;
-            Toast.MakeText(this, "Alarma amanata pentru " + key + " minute.", ToastLength.Short).Show();
+            
+            var snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze", this));
+            var snoozeInMilisec = snoozeInMinutes * 60000;
+            Toast.MakeText(this, "Alarma amanata pentru " + snoozeInMinutes + " minute.", ToastLength.Short).Show();
             btnOk.Visibility = ViewStates.Gone;
             var am = (AlarmManager) GetSystemService(AlarmService);
 
@@ -123,7 +123,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
             if (am != null)
             {
-                am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + snoozeInMinutes,
+                am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + snoozeInMilisec,
                     AlarmManager.IntervalDay, pi);
             }
 
