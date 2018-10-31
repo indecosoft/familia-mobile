@@ -9,8 +9,6 @@ namespace FamiliaXamarin.Medicatie
 {
     class HourAdapter : RecyclerView.Adapter
     {
-        public event EventHandler<HourAdapterClickEventArgs> ItemClick;
-        public event EventHandler<HourAdapterClickEventArgs> ItemLongClick;
         private List<Hour> hours;
 
         private OnHourClickListener listener;
@@ -30,7 +28,6 @@ namespace FamiliaXamarin.Medicatie
             hours = data;
         }
 
-        // Create new views (invoked by the layout manager)
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
             LayoutInflater inflater = LayoutInflater.From(parent.Context);
@@ -38,14 +35,13 @@ namespace FamiliaXamarin.Medicatie
             return new HourAdapterViewHolder(v);
         }
 
-        // Replace the contents of a view (invoked by the layout manager)
         public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
         {
             var holder = viewHolder as HourAdapterViewHolder;
             Hour hour = hours[position];
             if (holder != null)
             {
-                holder.tvHour.Text = hour.Nume;
+                holder.tvHour.Text = hour.HourName;
                 holder.Hour = hour;
                 holder.Listener = listener;
 
@@ -98,7 +94,6 @@ namespace FamiliaXamarin.Medicatie
 
         public class HourAdapterViewHolder : RecyclerView.ViewHolder
         {
-            //public TextView TextView { get; set; }
             public RelativeLayout rlHour;
             public TextView tvHour;
             public OnHourClickListener Listener;

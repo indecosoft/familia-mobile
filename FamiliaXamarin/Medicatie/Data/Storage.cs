@@ -21,52 +21,49 @@ namespace FamiliaXamarin.Medicatie.Data
 {
     class Storage
     {
-        private int id;
-        private static Storage instance;
-        private List<Boala> boalaList;
+       
+        private static Storage Instance;
+        private List<Disease> DiseaseList;
         private static readonly object padlock = new object();
 
         private Storage()
         {
-            this.boalaList = new List<Boala>();
+            this.DiseaseList = new List<Disease>();
         }
-//        [MethodImpl(MethodImplOptions.Synchronized)]
-        public static Storage getInstance()
+
+        public static Storage GetInstance()
         {
             lock (padlock)
             {
-                if (instance == null)
+                if (Instance == null)
                 {
-                    instance = new Storage();
+                    Instance = new Storage();
                 }
 
             }
 
-            return instance;
+            return Instance;
         }
 
-        public List<Boala> getBoli()
+        public List<Disease> GetDiseases()
         {
-            return new List<Boala>(boalaList);
+            return new List<Disease>(DiseaseList);
         }
 
 
-        public void addBoala(Context context, Boala boala)
+        public void AddDisease(Context context, Disease disease)
         {
-            //boala.setId("boala" + id++);
-            //Random r = new Random();
-            //boala.Id = r.Next(0, int.MaxValue) * r.Next(0, int.MaxValue);
-            boalaList.Add(boala);
-            boala.Id = boalaList.IndexOf(boala).ToString();
-            saveData(context, boala);
+            DiseaseList.Add(disease);
+            disease.Id = DiseaseList.IndexOf(disease).ToString();
+            SaveData(context, disease);
 
 
 
         }
 
-        public Boala getBoala(string id)
+        public Disease GetDisease(string id)
         {
-            foreach (Boala item in boalaList)
+            foreach (Disease item in DiseaseList)
             {
                 if (item.Id.Equals(id))
                 {
@@ -76,46 +73,34 @@ namespace FamiliaXamarin.Medicatie.Data
             return null;
         }
 
-        public Boala removeBoala(Context context, Boala boala)
+        public Disease removeBoala(Context context, Disease disease)
         {
-            boalaList.Remove(boala);
-            saveCurrentData(context);
-            return boala;
+            DiseaseList.Remove(disease);
+            SaveCurrentData(context);
+            return disease;
         }
 
 
-        public Boala updateBoala(Context context, Boala boala)
+        public Disease updateBoala(Context context, Disease disease)
         {
-            foreach (Boala item in boalaList)
+            foreach (Disease item in DiseaseList)
             {
-                if (item.Id.Equals(boala.Id))
+                if (item.Id.Equals(disease.Id))
                 {
-                    item.NumeBoala = boala.NumeBoala;
-                    item.MedicamentList = boala.MedicamentList;
+                    item.DiseaseName = disease.DiseaseName;
+                    item.ListOfMedicines = disease.ListOfMedicines;
                 }
             }
-            saveCurrentData(context);
-            return boala;
-
-//            for (Boala item : boalaList)
-//            {
-//                if (item.getId().equals(boala.getId()))
-//                {
-//                    item.setNumeBoala(boala.getNumeBoala());
-//                    item.setMedicamentList(boala.getMedicamentList());
-//                }
-//            }
-//            saveCurrentData(context);
-//            return boala;
-        
+            SaveCurrentData(context);
+            return disease;
     }
 
-        public void saveCurrentData(Context context)
+        public void SaveCurrentData(Context context)
         {
             JSONArray data = new JSONArray();
-            for (int i = 0; i < boalaList.Count; i++)
+            for (int i = 0; i < DiseaseList.Count; i++)
             {
-                data.Put(createJsonObject(boalaList[i]));
+                data.Put(CreateJsonObject(DiseaseList[i]));
             }
 
             File file = new File(context.FilesDir, Constants.File);
@@ -132,37 +117,37 @@ namespace FamiliaXamarin.Medicatie.Data
             }
         }
 
-        private JSONObject createJsonObject(Boala boala)
+        private JSONObject CreateJsonObject(Disease disease)
         {
             JSONObject jsonObject = new JSONObject();
             try
             {
-                jsonObject.Put("idBoala", boala.Id);
+                jsonObject.Put("idBoala", disease.Id);
 
-                jsonObject.Put("numeBoala", boala.NumeBoala);
+                jsonObject.Put("numeBoala", disease.DiseaseName);
 
-                JSONArray listaMedicamente = new JSONArray();
-                for (int i = 0; i < boala.MedicamentList.Count; i++)
+                JSONArray listOfMedicines = new JSONArray();
+                for (int i = 0; i < disease.ListOfMedicines.Count; i++)
                 {
                     JSONObject medicament = new JSONObject();
-                    medicament.Put("idMedicament", boala.MedicamentList[i].IdMed);
-                    medicament.Put("numeMedicament", boala.MedicamentList[i].Name);
-                    medicament.Put("dataMedicament", boala.MedicamentList[i].Date);
-                    medicament.Put("nrZileMedicament", boala.MedicamentList[i].NrZile);
-                    medicament.Put("intervalZi", boala.MedicamentList[i].IntervalZi);
+                    medicament.Put("idMedicament", disease.ListOfMedicines[i].IdMed);
+                    medicament.Put("numeMedicament", disease.ListOfMedicines[i].Name);
+                    medicament.Put("dataMedicament", disease.ListOfMedicines[i].Date);
+                    medicament.Put("nrZileMedicament", disease.ListOfMedicines[i].NumberOfDays);
+                    medicament.Put("intervalZi", disease.ListOfMedicines[i].IntervalOfDay);
 
-                    JSONArray arrayOre = new JSONArray();
+                    JSONArray arrayOfHours = new JSONArray();
 
-                    for (int j = 0; j < boala.MedicamentList[i].Hours.Count; j++)
+                    for (int j = 0; j < disease.ListOfMedicines[i].Hours.Count; j++)
                     {
-                        arrayOre.Put(new JSONObject().Put("idOra", boala.MedicamentList[i].Hours[j].Id).Put("numeOra", boala.MedicamentList[i].Hours[j].Nume));
+                        arrayOfHours.Put(new JSONObject().Put("idOra", disease.ListOfMedicines[i].Hours[j].Id).Put("numeOra", disease.ListOfMedicines[i].Hours[j].HourName));
                     }
 
-                    medicament.Put("listaOre", arrayOre);
-                    listaMedicamente.Put(medicament);
+                    medicament.Put("listaOre", arrayOfHours);
+                    listOfMedicines.Put(medicament);
                 }
 
-                jsonObject.Put("listaMedicamente", listaMedicamente);
+                jsonObject.Put("listaMedicamente", listOfMedicines);
             }
             catch (JSONException e)
             {
@@ -171,27 +156,27 @@ namespace FamiliaXamarin.Medicatie.Data
             return jsonObject;
         }
 
-        public void saveData(Context context, Boala boala)
+        public void SaveData(Context context, Disease disease)
         {
             try
             {
-                string data = readData(context);
-                JSONArray listaDeBoli;
+                string data = ReadData(context);
+                JSONArray listOfDiseases;
                 if (data != null)
                 {
-                    listaDeBoli = new JSONArray(data);
+                    listOfDiseases = new JSONArray(data);
                 }
                 else
                 {
-                    listaDeBoli = new JSONArray();
+                    listOfDiseases = new JSONArray();
                 }
 
-                listaDeBoli.Put(createJsonObject(boala));
+                listOfDiseases.Put(CreateJsonObject(disease));
 
                 File file = new File(context.FilesDir, Constants.File);
                 FileWriter fileWriter = new FileWriter(file);
                 BufferedWriter outBufferedWriter = new BufferedWriter(fileWriter);
-                outBufferedWriter.Write(listaDeBoli.ToString());
+                outBufferedWriter.Write(listOfDiseases.ToString());
                 outBufferedWriter.Close();
             }
             catch (JSONException e)
@@ -204,7 +189,7 @@ namespace FamiliaXamarin.Medicatie.Data
             }
         }
 
-        public string readData(Context context)
+        public string ReadData(Context context)
         {
             Stream fis;
             try
@@ -228,67 +213,67 @@ namespace FamiliaXamarin.Medicatie.Data
             return null;
         }
 
-        public List<Boala> getBoliTest(Context context)
+        public List<Disease> GetListOfDiseasesFromFile(Context context)
         {
             try
             {
-                boalaList.Clear();
+                DiseaseList.Clear();
 
-                string data = readData(context);
-                JSONArray boli;
+                string data = ReadData(context);
+                JSONArray diseases;
                 if (data != null)
                 {
-                    boli = new JSONArray(data);
+                    diseases = new JSONArray(data);
                 }
                 else
                 {
-                    boli = new JSONArray();
+                    diseases = new JSONArray();
                 }
 
-                for (int i = 0; i < boli.Length(); i++)
+                for (int i = 0; i < diseases.Length(); i++)
                 {
-                    Boala b = new Boala();
-                    JSONObject bTemp = (JSONObject)boli.Get(i);
+                    Disease b = new Disease();
+                    JSONObject bTemp = (JSONObject)diseases.Get(i);
 
                     b.Id = bTemp.GetString("idBoala");
-                    b.NumeBoala = bTemp.GetString("numeBoala");
+                    b.DiseaseName = bTemp.GetString("numeBoala");
 
-                    List<Medicament> lMed = new List<Medicament>();
-                    JSONArray lMedAr = (JSONArray)bTemp.Get("listaMedicamente");
+                    List<Medicine> listOfMedicines = new List<Medicine>();
+                    JSONArray arrayOfMedicines = (JSONArray)bTemp.Get("listaMedicamente");
 
-                    for (int j = 0; j < lMedAr.Length(); j++)
+                    for (int j = 0; j < arrayOfMedicines.Length(); j++)
                     {
-                        Medicament m = new Medicament();
-                        m.IdMed= (string)((JSONObject)lMedAr.Get(j)).Get("idMedicament");
-                        m.Name = (string)((JSONObject)lMedAr.Get(j)).Get("numeMedicament");
-                        m.Date = (string)((JSONObject)lMedAr.Get(j)).Get("dataMedicament");
-                        m.NrZile = (int)((JSONObject)lMedAr.Get(j)).Get("nrZileMedicament");
-                        m.IntervalZi = (int)((JSONObject)lMedAr.Get(j)).Get("intervalZi");
+                        Medicine m = new Medicine();
+                        m.IdMed= (string)((JSONObject)arrayOfMedicines.Get(j)).Get("idMedicament");
+                        m.Name = (string)((JSONObject)arrayOfMedicines.Get(j)).Get("numeMedicament");
+                        m.Date = (string)((JSONObject)arrayOfMedicines.Get(j)).Get("dataMedicament");
+                        m.NumberOfDays = (int)((JSONObject)arrayOfMedicines.Get(j)).Get("nrZileMedicament");
+                        m.IntervalOfDay = (int)((JSONObject)arrayOfMedicines.Get(j)).Get("intervalZi");
 
-                        List<Hour> lOre = new List<Hour>();
-                        JSONArray lOreAr = (JSONArray)((JSONObject)lMedAr.Get(j)).Get("listaOre");
+                        List<Hour> ListOfHours = new List<Hour>();
+                        JSONArray arrayOfHours = (JSONArray)((JSONObject)arrayOfMedicines.Get(j)).Get("listaOre");
 
-                        for (int k = 0; k < lOreAr.Length(); k++)
+                        for (int k = 0; k < arrayOfHours.Length(); k++)
                         {
                             Hour h = new Hour();
-                            h.Id = (string)((JSONObject)lOreAr.Get(k)).Get("idOra");
-                            h.Nume = (string)((JSONObject)lOreAr.Get(k)).Get("numeOra");
-                            lOre.Add(h);
+                            h.Id = (string)((JSONObject)arrayOfHours.Get(k)).Get("idOra");
+                            h.HourName = (string)((JSONObject)arrayOfHours.Get(k)).Get("numeOra");
+                            ListOfHours.Add(h);
                         }
 
-                        m.Hours = lOre;
+                        m.Hours = ListOfHours;
 
-                        lMed.Add(m);
+                        listOfMedicines.Add(m);
                     }
-                    b.MedicamentList = lMed;
-                    boalaList.Add(b);
+                    b.ListOfMedicines = listOfMedicines;
+                    DiseaseList.Add(b);
                 }
             }
             catch (JSONException e)
             {
                 e.PrintStackTrace();
             }
-            return new List<Boala>(boalaList);
+            return new List<Disease>(DiseaseList);
         }
     }
 }

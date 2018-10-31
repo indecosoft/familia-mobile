@@ -1,27 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+	android:keepScreenOn="true"
     tools:context=".medicatie.gestiune.alarm.AlarmActivity"
-    android:background="#3c3c3c">
+    android:background="#ffffff">
+	 <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            app:lottie_rawRes="@raw/bell"
 
+
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     <RelativeLayout
         android:id="@+id/rl_alarm"
-        android:layout_width="300dp"
-        android:layout_height="200dp"
-        android:layout_centerInParent="true"
-        android:background="@android:color/white">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+		app:layout_constraintVertical_bias="0.6"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
             android:id="@+id/tv_label_med_alarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/tv_med_name_alarm"
+
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp"
-            android:text="Ia-ti medicamentul:"
+            android:layout_marginTop="30dp"
+            android:text="Trebuie sa-ti iei medicamentul:"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"/>
@@ -31,8 +49,12 @@
             android:id="@+id/tv_med_name_alarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+			android:layout_centerHorizontal="true"
+            android:layout_below="@+id/tv_label_med_alarm"
             android:textSize="30dp"
+			android:text="sdgdf"
+			android:textAlignment="center"
+			android:layout_marginTop="30dp"
             android:textColor="@android:color/black"/>
 
 
@@ -42,9 +64,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_med_name_alarm"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/button_style"
-        android:text="ok"
+        android:text="Am luat"
+		android:padding="15dp"
         android:textColor="@android:color/white"/>
 
         <Button
@@ -54,11 +77,12 @@
             android:layout_below="@+id/tv_med_name_alarm"
             android:layout_marginEnd="30dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/button_style"
-            android:text="Amana"
-            android:textColor="@android:color/white"/>
+            android:layout_marginTop="30dp"
+            android:background="@drawable/snooze_button"
+            android:text="Mai tarziu"
+			android:padding="15dp"
+            android:textColor="@color/customDark"/>
 
     </RelativeLayout>
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
