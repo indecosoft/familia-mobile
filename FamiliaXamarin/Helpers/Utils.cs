@@ -198,11 +198,11 @@ namespace FamiliaXamarin
             //(d)
             return r * c;
         }
-        public static void CreateChannels()
+        public static void CreateChannels(string channelId,string channel)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
 #pragma warning disable XA0001 // Find issues with Android API usage
-            var androidChannel = new NotificationChannel("ANDROID_CHANNEL_ID", "ANDROID_CHANNEL_NAME", NotificationImportance.High);
+            var androidChannel = new NotificationChannel(channelId, channel, NotificationImportance.High);
 #pragma warning restore XA0001 // Find issues with Android API usage
             androidChannel.EnableLights(true);
             androidChannel.EnableVibration(true);
