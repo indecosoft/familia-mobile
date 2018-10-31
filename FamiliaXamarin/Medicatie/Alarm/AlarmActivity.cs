@@ -110,7 +110,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
             Toast.MakeText(this, "Alarma amanata pentru " + snoozeInMinutes + " minute.", ToastLength.Short).Show();
             btnOk.Visibility = ViewStates.Gone;
             var am = (AlarmManager) GetSystemService(AlarmService);
-
+            //comment
             var i = new Intent(this, typeof(AlarmBroadcastReceiver));
             i.PutExtra(DiseaseActivity.BOALA_ID, mBoala.Id);
             i.PutExtra(DiseaseActivity.MED_ID, mMed.IdMed);
