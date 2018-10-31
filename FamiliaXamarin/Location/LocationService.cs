@@ -52,8 +52,8 @@ namespace FamiliaXamarin
             {
                 locationRequest = new LocationRequest()
                                   .SetPriority(LocationRequest.PriorityHighAccuracy)
-                                  .SetInterval(0)
-                                  .SetFastestInterval(0);
+                                  .SetInterval(1000*60)
+                                  .SetFastestInterval(1000 * 60);
                 locationCallback = new FusedLocationProviderCallback(this);
 
                 fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);
