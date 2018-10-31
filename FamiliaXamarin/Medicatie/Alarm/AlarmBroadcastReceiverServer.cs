@@ -12,6 +12,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Java.Util;
+using Org.Json;
 using Random = Java.Util.Random;
 
 namespace FamiliaXamarin.Medicatie.Alarm
@@ -34,7 +35,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
             if (action != null)
             {
                 Log.Error("ACTION", action);
-                //TODO de ce nu intra pe else  
                 if (ACTION_RECEIVE.Equals(action))
                 {
                     Toast.MakeText(context, "ALARM SERVER!!!", ToastLength.Long).Show();
@@ -80,12 +80,10 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 if (ACTION_OK.Equals(action))
                 {
                     Toast.MakeText(context, "Action ok!!!", ToastLength.Long).Show();
-//                    long timestamp = CurrentTimeMillis();
-//                    Date date = new Date(timestamp);
                     DateTime now = DateTime.Now;
                     String uuid = intent.GetStringExtra(UUID);
+                    //TODO verifica daca poate trimite la server, daca nu, salveaza intr-un fisier si trimite datele din fisier cand se poate
 
-                    //TODO post to server
                     SendData(uuid, now, context);
                     NotificationManagerCompat.From(context).Cancel(intent.GetIntExtra("notifyId", 0));
 
@@ -105,7 +103,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
         async void SendData(string uuid, DateTime date, Context context)
 #pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
         {
-            var res = await Tasks.Tasks.PostMedicine($"{Constants.PublicServerAddress}/api/medicine", uuid, date, Utils.GetDefaults("Token", context));
+            //using (var response = await httpClient.PostAsync(url, new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("uuid", uuid), new KeyValuePair<string, string>("date", date.ToString("yyyy-MM-dd HH:mm:ss")) })))
+            JSONObject mObject = new JSONObject().Put("uuid", uuid).Put("date", date.ToString("yyyy-MM-dd HH:mm:ss"));
+            var res = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", mObject, Utils.GetDefaults("Token", context));
 
             Log.Error("#################", ""+res);
         }

@@ -42,7 +42,8 @@ namespace FamiliaXamarin
         public static string NotifContent { get; } = "";
         public static int NotifId { get; } = 667;
         public static int NotifIdServer { get; } = 668;
-        public static string File { get; } = "data.txt";
+        public static string MedicationFile { get; } = "data.txt";
+        public static string MedicationServerFile { get; } = "data_server.txt";
         #endregion
 
         public static string DataUrl { get; } = "https://devgis.sigma.team/devices/save-device-measurements";
