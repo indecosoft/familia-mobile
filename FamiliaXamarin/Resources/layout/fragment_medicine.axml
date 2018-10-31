@@ -10,11 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/btn_add"
+		android:layout_marginBottom="71dp"
+		android:scrollbars="vertical"
 
         />
 
     <Button
-        android:id="@+id/btn_add"
+        android:id="@+id/btn_add_disease"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -23,6 +25,7 @@
         android:background="@drawable/button_style"
         android:text="Adauga tratament"
         android:textColor="@android:color/white"
+		 android:layout_above="@+id/btn_add"
         android:paddingLeft="50dp"
         android:paddingRight="50dp"/>
 

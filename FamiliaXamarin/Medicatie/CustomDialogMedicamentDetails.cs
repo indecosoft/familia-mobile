@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
@@ -27,17 +28,17 @@ namespace FamiliaXamarin.Medicatie
         private RadioButton rbNrZile;
         private HourAdapter hourAdapter;
         private IMedSaveListener listener;
-        private Medicament medicament;
+        private Medicine medicament;
         private IMode mode;
         private int intervalZi;
         private Activity activity;
         private string timeSelected;
-        private DatePickerDialog datePickerDialog;
-        private DatePickerDialog.IOnDateSetListener mDateSetListener;
         private TextView tvStartDate;
         private bool listmode = true;
+        private bool _isEdited = false;
+        private string currentMed = string.Empty;
 
-        public CustomDialogMedicamentDetails(Context context, Medicament medicament) : base(context)
+        public CustomDialogMedicamentDetails(Context context, Medicine medicament) : base(context)
         {
             this.activity = (Activity)context;
             mode = medicament == null ? IMode.SAVE : IMode.UPDATE;
@@ -54,7 +55,30 @@ namespace FamiliaXamarin.Medicatie
             SetContentView(Resource.Layout.custom_dialog);
             listmode = true;
             setupViews();
-            //setDateListener();
+
+        }
+
+        public override void OnBackPressed()
+        {
+            if (_isEdited)
+            {
+                Android.Support.V7.App.AlertDialog.Builder alert = new Android.Support.V7.App.AlertDialog.Builder(activity);
+                alert.SetTitle("Avertisment");
+                alert.SetMessage("Esti pe cale sa renunti la modificarile facute. Renuntati?");
+                alert.SetPositiveButton("Da", (senderAlert, args) => {
+                    base.OnBackPressed();
+                });
+
+                alert.SetNegativeButton("Nu", (senderAlert, args) => {
+                });
+
+                Dialog dialog = alert.Create();
+                dialog.Show();
+            }
+            else
+            {
+                base.OnBackPressed();
+            }
 
         }
         private void setCurrentDate()
@@ -69,7 +93,7 @@ namespace FamiliaXamarin.Medicatie
             int year = cal.Get(CalendarField.Year);
             int month = cal.Get(CalendarField.Month);
             int day = cal.Get(CalendarField.DayOfMonth);
-            return $"{day}/{(month + 1)}/{year}";
+            return $"{day}.{(month + 1)}.{year}";
         }
        
 
@@ -94,7 +118,23 @@ namespace FamiliaXamarin.Medicatie
         if (medicament != null)
         {
             etMedicamentName.Text = medicament.Name;
-            hourAdapter.SetList(medicament.Hours);
+            etMedicamentName.TextChanged += delegate (object sender, Android.Text.TextChangedEventArgs args)
+            {
+                try
+                {
+                    if (!currentMed.Equals(etMedicamentName.Text))
+                        _isEdited = true;
+                    else
+                        _isEdited = false;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+
+                }
+
+            };
+                hourAdapter.SetList(medicament.Hours);
         }
 
         switch (mode)
@@ -111,15 +151,15 @@ namespace FamiliaXamarin.Medicatie
     private void setViewOnUpdate()
     {
         listmode = false;
-        spinner.SetSelection(medicament.IntervalZi - 1);
+        spinner.SetSelection(medicament.IntervalOfDay - 1);
 
         hourAdapter.SetList(medicament.Hours);
         hourAdapter.NotifyDataSetChanged();
-        if (medicament.NrZile != 0)
+        if (medicament.NumberOfDays != 0)
         {
             rbNrZile.Checked =true;
             etNumarZile.Visibility = ViewStates.Visible;
-            etNumarZile.Text = medicament.NrZile + "";
+            etNumarZile.Text = medicament.NumberOfDays + "";
 
         }
         else
@@ -169,6 +209,7 @@ namespace FamiliaXamarin.Medicatie
         spinner = FindViewById<Spinner>(Resource.Id.spinner);
         spinner.ItemSelected += delegate(object sender, AdapterView.ItemSelectedEventArgs args)
         {
+            Contract.Requires(sender != null);
             intervalZi = args.Position + 1;
             if (listmode)
             {
@@ -182,7 +223,7 @@ namespace FamiliaXamarin.Medicatie
 
             if (medicament == null)
             {
-                medicament = new Medicament(etMedicamentName.Text);
+                medicament = new Medicine(etMedicamentName.Text);
                 medicament.Date = getCurrentDate();
             }
 
@@ -212,9 +253,9 @@ namespace FamiliaXamarin.Medicatie
     }
         public interface IMedSaveListener
         {
-            void onMedSaved(Medicament medicament);
+            void onMedSaved(Medicine medicament);
 
-            void onMedUpdated(Medicament medicament);
+            void onMedUpdated(Medicine medicament);
 
         }
 
@@ -257,15 +298,6 @@ namespace FamiliaXamarin.Medicatie
 
         private void onDateClick()
         {
-//            Calendar cal = Calendar.Instance;
-//            int year = cal.Get(Calendar.Year);
-//            int month = cal.Get(Calendar.Month);
-//            int day = cal.Get(Calendar.DayOfMonth);
-//
-//            datePickerDialog = new DatePickerDialog(Context, Android.Resource.Style.ThemeHoloDialog, mDateSetListener, year, month, day);
-//            datePickerDialog.Window.SetBackgroundDrawable(new ColorDrawable(Color.Transparent));
-//            datePickerDialog.Show();
-
             var frag = DatePickerMedicine.NewInstance(delegate (DateTime time)
             {
                 tvStartDate.Text = time.ToShortDateString();
@@ -297,23 +329,24 @@ namespace FamiliaXamarin.Medicatie
             {
                 if (medicament == null)
                 {
-                    medicament = new Medicament(name);
+                    medicament = new Medicine(name);
                 }
                 else
                 {
                     medicament.Name = name;
                     medicament.Hours = hourAdapter.GetList();
-                    medicament.IntervalZi= intervalZi;
+                    medicament.IntervalOfDay= intervalZi;
+                    medicament.Date = tvStartDate.Text;
                     string zile = etNumarZile.Text;
                     if (!zile.Equals(string.Empty))
                     {
                         int nrZile = int.Parse(zile);
-                        medicament.NrZile = nrZile;
+                        medicament.NumberOfDays = nrZile;
                         
                     }
                     else
                     {
-                        medicament.NrZile = 0;
+                        medicament.NumberOfDays = 0;
                     }
                 }
                 switch (mode)
@@ -341,35 +374,31 @@ namespace FamiliaXamarin.Medicatie
         private void saveNewMed()
         {
             medicament.Hours = hourAdapter.GetList();
-            //logHourAdapterList();
             listener.onMedSaved(medicament);
         }
         private void onTimeClicked(Hour myHour)
         {
             Calendar mcurrentTime = Calendar.Instance;
-            int hour = mcurrentTime.Get(Calendar.HourOfDay);
-            int minute = mcurrentTime.Get(Calendar.Minute);
+            int hour = mcurrentTime.Get(CalendarField.HourOfDay);
+            int minute = mcurrentTime.Get(CalendarField.Minute);
 
-            TimePickerDialog mTimePicker = new TimePickerDialog(
-                Context,
-                delegate(object sender, TimePickerDialog.TimeSetEventArgs args)
+            TimePickerDialog mTimePicker = new TimePickerDialog(Context, delegate(object sender, TimePickerDialog.TimeSetEventArgs args)
                 {
                     onTimeSelected(sender as TimePicker, args.HourOfDay, args.Minute, myHour);
                 }, hour,minute,true);
-            mTimePicker.SetTitle("Select Time");
 
+            mTimePicker.SetTitle("Select Time");
             mTimePicker.Show();
         }
 
         private void onTimeSelected(TimePicker timePicker, int selectedHour, int selectedMinute, Hour myHour)
         {
             timeSelected = selectedHour + ":" + selectedMinute;
-            myHour.Nume = timeSelected;
+            myHour.HourName = timeSelected;
             hourAdapter.updateHour(myHour);
             hourAdapter.NotifyDataSetChanged();
             Calendar calendar = getCalendar(timePicker, selectedHour, selectedMinute);
             
-            // setAlarm(calendar.getTimeInMillis());
         }
 
         private Calendar getCalendar(TimePicker timePicker, int selectedHour, int selectedMinute)
@@ -377,12 +406,12 @@ namespace FamiliaXamarin.Medicatie
             Calendar calendar = Calendar.Instance;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
             {
-                calendar.Set(calendar.Get(Calendar.Year), calendar.Get(Calendar.Month), calendar.Get(Calendar.DayOfMonth),
+                calendar.Set(calendar.Get(CalendarField.Year), calendar.Get(CalendarField.Month), calendar.Get(CalendarField.DayOfMonth),
                     timePicker.Hour, timePicker.Minute, 0);
             }
             else
             {
-                calendar.Set(calendar.Get(Calendar.Year), calendar.Get(Calendar.Month), calendar.Get(Calendar.DayOfMonth),
+                calendar.Set(calendar.Get(CalendarField.Year), calendar.Get(CalendarField.Month), calendar.Get(CalendarField.DayOfMonth),
                     selectedHour, selectedMinute, 0);
             }
             return calendar;
@@ -390,15 +419,15 @@ namespace FamiliaXamarin.Medicatie
 
         public void OnDateSet(DatePicker view, int year, int month, int dayOfMonth)
         {
-            string dateSaved = $"{dayOfMonth}/ {(month + 1)} /{year}";
+            string dateSaved = $"{dayOfMonth}.{(month + 1)}.{year}";
             tvStartDate.Text = dateSaved;
             this.medicament.Date = dateSaved;
         }
 
         public void onHourClicked(Hour hour)
-        {
-            Toast.MakeText(activity, hour.Id + " clicked", ToastLength.Short).Show();
+        {   
             onTimeClicked(hour);
+            _isEdited = true;
         }
     }
 }

@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Java.Util;
+﻿using Java.Util;
 
 namespace FamiliaXamarin
 {
@@ -17,8 +6,6 @@ namespace FamiliaXamarin
     {
         public static string BloodPressureFile { get; } = "blood_pressure_data.txt";
         public static string BloodGlucoseFile { get; } = "blood_glucose_data.txt";
-
-
         public static UUID UuidBloodPressureService { get; } = UUID.FromString("00001810-0000-1000-8000-00805f9b34fb");
 
         public static UUID UuidBloodPressureMeasurementChar { get; } =
@@ -54,19 +41,20 @@ namespace FamiliaXamarin
         public static string NotificationTitle { get; } = "Este timpul sa iti iei medicamentele";
         public static string NotifContent { get; } = "";
         public static int NotifId { get; } = 667;
+        public static int NotifIdServer { get; } = 668;
         public static string File { get; } = "data.txt";
-
-
         #endregion
-
 
         public static string DataUrl { get; } = "https://devgis.sigma.team/devices/save-device-measurements";
 
         public static string ServerAddress { get; } = "http://192.168.101.192:3000/";
 
-        //public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/chat/";
-        //public static string PublicServerAddress { get; } = "http://gisdev.indecosoft.net/";
-        public static string WebSocketAddress { get; } = "https://gisdev.indecosoft.net/ws";
+        //public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/chat";
+        //public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/";
+        //public static string PublicServerAddress { get; } = "http://192.168.101.140:3000/api/userMeds/1";
+        public static string PublicServerAddress { get; } = "http://192.168.101.107:3000";
+        //public static string WebSocketAddress { get; } = "https://gisdev.indecosoft.net/ws";
+        public static string WebSocketAddress { get; } = "http://192.168.101.107:3000/ws";
         public static int WebSocketPort { get; } = 3000;
         public static string ImageDirectory { get; } = "/demonuts";
         public static int RequestGallery { get; } = 2;
