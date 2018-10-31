@@ -103,7 +103,7 @@ namespace FamiliaXamarin.Medicatie.Data
                 data.Put(CreateJsonObject(DiseaseList[i]));
             }
 
-            File file = new File(context.FilesDir, Constants.File);
+            File file = new File(context.FilesDir, Constants.MedicationFile);
             try
             {
                 FileWriter fileWriter = new FileWriter(file);
@@ -173,7 +173,7 @@ namespace FamiliaXamarin.Medicatie.Data
 
                 listOfDiseases.Put(CreateJsonObject(disease));
 
-                File file = new File(context.FilesDir, Constants.File);
+                File file = new File(context.FilesDir, Constants.MedicationFile);
                 FileWriter fileWriter = new FileWriter(file);
                 BufferedWriter outBufferedWriter = new BufferedWriter(fileWriter);
                 outBufferedWriter.Write(listOfDiseases.ToString());
@@ -194,7 +194,7 @@ namespace FamiliaXamarin.Medicatie.Data
             Stream fis;
             try
             {
-                fis = context.OpenFileInput(Constants.File);
+                fis = context.OpenFileInput(Constants.MedicationFile);
                 InputStreamReader isr = new InputStreamReader(fis);
                 BufferedReader bufferedReader = new BufferedReader(isr);
                 StringBuilder sb = new StringBuilder();
