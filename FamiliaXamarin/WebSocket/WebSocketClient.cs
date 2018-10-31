@@ -56,7 +56,7 @@ namespace FamiliaXamarin
         }                                      
 
         public static void Disconect()
-        {
+        {      
             
             Client?.Disconnect();
         }
