@@ -10,9 +10,10 @@ namespace FamiliaXamarin.Helpers
 {
     internal class FingerprintHandler:FingerprintManager.AuthenticationCallback
     {
-        private Context mainActivity;
+        private LoginActivity mainActivity;
+        private int error = 0;
 
-        public FingerprintHandler(Context mainActivity)
+        public FingerprintHandler(LoginActivity mainActivity)
         {
             this.mainActivity = mainActivity;
         }
@@ -27,12 +28,28 @@ namespace FamiliaXamarin.Helpers
 
         public override void OnAuthenticationFailed()
         {
-            Toast.MakeText(mainActivity, "Fingerprint Authentication failed!", ToastLength.Long).Show();
+            Vibrator vibrator = (Vibrator)mainActivity.GetSystemService(Context.VibratorService);
+
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                vibrator?.Vibrate(500);
+            else
+                vibrator?.Vibrate(VibrationEffect.CreateOneShot(500, VibrationEffect.DefaultAmplitude));
+            Toast.MakeText(mainActivity, "Amprenta nerecunoscuta!", ToastLength.Long).Show();
+            error++;
+            if (error==5)
+            {
+                Toast.MakeText(mainActivity, "5 incercari gresite de verificare a amprentelor!", ToastLength.Long).Show();
+                error = 0;
+            }
+            
         }
 
         public override void OnAuthenticationSucceeded(FingerprintManager.AuthenticationResult result)
         {
-            mainActivity.StartActivity(new Intent(mainActivity, typeof(MainActivity)));
+            Intent intent = new Intent(mainActivity, typeof(MainActivity));
+            mainActivity.StartActivity(intent);
+            mainActivity.Finish();
+           
         }
     }
 }

@@ -17,7 +17,7 @@ using Org.Json;
 
 namespace FamiliaXamarin.Medicatie
 {
-    public class MedicineFragment : Android.Support.V4.App.Fragment ,View.IOnClickListener, IOnBoalaClickListener, CustomDialogDeleteBoala.ICustomDialogDeleteBoalaListener
+    public class MedicineFragment : Android.Support.V4.App.Fragment ,View.IOnClickListener, IOnBoalaClickListener, CustomDialogDeleteDisease.ICustomDialogDeleteDiseaseListener
     {
 
 #pragma warning disable 618
@@ -30,14 +30,10 @@ namespace FamiliaXamarin.Medicatie
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
-            // Create your fragment here
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            // Use this to return your custom view for this Fragment
-            // return inflater.Inflate(Resource.Layout.YourFragment, container, false);
             View view = inflater.Inflate(Resource.Layout.fragment_medicine, container, false);
             view.FindViewById(Resource.Id.btn_add_disease).SetOnClickListener(this);
             setupRecycleView(view);
@@ -59,18 +55,14 @@ namespace FamiliaXamarin.Medicatie
 
         private async void GetData()
         {
-            //IWebServices webservices = new WebServices();
             await Task.Run(async () => {
                 try
                 {
                     var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("IdClient", Activity)}", Utils.GetDefaults("Token", Activity));
-                    // var res = await webservices.Get($"{Constants.PublicServerAddress}/api/userMeds/15", Utils.GetDefaults("Token", Activity));
-                    Log.Error("Result", "*******************************************************");
                     if (res != null)
                     {
                         if (res.Equals("[]")) return;
                         medications = ParseResultFromUrl(res);
-                        //TODO setAlarm for each item of medications and parse the timestampString to a real timestamp
                         foreach (var ms in medications)
                         {
                             var am = (AlarmManager)Activity.GetSystemService(Context.AlarmService);
@@ -92,8 +84,6 @@ namespace FamiliaXamarin.Medicatie
                                 Calendar setcalendar = Calendar.Instance;
 
                                 setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
-                                //setcalendar.Time = date.;
-                                Log.Error("Calendarul", setcalendar.ToString());
 
                                 if (setcalendar.Before(calendar)) return;
 
@@ -229,7 +219,7 @@ namespace FamiliaXamarin.Medicatie
 
         public void OnBoalaDelete(Disease boala)
         {
-            CustomDialogDeleteBoala cddb = new CustomDialogDeleteBoala(Activity);
+            CustomDialogDeleteDisease cddb = new CustomDialogDeleteDisease(Activity);
             cddb.SetListener(this);
             cddb.SetBoala(boala);
             cddb.Show();
@@ -268,17 +258,5 @@ namespace FamiliaXamarin.Medicatie
                 }
             }
         }
-//        public override void OnMedicationScheduleLoaded(List<MedicationSchedule> msList)
-//        {
-//            foreach (var ms in  msList)
-//            {
-//
-//                //TODO parseaza din timestamp-ul de pe ms ca sa iei ora si data pt setarea alarmei
-// 
-//
-//            }
-//        }
-
-        
     }
 }

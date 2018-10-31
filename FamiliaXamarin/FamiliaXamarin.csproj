@@ -66,9 +66,9 @@
     <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiver.cs" />
     <Compile Include="Medicatie\Alarm\App.cs" />
     <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiverServer.cs" />
+    <Compile Include="Medicatie\CustomDialogDeleteDisease.cs" />
     <Compile Include="Medicatie\DiseaseActivity.cs" />
     <Compile Include="Medicatie\DiseaseAdapter.cs" />
-    <Compile Include="Medicatie\CustomDialogDeleteBoala.cs" />
     <Compile Include="Medicatie\CustomDialogDeleteMedicament.cs" />
     <Compile Include="Medicatie\CustomDialogMedicamentDetails.cs" />
     <Compile Include="Medicatie\Data\Storage.cs" />

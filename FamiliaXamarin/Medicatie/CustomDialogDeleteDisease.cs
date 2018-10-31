@@ -12,11 +12,11 @@ using FamiliaXamarin.Medicatie.Entities;
 
 namespace FamiliaXamarin.Medicatie
 {
-    class CustomDialogDeleteBoala : Dialog, View.IOnClickListener
+    class CustomDialogDeleteDisease : Dialog, View.IOnClickListener
     {
         private Button _btnDa;
         private Button _btnNu;
-        private ICustomDialogDeleteBoalaListener _listener;
+        private ICustomDialogDeleteDiseaseListener _listener;
         private Disease _boala;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -30,7 +30,7 @@ namespace FamiliaXamarin.Medicatie
             _btnDa.SetOnClickListener(this);
             _btnNu.SetOnClickListener(this);
         }
-        public void SetListener(ICustomDialogDeleteBoalaListener listener)
+        public void SetListener(ICustomDialogDeleteDiseaseListener listener)
         {
             _listener = listener;
         }
@@ -40,9 +40,8 @@ namespace FamiliaXamarin.Medicatie
             _boala = boala;
         }
 
-        public CustomDialogDeleteBoala(Context context) : base(context)
+        public CustomDialogDeleteDisease(Context context) : base(context)
         {
-        
         }
 
         public void OnClick(View v)
@@ -59,7 +58,7 @@ namespace FamiliaXamarin.Medicatie
 
             }
         }
-        public interface ICustomDialogDeleteBoalaListener
+        public interface ICustomDialogDeleteDiseaseListener
         {
             void OnYesClicked(string result, Disease boala);
         }

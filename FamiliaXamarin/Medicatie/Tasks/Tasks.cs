@@ -13,7 +13,6 @@ namespace FamiliaXamarin.Medicatie.Tasks
 {
     class Tasks
     {
-
         
         public static HttpClient httpClient = new HttpClient();
         public static async Task<string> GetMedicine(string url, string token)
@@ -50,18 +49,12 @@ namespace FamiliaXamarin.Medicatie.Tasks
                     {
                         return await content.ReadAsStringAsync();
                     }
-
                 }
-
             }
             catch (Exception)
             {
                 return null;
             }
-
         }
-
-
-     
     }
 }
