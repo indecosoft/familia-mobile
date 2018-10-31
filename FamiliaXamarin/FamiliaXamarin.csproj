@@ -80,8 +80,6 @@
     <Compile Include="Medicatie\HourAdapter.cs" />
     <Compile Include="Medicatie\MedicineAdapter.cs" />
     <Compile Include="Medicatie\MedicineFragment.cs" />
-    <Compile Include="Settings\SnoozePreferences.cs" />
-    <Compile Include="Medicatie\Tasks\Tasks.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Chat\ChatActivity.cs" />

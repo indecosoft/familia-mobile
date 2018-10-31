@@ -58,24 +58,23 @@ namespace FamiliaXamarin.Settings
                 {
                     Contract.Requires(sender != null);
                     optionOfSnooze = args.Position;
-                    SnoozePreferences snooze = new SnoozePreferences(Activity);
                     
+
                     switch (optionOfSnooze)
                     {
                         case 0:
-                            snooze.SaveAccesKey("5");
+                            Utils.SetDefaults("snooze", "5", Activity);
                             break;
                         case 1:
-                            snooze.SaveAccesKey("10");
+                            Utils.SetDefaults("snooze", "10", Activity);
                             break;
                         case 2:
-                            snooze.SaveAccesKey("15");
+                            Utils.SetDefaults("snooze", "15", Activity);
                             break;
                         case 3:
-                            snooze.SaveAccesKey("30");
+                            Utils.SetDefaults("snooze", "30", Activity);
                             break;
                     }
-                    Toast.MakeText(Activity, "Snooze: " + snooze, ToastLength.Long).Show();
                 };
 
 
