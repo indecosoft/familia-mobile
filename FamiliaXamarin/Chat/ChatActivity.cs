@@ -98,7 +98,7 @@ namespace FamiliaXamarin
             mInputMessageView = (EditText)FindViewById(Resource.Id.tbMessage);
             send = FindViewById<Button>(Resource.Id.Send);
             send.Click += delegate { AttemptSend(); };
-            NotificationManagerCompat.From(this).Cancel(100);
+            NotificationManagerCompat.From(this).Cancel(Constants.NotifChatId--);
 
             if (savedInstanceState == null)
             {
