@@ -12,6 +12,7 @@ using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
 using FamiliaXamarin.Settings;

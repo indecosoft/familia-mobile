@@ -5,6 +5,7 @@ using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Text;
 using Android.Views;
+using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
 using Java.Lang;
 using Newtonsoft.Json;

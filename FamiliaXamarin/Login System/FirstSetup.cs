@@ -10,9 +10,11 @@ using Android.Provider;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
 using Android.Support.V4.App;
+using Android.Support.V4.Content;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
 using Newtonsoft.Json;
 using Org.Json;
@@ -35,9 +37,7 @@ namespace FamiliaXamarin
         //readonly IWebServices _webServices = new WebServices();
         ConstraintLayout _mainContent;
         public static FirstSetup FragmentContext;
-#pragma warning disable 618
-        ProgressDialog _progressDialog;
-#pragma warning restore 618
+        ProgressBarDialog _progressBarDialog;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -54,12 +54,7 @@ namespace FamiliaXamarin
             _viewPager = FindViewById<FirstSetupViewPager>(Resource.Id.container);
             _viewPager.SetPagingEnabled(false);
             _viewPager.Adapter = _sectionsPagerAdapter;
-#pragma warning disable 618
-            _progressDialog = new ProgressDialog(this);
-#pragma warning restore 618
-            _progressDialog.SetTitle("Va rugam asteptati ...");
-            _progressDialog.SetMessage("Trimitere date");
-            _progressDialog.SetCancelable(false);
+            _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se trimit datele", this, false);
 
             Utils.SetDefaults("Logins", true.ToString(), this);
         }
@@ -155,9 +150,7 @@ namespace FamiliaXamarin
 
                 // The projection contains the columns we want to return in our query.
                 string selection = MediaStore.Images.Media.InterfaceConsts.Id + " =? ";
-#pragma warning disable CS0618 // Type or member is obsolete
-                using (var cursor = FragmentContext.ManagedQuery(MediaStore.Images.Media.ExternalContentUri, null, selection, new[] { docId }, null))
-#pragma warning restore CS0618 // Type or member is obsolete
+                using (var cursor = FragmentContext.ContentResolver.Query(MediaStore.Images.Media.ExternalContentUri, null, selection, new[] { docId }, null))
                 {
                     if (cursor == null) return null;
                     var columnIndex = cursor.GetColumnIndexOrThrow(MediaStore.Images.Media.InterfaceConsts.Data);
@@ -231,9 +224,9 @@ namespace FamiliaXamarin
 
                 int imageResource = Activity.Resources.GetIdentifier(resourcePath, null, Activity.PackageName);
 
-#pragma warning disable CS0618 // Type or member is obsolete
-                Drawable res = Activity.Resources.GetDrawable(imageResource);
-#pragma warning restore CS0618 // Type or member is obsolete
+                
+                //Drawable res = Activity.Resources.GetDrawable(imageResource);
+                Drawable res = ContextCompat.GetDrawable(Activity, imageResource);
                 _profileImage.SetImageDrawable(res);
             }
 
@@ -378,7 +371,7 @@ namespace FamiliaXamarin
                         FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber);
                         break;
                     case 3:
-                        FragmentContext._progressDialog.Show();
+                        FragmentContext._progressBarDialog.Show();
                         FragmentContext._firstSetupModel.ImageName = Utils.GetDefaults("Email", Activity);
 
                         await Task.Run(async () =>
@@ -413,7 +406,7 @@ namespace FamiliaXamarin
                                 snack.Show();
                             }
                         });
-                        FragmentContext._progressDialog.Dismiss();
+                        FragmentContext._progressBarDialog.Dismiss();
 
                         break;
                 }

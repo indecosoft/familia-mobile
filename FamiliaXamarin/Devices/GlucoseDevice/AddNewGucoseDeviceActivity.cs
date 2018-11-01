@@ -9,6 +9,7 @@ using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Widget;
+using FamiliaXamarin.Helpers;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.GlucoseDevice
@@ -23,9 +24,7 @@ namespace FamiliaXamarin.GlucoseDevice
 
         BluetoothLeScanner scanner;
         readonly int ENABLE_BT = 11;
-#pragma warning disable CS0618 // Type or member is obsolete
-        ProgressDialog progressDialog;
-#pragma warning restore CS0618 // Type or member is obsolete
+        ProgressBarDialog _progressBarDialog;
 
         DevicesRecyclerViewAdapter adapter;
         BluetoothScanCallback scanCallback;
@@ -48,16 +47,8 @@ namespace FamiliaXamarin.GlucoseDevice
                 Finish();
             };
             scanCallback = new BluetoothScanCallback(this);
-
-#pragma warning disable CS0618 // Type or member is obsolete
-            progressDialog = new ProgressDialog(this);
-#pragma warning restore CS0618 // Type or member is obsolete
-            progressDialog.SetTitle("Va rugam asteptati ...");
-            progressDialog.SetMessage("Se cauta dispozitive");
-            progressDialog.SetCancelable(false);
-            progressDialog.SetButton(-1, "Anulare", (sender, args) => Finish());
-
-            progressDialog.Show();
+            _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se cauta dispozitive...", this, false, null, null, null, null, "Anulare", (sender, args) => Finish());
+            _progressBarDialog.Show();
 
             
 
@@ -122,7 +113,7 @@ namespace FamiliaXamarin.GlucoseDevice
         protected override void OnPause()
         {
             base.OnPause();
-            scanner.StopScan(scanCallback);
+            scanner?.StopScan(scanCallback);
 
         }
 
@@ -143,7 +134,7 @@ namespace FamiliaXamarin.GlucoseDevice
                         (_context as AddNewGucoseDeviceActivity)?.devices.Add(result.Device.Name);
                         (_context as AddNewGucoseDeviceActivity)?.devicesAddress.Add(result.Device.Address);
                         (_context as AddNewGucoseDeviceActivity)?.adapter.NotifyDataSetChanged();
-                        (_context as AddNewGucoseDeviceActivity)?.progressDialog.Dismiss();
+                        (_context as AddNewGucoseDeviceActivity)?._progressBarDialog.Dismiss();
                     }
                 }
             }

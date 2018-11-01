@@ -14,6 +14,7 @@ using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Helpers;
 using V7Widget = Android.Support.V7.Widget;
 using Org.Json;
 

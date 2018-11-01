@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Gms.Location;
 using Android.Util;
+using FamiliaXamarin.Helpers;
 using Org.Json;
 
 namespace FamiliaXamarin

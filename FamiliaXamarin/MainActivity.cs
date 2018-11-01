@@ -9,8 +9,11 @@ using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Active_Conversations;
 using FamiliaXamarin.Asistenta_sociala;
+using FamiliaXamarin.Helpers;
+using FamiliaXamarin.Login_System;
 using FamiliaXamarin.Medicatie;
 using FamiliaXamarin.Settings;
+using FamiliaXamarin.WebSocket;
 using Refractored.Controls;
 using Square.Picasso;
 
