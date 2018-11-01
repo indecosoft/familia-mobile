@@ -204,8 +204,8 @@ namespace FamiliaXamarin.Login_System
             _registerTextView = FindViewById<TextView>(Resource.Id.Signup);
             _pwdResetTextView = FindViewById<TextView>(Resource.Id.PasswordReset);
 
-            _progressBarDialog = new ProgressBarDialog("Progress de test", "Alege butoane...", this, false, "Bine", (sender, args) => {Toast.MakeText(this,"Bine", ToastLength.Short).Show();}, "Nu stiu", (sender, args) => { Toast.MakeText(this, "Nu stiu", ToastLength.Short).Show(); }, "Anulare", (sender, args) => { Toast.MakeText(this, "Anulare", ToastLength.Short).Show(); });
-            //_progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Autentificare...", this, false);
+            //_progressBarDialog = new ProgressBarDialog("Progress de test", "Alege butoane...", this, false, "Bine", (sender, args) => {Toast.MakeText(this,"Bine", ToastLength.Short).Show();}, "Nu stiu", (sender, args) => { Toast.MakeText(this, "Nu stiu", ToastLength.Short).Show(); }, "Anulare", (sender, args) => { Toast.MakeText(this, "Anulare", ToastLength.Short).Show(); });
+            _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Autentificare...", this, false);
         }
 
         private void InitListeners()
@@ -276,7 +276,7 @@ namespace FamiliaXamarin.Login_System
                     snack.Show();
                 }
             });
-            //_progressBarDialog.Dismiss();
+            _progressBarDialog.Dismiss();
 
         }
     }
