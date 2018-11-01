@@ -1,24 +1,23 @@
 ﻿using System;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Support.V4.App;
 using Android.Util;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.WebSocket
 {
     [Service]
     class WebSocketService : Service
     {
         //private NotificationManager _notificationManager;
         readonly IWebSocketClient _socketClient = new WebSocketClient();
-        public const int ServiceRunningNotificationId = 10000;
+        private const int ServiceRunningNotificationId = 10000;
 
         public override IBinder OnBind(Intent intent)
         {
-#pragma warning disable RECS0083 // Shows NotImplementedException throws in the quick task bar
+
             throw new NotImplementedException();
-#pragma warning restore RECS0083 // Shows NotImplementedException throws in the quick task bar
         }
 
         public override void OnCreate()
@@ -32,9 +31,8 @@ namespace FamiliaXamarin
         {
             Log.Error("Location Service", "Started");
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            var notification = new Notification.Builder(this)
-#pragma warning restore CS0618 // Type or member is obsolete
+
+            var notification = new NotificationCompat.Builder(this)
                 .SetContentTitle(Resources.GetString(Resource.String.app_name))
                 .SetContentText("Ruleaza in fundal")
                 .SetSmallIcon(Resource.Drawable.logo)

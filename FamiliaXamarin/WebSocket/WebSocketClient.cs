@@ -4,6 +4,7 @@ using Android.App;
 using Android.Content;
 using Android.Support.V4.App;
 using Android.Util;
+using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
 using Newtonsoft.Json;
 using Org.Json;
@@ -57,7 +58,6 @@ namespace FamiliaXamarin
 
         public static void Disconect()
         {      
-            
             Client?.Disconnect();
         }
 
@@ -66,23 +66,27 @@ namespace FamiliaXamarin
             _socket?.Emit(eventName, value);
         }
 
-        static void OnConnect(Object[] obj)
+        private static void OnConnect(Object[] obj)
         {
             Log.Error("WebSocket", "Client Connected");
         }
-        static void OnDisconnect(Object[] obj)
+
+        private static void OnDisconnect(Object[] obj)
         {
             Log.Error("WebSocket", "Client Diconnected");
         }
-        static void OnConnectError(Object[] obj)
+
+        private static void OnConnectError(Object[] obj)
         {
             Log.Error("WebSocket", "Connection Error" + obj[0]);
         }
-        static void OnConnectTimeout(Object[] obj)
+
+        private static void OnConnectTimeout(Object[] obj)
         {
             Log.Error("WebSocket", "Connection Timeout");
         }
-        void OnConversation(Object[] obj)
+
+        private void OnConversation(Object[] obj)
         {
             Log.Error("WebSocket", "OnConversation");
             var data = (JSONObject)obj[0];
@@ -117,7 +121,7 @@ namespace FamiliaXamarin
                     Log.Error("Caz 2", "*********************");
 
                     NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
-                    Utils.GetManager().Notify(100, nb.Build());
+                    Utils.GetManager().Notify(Constants.NotifChatId, nb.Build());
                 }
                 //CAZUL 3 user 1, user 2 converseaza, al3lea se baga in seama
                 else if (!ChatActivity.RoomName.Equals(room))
@@ -126,8 +130,10 @@ namespace FamiliaXamarin
                     Log.Error("Caz 3", "*********************");
 
                     NotificationCompat.Builder nb = Utils.GetAndroidChannelNotification(username, message, "Vizualizare", 3, _context, room);
-                    Utils.GetManager().Notify(100, nb.Build());
+                    Utils.GetManager().Notify(Constants.NotifChatId, nb.Build());
                 }
+
+                Constants.NotifChatId++;
 
             }
             catch (Exception ex)
@@ -198,9 +204,11 @@ namespace FamiliaXamarin
 
 
             var nb = Utils.GetAndroidChannelNotification("Cerere acceptata", email + " ti-a acceptat cererea de chat!", "Converseaza", 2, _context, room);
-            Utils.GetManager().Notify(100, nb.Build());
+            Utils.GetManager().Notify(Constants.NotifChatId, nb.Build());
+            Constants.NotifChatId++;
         }
-        void OnChatRequest(Object[] obj)
+
+        private void OnChatRequest(Object[] obj)
         {
             Log.Error("WebSocket", "Chat Request");
             
@@ -221,7 +229,8 @@ namespace FamiliaXamarin
             Utils.CreateChannels(email, email);
 
             var nb = Utils.GetAndroidChannelNotification("Cerere de chat", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
-            Utils.GetManager().Notify(100, nb.Build());
+            Utils.GetManager().Notify(Constants.NotifChatId, nb.Build());
+            Constants.NotifChatId++;
         }
     }
 }

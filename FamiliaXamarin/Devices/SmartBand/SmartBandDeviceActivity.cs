@@ -8,6 +8,7 @@ using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Helpers;
 using Java.Util.Concurrent;
 using Org.Json;
 using Refractored.Controls;
