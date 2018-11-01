@@ -8,7 +8,10 @@ using Android.Locations;
 using Android.OS;
 using Android.Util;
 using Android.Gms.Location;
+using Android.Graphics;
+using Android.Support.V4.App;
 using Android.Support.V4.Content;
+using FamiliaXamarin.Helpers;
 
 namespace FamiliaXamarin
 {
@@ -29,9 +32,7 @@ namespace FamiliaXamarin
 
         public override IBinder OnBind(Intent intent)
         {
-#pragma warning disable RECS0083 // Shows NotImplementedException throws in the quick task bar
             throw new NotImplementedException();
-#pragma warning restore RECS0083 // Shows NotImplementedException throws in the quick task bar
         }
 
         public override void OnDestroy()
@@ -61,9 +62,8 @@ namespace FamiliaXamarin
             }
 
         }
-#pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
+
         async void RequestLocationUpdatesButtonOnClick()
-#pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
         {
             // No need to request location updates if we're already doing so.
             if (isRequestingLocationUpdates)
@@ -85,9 +85,8 @@ namespace FamiliaXamarin
             await fusedLocationProviderClient.RequestLocationUpdatesAsync(locationRequest, locationCallback);
         }
 
-#pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
+
         async void StopRequestionLocationUpdates()
-#pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
         {
 
             if (isRequestingLocationUpdates)
@@ -99,7 +98,7 @@ namespace FamiliaXamarin
         {
             // This method assumes that the necessary run-time permission checks have succeeded.
             //getLastLocationButton.SetText(Resource.String.getting_last_location);
-            Location location = await fusedLocationProviderClient.GetLastLocationAsync();
+            Android.Locations.Location location = await fusedLocationProviderClient.GetLastLocationAsync();
 
             if (location == null)
             {
@@ -115,10 +114,8 @@ namespace FamiliaXamarin
         {
             Log.Error("Location Service", "Started");
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            var notification = new Notification.Builder(this)
-#pragma warning restore CS0618 // Type or member is obsolete
-                .SetContentTitle(Resources.GetString(Resource.String.app_name))
+            var notification = new NotificationCompat.Builder(this)
+                .SetContentTitle("Familia")
                 .SetContentText("Ruleaza in fundal")
                 .SetSmallIcon(Resource.Drawable.logo)
                 .SetOngoing(true)

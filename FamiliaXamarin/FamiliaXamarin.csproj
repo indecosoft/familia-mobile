@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Helpers\FingerprintHandler.cs" />
+    <Compile Include="Helpers\ProgressBarDialog.cs" />
     <Compile Include="JsonModels\ConverstionsModel.cs" />
     <Compile Include="JsonModels\FirstSetupModel.cs" />
     <Compile Include="MainActivity.cs" />
@@ -590,6 +591,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_finger.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\progress_dialog_layout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

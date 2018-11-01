@@ -15,6 +15,7 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
 using Java.Lang;
 using Newtonsoft.Json;
@@ -99,6 +100,7 @@ namespace FamiliaXamarin
             send = FindViewById<Button>(Resource.Id.Send);
             send.Click += delegate { AttemptSend(); };
             NotificationManagerCompat.From(this).Cancel(Constants.NotifChatId--);
+
 
             if (savedInstanceState == null)
             {

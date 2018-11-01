@@ -10,10 +10,13 @@ using Android.Gms.Location;
 using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
+using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Helpers;
+using FamiliaXamarin.Location;
 using Java.Text;
 using Java.Util;
 using Org.Json;
@@ -31,9 +34,7 @@ namespace FamiliaXamarin.Asistenta_sociala
         private ConstraintLayout _formContainer;
         private string _dateTimeStart, _dateTimeEnd;
         private double _latitude, _longitude;
-#pragma warning disable CS0618 // Type or member is obsolete
-        private ProgressDialog _progressDialog;
-#pragma warning restore CS0618 // Type or member is obsolete
+        private ProgressBarDialog _progressBarDialog;
         private JSONObject _location, _details, _qrJsonData;
         private JSONArray _benefitsArray;
         private List<BenefitSpinnerState> _listVOs;
@@ -46,13 +47,8 @@ namespace FamiliaXamarin.Asistenta_sociala
             _btnScan = v.FindViewById<Button>(Resource.Id.btnScan);
             _formContainer = v.FindViewById<ConstraintLayout>(Resource.Id.container);
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            _progressDialog = new ProgressDialog(Activity);
-#pragma warning restore CS0618 // Type or member is obsolete
-            _progressDialog.SetTitle("Va rugam asteptati ...");
-            _progressDialog.SetMessage("Se trimit datele");
-            _progressDialog.SetCancelable(false);
 
+            _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se trimit datele...", Activity, false);
         }
 
         private bool FieldsValidation()
@@ -65,7 +61,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             // Use this to return your custom view for this Fragment
             // return inflater.Inflate(Resource.Layout.YourFragment, container, false);
             var view = inflater.Inflate(Resource.Layout.fragment_asistent_form, container, false);
-
+            NotificationManagerCompat.From(Activity).Cancel(Constants.NotifMedicationId--);
             IntiUi(view);
             _distanceCalculatorService = new Intent(Activity, typeof(DistanceCalculator));
             string[] selectQualification = {
@@ -172,7 +168,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                             _btnScan.Enabled = false;
                             try
                             {
-                                _progressDialog.Show();
+                                _progressBarDialog.Show();
                                 _dateTimeStart = currentDateandTime;
                                 _dateTimeEnd = null;
 
@@ -196,7 +192,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 {
                                     Activity.StartService(_distanceCalculatorService);
                                 }
-                                _progressDialog.Dismiss();
+                                _progressBarDialog.Dismiss();
                             }
                             catch (JSONException ex)
                             {
@@ -209,7 +205,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                             _btnScan.Text = "Incepe activitatea";
                             try
                             {
-                                _progressDialog.Show();
+                                _progressBarDialog.Show();
                                 //JSONObject obj = new JSONObject().put("dateTimeStop", currentDateandTime).put("QRData", QrJsonData.toString());
                                 Utils.SetDefaults("ActivityStart", "", Activity);
                                 //DateTimeStart = null;
@@ -259,7 +255,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                                             case 2:
                                                 break;
                                         }
-                                        _progressDialog.Dismiss();
+                                        _progressBarDialog.Dismiss();
                                     }
                                     else
                                         Snackbar.Make(_formContainer, "Unable to reach the server!", Snackbar.LengthLong).Show();
@@ -276,20 +272,20 @@ namespace FamiliaXamarin.Asistenta_sociala
                     else
                     {
                         Snackbar.Make(_formContainer, "QRCode Expirat! Va rugam sa generati alt cod QR!", Snackbar.LengthLong).Show();
-                        _progressDialog.Dismiss();
+                        _progressBarDialog.Dismiss();
                     }
 
                 }
                 catch (JSONException)
                 {
                     Snackbar.Make(_formContainer, "QRCode invalid!", Snackbar.LengthLong).Show();
-                    _progressDialog.Dismiss();
+                    _progressBarDialog.Dismiss();
 
                 }
             }
             catch (Exception)
             {
-                _progressDialog.Dismiss();
+                _progressBarDialog.Dismiss();
             }
         }
 
@@ -325,9 +321,8 @@ namespace FamiliaXamarin.Asistenta_sociala
 
         }
 
-#pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
+
         private async void GetLastLocationButtonOnClick()
-#pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
         {
             if (ContextCompat.CheckSelfPermission(Activity, Manifest.Permission.AccessFineLocation) == Permission.Granted)
             {

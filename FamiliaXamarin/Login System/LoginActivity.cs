@@ -2,14 +2,11 @@
 using System.Threading.Tasks;
 using Android;
 using Android.App;
-using Android.Content;
 using Android.Hardware.Fingerprints;
 using Android.OS;
-using Android.Preferences;
 using Android.Security.Keystore;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
-using Android.Support.V4.App;
 using Android.Support.V4.Hardware.Fingerprint;
 using Android.Support.V7.App;
 using Android.Widget;
@@ -19,7 +16,7 @@ using Javax.Crypto;
 using Org.Json;
 using Permission = Android.Content.PM.Permission;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Login_System
 {
     [Activity(Label = "Familia", Theme = "@style/AppTheme.Dark", MainLauncher = true)]
     public class LoginActivity : AppCompatActivity
@@ -31,12 +28,10 @@ namespace FamiliaXamarin
         private TextView _registerTextView;
         private TextView _pwdResetTextView;
         private Button _loginButton;
-#pragma warning disable 618
-        private ProgressDialog _progressDialog;
-#pragma warning restore 618
-        private KeyStore keyStore;
-        private Cipher cipher;
-        private string KEY_NAME = "EDMTDev";
+        private KeyStore _keyStore;
+        private Cipher _cipher;
+        private readonly string _keyName = "EDMTDev";
+        private ProgressBarDialog _progressBarDialog;
         private readonly string[] _permissionsLocation =
         {
             Manifest.Permission.ReadPhoneState,
@@ -94,7 +89,7 @@ namespace FamiliaXamarin
                             GenKey();
 
                         if (!CipherInit()) return;
-                        var cryptoObject = new FingerprintManager.CryptoObject(cipher);
+                        var cryptoObject = new FingerprintManager.CryptoObject(_cipher);
                         var helper = new FingerprintHandler(this);
                         helper.StartAuthentication(fingerprintManager, cryptoObject);
                     }
@@ -147,28 +142,27 @@ namespace FamiliaXamarin
         {
             try
             {
-                cipher = Cipher.GetInstance(KeyProperties.KeyAlgorithmAes
+                _cipher = Cipher.GetInstance(KeyProperties.KeyAlgorithmAes
                                             + "/"
                                             + KeyProperties.BlockModeCbc
                                             + "/"
                                             + KeyProperties.EncryptionPaddingPkcs7);
-                keyStore.Load(null);
-                IKey key = (IKey)keyStore.GetKey(KEY_NAME, null);
-                cipher.Init(CipherMode.EncryptMode, key);
+                _keyStore.Load(null);
+                IKey key = _keyStore.GetKey(_keyName, null);
+                _cipher.Init(CipherMode.EncryptMode, key);
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
         }
         private void GenKey()
         {
-            keyStore = KeyStore.GetInstance("AndroidKeyStore");
-            KeyGenerator keyGenerator = null;
-            keyGenerator = KeyGenerator.GetInstance(KeyProperties.KeyAlgorithmAes, "AndroidKeyStore");
-            keyStore.Load(null);
-            keyGenerator.Init(new KeyGenParameterSpec.Builder(KEY_NAME, KeyStorePurpose.Encrypt | KeyStorePurpose.Decrypt)
+            _keyStore = KeyStore.GetInstance("AndroidKeyStore");
+            var keyGenerator = KeyGenerator.GetInstance(KeyProperties.KeyAlgorithmAes, "AndroidKeyStore");
+            _keyStore.Load(null);
+            keyGenerator.Init(new KeyGenParameterSpec.Builder(_keyName, (KeyStorePurpose) 3)
                 .SetBlockModes(KeyProperties.BlockModeCbc)
                 .SetUserAuthenticationRequired(true)
                 .SetEncryptionPaddings(KeyProperties.EncryptionPaddingPkcs7)
@@ -210,14 +204,8 @@ namespace FamiliaXamarin
             _registerTextView = FindViewById<TextView>(Resource.Id.Signup);
             _pwdResetTextView = FindViewById<TextView>(Resource.Id.PasswordReset);
 
-#pragma warning disable 618
-            _progressDialog = new ProgressDialog(this);
-#pragma warning restore 618
-            _progressDialog.SetTitle("Va rugam asteptati ...");
-            _progressDialog.SetMessage("Autentificare");
-            _progressDialog.SetCancelable(false);
-
-
+            _progressBarDialog = new ProgressBarDialog("Progress de test", "Alege butoane...", this, false, "Bine", (sender, args) => {Toast.MakeText(this,"Bine", ToastLength.Short).Show();}, "Nu stiu", (sender, args) => { Toast.MakeText(this, "Nu stiu", ToastLength.Short).Show(); }, "Anulare", (sender, args) => { Toast.MakeText(this, "Anulare", ToastLength.Short).Show(); });
+            //_progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Autentificare...", this, false);
         }
 
         private void InitListeners()
@@ -241,8 +229,7 @@ namespace FamiliaXamarin
         private async void BtnOnClick(object sender, EventArgs e)
         {
             Utils.HideKeyboard(this);
-            _progressDialog.Show();
-
+            _progressBarDialog.Show();
             await Task.Run(async () => {
                 var dataToSend = new JSONObject().Put("email", _usernameEditText.Text)
                     .Put("password", _passwordEditText.Text).Put("imei", Utils.GetImei(this));
@@ -277,10 +264,7 @@ namespace FamiliaXamarin
                             Utils.SetDefaults("Avatar", Constants.PublicServerAddress + avatar, this);
                             Utils.SetDefaults("IdClient", id, this);
 
-                            if (logins)
-                                StartActivity(typeof(MainActivity));
-                            else
-                                StartActivity(typeof(FirstSetup));
+                            StartActivity(logins ? typeof(MainActivity) : typeof(FirstSetup));
 
                             Finish();
                             break;
@@ -292,8 +276,8 @@ namespace FamiliaXamarin
                     snack.Show();
                 }
             });
-            _progressDialog.Dismiss();
- 
+            //_progressBarDialog.Dismiss();
+
         }
     }
 }
