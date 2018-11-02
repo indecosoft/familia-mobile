@@ -12,6 +12,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Helpers;
+using Java.IO;
 using Java.Util;
 using Org.Json;
 using Random = Java.Util.Random;
@@ -83,9 +84,23 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     Toast.MakeText(context, "Action ok!!!", ToastLength.Long).Show();
                     DateTime now = DateTime.Now;
                     string uuid = intent.GetStringExtra(Uuid);
+                    JSONObject mObject = new JSONObject().Put("uuid", uuid).Put("date", now.ToString("yyyy-MM-dd HH:mm:ss"));
                     //TODO verifica daca poate trimite la server, daca nu, salveaza intr-un fisier si trimite datele din fisier cand se poate
 
-                    SendData(uuid, now, context);
+                    File file = new File(context.FilesDir, Constants.MedicationServerFile);
+                    try
+                    {
+                        FileWriter fileWriter = new FileWriter(file);
+                        BufferedWriter outBufferedWriter = new BufferedWriter(fileWriter);
+                        outBufferedWriter.Write(mObject.ToString());
+                        outBufferedWriter.Close();
+                    }
+                    catch (IOException e)
+                    {
+                        e.PrintStackTrace();
+                    }
+
+                    SendData(mObject, context);
                     NotificationManagerCompat.From(context).Cancel(intent.GetIntExtra("notifyId", 0));
 
                     
@@ -100,10 +115,11 @@ namespace FamiliaXamarin.Medicatie.Alarm
         readonly DateTime Jan1st1970 = new DateTime
             (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        async void SendData(string uuid, DateTime date, Context context)
+#pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
+        async void SendData(JSONObject mObject, Context context)
+#pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
         {
             //using (var response = await httpClient.PostAsync(url, new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("uuid", uuid), new KeyValuePair<string, string>("date", date.ToString("yyyy-MM-dd HH:mm:ss")) })))
-            JSONObject mObject = new JSONObject().Put("uuid", uuid).Put("date", date.ToString("yyyy-MM-dd HH:mm:ss"));
             var res = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", mObject, Utils.GetDefaults("Token", context));
 
             Log.Error("#################", ""+res);

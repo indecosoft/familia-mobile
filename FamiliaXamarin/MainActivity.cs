@@ -85,7 +85,7 @@ namespace FamiliaXamarin
                     FromBoala = false;
                 }
 
-            Utils.CreateNotificationChannel();
+           // Utils.CreateNotificationChannel();
 
 
         }
