@@ -9,6 +9,7 @@ using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Active_Conversations;
 using FamiliaXamarin.Asistenta_sociala;
+using FamiliaXamarin.Chat;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Login_System;
 using FamiliaXamarin.Medicatie;
