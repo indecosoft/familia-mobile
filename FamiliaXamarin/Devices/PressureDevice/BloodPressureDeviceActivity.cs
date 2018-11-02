@@ -18,6 +18,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Airbnb.Lottie;
+using FamiliaXamarin.Helpers;
 using Java.IO;
 using Java.Lang;
 using Java.Text;

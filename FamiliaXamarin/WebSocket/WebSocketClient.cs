@@ -4,6 +4,7 @@ using Android.App;
 using Android.Content;
 using Android.Support.V4.App;
 using Android.Util;
+using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
 using Newtonsoft.Json;
 using Org.Json;

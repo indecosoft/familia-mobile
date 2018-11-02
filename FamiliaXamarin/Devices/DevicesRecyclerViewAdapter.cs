@@ -61,9 +61,7 @@ namespace FamiliaXamarin
         public DevicesRecyclerViewAdapterViewHolder(View itemView, Action<int> listener) : base(itemView)
         {
             TextViewName = (TextView) itemView.FindViewById(Resource.Id.name);
-#pragma warning disable CS0618 // Type or member is obsolete
             itemView.Click += (sender, e) => listener(obj: base.Position);
-#pragma warning restore CS0618 // Type or member is obsolete
         }
 
     }

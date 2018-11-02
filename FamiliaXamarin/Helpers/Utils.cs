@@ -21,7 +21,7 @@ using Exception = System.Exception;
 using Math = System.Math;
 
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Helpers
 {
     public static class Utils
     {
@@ -34,7 +34,6 @@ namespace FamiliaXamarin
             editor.PutString(key, value);
             editor.Apply();
         }
-
 
         public static string GetDefaults(string key, Context context)
         {
@@ -63,27 +62,27 @@ namespace FamiliaXamarin
         public static Bitmap CheckRotation(string photoPath, Bitmap bitmap)
         {
             var ei = new ExifInterface(photoPath);
-            var orientation = ei.GetAttributeInt(ExifInterface.TagOrientation, (int)Android.Media.Orientation.Undefined);
+            var orientation = ei.GetAttributeInt(ExifInterface.TagOrientation, (int)Orientation.Undefined);
 
             Bitmap rotatedBitmap;
             switch (orientation)
             {
 
-                case (int)Android.Media.Orientation.Rotate90:
+                case (int)Orientation.Rotate90:
                     rotatedBitmap = RotateImage(bitmap, 90);
                     break;
 
-                case (int)Android.Media.Orientation.Rotate180:
+                case (int)Orientation.Rotate180:
                     rotatedBitmap = RotateImage(bitmap, 180);
                     break;
 
-                case (int)Android.Media.Orientation.Rotate270:
+                case (int)Orientation.Rotate270:
                     rotatedBitmap = RotateImage(bitmap, 270);
                     break;
-                case (int)Android.Media.Orientation.FlipHorizontal:
+                case (int)Orientation.FlipHorizontal:
                     return Flip(bitmap, true, false);
 
-                case (int)Android.Media.Orientation.FlipVertical:
+                case (int)Orientation.FlipVertical:
                     return Flip(bitmap, false, true);
                 default:
                     rotatedBitmap = bitmap;
@@ -118,7 +117,7 @@ namespace FamiliaXamarin
             try
             {
 
-                string token = Utils.GetDefaults("Token", ctx);
+                string token = GetDefaults("Token", ctx);
 
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -175,7 +174,7 @@ namespace FamiliaXamarin
         {
             return (Math.PI / 180) * angle;
         }
-        public static double HaversineFormula(double CurrentLatitude, double CurrentLongitude, double DestLatitude, double DestLongitude)
+        public static double HaversineFormula(double currentLatitude, double currentLongitude, double destLatitude, double destLongitude)
         {
 
             //R => raza pamantului
@@ -186,12 +185,12 @@ namespace FamiliaXamarin
             double r = 6371e3;
             //conversie in Radiani
 
-            double radLat1 = ToRadians(CurrentLatitude);
-            double radLat2 = ToRadians(DestLatitude);
+            double radLat1 = ToRadians(currentLatitude);
+            double radLat2 = ToRadians(destLatitude);
 
             //diferenta dintre longitudine si latitudine in radiani
-            double difLat = ToRadians(DestLatitude - CurrentLatitude);
-            double difLong = ToRadians(DestLongitude - CurrentLongitude);
+            double difLat = ToRadians(destLatitude - currentLatitude);
+            double difLong = ToRadians(destLongitude - currentLongitude);
             //calculare
             double a = Math.Sin(difLat / 2) * Math.Sin(difLat / 2) + Math.Cos(radLat1) * Math.Cos(radLat2) * Math.Sin(difLong / 2) * Math.Sin(difLong / 2);
             double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
@@ -200,18 +199,23 @@ namespace FamiliaXamarin
         }
         public static void CreateChannels(string channelId,string channel)
         {
+//            if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
+//            var androidChannel = new NotificationChannel(channelId, channel, NotificationImportance.High);
+//            androidChannel.EnableLights(true);
+//            androidChannel.EnableVibration(true);
+//            androidChannel.LightColor = Color.Green;
+//            androidChannel.LockscreenVisibility = NotificationVisibility.Private;
+
+           //
+           //GetManager().CreateNotificationChannel(androidChannel);
             if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
-#pragma warning disable XA0001 // Find issues with Android API usage
-            var androidChannel = new NotificationChannel(channelId, channel, NotificationImportance.High);
-#pragma warning restore XA0001 // Find issues with Android API usage
+            var androidChannel = new NotificationChannel(channelId, "ANDROID_CHANNEL_NAME", NotificationImportance.High);
             androidChannel.EnableLights(true);
             androidChannel.EnableVibration(true);
             androidChannel.LightColor = Color.Green;
             androidChannel.LockscreenVisibility = NotificationVisibility.Private;
 
-#pragma warning disable XA0001 // Find issues with Android API usage
             GetManager().CreateNotificationChannel(androidChannel);
-#pragma warning restore XA0001 // Find issues with Android API usage
         }
 
         public static NotificationManager GetManager()
@@ -243,7 +247,7 @@ namespace FamiliaXamarin
 
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
-                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                        return new NotificationCompat.Builder(context, body.Replace(" doreste sa ia legatura cu tine!", ""))
                             .SetContentTitle(title)
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)
@@ -269,7 +273,7 @@ namespace FamiliaXamarin
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
 
-                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                        return new NotificationCompat.Builder(context, body.Replace(" ti-a acceptat cererea de chat!", ""))
                             .SetContentTitle(title)
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)
@@ -295,7 +299,7 @@ namespace FamiliaXamarin
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
 
-                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                        return new NotificationCompat.Builder(context, title)
                             .SetContentTitle(title)
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)
@@ -320,14 +324,7 @@ namespace FamiliaXamarin
                 return;
             string name = Constants.ChannelId;
             string description = "my channel desc";
-#pragma warning disable CS0618 // Type or member is obsolete
-#pragma warning disable XA0001 // Find issues with Android API usage
-            var importance = NotificationManager.ImportanceDefault;
-#pragma warning restore XA0001 // Find issues with Android API usage
-#pragma warning restore CS0618 // Type or member is obsolete
-#pragma warning disable XA0001 // Find issues with Android API usage
-            using (var channel = new NotificationChannel(Constants.ChannelId, name, importance)
-#pragma warning restore XA0001 // Find issues with Android API usage
+            using (var channel = new NotificationChannel(Constants.ChannelId, name, NotificationImportance.Default)
             {
                 Description = description
             })
@@ -335,9 +332,7 @@ namespace FamiliaXamarin
                 // Register the channel with the system; you can't change the importance
                 // or other notification behaviors after this
                 var notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
-#pragma warning disable XA0001 // Find issues with Android API usage
                 notificationManager.CreateNotificationChannel(channel);
-#pragma warning restore XA0001 // Find issues with Android API usage
             }
         }
 

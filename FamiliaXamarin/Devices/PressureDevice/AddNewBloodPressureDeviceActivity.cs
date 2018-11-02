@@ -10,6 +10,7 @@ using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Widget;
+using FamiliaXamarin.Helpers;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.PressureDevice
@@ -24,9 +25,7 @@ namespace FamiliaXamarin.PressureDevice
         BluetoothAdapter bluetoothAdapter;
         BluetoothLeScanner scanner;
         DevicesRecyclerViewAdapter adapter;
-#pragma warning disable CS0618 // Type or member is obsolete
-        ProgressDialog progressDialog;
-#pragma warning restore CS0618 // Type or member is obsolete
+        ProgressBarDialog _progressBarDialog;
         static AddNewBloodPressureDeviceActivity _context;
         BluetoothScanCallback scanCallback = new BluetoothScanCallback();
         protected override void OnCreate(Bundle savedInstanceState)
@@ -44,16 +43,9 @@ namespace FamiliaXamarin.PressureDevice
             {
                 Finish();
             };
+            _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se cauta dispozitive...", this, false, null, null, null, null, "Anulare", (sender, args) => Finish());
+            _progressBarDialog.Show();
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            progressDialog = new ProgressDialog(this);
-#pragma warning restore CS0618 // Type or member is obsolete
-            progressDialog.SetTitle("Va rugam asteptati ...");
-            progressDialog.SetMessage("Se cauta dispozitive");
-            progressDialog.SetCancelable(false);
-            progressDialog.SetButton(-1, "Anulare", (sender, args) => Finish());
-
-            progressDialog.Show();
             devices = new List<string>();
             devicesAddress = new List<string>();
 
@@ -136,7 +128,7 @@ namespace FamiliaXamarin.PressureDevice
                         _context.devices.Add(result.Device.Name);
                         _context.devicesAddress.Add(result.Device.Address);
                         _context.adapter.NotifyDataSetChanged();
-                        _context.progressDialog.Dismiss();
+                        _context._progressBarDialog.Dismiss();
                     }
                 }
             }

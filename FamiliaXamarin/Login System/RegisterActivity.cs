@@ -7,6 +7,7 @@ using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Text;
 using Android.Widget;
+using FamiliaXamarin.Helpers;
 using Org.Json;
 
 namespace FamiliaXamarin
@@ -25,9 +26,7 @@ namespace FamiliaXamarin
         private EditText _passwordRetypeEditText;
         private Button _btnRegister;
         private TextView _signInTextView;
-#pragma warning disable CS0618 // Type or member is obsolete
-        private ProgressDialog _progressDialog;
-#pragma warning restore CS0618 // Type or member is obsolete
+        private ProgressBarDialog _progressBarDialog;
 
         //private readonly IWebServices _webServices = new WebServices();
         private bool _validateForm;
@@ -61,12 +60,8 @@ namespace FamiliaXamarin
             _btnRegister = FindViewById<Button>(Resource.Id.btnRegister);
             _signInTextView = FindViewById<TextView>(Resource.Id.tvSignIn);
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            _progressDialog = new ProgressDialog(this);
-#pragma warning restore CS0618 // Type or member is obsolete
-            _progressDialog.SetTitle("Va rugam asteptati ...");
-            _progressDialog.SetMessage("Inregistrare");
-            _progressDialog.SetCancelable(false);
+
+            _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Inregistrare...", this, false);
 
             _btnRegister.Enabled = false;
         }
@@ -112,7 +107,7 @@ namespace FamiliaXamarin
 
         private void PasswordEditTextOnTextChanged(object sender, TextChangedEventArgs e)
         {
-            String password = _passwordEditText.Text;
+            string password = _passwordEditText.Text;
             if (password == string.Empty)
             {
                 _passwordInputLayout.Error = "Camp obligatoriu";
@@ -139,7 +134,7 @@ namespace FamiliaXamarin
 
         private void EmailEditTextOnTextChanged(object sender, TextChangedEventArgs e)
         {
-            String email = _emailEditText.Text;
+            string email = _emailEditText.Text;
             if (email == string.Empty)
             {
                 _emailInputLayout.Error ="Camp obligatoriu";
@@ -166,7 +161,7 @@ namespace FamiliaXamarin
 
         private void NameEditTextOnTextChanged(object sender, TextChangedEventArgs e)
         {
-            String name = _nameEditText.Text;
+            string name = _nameEditText.Text;
             if (name == string.Empty)
             {
                 _nameInputLayout.Error = "Camp obligatoriu";
@@ -192,7 +187,7 @@ namespace FamiliaXamarin
 
         private async void BtnRegisterOnClick(object sender, EventArgs e)
         {
-            _progressDialog.Show();
+            _progressBarDialog.Show();
 
             await Task.Run(async () => {
 
@@ -227,7 +222,7 @@ namespace FamiliaXamarin
                     snack.Show();
                 }
             });
-            _progressDialog.Dismiss();
+            _progressBarDialog.Dismiss();
         }
     }
 }
