@@ -194,6 +194,11 @@ namespace FamiliaXamarin.Login_System
             SetSupportActionBar(toolbar);
             Title = string.Empty;
 
+//            Utils.CreateChannels("fdf", "fdf");
+//
+//            var nb = Utils.GetAndroidChannelNotification("Cerere de chat", "eu doreste sa ia legatura cu tine!", "Accept", 1, this, "12:14");
+//            Utils.GetManager().Notify(235646, nb.Build());
+
             _layout = FindViewById<ConstraintLayout>(Resource.Id.layout);
 
             _usernameEditText = FindViewById<EditText>(Resource.Id.UsernameEditText);

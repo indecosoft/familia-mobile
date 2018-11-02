@@ -171,7 +171,7 @@ namespace FamiliaXamarin
                             GalleryAddPic();
                             _fileInformations = new FileInfo(_imagePath);
                             Log.Error("Size", _fileInformations.Length.ToString());
-                            if (_fileInformations.Length >= 10240)
+                            if (_fileInformations.Length >= 10485760)
                             {
                                 _imageValidator = false;
                                 ImageTooLargeWarning();

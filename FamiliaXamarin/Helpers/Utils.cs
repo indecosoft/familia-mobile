@@ -199,8 +199,17 @@ namespace FamiliaXamarin.Helpers
         }
         public static void CreateChannels(string channelId,string channel)
         {
+//            if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
+//            var androidChannel = new NotificationChannel(channelId, channel, NotificationImportance.High);
+//            androidChannel.EnableLights(true);
+//            androidChannel.EnableVibration(true);
+//            androidChannel.LightColor = Color.Green;
+//            androidChannel.LockscreenVisibility = NotificationVisibility.Private;
+
+           //
+           //GetManager().CreateNotificationChannel(androidChannel);
             if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
-            var androidChannel = new NotificationChannel(channelId, channel, NotificationImportance.High);
+            var androidChannel = new NotificationChannel(channelId, "ANDROID_CHANNEL_NAME", NotificationImportance.High);
             androidChannel.EnableLights(true);
             androidChannel.EnableVibration(true);
             androidChannel.LightColor = Color.Green;
@@ -238,7 +247,7 @@ namespace FamiliaXamarin.Helpers
 
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
-                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                        return new NotificationCompat.Builder(context, body.Replace(" doreste sa ia legatura cu tine!", ""))
                             .SetContentTitle(title)
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)
@@ -264,7 +273,7 @@ namespace FamiliaXamarin.Helpers
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
 
-                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                        return new NotificationCompat.Builder(context, body.Replace(" ti-a acceptat cererea de chat!", ""))
                             .SetContentTitle(title)
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)
@@ -290,7 +299,7 @@ namespace FamiliaXamarin.Helpers
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
 
-                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                        return new NotificationCompat.Builder(context, title)
                             .SetContentTitle(title)
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)

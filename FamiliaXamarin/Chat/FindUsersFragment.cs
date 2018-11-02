@@ -17,44 +17,33 @@ namespace FamiliaXamarin
     public class FindUsersFragment : Android.Support.V4.App.Fragment, Animator.IAnimatorListener
     {
         UserCardAdapter _adapter;
-
         CardStackView _cardStackView;
         LottieAnimationView _animationView;
         TextView _lbNobody;
         Button _leftButton;
         Button _rightButton;
         View _mView;
-        List<UserCard> _people;
+        List<UserCard> _people = new List<UserCard>();
+
+        private UserCardAdapter userCardAdapter;
         //readonly IWebServices _webServices = new WebServices();
 
-        readonly IWebSocketClient _webSocket = new WebSocketClient();
-
-        UserCardAdapter CreateUserCardAdapter()
-        {
-            var userCardAdapter = new UserCardAdapter(Activity);
-            userCardAdapter.AddAll(_people);
-            return userCardAdapter;
-        }
+//        UserCardAdapter CreateUserCardAdapter()
+//        {
+//            var userCardAdapter = new UserCardAdapter(Activity);
+//            userCardAdapter.AddAll(_people);
+//            return userCardAdapter;
+//        }
         void Setup(View view)
         {
             //progressBar = (ProgressBar)findViewById(R.id.activity_main_progress_bar);
 
-            _cardStackView = (CardStackView)view.FindViewById(Resource.Id.activity_main_card_stack_view);
-            _cardStackView.CardDragging += delegate
-            {
-                Log.Error("CardStackView", "onCardDragging");
-            };
+            //_cardStackView = (CardStackView)view.FindViewById(Resource.Id.activity_main_card_stack_view);
             _cardStackView.CardSwiped += delegate (object sender, CardStackView.CardSwipedEventArgs args)
             {
                 Contract.Requires(sender != null);
-                Log.Error("CardStackView", $"onCardSwiped: {args.Direction}");
-                Log.Error("CardStackView", $"topIndex: {_cardStackView.TopIndex}");
-                if (_cardStackView.TopIndex == _adapter.Count - 5)
-                {
-                    Log.Error("CardStackView", "Paginate: " + _cardStackView.TopIndex);
-                }
 
-                if (args.Direction.ToString() == "Right")
+                if (args.Direction.ToString() == "Right" && _people.Count != 0)
                 {
                     try
                     {
@@ -75,6 +64,10 @@ namespace FamiliaXamarin
                 _leftButton.Enabled = false;
                 _cardStackView.Enabled = false;
                 _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                _people.Clear();
+                userCardAdapter.Clear();
+                _adapter = userCardAdapter;
+                _cardStackView.SetAdapter(_adapter);
                 _animationView.PlayAnimation();
 
             };
@@ -83,7 +76,7 @@ namespace FamiliaXamarin
         void Reload()
         {
 
-            _adapter = CreateUserCardAdapter();
+            _adapter = userCardAdapter;
             _cardStackView.SetAdapter(_adapter);
             _cardStackView.Visibility = ViewStates.Visible;
         }
@@ -101,7 +94,12 @@ namespace FamiliaXamarin
                     {
 
                         var nearMe = new JSONArray(response);
-                        _people = new List<UserCard>();
+                        Activity.RunOnUiThread(() =>
+                        {
+                            _people.Clear();
+                        });
+                        
+                        
                         var r = new Random();
                         if (nearMe.Length() != 0)
                         {
@@ -165,9 +163,12 @@ namespace FamiliaXamarin
 
                             }
                         }
+                        
                         Activity.RunOnUiThread(() =>
                         {
-                            Setup(_mView);
+                            userCardAdapter.Clear();
+                            userCardAdapter.AddAll(_people);
+                            //Setup(_mView);
                             Reload();
                         });
 
@@ -196,20 +197,26 @@ namespace FamiliaXamarin
 
         void InitUi(View view)
         {
+
+            userCardAdapter = new UserCardAdapter(Activity);
+
             _cardStackView = view.FindViewById<CardStackView>(Resource.Id.activity_main_card_stack_view);
             _animationView = view.FindViewById<LottieAnimationView>(Resource.Id.animation_view);
             _lbNobody = view.FindViewById<TextView>(Resource.Id.lbNobody);
             _rightButton = view.FindViewById<Button>(Resource.Id.btnRight);
             _leftButton = view.FindViewById<Button>(Resource.Id.btnLeft);
         }
+
+        private View v;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             // Use this to return your custom view for this Fragment
             // return inflater.Inflate(Resource.Layout.YourFragment, container, false);
             View view = inflater.Inflate(Resource.Layout.find_users_fragment, container, false);
-            
+            v = view;
             _mView = view;
             InitUi(view);
+            Setup(view);
             _animationView.AddAnimatorListener(this);
             //start annimation
             _animationView.PlayAnimation();
