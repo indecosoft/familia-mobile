@@ -209,7 +209,7 @@ namespace FamiliaXamarin.Helpers
            //
            //GetManager().CreateNotificationChannel(androidChannel);
             if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
-            var androidChannel = new NotificationChannel(channelId, "ANDROID_CHANNEL_NAME", NotificationImportance.High);
+            var androidChannel = new NotificationChannel(channelId, channel, NotificationImportance.High);
             androidChannel.EnableLights(true);
             androidChannel.EnableVibration(true);
             androidChannel.LightColor = Color.Green;
