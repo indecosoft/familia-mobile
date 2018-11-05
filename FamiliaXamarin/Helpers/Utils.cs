@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Gms.Common;
 using Android.Graphics;
 using Android.Media;
+using Android.Net;
 using Android.OS;
 using Android.Preferences;
 using Android.Support.V4.App;
@@ -336,6 +337,12 @@ namespace FamiliaXamarin.Helpers
             }
         }
 
+        public static bool CheckNetworkAvailablelity()
+        {
+            ConnectivityManager cm = (ConnectivityManager)Application.Context.GetSystemService(Context.ConnectivityService);
+            NetworkInfo activeNetwork = cm.ActiveNetworkInfo;
+            return activeNetwork != null && activeNetwork.IsConnectedOrConnecting;
+        }
 
     }
 }

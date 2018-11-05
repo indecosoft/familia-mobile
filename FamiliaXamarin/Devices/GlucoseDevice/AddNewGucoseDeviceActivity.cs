@@ -9,6 +9,7 @@ using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Widget;
+using FamiliaXamarin.Devices.GlucoseDevice;
 using FamiliaXamarin.Helpers;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
