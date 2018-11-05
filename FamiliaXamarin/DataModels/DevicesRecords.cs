@@ -14,7 +14,6 @@ namespace FamiliaXamarin.DataModels
         public bool LastLocation { get; set; }
         public bool SendPanicAlerts { get; set; }
         public int StepCounter { get; set; }
-
         public int BloodPresureSystolic { get; set; }
         public int BloodPresureDiastolic { get; set; }
         public int BloodPresurePulsRate { get; set; }
