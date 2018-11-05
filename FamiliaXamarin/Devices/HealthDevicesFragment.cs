@@ -5,6 +5,7 @@ using Android.Support.CustomTabs;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Devices.GlucoseDevice;
 using FamiliaXamarin.GlucoseDevice;
 using FamiliaXamarin.PressureDevice;
 using FamiliaXamarin.SmartBand;
