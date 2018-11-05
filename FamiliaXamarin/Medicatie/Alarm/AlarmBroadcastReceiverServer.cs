@@ -37,7 +37,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
         public async override void OnReceive(Context context, Intent intent)
         {
             string action = intent.Action;
-            Log.Error("ACTIONSARTONRECEIVE", ""+ action);
+            Log.Error("ACTIONSARTONRECEIVE", "" + action);
             if (action != null)
             {
                 Log.Error("ACTION", action);
@@ -47,7 +47,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     var numeDB = "devices_data.db";
                     _db = new SQLiteAsyncConnection(Path.Combine(path, numeDB));
                     await _db.CreateTableAsync<MedicineRecords>();
-                    
+
 
                     Toast.MakeText(context, "ALARM SERVER!!!", ToastLength.Long).Show();
                     Log.Error("VINE ALARMA DIN SERVICE", "DADADAD");
@@ -83,19 +83,18 @@ namespace FamiliaXamarin.Medicatie.Alarm
                             .SetOngoing(true);
 
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
-                    
+
                     notificationManager.Notify(NotifyId, mBuilder.Build());
 
                 }
 
-                else 
+                else
                 if (ActionOk.Equals(action))
                 {
                     Toast.MakeText(context, "Action ok!!!", ToastLength.Long).Show();
                     DateTime now = DateTime.Now;
                     string uuid = intent.GetStringExtra(Uuid);
                     JSONObject mObject = new JSONObject().Put("uuid", uuid).Put("date", now.ToString("yyyy-MM-dd HH:mm:ss"));
-                    //TODO verifica daca poate trimite la server, daca nu, salveaza intr-un fisier si trimite datele din fisier cand se poate
 
 
                     if (!await SendData(mObject, context))
@@ -108,33 +107,37 @@ namespace FamiliaXamarin.Medicatie.Alarm
                         JSONArray jsonList = new JSONArray();
                         foreach (var el in myList)
                         {
-                         JSONObject element = new JSONObject().Put("uuid", el.Uuid).Put("date", el.DateTime);
+                            JSONObject element = new JSONObject().Put("uuid", el.Uuid).Put("date", el.DateTime);
                             jsonList.Put(element);
                         }
 
-                        WebServices.Post(Constants.PublicServerAddress,jsonList, Utils.GetDefaults("Token",context));
+                        if (Utils.CheckNetworkAvailability())
+                        {
+                            string result = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", jsonList, Utils.GetDefaults("Token", context));
+                            var table = await EvaluateQuery(_db, "DROP TABLE MedicineRecords");
+                        }
 
                     }
 
-                    
-                    
+
+
                     NotificationManagerCompat.From(context).Cancel(intent.GetIntExtra("notifyId", 0));
 
-                    
+
                 }
             }
         }
 
         private async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now)
         {
-            
+
             await db.InsertAsync(new MedicineRecords()
             {
                 Uuid = uuid,
                 DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
             });
         }
-        private async  Task<IEnumerable<MedicineRecords>> EvaluateQuery(SQLiteAsyncConnection db, string query)
+        private async Task<IEnumerable<MedicineRecords>> EvaluateQuery(SQLiteAsyncConnection db, string query)
         {
             return await db.QueryAsync<MedicineRecords>(query);
         }
@@ -147,32 +150,34 @@ namespace FamiliaXamarin.Medicatie.Alarm
             (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         async Task<bool> SendData(JSONObject mObject, Context context)
-        {   
+        {
             //using (var response = await httpClient.PostAsync(url, new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("uuid", uuid), new KeyValuePair<string, string>("date", date.ToString("yyyy-MM-dd HH:mm:ss")) })))
             var res = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", mObject, Utils.GetDefaults("Token", context));
 
-            Log.Error("#################", ""+res);
+            Log.Error("#################", "" + res);
             if (res != null)
+            {
                 return true;
-            else return false;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         void createNotificationChannel(string mChannel, string mTitle, string mContent)
         {
-                string name = mTitle;
-                string description = mContent;
-                //var importance = NotificationManager.ImportanceDefault;
+            string name = mTitle;
+            string description = mContent;
 
-                NotificationChannel channel =
-                    new NotificationChannel(mChannel, mTitle, NotificationImportance.Default)
-                    {
-                        Description = description
-                    };
+            NotificationChannel channel =
+                new NotificationChannel(mChannel, mTitle, NotificationImportance.Default)
+                {
+                    Description = description
+                };
 
-                // Register the channel with the system; you can't change the importance
-                // or other notification behaviors after this
-                var notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
-                notificationManager.CreateNotificationChannel(channel);
+            var notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
+            notificationManager.CreateNotificationChannel(channel);
 
         }
     }
