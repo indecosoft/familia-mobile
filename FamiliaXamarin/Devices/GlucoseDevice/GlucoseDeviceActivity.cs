@@ -76,7 +76,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
             var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             var numeDB = "devices_data.db";
             _db = new SQLiteConnection(Path.Combine(path, numeDB));
-            _db.CreateTable<DevicesRecords>();
+            
 
             _lbStatus = FindViewById<TextView>(Resource.Id.status);
             _dataContainer = FindViewById<ConstraintLayout>(Resource.Id.dataContainer);
@@ -325,11 +325,8 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
             if (!_send)
             {
                 var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
-
-
-                
-
-                if(!Utils.CheckNetworkAvailablelity())
+                _db.CreateTable<DevicesRecords>();
+                if (!Utils.CheckNetworkAvailablelity())
                     AddGlucoseRecord(_db, (int) g);
                 else
                 {
