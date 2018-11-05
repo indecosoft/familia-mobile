@@ -379,7 +379,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
                         .Put("oxygenSaturation", string.Empty)
                         .Put("extension", string.Empty);
                     jsonArray.Put(jsonObject);
-                    string result = await WebServices.Post(Constants.SaveDeviceDataUrl, jsonObject);
+                    string result = await WebServices.Post(Constants.SaveDeviceDataUrl, jsonArray);
                     if (result == "Succes!")
                     {
                          Toast.MakeText(this, "Succes", ToastLength.Long).Show();
