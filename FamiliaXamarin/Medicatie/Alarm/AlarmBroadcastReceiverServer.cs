@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -11,11 +12,14 @@ using Android.Support.V4.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
 using Java.IO;
 using Java.Util;
 using Org.Json;
+using SQLite;
 using Random = Java.Util.Random;
+using TaskStackBuilder = Android.App.TaskStackBuilder;
 
 namespace FamiliaXamarin.Medicatie.Alarm
 {
@@ -29,8 +33,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
         public static readonly string ActionOk = "actionOk";
         public static readonly string ActionReceive = "actionReceive";
         public static int NotifyId = Constants.NotifId;
-
-        public override void OnReceive(Context context, Intent intent)
+        private SQLiteAsyncConnection _db;
+        public async override void OnReceive(Context context, Intent intent)
         {
             string action = intent.Action;
             Log.Error("ACTIONSARTONRECEIVE", ""+ action);
@@ -39,6 +43,12 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 Log.Error("ACTION", action);
                 if (ActionReceive.Equals(action))
                 {
+                    var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+                    var numeDB = "devices_data.db";
+                    _db = new SQLiteAsyncConnection(Path.Combine(path, numeDB));
+                    await _db.CreateTableAsync<MedicineRecords>();
+                    
+
                     Toast.MakeText(context, "ALARM SERVER!!!", ToastLength.Long).Show();
                     Log.Error("VINE ALARMA DIN SERVICE", "DADADAD");
                     var uuid = intent.GetStringExtra(Uuid);
@@ -87,25 +97,46 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     JSONObject mObject = new JSONObject().Put("uuid", uuid).Put("date", now.ToString("yyyy-MM-dd HH:mm:ss"));
                     //TODO verifica daca poate trimite la server, daca nu, salveaza intr-un fisier si trimite datele din fisier cand se poate
 
-                    File file = new File(context.FilesDir, Constants.MedicationServerFile);
-                    try
+
+                    if (!await SendData(mObject, context))
                     {
-                        FileWriter fileWriter = new FileWriter(file);
-                        BufferedWriter outBufferedWriter = new BufferedWriter(fileWriter);
-                        outBufferedWriter.Write(mObject.ToString());
-                        outBufferedWriter.Close();
+                        AddMedicine(_db, uuid, now);
                     }
-                    catch (IOException e)
+                    else
                     {
-                        e.PrintStackTrace();
+                        var myList = await EvaluateQuery(_db, "Select * FROM MedicineRecords");
+                        JSONArray jsonList = new JSONArray();
+                        foreach (var el in myList)
+                        {
+                         JSONObject element = new JSONObject().Put("uuid", el.Uuid).Put("date", el.DateTime);
+                            jsonList.Put(element);
+                        }
+
+                        WebServices.Post(Constants.PublicServerAddress,jsonList, Utils.GetDefaults("Token",context));
+
                     }
 
-                    SendData(mObject, context);
+                    
+                    
                     NotificationManagerCompat.From(context).Cancel(intent.GetIntExtra("notifyId", 0));
 
                     
                 }
             }
+        }
+
+        private async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now)
+        {
+            
+            await db.InsertAsync(new MedicineRecords()
+            {
+                Uuid = uuid,
+                DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
+            });
+        }
+        private async  Task<IEnumerable<MedicineRecords>> EvaluateQuery(SQLiteAsyncConnection db, string query)
+        {
+            return await db.QueryAsync<MedicineRecords>(query);
         }
         public int CurrentTimeMillis()
         {
@@ -115,14 +146,15 @@ namespace FamiliaXamarin.Medicatie.Alarm
         readonly DateTime Jan1st1970 = new DateTime
             (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-#pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
-        async void SendData(JSONObject mObject, Context context)
-#pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
-        {
+        async Task<bool> SendData(JSONObject mObject, Context context)
+        {   
             //using (var response = await httpClient.PostAsync(url, new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("uuid", uuid), new KeyValuePair<string, string>("date", date.ToString("yyyy-MM-dd HH:mm:ss")) })))
             var res = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", mObject, Utils.GetDefaults("Token", context));
 
             Log.Error("#################", ""+res);
+            if (res != null)
+                return true;
+            else return false;
         }
 
         void createNotificationChannel(string mChannel, string mTitle, string mContent)
