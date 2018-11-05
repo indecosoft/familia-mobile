@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Android.Animation;
 using Android.App;
 using Android.Bluetooth;
@@ -40,7 +41,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
         private BluetoothAdapter _bluetoothAdapter;
         private BluetoothLeScanner _bluetoothScanner;
         private BluetoothManager _bluetoothManager;
-        private SQLiteConnection _db;
+        private SQLiteAsyncConnection _db;
 
         private Handler _handler;
         private bool _send;
@@ -75,8 +76,8 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
 
             var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             var numeDB = "devices_data.db";
-            _db = new SQLiteConnection(Path.Combine(path, numeDB));
-            _db.CreateTable<DevicesRecords>();
+             _db = new SQLiteAsyncConnection(Path.Combine(path, numeDB));
+            
 
             _lbStatus = FindViewById<TextView>(Resource.Id.status);
             _dataContainer = FindViewById<ConstraintLayout>(Resource.Id.dataContainer);
@@ -325,17 +326,14 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
             if (!_send)
             {
                 var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
-
-
-                
-
-                if(!Utils.CheckNetworkAvailability())
+                await _db.CreateTableAsync<DevicesRecords>();
+                if (!Utils.CheckNetworkAvailability())
                     AddGlucoseRecord(_db, (int) g);
                 else
                 {
                     JSONObject jsonObject;
                     var jsonArray = new JSONArray();
-                    var list = QueryValuations(_db, "select * from DevicesRecords");
+                    var list = await QueryValuations(_db, "select * from DevicesRecords");
 
                     var a = JsonConvert.SerializeObject(list);
                     //Log.Error("Serialized Object", a);
@@ -383,6 +381,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
                     if (result == "Succes!")
                     {
                          Toast.MakeText(this, "Succes", ToastLength.Long).Show();
+                        await _db.DropTableAsync<DevicesRecords>();
                     }
                     else
                     {
@@ -400,14 +399,14 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
             _glucose.Text = gl;
             ActivateScanButton();
         }
-        private IEnumerable<DevicesRecords> QueryValuations(SQLiteConnection db, string query)
+        private async Task<IEnumerable<DevicesRecords>> QueryValuations(SQLiteAsyncConnection db, string query)
         {
-            return db.Query<DevicesRecords>(query);
+            return await db.QueryAsync<DevicesRecords>(query);
         }
-        private void AddGlucoseRecord(SQLiteConnection db, int glucoseValue)
+        private async void AddGlucoseRecord(SQLiteAsyncConnection db, int glucoseValue)
         {
             var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
-            db.Insert(new DevicesRecords()
+            await db.InsertAsync(new DevicesRecords()
             {
                 Imei = Utils.GetImei(this),
                 DateTime = ft.Format(new Date()),
