@@ -329,7 +329,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
 
                 
 
-                if(!Utils.CheckNetworkAvailablelity())
+                if(!Utils.CheckNetworkAvailability())
                     AddGlucoseRecord(_db, (int) g);
                 else
                 {
