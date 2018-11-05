@@ -94,10 +94,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     Toast.MakeText(context, "Action ok!!!", ToastLength.Long).Show();
                     DateTime now = DateTime.Now;
                     string uuid = intent.GetStringExtra(Uuid);
-                    JSONObject mObject = new JSONObject().Put("uuid", uuid).Put("date", now.ToString("yyyy-MM-dd HH:mm:ss"));
+                    JSONArray mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid).Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
 
-
-                    if (!await SendData(mObject, context))
+                    if (!await SendData(mArray, context))
                     {
                         AddMedicine(_db, uuid, now);
                     }
@@ -149,10 +148,11 @@ namespace FamiliaXamarin.Medicatie.Alarm
         readonly DateTime Jan1st1970 = new DateTime
             (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        async Task<bool> SendData(JSONObject mObject, Context context)
+        async Task<bool> SendData(JSONArray mArray, Context context)
         {
             //using (var response = await httpClient.PostAsync(url, new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("uuid", uuid), new KeyValuePair<string, string>("date", date.ToString("yyyy-MM-dd HH:mm:ss")) })))
-            var res = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", mObject, Utils.GetDefaults("Token", context));
+
+            var res = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", mArray, Utils.GetDefaults("Token", context));
 
             Log.Error("#################", "" + res);
             if (res != null)
