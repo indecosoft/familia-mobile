@@ -337,7 +337,7 @@ namespace FamiliaXamarin.Helpers
             }
         }
 
-        public static bool CheckNetworkAvailablelity()
+        public static bool CheckNetworkAvailability()
         {
             ConnectivityManager cm = (ConnectivityManager)Application.Context.GetSystemService(Context.ConnectivityService);
             NetworkInfo activeNetwork = cm.ActiveNetworkInfo;

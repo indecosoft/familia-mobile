@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
@@ -8,6 +9,7 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Medicatie.Alarm;
 using FamiliaXamarin.Medicatie.Data;
@@ -15,6 +17,7 @@ using FamiliaXamarin.Medicatie.Entities;
 using Java.Text;
 using Java.Util;
 using Org.Json;
+using SQLite;
 
 namespace FamiliaXamarin.Medicatie
 {
@@ -25,7 +28,7 @@ namespace FamiliaXamarin.Medicatie
         public static string IdBoala = "id_boala";
         private DiseaseAdapter _boalaAdapter;
         private List<MedicationSchedule> _medications;
-
+        private SQLiteConnection _db;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View view = inflater.Inflate(Resource.Layout.fragment_medicine, container, false);
@@ -36,6 +39,10 @@ namespace FamiliaXamarin.Medicatie
             _progressBarDialog.Show();
             GetData();
 
+            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            var numeDB = "devices_data.db";
+            _db = new SQLiteConnection(Path.Combine(path, numeDB));
+            _db.CreateTable<MedicineRecords>();
 
             return view;
         }
