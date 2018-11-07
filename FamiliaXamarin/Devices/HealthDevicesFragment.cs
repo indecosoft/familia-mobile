@@ -6,9 +6,10 @@ using Android.Text;
 using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Devices.GlucoseDevice;
+using FamiliaXamarin.Devices.PressureDevice;
+using FamiliaXamarin.Devices.SmartBand;
 using FamiliaXamarin.GlucoseDevice;
 using FamiliaXamarin.PressureDevice;
-using FamiliaXamarin.SmartBand;
 using static FamiliaXamarin.Helpers.Utils;
 
 namespace FamiliaXamarin
