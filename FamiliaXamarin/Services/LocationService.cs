@@ -4,16 +4,14 @@ using Android;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
-using Android.Locations;
-using Android.OS;
-using Android.Util;
 using Android.Gms.Location;
-using Android.Graphics;
+using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
+using Android.Util;
 using FamiliaXamarin.Helpers;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Services
 {
     [Service]
     class LocationService : Service 

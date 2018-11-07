@@ -9,26 +9,25 @@ using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Widget;
-using FamiliaXamarin.Devices.GlucoseDevice;
 using FamiliaXamarin.Helpers;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
-namespace FamiliaXamarin.GlucoseDevice
+namespace FamiliaXamarin.Devices.GlucoseDevice
 {
     [Activity(Label = "AddNewGucoseDeviceActivity", Theme = "@style/AppTheme.Dark")]
     public class AddNewGucoseDeviceActivity : AppCompatActivity
     {
-        RecyclerView recyclerView;
-        BluetoothAdapter bluetoothAdapter;
-        List<string> devices;
-        List<string> devicesAddress;
+        private RecyclerView _recyclerView;
+        private BluetoothAdapter _bluetoothAdapter;
+        private List<string> _devices;
+        private List<string> _devicesAddress;
 
-        BluetoothLeScanner scanner;
-        readonly int ENABLE_BT = 11;
-        ProgressBarDialog _progressBarDialog;
+        private BluetoothLeScanner _scanner;
+        private const int EnableBt = 11;
+        private ProgressBarDialog _progressBarDialog;
 
-        DevicesRecyclerViewAdapter adapter;
-        BluetoothScanCallback scanCallback;
+        private DevicesRecyclerViewAdapter _adapter;
+        private BluetoothScanCallback _scanCallback;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -47,42 +46,42 @@ namespace FamiliaXamarin.GlucoseDevice
             {
                 Finish();
             };
-            scanCallback = new BluetoothScanCallback(this);
+            _scanCallback = new BluetoothScanCallback(this);
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se cauta dispozitive...", this, false, null, null, null, null, "Anulare", (sender, args) => Finish());
             _progressBarDialog.Show();
 
             
 
-            devices = new List<string>();
-            devicesAddress = new List<string>();
+            _devices = new List<string>();
+            _devicesAddress = new List<string>();
 
-            adapter = new DevicesRecyclerViewAdapter(this, devices);
-            adapter.ItemClick += delegate(object sender, int i)
+            _adapter = new DevicesRecyclerViewAdapter(this, _devices);
+            _adapter.ItemClick += delegate(object sender, int i)
             {
                 Contract.Requires(sender != null);
-                Utils.SetDefaults(GetString(Resource.String.blood_glucose_device), devicesAddress[i], this);
+                Utils.SetDefaults(GetString(Resource.String.blood_glucose_device), _devicesAddress[i], this);
                 StartActivity(typeof(GlucoseDeviceActivity));
                 Finish();
             };
-            recyclerView = FindViewById<RecyclerView>(Resource.Id.addNewDeviceRecyclerView);
-            recyclerView.SetLayoutManager(new LinearLayoutManager(this));
-            recyclerView.SetAdapter(adapter);
+            _recyclerView = FindViewById<RecyclerView>(Resource.Id.addNewDeviceRecyclerView);
+            _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
+            _recyclerView.SetAdapter(_adapter);
 
             BluetoothManager bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
             if (bluetoothManager != null)
             {
-                bluetoothAdapter = bluetoothManager.Adapter;
+                _bluetoothAdapter = bluetoothManager.Adapter;
             }
-            if (bluetoothAdapter == null)
+            if (_bluetoothAdapter == null)
             {
                 Toast.MakeText(this, "Dispozitivul nu suporta Bluetooth!", ToastLength.Short).Show();
                 Finish();
             }
             else
             {
-                if (!bluetoothAdapter.IsEnabled)
+                if (!_bluetoothAdapter.IsEnabled)
                 {
-                    StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), ENABLE_BT);
+                    StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), EnableBt);
                 }
                 else
                 {
@@ -94,7 +93,7 @@ namespace FamiliaXamarin.GlucoseDevice
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
-            if (requestCode == ENABLE_BT)
+            if (requestCode == EnableBt)
             {
                 if (resultCode == Result.Ok)
                 {
@@ -102,25 +101,26 @@ namespace FamiliaXamarin.GlucoseDevice
                 }
                 else
                 {
-                    StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), ENABLE_BT);
+                    StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), EnableBt);
                 }
             }
         }
-        void ScanDevices()
+
+        private void ScanDevices()
         {
-            scanner = bluetoothAdapter.BluetoothLeScanner;
-            scanner.StartScan(scanCallback);
+            _scanner = _bluetoothAdapter.BluetoothLeScanner;
+            _scanner.StartScan(_scanCallback);
         }
         protected override void OnPause()
         {
             base.OnPause();
-            scanner?.StopScan(scanCallback);
+            _scanner?.StopScan(_scanCallback);
 
         }
 
-        public class BluetoothScanCallback : ScanCallback
+        private class BluetoothScanCallback : ScanCallback
         {
-            readonly Context _context;
+            private readonly Context _context;
             public BluetoothScanCallback(Context context)
             {
                 _context = context;
@@ -128,16 +128,12 @@ namespace FamiliaXamarin.GlucoseDevice
             public override void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result)
             {
                 base.OnScanResult(callbackType, result);
-                if (result.Device.Name != null)
-                {
-                    if (!((AddNewGucoseDeviceActivity)_context).devicesAddress.Contains(result.Device.Address))
-                    {
-                        (_context as AddNewGucoseDeviceActivity)?.devices.Add(result.Device.Name);
-                        (_context as AddNewGucoseDeviceActivity)?.devicesAddress.Add(result.Device.Address);
-                        (_context as AddNewGucoseDeviceActivity)?.adapter.NotifyDataSetChanged();
-                        (_context as AddNewGucoseDeviceActivity)?._progressBarDialog.Dismiss();
-                    }
-                }
+                if (result.Device.Name == null ||
+                    ((AddNewGucoseDeviceActivity) _context)._devicesAddress.Contains(result.Device.Address)) return;
+                ((AddNewGucoseDeviceActivity) _context)?._devices.Add(result.Device.Name);
+                ((AddNewGucoseDeviceActivity) _context)?._devicesAddress.Add(result.Device.Address);
+                ((AddNewGucoseDeviceActivity) _context)?._adapter.NotifyDataSetChanged();
+                ((AddNewGucoseDeviceActivity) _context)?._progressBarDialog.Dismiss();
             }
         }
 

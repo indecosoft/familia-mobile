@@ -1,14 +1,14 @@
 ﻿using Java.Util;
 
-namespace FamiliaXamarin.PressureDevice
+namespace FamiliaXamarin.Devices.PressureDevice
 {
     public class BloodPressureData
     {
 
-        public float Sys { get; set; }
-        public float Dia { get; set; }
-        public float Pul { get; set; }
-        public Calendar Data { get; set; }
+        public float Sys { get;}
+        public float Dia { get;}
+        public float Pul { get;}
+        public Calendar Data { get;}
 
         public BloodPressureData(float sys, float dia, float pul, Calendar data)
         {
