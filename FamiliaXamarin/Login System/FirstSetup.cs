@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using Android.Support.V4.Content;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Asistenta_sociala;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
 using Newtonsoft.Json;
@@ -25,7 +27,7 @@ using File = Java.IO.File;
 using FragmentManager = Android.Support.V4.App.FragmentManager;
 using FragmentPagerAdapter = Android.Support.V4.App.FragmentPagerAdapter;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Login_System
 {
     [Activity(Label = "FirstSetup", Theme = "@style/AppTheme.Dark")]
     public class FirstSetup : FragmentActivity
@@ -331,18 +333,7 @@ namespace FamiliaXamarin
                         InitDefaultUi(rootView);
                         IniThirdViewUi(rootView);
                         // Create an ArrayAdapter using the string array and a default spinner layout
-                        string[] stringArray = { "Niciuna", "Afectiune 1", "Afectiune 2", "Afectiune 3" };
-                        var adapter = new ArrayAdapter<string>(Context, Resource.Layout.spinner_item, stringArray);
-                        // Specify the layout to use when the list of choices appears
-                        adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
-                        // Apply the adapter to the spinner
-                        _diseaseSpinner.Adapter = adapter;
-                        _diseaseSpinner.ItemSelected += delegate
-                        {
-                            FragmentContext._firstSetupModel.Disease = _diseaseSpinner.SelectedItem.ToString();
-                        };
-
-                        _btnBack.Click += delegate { FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber) - 2; };
+                       
                         break;
                     default:
                         rootView = inflater.Inflate(Resource.Layout.fragment_setup1, container, false);
@@ -355,6 +346,76 @@ namespace FamiliaXamarin
                 if (Arguments.GetInt(ArgSectionNumber) == 3)
                     _btnNext.Text = "Gata";
                 return rootView;
+            }
+
+            private async void DiseaseSelectorView()
+            {
+                string[] stringArray = { "Niciuna", "Afectiune 1", "Afectiune 2", "Afectiune 3" };
+
+                var a = await GetDiseaseList();
+
+
+                var _listVOs = new List<BenefitSpinnerState>();
+
+                foreach (var t in a)
+                {
+                    var stateVo = new BenefitSpinnerState
+                    {
+                        Title = t.Name,
+                        IsSelected = false
+                    };
+                    _listVOs.Add(stateVo);
+                }
+                var myAdapter = new BenefitAdapter(Activity, 0, _listVOs);
+                _diseaseSpinner.Adapter = myAdapter;
+
+
+                //                var adapter = new ArrayAdapter<string>(Context, Resource.Layout.spinner_item, stringArray);
+                //                // Specify the layout to use when the list of choices appears
+                //                adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
+                //                // Apply the adapter to the spinner
+                //                _diseaseSpinner.Adapter = adapter;
+                //var _benefitsArray = new JSONArray();
+                _diseaseSpinner.ItemSelected +=delegate(object sender, AdapterView.ItemSelectedEventArgs args)
+                {
+                    
+                        FragmentContext._firstSetupModel.Disease.Put(new JSONObject().Put("Cod", a[_diseaseSpinner.SelectedItemPosition].Cod));
+                };
+
+                
+//                foreach (var t in _listVOs)
+//                {
+//                    if (t.IsSelected)
+//                    {
+//                        _benefitsArray = _benefitsArray.Put(t.Title);
+//                    }
+//                    //BenefitAdapter el = listVOs.get(i).isSelected();
+//                }
+
+                _btnBack.Click += delegate { FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber) - 2; };
+            }
+
+
+            private async Task<List<DiseaseModel>> GetDiseaseList()
+            {
+                string result = await WebServices.Get(Constants.PublicServerAddress + "/api/getDisease",
+                    Utils.GetDefaults("Token", Activity));
+                if (result != null)
+                {
+                    List<DiseaseModel> listOfDiseases = new List<DiseaseModel>();
+                    JSONArray arrayOfDiseases = new JSONArray(result);
+                    for (int i = 0; i < arrayOfDiseases.Length(); i++)
+                    {
+                        JSONObject jsonModel = new JSONObject(arrayOfDiseases.Get(i).ToString());
+                        var model = new DiseaseModel{Cod = jsonModel.GetInt("Cod"), Name = jsonModel.GetString("Denumire")};
+                                if(!listOfDiseases.Contains(model))
+                                    listOfDiseases.Add(model);
+                    }
+
+                    return listOfDiseases;
+                }
+
+                return null;
             }
 
             async void _btnNext_Click(object sender, EventArgs e)
