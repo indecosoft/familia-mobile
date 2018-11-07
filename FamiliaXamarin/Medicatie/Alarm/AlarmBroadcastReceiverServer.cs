@@ -96,6 +96,10 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     string uuid = intent.GetStringExtra(Uuid);
                     JSONArray mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid).Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
 
+                    var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+                    var numeDB = "devices_data.db";
+                    _db = new SQLiteAsyncConnection(Path.Combine(path, numeDB));
+                    await _db.CreateTableAsync<MedicineRecords>();
                     if (!await SendData(mArray, context))
                     {
                         AddMedicine(_db, uuid, now);
@@ -103,6 +107,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     else
                     {
                         var myList = await EvaluateQuery(_db, "Select * FROM MedicineRecords");
+
                         JSONArray jsonList = new JSONArray();
                         foreach (var el in myList)
                         {
@@ -113,7 +118,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
                         if (Utils.CheckNetworkAvailability())
                         {
                             string result = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", jsonList, Utils.GetDefaults("Token", context));
-                            var table = await EvaluateQuery(_db, "DROP TABLE MedicineRecords");
+                            //var table = await EvaluateQuery(_db, "DROP TABLE MedicineRecords");
+                            await _db.DropTableAsync<MedicineRecords>();
                         }
 
                     }

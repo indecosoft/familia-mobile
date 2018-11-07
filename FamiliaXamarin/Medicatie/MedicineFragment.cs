@@ -53,32 +53,36 @@ namespace FamiliaXamarin.Medicatie
                 try
                 {
                     var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("IdClient", Activity)}", Utils.GetDefaults("Token", Activity));
+
                     if (res != null)
                     {
+                        Log.Error("RES", res);
                         if (res.Equals("[]")) return;
                         _medications = ParseResultFromUrl(res);
-                        foreach (var ms in _medications)
+                       // foreach (var ms in _medications)
+                        for(var ms = 0; ms <= _medications.Count; ms++)
                         {
+                            Log.Error("MSSSSSTRING", _medications[ms].Timestampstring);
                             var am = (AlarmManager)Activity.GetSystemService(Context.AlarmService);
                             var i = new Intent(Activity, typeof(AlarmBroadcastReceiverServer));
 
 
-                            i.PutExtra(AlarmBroadcastReceiverServer.Uuid, ms.Uuid);
-                            i.PutExtra(AlarmBroadcastReceiverServer.Title, ms.Title);
-                            i.PutExtra(AlarmBroadcastReceiverServer.Content, ms.Content);
+                            i.PutExtra(AlarmBroadcastReceiverServer.Uuid, _medications[ms].Uuid);
+                            i.PutExtra(AlarmBroadcastReceiverServer.Title, _medications[ms].Title);
+                            i.PutExtra(AlarmBroadcastReceiverServer.Content, _medications[ms].Content);
                             i.SetAction(AlarmBroadcastReceiverServer.ActionReceive);
 
                             var id = CurrentTimeMillis();
                             var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.OneShot);
                             if (am == null) continue;
-                            var date = parseTimestampStringToDate(ms);
+                            var date = parseTimestampStringToDate(_medications[ms]);
 
                             Calendar calendar = Calendar.Instance;
                             Calendar setcalendar = Calendar.Instance;
 
                             setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
 
-                            if (setcalendar.Before(calendar)) return;
+                            if (setcalendar.Before(calendar)) continue;
 
                             am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
                         }
@@ -108,6 +112,7 @@ namespace FamiliaXamarin.Medicatie
 
         private DateTime parseTimestampStringToDate(MedicationSchedule ms)
         {
+           
             DateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             {
                 TimeZone = Java.Util.TimeZone.GetTimeZone("UTC")
@@ -158,6 +163,7 @@ namespace FamiliaXamarin.Medicatie
                     var content = obj.GetString("content");
                     var postpone = Convert.ToInt32(obj.GetString("postpone"));
                     medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone));
+                    Log.Error("MEDICATIONSTRING", timestampString);
                 }
 
                 return medicationScheduleList;
