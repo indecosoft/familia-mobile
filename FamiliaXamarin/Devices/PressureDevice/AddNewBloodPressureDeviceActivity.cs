@@ -10,6 +10,7 @@ using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Widget;
+using FamiliaXamarin.Devices.PressureDevice;
 using FamiliaXamarin.Helpers;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
