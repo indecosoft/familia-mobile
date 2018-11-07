@@ -18,7 +18,6 @@ using Android.Widget;
 using Com.Airbnb.Lottie;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
-using FamiliaXamarin.PressureDevice;
 using Java.Lang;
 using Java.Text;
 using Java.Util;

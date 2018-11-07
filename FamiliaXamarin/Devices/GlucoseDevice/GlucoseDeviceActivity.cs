@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +9,6 @@ using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.Content;
-using Android.Net;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Constraints;
@@ -20,12 +18,10 @@ using Android.Views;
 using Android.Widget;
 using Com.Airbnb.Lottie;
 using FamiliaXamarin.DataModels;
-using FamiliaXamarin.GlucoseDevice;
 using FamiliaXamarin.Helpers;
 using Java.IO;
 using Java.Text;
 using Java.Util;
-using Newtonsoft.Json;
 using Org.Json;
 using SQLite;
 using Environment = System.Environment;
@@ -75,8 +71,8 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
             };
 
             var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            var numeDB = "devices_data.db";
-             _db = new SQLiteAsyncConnection(Path.Combine(path, numeDB));
+            const string numeDb = "devices_data.db";
+             _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
             
 
             _lbStatus = FindViewById<TextView>(Resource.Id.status);
@@ -289,21 +285,17 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
 
                 var calendar = Calendar.Instance;
                 calendar.Set(year, month, day, hours, minutes, seconds);
-                record.Time = calendar;
 
                 if (timeOffsetPresent)
                 {
-                    record.TimeOffset = characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue();
+                    characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue();
                     offset += 2;
                 }
 
                 if (typeAndLocationPresent)
                 {
                     record.GlucoseConcentration = characteristic.GetFloatValue(GattFormat.Sfloat, offset).FloatValue();
-                    record.Unit = concentrationUnit;
                     var typeAndLocation = characteristic.GetIntValue(GattFormat.Uint8, offset + 2).IntValue();
-                    record.Type = (typeAndLocation & 0xF0) >> 4;
-                    record.SampleLocation = (typeAndLocation & 0x0F);
                     offset += 3;
 
                     (Context as GlucoseDeviceActivity)?.RunOnUiThread(() =>
@@ -315,7 +307,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
 
                 if (sensorStatusAnnunciationPresent)
                 {
-                    record.Status = characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue();
+                    characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue();
                 }
             }
 
@@ -335,8 +327,6 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
                     var jsonArray = new JSONArray();
                     var list = await QueryValuations(_db, "select * from DevicesRecords");
 
-                    var a = JsonConvert.SerializeObject(list);
-                    //Log.Error("Serialized Object", a);
                     foreach (var el in list)
                     {
                         try
