@@ -17,6 +17,7 @@ using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Location;
+using FamiliaXamarin.Services;
 using Java.Text;
 using Java.Util;
 using Org.Json;
@@ -39,6 +40,7 @@ namespace FamiliaXamarin.Asistenta_sociala
         private JSONArray _benefitsArray;
         private List<BenefitSpinnerState> _listVOs;
         private Intent _distanceCalculatorService;
+        private Intent _medicalAsistanceService;
 
         private void IntiUi(View v)
         {
@@ -64,6 +66,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             NotificationManagerCompat.From(Activity).Cancel(Constants.NotifMedicationId--);
             IntiUi(view);
             _distanceCalculatorService = new Intent(Activity, typeof(DistanceCalculator));
+            _medicalAsistanceService = new Intent(Activity, typeof(MedicalAsistanceService));
             string[] selectQualification = {
                 "Beneficiu acordat", "Masaj", "Baie", "Perfuzie", "Pansament"};
             _listVOs = new List<BenefitSpinnerState>();
@@ -171,9 +174,21 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 _progressBarDialog.Show();
                                 _dateTimeStart = currentDateandTime;
                                 _dateTimeEnd = null;
+                                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                                {
+                                    Activity.StartForegroundService(_medicalAsistanceService);
+                                    
+                                }
+                                else
+                                {
+                                    Activity.StartService(_medicalAsistanceService);
+                                }
 
+                        
                                 _latitude = double.Parse(Utils.GetDefaults("Latitude", Activity));
                                 _longitude = double.Parse(Utils.GetDefaults("Longitude", Activity));
+                                Log.Error("Latitude12", _latitude.ToString());
+                                Log.Error("Longitude12", _longitude.ToString());
 
                                 Utils.SetDefaults("ConsultLat", _latitude.ToString(), Activity);
                                 Utils.SetDefaults("ConsultLong", _longitude.ToString(), Activity);
@@ -225,7 +240,8 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 _details = new JSONObject().Put("benefit", _benefitsArray).Put("details", _tbDetails.Text);
                                 Log.Error("Details", _details.ToString());
 
-                                Activity.StopService(new Intent(Activity, typeof(DistanceCalculator)));
+                                //Activity.StopService(_distanceCalculatorService);
+                                
                                 await Task.Run(async () =>
                                 {
                                     //GetLastLocationButtonOnClick();
@@ -260,7 +276,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                                     else
                                         Snackbar.Make(_formContainer, "Unable to reach the server!", Snackbar.LengthLong).Show();
                                 });
-
+                                Activity.StopService(_medicalAsistanceService);
                                 Activity.StopService(_distanceCalculatorService);
                             }
                             catch (JSONException ex)

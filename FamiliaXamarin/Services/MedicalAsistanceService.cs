@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Android;
 using Android.App;
@@ -6,16 +9,19 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Location;
 using Android.OS;
+using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Util;
+using Android.Views;
+using Android.Widget;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Location;
 
 namespace FamiliaXamarin.Services
 {
     [Service]
-    internal class LocationService : Service 
+    class MedicalAsistanceService :Service
     {
         private FusedLocationProviderClient _fusedLocationProviderClient;
         private LocationCallback _locationCallback;
@@ -25,7 +31,6 @@ namespace FamiliaXamarin.Services
         private bool _isRequestingLocationUpdates;
         private const int ServiceRunningNotificationId = 10000;
 
-
         public override IBinder OnBind(Intent intent)
         {
             throw new NotImplementedException();
@@ -34,22 +39,20 @@ namespace FamiliaXamarin.Services
         public override void OnCreate()
         {
             Log.Info("Service", "OnCreate: the service is initializing.");
-            
+
             _isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
 
 
             if (!_isGooglePlayServicesInstalled) return;
             _locationRequest = new LocationRequest()
                 .SetPriority(LocationRequest.PriorityHighAccuracy)
-                .SetInterval(1000 * 60 * 5)
-                .SetFastestInterval(1000 * 60 * 5);
-            _locationCallback = new FusedLocationProviderCallback(this);
+                .SetInterval(0)
+                .SetFastestInterval(0);
+            _locationCallback = new MedicalAsistanceFusedLocationProviderCallback(this);
 
             _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);
             RequestLocationUpdatesButtonOnClick();
-
         }
-
         private async void RequestLocationUpdatesButtonOnClick()
         {
             // No need to request location updates if we're already doing so.
@@ -82,7 +85,8 @@ namespace FamiliaXamarin.Services
         }
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            Log.Info("Location Service", "Started");
+
+            Log.Info("MedicalAsistent Service", "Started");
 
             var notification = new NotificationCompat.Builder(this)
                 .SetContentTitle("Familia")

@@ -4,12 +4,13 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
+using Android.Widget;
 using FamiliaXamarin.Helpers;
 using Java.Lang;
 using Math = System.Math;
 using String = System.String;
 
-namespace FamiliaXamarin.Location
+namespace FamiliaXamarin.Services
 {
     [Service]
     internal class DistanceCalculator : Service
@@ -100,7 +101,7 @@ namespace FamiliaXamarin.Location
 
                 double distance = Utils.HaversineFormula(_ctx._latitude, _ctx._longitude, _ctx._currentLatitude, _ctx._currentLongitude);
                 Log.Error("Distance", "" + distance);
-                //Toast.MakeText(_ctx, "" + distance + " metri", ToastLength.Short).Show();
+                Toast.MakeText(_ctx, "" + distance + " metri", ToastLength.Short).Show();
                 if (distance > 180 && distance < 220)
                 {
                     Log.Warn("Distance warning", "mai mult de 200 metri.Esti la " + Math.Round(distance) + " metrii distanta");
@@ -114,27 +115,26 @@ namespace FamiliaXamarin.Location
                 else if (distance > 220)
                 {
                     _ctx._refreshTime = 60000;
-                    //Toast.MakeText(_ctx, "" + distance + " metri " + _ctx.Verifications, ToastLength.Short).Show();
+                    Toast.MakeText(_ctx, "" + distance + " metri " + _ctx._verifications, ToastLength.Short).Show();
 
                     if (_ctx._verifications == 15)
                     {
                         NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment", "Vizita a fost anulata automat!");
-                        _ctx.GetManager().Notify(Constants.NotifMedicationId, nb.Build());
+                        _ctx.GetManager().Notify(1000, nb.Build());
                         _ctx._verifications = 0;
 
                         //trimitere date la server
                         Utils.SetDefaults("ActivityStart", "", _ctx);
+                        _ctx.StopService(new Intent(_ctx, typeof(MedicalAsistanceService)));
                         _ctx.StopSelf();
 
                     }
                     else
                     {
                         NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment", "Vizita va fi anulata automat deoarece te afli la " + Math.Round(distance) + " metrii distanta de pacient! Mai ai " + (15 - _ctx._verifications) + " minute sa te intorci!");
-                        _ctx.GetManager().Notify(Constants.NotifMedicationId, nb.Build());
+                        _ctx.GetManager().Notify(1000, nb.Build());
                         _ctx._verifications++;
                     }
-
-                    Constants.NotifMedicationId++;
                 }
                 else
                 {
