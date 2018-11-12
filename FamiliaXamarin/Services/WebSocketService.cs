@@ -5,7 +5,7 @@ using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
 
-namespace FamiliaXamarin.WebSocket
+namespace FamiliaXamarin.Services
 {
     [Service]
     class WebSocketService : Service

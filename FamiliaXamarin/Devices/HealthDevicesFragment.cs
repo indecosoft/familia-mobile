@@ -5,12 +5,12 @@ using Android.Support.CustomTabs;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
-using FamiliaXamarin.GlucoseDevice;
-using FamiliaXamarin.PressureDevice;
-using FamiliaXamarin.SmartBand;
-using static FamiliaXamarin.Helpers.Utils;
+using FamiliaXamarin.Devices.GlucoseDevice;
+using FamiliaXamarin.Devices.PressureDevice;
+using FamiliaXamarin.Devices.SmartBand;
+using FamiliaXamarin.Helpers;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Devices
 {
     public class HealthDevicesFragment : Android.Support.V4.App.Fragment, View.IOnClickListener
     {
@@ -24,7 +24,7 @@ namespace FamiliaXamarin
         private void StartNewActivity(Type newActivity, string button, View v)
         {
 
-            if (GetDefaults(button, Activity) != null)
+            if (Utils.GetDefaults(button, Activity) != null)
             {
                 Application.Context.StartActivity(newActivity);
                 //Activity.StartActivity(typeof(AddNewGucoseDeviceActivity));

@@ -48,7 +48,7 @@ namespace FamiliaXamarin
         public static string MedicationServerFile { get; } = "data_server.txt";
         #endregion
 
-        public static string DataUrl { get; } = "https://devgis.sigma.team/devices/save-device-measurements";
+        public static string SaveDeviceDataUrl { get; } = "https://gisdev.indecosoft.net/devices/save-device-measurements";
 
         public static string ServerAddress { get; } = "http://192.168.101.192:3000/";
 

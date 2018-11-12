@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Gms.Common;
 using Android.Graphics;
 using Android.Media;
+using Android.Net;
 using Android.OS;
 using Android.Preferences;
 using Android.Support.V4.App;
@@ -199,6 +200,15 @@ namespace FamiliaXamarin.Helpers
         }
         public static void CreateChannels(string channelId,string channel)
         {
+//            if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
+//            var androidChannel = new NotificationChannel(channelId, channel, NotificationImportance.High);
+//            androidChannel.EnableLights(true);
+//            androidChannel.EnableVibration(true);
+//            androidChannel.LightColor = Color.Green;
+//            androidChannel.LockscreenVisibility = NotificationVisibility.Private;
+
+           //
+           //GetManager().CreateNotificationChannel(androidChannel);
             if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
             var androidChannel = new NotificationChannel(channelId, channel, NotificationImportance.High);
             androidChannel.EnableLights(true);
@@ -238,7 +248,7 @@ namespace FamiliaXamarin.Helpers
 
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
-                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                        return new NotificationCompat.Builder(context, body.Replace(" doreste sa ia legatura cu tine!", ""))
                             .SetContentTitle(title)
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)
@@ -264,7 +274,7 @@ namespace FamiliaXamarin.Helpers
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
 
-                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                        return new NotificationCompat.Builder(context, body.Replace(" ti-a acceptat cererea de chat!", ""))
                             .SetContentTitle(title)
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)
@@ -290,7 +300,7 @@ namespace FamiliaXamarin.Helpers
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
 
-                        return new NotificationCompat.Builder(context, "ANDROID_CHANNEL_ID")
+                        return new NotificationCompat.Builder(context, title)
                             .SetContentTitle(title)
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)
@@ -327,6 +337,12 @@ namespace FamiliaXamarin.Helpers
             }
         }
 
+        public static bool CheckNetworkAvailability()
+        {
+            ConnectivityManager cm = (ConnectivityManager)Application.Context.GetSystemService(Context.ConnectivityService);
+            NetworkInfo activeNetwork = cm.ActiveNetworkInfo;
+            return activeNetwork != null && activeNetwork.IsConnectedOrConnecting;
+        }
 
     }
 }

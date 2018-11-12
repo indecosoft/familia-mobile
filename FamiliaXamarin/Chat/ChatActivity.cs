@@ -36,7 +36,7 @@ namespace FamiliaXamarin
         static ChatAdapter mAdapter;
         public static string Email;
         public static string RoomName = "";
-
+        private static LinearLayoutManager layoutManager;
         public static bool Active;
 
         readonly Handler mTypingHandler = new Handler();
@@ -92,9 +92,14 @@ namespace FamiliaXamarin
             //{
             //    Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
             //};
+            layoutManager = new LinearLayoutManager(this);
+            layoutManager.Orientation = LinearLayoutManager.Vertical;
+            
+            //layoutManager.ReverseLayout = true;
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.messages);
-            _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
+            _recyclerView.SetLayoutManager(layoutManager);
             _recyclerView.SetAdapter(mAdapter);
+           
             Ctx = this;
             mInputMessageView = (EditText)FindViewById(Resource.Id.tbMessage);
             send = FindViewById<Button>(Resource.Id.Send);
@@ -226,7 +231,11 @@ namespace FamiliaXamarin
         }
         static void ScrollToBottom()
         {
-            _recyclerView.ScrollToPosition(mAdapter.ItemCount);
+            //_recyclerView.ScrollToPosition(mAdapter.ItemCount-1);
+            _recyclerView.SmoothScrollToPosition(mAdapter.ItemCount - 1);
+            //layoutManager.ReverseLayout = true;
+            Log.Error("positiooooooooooooon: ", mAdapter.ItemCount - 1 + "");
         }
+
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -16,7 +15,7 @@ using Square.Picasso;
 using Task = System.Threading.Tasks.Task;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
-namespace FamiliaXamarin.SmartBand
+namespace FamiliaXamarin.Devices.SmartBand
 {
     [Activity(Label = "SmartBandDeviceActivity", Theme = "@style/AppTheme.Dark")]
     [IntentFilter(new[] { Intent.ActionView },
@@ -25,21 +24,18 @@ namespace FamiliaXamarin.SmartBand
         DataHost = "finish")]
     public  class SmartBandDeviceActivity : AppCompatActivity
     {
-        string _url = string.Empty;
-        string _token = string.Empty;
-        TextView _lbBpm;
-        TextView _lbSleep;
-        TextView _lbSteps;
-        TextView _lbDisplayName;
-        TextView _lbFullName;
-        TextView _lbActivity;
-        CircleImageView _avatarImage;
-        ConstraintLayout _loadingScreen;
-        //readonly IWebServices _webServices = new WebServices();
+        private string _url = string.Empty;
+        private string _token = string.Empty;
+        private TextView _lbBpm;
+        private TextView _lbSleep;
+        private TextView _lbSteps;
+        private TextView _lbDisplayName;
+        private TextView _lbFullName;
+        private TextView _lbActivity;
+        private CircleImageView _avatarImage;
+        private ConstraintLayout _loadingScreen;
 
-#pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
         protected override async void OnCreate(Bundle savedInstanceState)
-#pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_smart_band_device);
@@ -87,7 +83,10 @@ namespace FamiliaXamarin.SmartBand
                 Log.Error("UserId", userId);
                 Log.Error("Scope", scope);
                 Log.Error("Expires_in", expires);
+
+
                 Utils.SetDefaults(GetString(Resource.String.smartband_device), token, this);
+                _token = token;
             }
             else
             {
@@ -101,7 +100,7 @@ namespace FamiliaXamarin.SmartBand
             // Create your application here
         }
 
-        async Task PopulateFields()
+        private async Task PopulateFields()
         {
             await GetProfileData();
             await GetSteps();
@@ -145,9 +144,10 @@ namespace FamiliaXamarin.SmartBand
                 }
             }
         }
-        async Task GetSteps()
+
+        private async Task GetSteps()
         {
-            var data = await WebServices.Get("https://api.fitbit.com/1.2/user/-/sleep/date/today.json", _token);
+            var data = await WebServices.Get("https://api.fitbit.com/1/user/-/activities/date/today.json", _token);
             if (!string.IsNullOrEmpty(data))
             {
                 Log.Error("Steps Result", data);
@@ -172,9 +172,10 @@ namespace FamiliaXamarin.SmartBand
                 }
             }
         }
-        async Task GetSleepData()
+
+        private async Task GetSleepData()
         {
-            var data = await WebServices.Get("https://api.fitbit.com/1/user/-/activities/date/today.json", _token);
+            var data = await WebServices.Get("https://api.fitbit.com/1.2/user/-/sleep/date/today.json", _token);
             Log.Error("Sleep Result", data);
             if (!string.IsNullOrEmpty(data))
             {
@@ -196,7 +197,8 @@ namespace FamiliaXamarin.SmartBand
                 }
             }
         }
-        async Task GetHeartRatePulse()
+
+        private async Task GetHeartRatePulse()
         {
             var data = await WebServices.Get("https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json", _token);
             if (!string.IsNullOrEmpty(data))

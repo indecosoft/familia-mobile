@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using Android.Animation;
 using Android.OS;
@@ -12,22 +11,17 @@ using Com.Yuyakaido.Android.CardStackView;
 using FamiliaXamarin.Helpers;
 using Org.Json;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Chat
 {
     public class FindUsersFragment : Android.Support.V4.App.Fragment, Animator.IAnimatorListener
     {
-        UserCardAdapter _adapter;
-
-        CardStackView _cardStackView;
-        LottieAnimationView _animationView;
-        TextView _lbNobody;
-        Button _leftButton;
-        Button _rightButton;
-        View _mView;
-        List<UserCard> _people;
-        //readonly IWebServices _webServices = new WebServices();
-
-        readonly IWebSocketClient _webSocket = new WebSocketClient();
+        private UserCardAdapter _adapter;
+        private CardStackView _cardStackView;
+        private LottieAnimationView _animationView;
+        private TextView _lbNobody;
+        private Button _leftButton;
+        private Button _rightButton;
+        private List<UserCard> _people;
 
         UserCardAdapter CreateUserCardAdapter()
         {
@@ -35,60 +29,51 @@ namespace FamiliaXamarin
             userCardAdapter.AddAll(_people);
             return userCardAdapter;
         }
-        void Setup(View view)
+        private void Setup() => _cardStackView.CardSwiped += delegate (object sender, CardStackView.CardSwipedEventArgs args)
+                      {
+                          if (args.Direction.ToString() == "Right" && _people.Count != 0)
+                          {
+                              try
+                              {
+                                  string emailFrom = Utils.GetDefaults("Email", Activity);
+
+                                  var emailObject = new JSONObject().Put("dest", _people[_cardStackView.TopIndex - 1].Email).Put("from", emailFrom);
+                                  WebSocketClient.Client.Emit("chat request", emailObject);
+                              }
+                              catch (Exception e)
+                              {
+                                  Console.WriteLine(e.Message);
+                              }
+
+                          }
+                          else if (_people.Count == 0)
+                          {
+                              _rightButton.Enabled = false;
+                              _leftButton.Enabled = false;
+                              _cardStackView.Enabled = false;
+                              _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                              _cardStackView.SetAdapter(_adapter);
+                              _animationView.PlayAnimation();
+                          }
+
+                          if (_cardStackView.TopIndex != _people.Count) return;
+                          _rightButton.Enabled = false;
+                          _leftButton.Enabled = false;
+                          _cardStackView.Enabled = false;
+                          _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                          _cardStackView.SetAdapter(_adapter);
+                          _animationView.PlayAnimation();
+
+                      };
+
+        private void Reload()
         {
-            //progressBar = (ProgressBar)findViewById(R.id.activity_main_progress_bar);
-
-            _cardStackView = (CardStackView)view.FindViewById(Resource.Id.activity_main_card_stack_view);
-            _cardStackView.CardDragging += delegate
-            {
-                Log.Error("CardStackView", "onCardDragging");
-            };
-            _cardStackView.CardSwiped += delegate (object sender, CardStackView.CardSwipedEventArgs args)
-            {
-                Contract.Requires(sender != null);
-                Log.Error("CardStackView", $"onCardSwiped: {args.Direction}");
-                Log.Error("CardStackView", $"topIndex: {_cardStackView.TopIndex}");
-                if (_cardStackView.TopIndex == _adapter.Count - 5)
-                {
-                    Log.Error("CardStackView", "Paginate: " + _cardStackView.TopIndex);
-                }
-
-                if (args.Direction.ToString() == "Right")
-                {
-                    try
-                    {
-                        string emailFrom = Utils.GetDefaults("Email", Activity);
-
-                        var emailObject = new JSONObject().Put("dest", _people[_cardStackView.TopIndex - 1].Email).Put("from", emailFrom);
-                        WebSocketClient.Client.Emit("chat request", emailObject);
-                    }
-                    catch (JSONException e)
-                    {
-                        e.PrintStackTrace();
-                    }
-
-                }
-
-                if (_cardStackView.TopIndex != _people.Count) return;
-                _rightButton.Enabled = false;
-                _leftButton.Enabled = false;
-                _cardStackView.Enabled = false;
-                _lbNobody.Text = "Nimeni nu se afla in jurul tau";
-                _animationView.PlayAnimation();
-
-            };
-        }
-
-        void Reload()
-        {
-
             _adapter = CreateUserCardAdapter();
             _cardStackView.SetAdapter(_adapter);
             _cardStackView.Visibility = ViewStates.Visible;
         }
 
-        async void SearchPeople()
+        private async void SearchPeople()
         {
             await Task.Run(async () =>
             {
@@ -162,14 +147,10 @@ namespace FamiliaXamarin
                                             Resource.Drawable.image_10));
                                         break;
                                 }
-
                             }
                         }
-                        Activity.RunOnUiThread(() =>
-                        {
-                            Setup(_mView);
-                            Reload();
-                        });
+
+                        Activity.RunOnUiThread(Reload);
 
 
                     }
@@ -202,40 +183,22 @@ namespace FamiliaXamarin
             _rightButton = view.FindViewById<Button>(Resource.Id.btnRight);
             _leftButton = view.FindViewById<Button>(Resource.Id.btnLeft);
         }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             // Use this to return your custom view for this Fragment
             // return inflater.Inflate(Resource.Layout.YourFragment, container, false);
             View view = inflater.Inflate(Resource.Layout.find_users_fragment, container, false);
-            
-            _mView = view;
             InitUi(view);
+            Setup();
             _animationView.AddAnimatorListener(this);
             //start annimation
             _animationView.PlayAnimation();
-            
 
-            _leftButton.Click += delegate { SwipeLeft();};
-            _rightButton.Click += delegate { SwipeRight();};
 
-//           _rightButton.Click += delegate
-//           {
-//               try
-//               {
-//                   string emailFrom = Utils.GetDefaults("Email", Activity);
-//                   Activity.StartActivity(typeof(ChatActivity));
-//                   //                        Chat.EmailDest = _people[_cardStackView.TopIndex - 1].Email;
-//                   //                        Chat.Avatar = _people[_cardStackView.TopIndex - 1].Avatar;
-//                   var emailObject = new JSONObject().Put("dest", "voicu.babiciu@indecosoft.ro").Put("from", emailFrom);
-//                   WebSocketClient.Client.Emit("chat request", emailObject);
-//               }
-//               catch (JSONException e)
-//               {
-//                   e.PrintStackTrace();
-//               }
-//           };
+            _leftButton.Click += delegate { SwipeLeft(); };
+            _rightButton.Click += delegate { SwipeRight(); };
 
-            
             return view;
         }
 
@@ -263,7 +226,7 @@ namespace FamiliaXamarin
             SearchPeople();
 
         }
-        public void SwipeLeft()
+        private void SwipeLeft()
         {
             List<UserCard> spots = ExtractRemainingUserCards();
             if (spots.Count == 0)
@@ -296,7 +259,7 @@ namespace FamiliaXamarin
             _cardStackView.Swipe(SwipeDirection.Left, cardAnimationSet);
         }
 
-        public void SwipeRight()
+        private void SwipeRight()
         {
             List<UserCard> spots = ExtractRemainingUserCards();
             if (spots.Count == 0)
@@ -328,7 +291,7 @@ namespace FamiliaXamarin
 
             _cardStackView.Swipe(SwipeDirection.Right, cardAnimationSet);
         }
-        List<UserCard> ExtractRemainingUserCards()
+        private List<UserCard> ExtractRemainingUserCards()
         {
             List<UserCard> spots = new List<UserCard>();
             for (int i = _cardStackView.TopIndex; i < _adapter.Count; i++)

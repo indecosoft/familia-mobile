@@ -9,11 +9,13 @@ using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Active_Conversations;
 using FamiliaXamarin.Asistenta_sociala;
+using FamiliaXamarin.Chat;
+using FamiliaXamarin.Devices;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Login_System;
 using FamiliaXamarin.Medicatie;
+using FamiliaXamarin.Services;
 using FamiliaXamarin.Settings;
-using FamiliaXamarin.WebSocket;
 using Refractored.Controls;
 using Square.Picasso;
 
@@ -84,7 +86,7 @@ namespace FamiliaXamarin
                     FromBoala = false;
                 }
 
-            Utils.CreateNotificationChannel();
+           // Utils.CreateNotificationChannel();
 
 
         }

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -11,10 +12,14 @@ using Android.Support.V4.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
+using Java.IO;
 using Java.Util;
 using Org.Json;
+using SQLite;
 using Random = Java.Util.Random;
+using TaskStackBuilder = Android.App.TaskStackBuilder;
 
 namespace FamiliaXamarin.Medicatie.Alarm
 {
@@ -28,16 +33,22 @@ namespace FamiliaXamarin.Medicatie.Alarm
         public static readonly string ActionOk = "actionOk";
         public static readonly string ActionReceive = "actionReceive";
         public static int NotifyId = Constants.NotifId;
-
-        public override void OnReceive(Context context, Intent intent)
+        private SQLiteAsyncConnection _db;
+        public async override void OnReceive(Context context, Intent intent)
         {
             string action = intent.Action;
-            Log.Error("ACTIONSARTONRECEIVE", ""+ action);
+            Log.Error("ACTIONSARTONRECEIVE", "" + action);
             if (action != null)
             {
                 Log.Error("ACTION", action);
                 if (ActionReceive.Equals(action))
                 {
+                    var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+                    var numeDB = "devices_data.db";
+                    _db = new SQLiteAsyncConnection(Path.Combine(path, numeDB));
+                    await _db.CreateTableAsync<MedicineRecords>();
+
+
                     Toast.MakeText(context, "ALARM SERVER!!!", ToastLength.Long).Show();
                     Log.Error("VINE ALARMA DIN SERVICE", "DADADAD");
                     var uuid = intent.GetStringExtra(Uuid);
@@ -72,25 +83,62 @@ namespace FamiliaXamarin.Medicatie.Alarm
                             .SetOngoing(true);
 
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
-                    
+
                     notificationManager.Notify(NotifyId, mBuilder.Build());
 
                 }
 
-                else 
+                else
                 if (ActionOk.Equals(action))
                 {
                     Toast.MakeText(context, "Action ok!!!", ToastLength.Long).Show();
                     DateTime now = DateTime.Now;
                     string uuid = intent.GetStringExtra(Uuid);
-                    //TODO verifica daca poate trimite la server, daca nu, salveaza intr-un fisier si trimite datele din fisier cand se poate
+                    JSONArray mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid).Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
 
-                    SendData(uuid, now, context);
+                    if (!await SendData(mArray, context))
+                    {
+                        AddMedicine(_db, uuid, now);
+                    }
+                    else
+                    {
+                        var myList = await EvaluateQuery(_db, "Select * FROM MedicineRecords");
+                        JSONArray jsonList = new JSONArray();
+                        foreach (var el in myList)
+                        {
+                            JSONObject element = new JSONObject().Put("uuid", el.Uuid).Put("date", el.DateTime);
+                            jsonList.Put(element);
+                        }
+
+                        if (Utils.CheckNetworkAvailability())
+                        {
+                            string result = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", jsonList, Utils.GetDefaults("Token", context));
+                            var table = await EvaluateQuery(_db, "DROP TABLE MedicineRecords");
+                        }
+
+                    }
+
+
+
                     NotificationManagerCompat.From(context).Cancel(intent.GetIntExtra("notifyId", 0));
 
-                    
+
                 }
             }
+        }
+
+        private async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now)
+        {
+
+            await db.InsertAsync(new MedicineRecords()
+            {
+                Uuid = uuid,
+                DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
+            });
+        }
+        private async Task<IEnumerable<MedicineRecords>> EvaluateQuery(SQLiteAsyncConnection db, string query)
+        {
+            return await db.QueryAsync<MedicineRecords>(query);
         }
         public int CurrentTimeMillis()
         {
@@ -100,31 +148,36 @@ namespace FamiliaXamarin.Medicatie.Alarm
         readonly DateTime Jan1st1970 = new DateTime
             (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        async void SendData(string uuid, DateTime date, Context context)
+        async Task<bool> SendData(JSONArray mArray, Context context)
         {
             //using (var response = await httpClient.PostAsync(url, new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("uuid", uuid), new KeyValuePair<string, string>("date", date.ToString("yyyy-MM-dd HH:mm:ss")) })))
-            JSONObject mObject = new JSONObject().Put("uuid", uuid).Put("date", date.ToString("yyyy-MM-dd HH:mm:ss"));
-            var res = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", mObject, Utils.GetDefaults("Token", context));
 
-            Log.Error("#################", ""+res);
+            var res = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", mArray, Utils.GetDefaults("Token", context));
+
+            Log.Error("#################", "" + res);
+            if (res != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         void createNotificationChannel(string mChannel, string mTitle, string mContent)
         {
-                string name = mTitle;
-                string description = mContent;
-                //var importance = NotificationManager.ImportanceDefault;
+            string name = mTitle;
+            string description = mContent;
 
-                NotificationChannel channel =
-                    new NotificationChannel(mChannel, mTitle, NotificationImportance.Default)
-                    {
-                        Description = description
-                    };
+            NotificationChannel channel =
+                new NotificationChannel(mChannel, mTitle, NotificationImportance.Default)
+                {
+                    Description = description
+                };
 
-                // Register the channel with the system; you can't change the importance
-                // or other notification behaviors after this
-                var notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
-                notificationManager.CreateNotificationChannel(channel);
+            var notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
+            notificationManager.CreateNotificationChannel(channel);
 
         }
     }

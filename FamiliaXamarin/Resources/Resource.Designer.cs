@@ -4683,28 +4683,31 @@ namespace FamiliaXamarin
 			public const int bell = 2131230720;
 			
 			// aapt resource value: 0x7f080001
-			public const int drop = 2131230721;
+			public const int devices_data = 2131230721;
 			
 			// aapt resource value: 0x7f080002
-			public const int fingerprint = 2131230722;
+			public const int drop = 2131230722;
 			
 			// aapt resource value: 0x7f080003
-			public const int heart = 2131230723;
+			public const int fingerprint = 2131230723;
 			
 			// aapt resource value: 0x7f080004
-			public const int loading = 2131230724;
+			public const int heart = 2131230724;
 			
 			// aapt resource value: 0x7f080005
-			public const int location = 2131230725;
+			public const int loading = 2131230725;
 			
 			// aapt resource value: 0x7f080006
-			public const int map_loading = 2131230726;
+			public const int location = 2131230726;
 			
 			// aapt resource value: 0x7f080007
-			public const int new_notification = 2131230727;
+			public const int map_loading = 2131230727;
 			
 			// aapt resource value: 0x7f080008
-			public const int notification = 2131230728;
+			public const int new_notification = 2131230728;
+			
+			// aapt resource value: 0x7f080009
+			public const int notification = 2131230729;
 			
 			static Raw()
 			{

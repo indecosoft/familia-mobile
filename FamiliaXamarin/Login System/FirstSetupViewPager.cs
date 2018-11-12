@@ -9,7 +9,7 @@ using Android.Widget;
 using Java.Lang;
 using Exception = System.Exception;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Login_System
 {
     public class FirstSetupViewPager : ViewPager, View.IOnTouchListener
     {
