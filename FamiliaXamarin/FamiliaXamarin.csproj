@@ -65,6 +65,7 @@
     <Compile Include="JsonModels\ConverstionsModel.cs" />
     <Compile Include="JsonModels\DiseaseModel.cs" />
     <Compile Include="JsonModels\FirstSetupModel.cs" />
+    <Compile Include="Location\MedicalAsistanceFusedLocationProviderCallback.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Medicatie\Alarm\AlarmActivity.cs" />
     <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiver.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Chat\ChatActivity.cs" />
     <Compile Include="Chat\ChatAdapter.cs" />
     <Compile Include="Chat\ChatModel.cs" />
+    <Compile Include="Services\MedicalAsistanceService.cs" />
     <Compile Include="Settings\SettingsFragment.cs" />
     <Compile Include="WebSocket\WebSocketClient.cs" />
     <Compile Include="Services\WebSocketService.cs" />
@@ -102,7 +104,7 @@
     <Compile Include="Devices\SmartBand\SmartBandDeviceActivity.cs" />
     <Compile Include="Devices\DevicesRecyclerViewAdapter.cs" />
     <Compile Include="Devices\HealthDevicesFragment.cs" />
-    <Compile Include="Location\DistanceCalculator.cs" />
+    <Compile Include="Services\DistanceCalculator.cs" />
     <Compile Include="Location\FusedLocationProviderCallback.cs" />
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Chat\UserCard.cs" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
@@ -58,7 +59,7 @@ namespace FamiliaXamarin.Login_System
             _viewPager.Adapter = _sectionsPagerAdapter;
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se trimit datele", this, false);
 
-            Utils.SetDefaults("Logins", true.ToString(), this);
+            
         }
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
@@ -86,7 +87,8 @@ namespace FamiliaXamarin.Login_System
             Android.Net.Uri _photoUri;
             FileInfo _fileInformations;
             string _imageExtension, _imagePath;
-
+            private List<BenefitSpinnerState> _listVOs;
+            private List<DiseaseModel> _diseaseList;
 
 
             public static PlaceholderFragment NewInstance(int sectionNumber)
@@ -326,14 +328,15 @@ namespace FamiliaXamarin.Login_System
                             frag.Show(FragmentContext.FragmentManager, DatePickerFragment.TAG);
                         };
 
-                        _btnBack.Click += delegate { FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber) - 2; };
+                        
                         break;
                     case 3:
                         rootView = inflater.Inflate(Resource.Layout.fragment_setup3, container, false);
                         InitDefaultUi(rootView);
                         IniThirdViewUi(rootView);
                         // Create an ArrayAdapter using the string array and a default spinner layout
-                       
+                        //FragmentContext._firstSetupModel.Disease = new JSONArray();
+                        DiseaseSelectorView();
                         break;
                     default:
                         rootView = inflater.Inflate(Resource.Layout.fragment_setup1, container, false);
@@ -342,6 +345,11 @@ namespace FamiliaXamarin.Login_System
                 }
 
                 _btnNext.Click += _btnNext_Click;
+                if (Arguments.GetInt(ArgSectionNumber) != 1)
+                {
+                    _btnBack.Click += delegate { FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber) - 2; };
+                }
+                
 
                 if (Arguments.GetInt(ArgSectionNumber) == 3)
                     _btnNext.Text = "Gata";
@@ -350,14 +358,13 @@ namespace FamiliaXamarin.Login_System
 
             private async void DiseaseSelectorView()
             {
-                string[] stringArray = { "Niciuna", "Afectiune 1", "Afectiune 2", "Afectiune 3" };
 
-                var a = await GetDiseaseList();
+                _diseaseList = await GetDiseaseList();
 
 
-                var _listVOs = new List<BenefitSpinnerState>();
 
-                foreach (var t in a)
+                _listVOs = new List<BenefitSpinnerState>();
+                foreach (var t in _diseaseList)
                 {
                     var stateVo = new BenefitSpinnerState
                     {
@@ -376,12 +383,10 @@ namespace FamiliaXamarin.Login_System
                 //                // Apply the adapter to the spinner
                 //                _diseaseSpinner.Adapter = adapter;
                 //var _benefitsArray = new JSONArray();
-                _diseaseSpinner.ItemSelected +=delegate(object sender, AdapterView.ItemSelectedEventArgs args)
-                {
-                    
-                        FragmentContext._firstSetupModel.Disease.Put(new JSONObject().Put("Cod", a[_diseaseSpinner.SelectedItemPosition].Cod));
-                };
-
+                //_diseaseSpinner.ItemSelected +=delegate(object sender, AdapterView.ItemSelectedEventArgs args)
+                //{
+                //        FragmentContext._firstSetupModel.Disease.Put(new JSONObject().Put("cod", a[_diseaseSpinner.SelectedItemPosition].Cod));
+                //};
                 
 //                foreach (var t in _listVOs)
 //                {
@@ -392,7 +397,7 @@ namespace FamiliaXamarin.Login_System
 //                    //BenefitAdapter el = listVOs.get(i).isSelected();
 //                }
 
-                _btnBack.Click += delegate { FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber) - 2; };
+                //_btnBack.Click += delegate { FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber) - 2; };
             }
 
 
@@ -402,12 +407,26 @@ namespace FamiliaXamarin.Login_System
                     Utils.GetDefaults("Token", Activity));
                 if (result != null)
                 {
-                    List<DiseaseModel> listOfDiseases = new List<DiseaseModel>();
+                    List<DiseaseModel> listOfDiseases =
+                        new List<DiseaseModel>
+                        {
+                            new DiseaseModel
+                            {
+                                Cod = -2,
+                                Name = "Selectati Afectiuni"
+                            },
+                            new DiseaseModel
+                            {
+                                Cod = -1,
+                                Name = "Niciuna"
+                            }
+
+                        };
                     JSONArray arrayOfDiseases = new JSONArray(result);
                     for (int i = 0; i < arrayOfDiseases.Length(); i++)
                     {
                         JSONObject jsonModel = new JSONObject(arrayOfDiseases.Get(i).ToString());
-                        var model = new DiseaseModel{Cod = jsonModel.GetInt("Cod"), Name = jsonModel.GetString("Denumire")};
+                        var model = new DiseaseModel{Cod = jsonModel.GetInt("cod"), Name = jsonModel.GetString("denumire")};
                                 if(!listOfDiseases.Contains(model))
                                     listOfDiseases.Add(model);
                     }
@@ -435,10 +454,21 @@ namespace FamiliaXamarin.Login_System
                         FragmentContext._progressBarDialog.Show();
                         FragmentContext._firstSetupModel.ImageName = Utils.GetDefaults("Email", Activity);
 
+                        FragmentContext._firstSetupModel.Disease = new int[(from disease in _listVOs where disease.IsSelected select disease).Count()];
+
+                        int k = 0;
+                        for (var i = 0; i < _listVOs.Count; i++)
+                        {
+                            if (!_listVOs[i].IsSelected) continue;
+                            FragmentContext._firstSetupModel.Disease[k] = _diseaseList[i].Cod;
+                            k++;
+                        }
+
                         await Task.Run(async () =>
                         {
 
                             var jsonData = JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
+                            Log.Error("datra to send", jsonData);
                             var response = await WebServices.Post(Constants.PublicServerAddress + "/api/firstSetup", new JSONObject(jsonData), Utils.GetDefaults("Token", Activity));
                             if (response != null)
                             {
@@ -456,6 +486,7 @@ namespace FamiliaXamarin.Login_System
                                         break;
                                     case 2:
 
+                                        Utils.SetDefaults("Logins", true.ToString(), Activity);
                                         FragmentContext.StartActivity(typeof(MainActivity));
                                         FragmentContext.Finish();
                                         break;
@@ -475,7 +506,7 @@ namespace FamiliaXamarin.Login_System
 
         }
 
-        public class SectionsPagerAdapter : FragmentPagerAdapter
+        private class SectionsPagerAdapter : FragmentPagerAdapter
         {
             public SectionsPagerAdapter(FragmentManager fm) : base(fm) { }
 
