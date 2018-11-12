@@ -88,6 +88,7 @@
     <Compile Include="Chat\ChatActivity.cs" />
     <Compile Include="Chat\ChatAdapter.cs" />
     <Compile Include="Chat\ChatModel.cs" />
+    <Compile Include="Services\MedicationService.cs" />
     <Compile Include="Settings\SettingsFragment.cs" />
     <Compile Include="WebSocket\WebSocketClient.cs" />
     <Compile Include="Services\WebSocketService.cs" />

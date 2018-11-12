@@ -71,8 +71,8 @@ namespace FamiliaXamarin.Medicatie
                             i.PutExtra(AlarmBroadcastReceiverServer.Title, _medications[ms].Title);
                             i.PutExtra(AlarmBroadcastReceiverServer.Content, _medications[ms].Content);
                             i.SetAction(AlarmBroadcastReceiverServer.ActionReceive);
-
-                            var id = CurrentTimeMillis();
+                            var random = new System.Random();
+                            var id = CurrentTimeMillis() * random.Next();
                             var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.OneShot);
                             if (am == null) continue;
                             var date = parseTimestampStringToDate(_medications[ms]);
@@ -81,7 +81,7 @@ namespace FamiliaXamarin.Medicatie
                             Calendar setcalendar = Calendar.Instance;
 
                             setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
-
+                            Log.Error("DATE YEAR:", date.Year.ToString());
                             if (setcalendar.Before(calendar)) continue;
 
                             am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
@@ -137,12 +137,13 @@ namespace FamiliaXamarin.Medicatie
             return date.ToLocalTime();
         }
 
-        private readonly DateTime Jan1st1970 = new DateTime
-            (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+//        private readonly DateTime Jan1st1970 = new DateTime
+//            (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         public int CurrentTimeMillis()
         {
-            return (int)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
+            //return (int)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
+            return (int)(DateTime.UtcNow).Millisecond;
         }
 
         private List<MedicationSchedule> ParseResultFromUrl(string res)

@@ -40,7 +40,7 @@ namespace FamiliaXamarin
         public static string ChannelId { get; } = "my chanel id";
         public static string NotificationTitle { get; } = "Este timpul sa iti iei medicamentele";
         public static string NotifContent { get; } = "";
-        public static int NotifId { get; } = 667;
+        public static int NotifId { get; } = 200;
         public static int NotifChatId { get; set; } = 100;
         public static int NotifMedicationId { get; set; } = 1;
         public static int NotifIdServer { get; } = 668;
