@@ -157,7 +157,7 @@ namespace FamiliaXamarin
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "POST";
-
+                //httpWebRequest.Timeout = 10;
                 httpWebRequest.Headers.Add("Authorization", "Bearer " + token);
 
                 using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))

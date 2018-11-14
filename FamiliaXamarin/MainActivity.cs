@@ -18,6 +18,7 @@ using FamiliaXamarin.Services;
 using FamiliaXamarin.Settings;
 using Refractored.Controls;
 using Square.Picasso;
+using System.Threading;
 
 namespace FamiliaXamarin
 {
@@ -26,6 +27,7 @@ namespace FamiliaXamarin
     {
         Intent _loacationServiceIntent;
         Intent _webSocketServiceIntent;
+        Intent _medicationServiceIntent;
         public static bool FromBoala;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -49,15 +51,20 @@ namespace FamiliaXamarin
 
             _loacationServiceIntent = new Intent(this, typeof(LocationService));
             _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
+            //_medicationServiceIntent = new Intent(this, typeof(MedicationService));
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
                     StartForegroundService(_loacationServiceIntent);
                     StartForegroundService(_webSocketServiceIntent);
+                   // StartForegroundService(_medicationServiceIntent);
+                
             }
             else
             {
                     StartService(_loacationServiceIntent);
                     StartService(_webSocketServiceIntent);
+                   // StartService(_medicationServiceIntent);
+
             }
           
             Picasso.With(this)
@@ -186,6 +193,7 @@ namespace FamiliaXamarin
                     WebSocketClient.Disconect();
                         StopService(_loacationServiceIntent);
                         StopService(_webSocketServiceIntent);
+                       // StopService(_medicationServiceIntent);
    
                     StartActivity(typeof(LoginActivity));
                     Finish();

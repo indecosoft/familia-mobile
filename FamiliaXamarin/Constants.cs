@@ -40,7 +40,7 @@ namespace FamiliaXamarin
         public static string ChannelId { get; } = "my chanel id";
         public static string NotificationTitle { get; } = "Este timpul sa iti iei medicamentele";
         public static string NotifContent { get; } = "";
-        public static int NotifId { get; } = 667;
+        public static int NotifId { get; } = 200;
         public static int NotifChatId { get; set; } = 100;
         public static int NotifMedicationId { get; set; } = 1;
         public static int NotifIdServer { get; } = 668;
@@ -53,9 +53,9 @@ namespace FamiliaXamarin
         public static string ServerAddress { get; } = "http://192.168.101.192:3000/";
 
         //public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/chat";
-        public static string PublicServerAddress { get; } = "http://192.168.101.107:3000";
+        public static string PublicServerAddress { get; } = "http://192.168.101.115:3000";
         //public static string WebSocketAddress { get; } = "https://gisdev.indecosoft.net/ws";
-        public static string WebSocketAddress { get; } = "http://192.168.101.107:3000/ws";
+        public static string WebSocketAddress { get; } = "http://192.168.101.115:3000/ws";
         public static int WebSocketPort { get; } = 3000;
         public static string ImageDirectory { get; } = "/demonuts";
         public static int RequestGallery { get; } = 2;
