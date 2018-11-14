@@ -466,7 +466,8 @@ namespace FamiliaXamarin.Login_System
 
                         await Task.Run(async () =>
                         {
-
+                            var a = FragmentContext._firstSetupModel.DateOfBirth.Split('.');
+                            FragmentContext._firstSetupModel.DateOfBirth = $"{a[1]}.{a[0]}.{a[2]}";
                             var jsonData = JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
                             Log.Error("datra to send", jsonData);
                             var response = await WebServices.Post(Constants.PublicServerAddress + "/api/firstSetup", new JSONObject(jsonData), Utils.GetDefaults("Token", Activity));
