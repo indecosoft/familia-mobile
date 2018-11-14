@@ -38,6 +38,13 @@ namespace FamiliaXamarin
             SetSupportActionBar(toolbar);
 
 
+
+           
+
+           // var am = (AlarmManager)GetSystemService(Context.AlarmService);
+            //var i = new Intent(this, typeof(ChargerReceiver));
+
+
             var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             var toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
             drawer.AddDrawerListener(toggle);

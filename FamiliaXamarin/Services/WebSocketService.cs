@@ -4,7 +4,7 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
-
+using FamiliaXamarin.Helpers;
 
 namespace FamiliaXamarin.Services
 {
@@ -17,21 +17,23 @@ namespace FamiliaXamarin.Services
 
         public override IBinder OnBind(Intent intent)
         {
-
             throw new NotImplementedException();
         }
 
         public override void OnCreate()
         {
             base.OnCreate();
-            Log.Error("Service:", "STARTED");
+            Log.Error("Service:", "WebSocketService STARTED");
+
+            var charger = new ChargerReceiver();
+            RegisterReceiver(charger, new IntentFilter(Intent.ActionCloseSystemDialogs));
+
             _socketClient.Connect(Constants.WebSocketAddress, Constants.WebSocketPort, this);
         }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             Log.Error("Location Service", "Started");
-
 
             var notification = new NotificationCompat.Builder(this)
                 .SetContentTitle(Resources.GetString(Resource.String.app_name))

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Android.Content;
 using Android.Gms.Location;
 using Android.Util;
@@ -33,10 +35,21 @@ namespace FamiliaXamarin.Location
                 {
                     JSONObject obj = new JSONObject().Put("latitude", location.Latitude).Put("longitude", location.Longitude);
                     JSONObject finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("IdClient", _activity)).Put("location", obj);
-
-                    string p = await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token", _activity));
-                    Log.Debug("Latitude ", location.Latitude.ToString());
-                    Log.Debug("Longitude", location.Longitude.ToString());
+                    try
+                    {
+                        await Task.Run(async () =>
+                        {
+                            string p = await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token", _activity));
+                            Log.Debug("Latitude ", location.Latitude.ToString());
+                            Log.Debug("Longitude", location.Longitude.ToString());
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("****************************", e.Message);
+                    }
+                    
+                    
                 }
                 
             }
