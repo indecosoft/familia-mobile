@@ -58,8 +58,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="DataModels\DeviceConfigRecords.cs" />
     <Compile Include="DataModels\DevicesRecords.cs" />
     <Compile Include="DataModels\MedicineRecords.cs" />
+    <Compile Include="Helpers\AlarmDeviceReceiver.cs" />
+    <Compile Include="Helpers\ChargerReceiver.cs" />
     <Compile Include="Helpers\FingerprintHandler.cs" />
     <Compile Include="Helpers\ProgressBarDialog.cs" />
     <Compile Include="JsonModels\ConverstionsModel.cs" />
