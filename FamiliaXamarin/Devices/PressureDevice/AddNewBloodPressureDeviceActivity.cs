@@ -4,6 +4,7 @@ using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.App;
@@ -15,7 +16,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.Devices.PressureDevice
 {
-    [Activity(Label = "AddNewBloodPressureDeviceActivity", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "AddNewBloodPressureDeviceActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class AddNewBloodPressureDeviceActivity : AppCompatActivity
     {
         private RecyclerView _recyclerView;

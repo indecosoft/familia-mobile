@@ -5,6 +5,7 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Constraints;
@@ -20,7 +21,7 @@ using Org.Json;
 
 namespace FamiliaXamarin
 {
-    [Activity(Label = "PwdResetActivity", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "PwdResetActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class PwdResetActivity : AppCompatActivity, View.IOnClickListener
     {
         private TextInputLayout _emailInputLayout;

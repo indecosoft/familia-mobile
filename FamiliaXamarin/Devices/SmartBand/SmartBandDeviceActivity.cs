@@ -1,6 +1,7 @@
 ﻿using System;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.V7.App;
@@ -17,7 +18,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.Devices.SmartBand
 {
-    [Activity(Label = "SmartBandDeviceActivity", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "SmartBandDeviceActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     [IntentFilter(new[] { Intent.ActionView },
         Categories = new[] { Intent.CategoryDefault, Intent.CategoryBrowsable },
         DataScheme = "fittauth",

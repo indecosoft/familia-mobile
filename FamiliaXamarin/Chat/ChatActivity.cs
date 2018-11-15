@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Preferences;
 using Android.Provider;
@@ -25,7 +26,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin
 {
-    [Activity(Label = "ChatActivity", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "ChatActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class ChatActivity : AppCompatActivity
     {
         Button send;

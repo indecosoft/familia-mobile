@@ -98,52 +98,52 @@ namespace FamiliaXamarin.Chat
                                 {
                                     case 1:
                                         _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            string.Empty, nearMeObj.GetString("avatar"),
                                             Resource.Drawable.image_1));
                                         break;
                                     case 2:
                                         _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            string.Empty, nearMeObj.GetString("avatar"),
                                             Resource.Drawable.image_2));
                                         break;
                                     case 3:
                                         _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            string.Empty, nearMeObj.GetString("avatar"),
                                             Resource.Drawable.image_3));
                                         break;
                                     case 4:
                                         _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            string.Empty, nearMeObj.GetString("avatar"),
                                             Resource.Drawable.image_4));
                                         break;
                                     case 5:
                                         _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            string.Empty, nearMeObj.GetString("avatar"),
                                             Resource.Drawable.image_5));
                                         break;
                                     case 6:
                                         _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            string.Empty, nearMeObj.GetString("avatar"),
                                             Resource.Drawable.image_6));
                                         break;
                                     case 7:
                                         _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            string.Empty, nearMeObj.GetString("avatar"),
                                             Resource.Drawable.image_7));
                                         break;
                                     case 8:
                                         _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            string.Empty, nearMeObj.GetString("avatar"),
                                             Resource.Drawable.image_8));
                                         break;
                                     case 9:
                                         _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            string.Empty, nearMeObj.GetString("avatar"),
                                             Resource.Drawable.image_9));
                                         break;
                                     case 10:
                                         _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
+                                            string.Empty, nearMeObj.GetString("avatar"),
                                             Resource.Drawable.image_10));
                                         break;
                                 }
@@ -151,7 +151,17 @@ namespace FamiliaXamarin.Chat
                         }
 
                         Activity.RunOnUiThread(Reload);
+                        if (_people.Count == 0)
+                        {
+                            
+                            Activity.RunOnUiThread(() =>
+                            {
+                                _animationView.PlayAnimation();
+                                _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                            });
 
+                            
+                        }
 
                     }
                     else
@@ -218,11 +228,12 @@ namespace FamiliaXamarin.Chat
         }
 
         public void OnAnimationStart(Animator animation)
-        {
-            _rightButton.Enabled = true;
-            _leftButton.Enabled = true;
-            _cardStackView.Enabled = true;
-            _lbNobody.Text = string.Empty;
+        {  
+                _rightButton.Enabled = true;
+                _leftButton.Enabled = true;
+                _cardStackView.Enabled = true;
+                _lbNobody.Text = string.Empty;
+   
             SearchPeople();
 
         }

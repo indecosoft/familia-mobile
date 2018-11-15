@@ -26,7 +26,7 @@ namespace FamiliaXamarin.Location
 
         public override async void OnLocationResult(LocationResult result)
         {
-            if (result.Locations.Any())
+            if (result.Locations.Any() && result.Locations != null)
             {
                 var location = result.Locations.First();
                 Utils.SetDefaults("Latitude", location.Latitude.ToString(), _activity);
