@@ -26,7 +26,7 @@ namespace FamiliaXamarin.Helpers
 {
     public static class Utils
     {
-        public static bool Tiganie = false;
+        public static bool util = false;
         static NotificationManager _notificationManager;
         public static void SetDefaults(string key, string value, Context context)
         {

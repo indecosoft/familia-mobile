@@ -22,6 +22,8 @@ namespace FamiliaXamarin.Helpers
     [IntentFilter(new[] { Android.Content.Intent.ActionCloseSystemDialogs })]
     public class ChargerReceiver : BroadcastReceiver
     {
+        public static readonly string INTERVAL_GLUCOSE = "INTERVAL_GLUCOSE";
+        public static readonly string INTERVAL_BLOOD_PRESSURE = "INTERVAL_BLOOD_PRESSURE";
         private SQLiteAsyncConnection _db;
         public async  override void OnReceive(Context context, Intent intent)
         {
@@ -48,7 +50,8 @@ namespace FamiliaXamarin.Helpers
 
                     AddDeviceConfig(_db, intervalBloodPressure, intervalGlucose);
 
-                    LaunchAlarm(context, intervalGlucose, "INTERVAL_GLUCOSE");
+                    LaunchAlarm(context, intervalGlucose, INTERVAL_GLUCOSE);
+                    LaunchAlarm(context, intervalBloodPressure, INTERVAL_BLOOD_PRESSURE);
                 });
 
                 Toast.MakeText(context, "S-a facut GET", ToastLength.Long).Show();
@@ -68,7 +71,6 @@ namespace FamiliaXamarin.Helpers
             var am = (AlarmManager) context.GetSystemService(Context.AlarmService);
             var i = new Intent(context, typeof(AlarmDeviceReceiver));
             i.PutExtra(AlarmDeviceReceiver.INTERVAL_CONTENT, content);
-           // i.PutExtra(AlarmBroadcastReceiverServer.Title, intervalGlucose);
             var random = new Random();
             var id = (DateTime.UtcNow).Millisecond * random.Next();
             var pi = PendingIntent.GetBroadcast(context, id, i, PendingIntentFlags.OneShot);

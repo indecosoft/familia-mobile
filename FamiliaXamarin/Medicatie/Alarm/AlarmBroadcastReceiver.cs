@@ -81,7 +81,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
         private void LaunchAlarm(Context context, Intent intent, string medId, string boalaId)
         {
            
-                Toast.MakeText(context, "ALARMA !!!", ToastLength.Long).Show();
                 var i = new Intent(context, typeof(AlarmActivity));
                 var intentNotification = new Intent(context, typeof(MedicineFragment));
                 //context.startActivity(new Intent(context, AlarmActivity.class));

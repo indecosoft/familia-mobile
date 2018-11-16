@@ -11,6 +11,7 @@ using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Medicatie.Entities;
@@ -420,6 +421,7 @@ namespace FamiliaXamarin.Medicatie
         public void OnDateSet(DatePicker view, int year, int month, int dayOfMonth)
         {
             string dateSaved = $"{dayOfMonth}.{(month + 1)}.{year}";
+            Log.Error("DATE SAVED", dateSaved);
             tvStartDate.Text = dateSaved;
             this.medicament.Date = dateSaved;
         }
