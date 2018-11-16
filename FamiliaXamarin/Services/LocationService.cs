@@ -37,12 +37,11 @@ namespace FamiliaXamarin.Services
             
             _isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
 
-
             if (!_isGooglePlayServicesInstalled) return;
             _locationRequest = new LocationRequest()
                 .SetPriority(LocationRequest.PriorityHighAccuracy)
-                .SetInterval(1000 * 60 * 5)
-                .SetFastestInterval(1000 * 60 * 5);
+                .SetInterval(1000 * 60 * 30)
+                .SetFastestInterval(1000 * 60 * 30);
             _locationCallback = new FusedLocationProviderCallback(this);
 
             _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);

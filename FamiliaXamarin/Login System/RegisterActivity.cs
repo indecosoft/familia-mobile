@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Android.App;
+using Android.Content.PM;
 using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
@@ -12,7 +13,7 @@ using Org.Json;
 
 namespace FamiliaXamarin
 {
-    [Activity(Label = "RegisterActivity", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "RegisterActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class RegisterActivity : AppCompatActivity
     {
         private ConstraintLayout _layout;

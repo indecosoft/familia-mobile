@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using System;
+using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Support.Design.Widget;
@@ -19,15 +20,24 @@ using FamiliaXamarin.Settings;
 using Refractored.Controls;
 using Square.Picasso;
 using System.Threading;
+using System.Threading.Tasks;
+using Android;
+using Android.Content.PM;
+using Android.Gms.Location;
+using Android.Support.V4.Content;
+using Android.Util;
+using FamiliaXamarin.Location;
+using Org.Json;
 
 namespace FamiliaXamarin
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         Intent _loacationServiceIntent;
         Intent _webSocketServiceIntent;
         Intent _medicationServiceIntent;
+        private FusedLocationProviderClient _fusedLocationProviderClient;
         public static bool FromBoala;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -99,12 +109,59 @@ namespace FamiliaXamarin
                     medbeginTransaction.Commit();
                     FromBoala = false;
                 }
+            //_isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
+            if (!Utils.IsGooglePlayServicesInstalled(this)) return;
+            new LocationRequest()
+                .SetPriority(LocationRequest.PriorityHighAccuracy)
+                .SetInterval(1000)
+                .SetFastestInterval(1000);
+            new FusedLocationProviderCallback(this);
 
-           // Utils.CreateNotificationChannel();
+            _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);
+            // Utils.CreateNotificationChannel();
+            GetLastLocationButtonOnClick();
 
 
         }
+        private async void GetLastLocationButtonOnClick()
+        {
+            if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) == Permission.Granted)
+            {
+                await GetLastLocationFromDevice();
+            }
+        }
 
+        private async Task GetLastLocationFromDevice()
+        {
+            var location = await _fusedLocationProviderClient.GetLastLocationAsync();
+
+            if (location == null)
+            {
+                // Seldom happens, but should code that handles this scenario
+                Log.Error("Location is null", "******************");
+            }
+            else
+            {
+                Log.Debug("Sample", "The Latitude is " + location.Latitude);
+                Log.Debug("Sample", "The Longitude is " + location.Longitude);
+                JSONObject obj = new JSONObject().Put("latitude", (double) location.Latitude).Put("longitude", (double) location.Longitude);
+                JSONObject finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("IdClient", this)).Put("location", obj);
+                try
+                {
+                    await Task.Run(async () =>
+                    {
+                        string p = await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token", this));
+                        Log.Debug("Latitude ", location.Latitude.ToString());
+                        Log.Debug("Longitude", location.Longitude.ToString());
+                    });
+                }
+                catch (Exception e)
+                {
+                    Log.Error("****************************", e.Message);
+                }
+
+            }
+        }
         public override void OnBackPressed()
         {
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);

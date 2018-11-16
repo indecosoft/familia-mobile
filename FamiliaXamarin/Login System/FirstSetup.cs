@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Provider;
@@ -30,7 +31,7 @@ using FragmentPagerAdapter = Android.Support.V4.App.FragmentPagerAdapter;
 
 namespace FamiliaXamarin.Login_System
 {
-    [Activity(Label = "FirstSetup", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "FirstSetup", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class FirstSetup : FragmentActivity
     {
 

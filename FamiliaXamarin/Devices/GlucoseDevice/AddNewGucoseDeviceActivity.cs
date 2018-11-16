@@ -4,6 +4,7 @@ using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.App;
@@ -14,7 +15,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.Devices.GlucoseDevice
 {
-    [Activity(Label = "AddNewGucoseDeviceActivity", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "AddNewGucoseDeviceActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class AddNewGucoseDeviceActivity : AppCompatActivity
     {
         private RecyclerView _recyclerView;

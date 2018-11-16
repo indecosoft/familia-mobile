@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Android;
 using Android.App;
+using Android.Content.PM;
 using Android.Hardware.Fingerprints;
 using Android.OS;
 using Android.Security.Keystore;
@@ -18,7 +19,7 @@ using Permission = Android.Content.PM.Permission;
 
 namespace FamiliaXamarin.Login_System
 {
-    [Activity(Label = "Familia", Theme = "@style/AppTheme.Dark", MainLauncher = true)]
+    [Activity(Label = "Familia", Theme = "@style/AppTheme.Dark", MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait)]
     public class LoginActivity : AppCompatActivity
     {
         private ConstraintLayout _layout;
