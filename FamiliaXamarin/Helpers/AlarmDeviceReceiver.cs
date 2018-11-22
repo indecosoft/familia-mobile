@@ -11,6 +11,9 @@ using Android.Support.V4.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Devices;
+using FamiliaXamarin.Devices.GlucoseDevice;
+using FamiliaXamarin.Devices.PressureDevice;
 
 namespace FamiliaXamarin.Helpers
 {
@@ -20,10 +23,10 @@ namespace FamiliaXamarin.Helpers
         public static readonly string INTERVAL_CONTENT = "INTERVAL_CONTENT";
         public static readonly string CHANNEL_NAME_GLUCOSE = "Channel glucose";
         public static readonly string CHANNEL_NAME_BLOODPRESSURE = "Channel bloodpressure";
-        public static readonly string TITLE_BLOODPRESSURE = "Puls";
-        public static readonly string TITLE_GLUCOSE = "Glucoza";
-        public static readonly string CONTENT_GLUCOSE = "Trebuie sa-ti masori glucoza";
-        public static readonly string CONTENT_BLOODPRESSURE = "Trebuie sa-ti masori pulsul";
+        public static readonly string TITLE_BLOODPRESSURE = "Tensiunea";
+        public static readonly string TITLE_GLUCOSE = "Glicemie";
+        public static readonly string CONTENT_GLUCOSE = "Va rugam sa va masurati glicemia.";
+        public static readonly string CONTENT_BLOODPRESSURE = "Va rugam sa va masurati tensiunea.";
 
         public static int NotifyId = Constants.NotificationAlarmDevice;
 
@@ -36,15 +39,17 @@ namespace FamiliaXamarin.Helpers
 
             if (content.Equals(ChargerReceiver.INTERVAL_GLUCOSE))
             {
+                Intent intentGlucose = new Intent(context, typeof(GlucoseDeviceActivity));
                 createNotificationChannel(CHANNEL_NAME_GLUCOSE, TITLE_GLUCOSE, CONTENT_GLUCOSE);
-                BuildNotification(context, CHANNEL_NAME_GLUCOSE, TITLE_GLUCOSE, CONTENT_GLUCOSE);
+                BuildNotification(context, CHANNEL_NAME_GLUCOSE, TITLE_GLUCOSE, CONTENT_GLUCOSE, intentGlucose);
 
             }
 
             if (content.Equals(ChargerReceiver.INTERVAL_BLOOD_PRESSURE))
             {
+                Intent intentBloodPressure = new Intent(context, typeof(BloodPressureDeviceActivity));
                 createNotificationChannel(CHANNEL_NAME_BLOODPRESSURE, TITLE_BLOODPRESSURE, CONTENT_BLOODPRESSURE);
-                BuildNotification(context, CHANNEL_NAME_BLOODPRESSURE, TITLE_BLOODPRESSURE, CONTENT_BLOODPRESSURE);
+                BuildNotification(context, CHANNEL_NAME_BLOODPRESSURE, TITLE_BLOODPRESSURE, CONTENT_BLOODPRESSURE, intentBloodPressure);
             }
 
 
@@ -66,15 +71,15 @@ namespace FamiliaXamarin.Helpers
 
         }
 
-        private void BuildNotification(Context context, string channel, string title, string content)
+        private void BuildNotification(Context context, string channel, string title, string content, Intent intent)
         {
 
             NotifyId += 1;
 
-            Intent okIntent = new Intent(context, typeof(MainActivity));
+            
 
 
-            PendingIntent piNotification = PendingIntent.GetBroadcast(context, NotifyId, okIntent, PendingIntentFlags.UpdateCurrent);
+            PendingIntent piNotification = PendingIntent.GetActivity(context, NotifyId, intent, PendingIntentFlags.UpdateCurrent);
 
             NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context, channel)
@@ -82,6 +87,7 @@ namespace FamiliaXamarin.Helpers
                     .SetContentTitle(title)
                     .SetContentText(content)
                     .SetAutoCancel(true)
+                    .SetContentIntent(piNotification)
                     .SetPriority(NotificationCompat.PriorityHigh)
                     .SetAutoCancel(true);
 

@@ -305,7 +305,7 @@ namespace FamiliaXamarin.Helpers
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)
                             .SetStyle(new NotificationCompat.BigTextStyle()
-                                .BigText(body))
+                            .BigText(body))
                             .SetOngoing(false)
                             .SetPriority(NotificationCompat.PriorityDefault)
                             .SetContentIntent(acceptIntent2)

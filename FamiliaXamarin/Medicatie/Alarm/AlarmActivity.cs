@@ -105,12 +105,18 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         private void LaunchSnoozeAlarm()
         {
-            
-            var snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze", this));
-            if (snoozeInMinutes == null)
-            {
+            int snoozeInMinutes;
+            bool a = int.TryParse(Utils.GetDefaults("snooze", this), out snoozeInMinutes);
+            if (a)
+                snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze", this));
+            else
                 snoozeInMinutes = 5;
-            }
+
+//            var snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze", this));
+//            if (snoozeInMinutes == null)
+//            {
+//                snoozeInMinutes = 5;
+//            }
             var snoozeInMilisec = snoozeInMinutes * 60000;
             Toast.MakeText(this, "Alarma amanata pentru " + snoozeInMinutes + " minute.", ToastLength.Short).Show();
             //btnOk.Visibility = ViewStates.Gone;

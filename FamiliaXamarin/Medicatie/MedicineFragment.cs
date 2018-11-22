@@ -35,9 +35,11 @@ namespace FamiliaXamarin.Medicatie
             view.FindViewById(Resource.Id.btn_add_disease).SetOnClickListener(this);
             setupRecycleView(view);
 
-            _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Preluare medicatie...", Activity, false);
-            _progressBarDialog.Show();
+            //_progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Preluare medicatie...", Activity, false);
+           // _progressBarDialog.Show();
             GetData();
+
+           
 
             var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var numeDB = "devices_data.db";
@@ -56,7 +58,7 @@ namespace FamiliaXamarin.Medicatie
 
                     if (res != null)
                     {
-                        Log.Error("RES", res);
+                        Log.Error("RESULT_FOR_MEDICATIE", res);
                         if (res.Equals("[]")) return;
                         _medications = ParseResultFromUrl(res);
                        // foreach (var ms in _medications)
@@ -91,6 +93,7 @@ namespace FamiliaXamarin.Medicatie
                     {
                         Activity.RunOnUiThread(() =>
                         {
+                            Log.Error("RESULT_FOR_MEDICATIE", "nu se poate conecta la server");
                             Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
 
                         });
@@ -103,7 +106,7 @@ namespace FamiliaXamarin.Medicatie
                
                
             });
-            _progressBarDialog.Dismiss();
+           // _progressBarDialog.Dismiss();
 
             
         }
