@@ -169,7 +169,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
         }
      
  
-        void createNotificationChannel(string mChannel, string mTitle, string mContent)
+        private void createNotificationChannel(string mChannel, string mTitle, string mContent)
         {
             string name = mTitle;
             string description = mContent;

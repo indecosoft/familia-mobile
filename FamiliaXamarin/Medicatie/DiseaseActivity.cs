@@ -219,9 +219,9 @@ namespace FamiliaXamarin.Medicatie
         }
         private void setAlarm(Hour hour, Medicine med, Disease boala, ref List<int> alarms, int position)
         {
-            var id = CurrentTimeMillis(); ;
+            var idAlarm = DateTime.Now.Millisecond ;
             var am = (AlarmManager)GetSystemService(AlarmService);
-
+            var id = 0;
             var i = new Intent(this, typeof(AlarmBroadcastReceiver));
             i.PutExtra(BOALA_ID, boala.Id);
             i.PutExtra(MED_ID, med.IdMed);
@@ -234,8 +234,8 @@ namespace FamiliaXamarin.Medicatie
             
             alarms.Add(id);
             i.PutExtra(ALARM_ID, id);
-
-            var pi = PendingIntent.GetBroadcast(this, id, i, PendingIntentFlags.OneShot);
+            Log.Error("MEDICAMENT", med.Name);
+            var pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
 
             if (am == null) return;
 
