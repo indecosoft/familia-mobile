@@ -47,8 +47,8 @@ namespace FamiliaXamarin
             var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
-
-
+            
+            
            
 
            // var am = (AlarmManager)GetSystemService(Context.AlarmService);
@@ -122,7 +122,23 @@ namespace FamiliaXamarin
             GetLastLocationButtonOnClick();
 
 
+            if (Intent.HasExtra("extra"))
+            {
+                openHealthDevicesFragment();
+            }
+
         }
+
+        private void openMedicationFragment()
+        {
+            var medFragment = new MedicineFragment();
+            var medsupportFragmentManager = SupportFragmentManager;
+            var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
+            medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
+            medbeginTransaction.AddToBackStack(null);
+            medbeginTransaction.Commit();
+        }
+
         private async void GetLastLocationButtonOnClick()
         {
             if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) == Permission.Granted)
@@ -203,20 +219,10 @@ namespace FamiliaXamarin
                     fragmentTransactionMap.Commit();
                     break;
                 case Resource.Id.nav_devices:
-                    var devicesFragment = new HealthDevicesFragment();
-                    var supportFragmentManager = SupportFragmentManager;
-                    var beginTransaction = supportFragmentManager.BeginTransaction();
-                    beginTransaction.Replace(Resource.Id.fragment_container, devicesFragment);
-                    beginTransaction.AddToBackStack(null);
-                    beginTransaction.Commit();
+                    openHealthDevicesFragment();
                     break;
                 case Resource.Id.medicatie:
-                    var medFragment = new MedicineFragment();
-                    var medsupportFragmentManager = SupportFragmentManager;
-                    var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
-                    medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
-                    medbeginTransaction.AddToBackStack(null);
-                    medbeginTransaction.Commit();
+                    openMedicationFragment();
                     break;
                 case Resource.Id.chat:
                     var convFragment = new ConversationsFragment();
@@ -270,6 +276,16 @@ namespace FamiliaXamarin
             var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
             return true;
+        }
+
+        private void openHealthDevicesFragment()
+        {
+            var devicesFragment = new HealthDevicesFragment();
+            var supportFragmentManager = SupportFragmentManager;
+            var beginTransaction = supportFragmentManager.BeginTransaction();
+            beginTransaction.Replace(Resource.Id.fragment_container, devicesFragment);
+            beginTransaction.AddToBackStack(null);
+            beginTransaction.Commit();
         }
     }
 }
