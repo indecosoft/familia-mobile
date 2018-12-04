@@ -19,7 +19,7 @@ namespace FamiliaXamarin.Helpers
 {
 
     [BroadcastReceiver(Enabled = true, Exported = true)]
-    [IntentFilter(new[] { Android.Content.Intent.ActionCloseSystemDialogs })]
+    [IntentFilter(new[] { Android.Content.Intent.ActionPowerConnected })]
     public class ChargerReceiver : BroadcastReceiver
     {
         public static readonly string INTERVAL_GLUCOSE = "INTERVAL_GLUCOSE";
@@ -27,9 +27,9 @@ namespace FamiliaXamarin.Helpers
         private SQLiteAsyncConnection _db;
         public async  override void OnReceive(Context context, Intent intent)
         {
+            Toast.MakeText(context, "IT IS WORKING", ToastLength.Long).Show();
             var action = intent.Action;
-            Toast.MakeText(context, "MERGE CHARGER RECEIVER", ToastLength.Long).Show();
-            if (action != null && action.Equals(Intent.ActionCloseSystemDialogs))
+            if (action != null && action.Equals(Intent.ActionPowerConnected))
             {
                 var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
                 var numeDB = "devices_data.db";
@@ -54,7 +54,6 @@ namespace FamiliaXamarin.Helpers
                     LaunchAlarm(context, intervalBloodPressure, INTERVAL_BLOOD_PRESSURE);
                 });
 
-                Toast.MakeText(context, "S-a facut GET", ToastLength.Long).Show();
 
             }
         }

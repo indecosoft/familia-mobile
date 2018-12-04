@@ -26,7 +26,7 @@ namespace FamiliaXamarin.Services
             Log.Error("Service:", "WebSocketService STARTED");
 
             var charger = new ChargerReceiver();
-            RegisterReceiver(charger, new IntentFilter(Intent.ActionCloseSystemDialogs));
+            RegisterReceiver(charger, new IntentFilter(Intent.ActionPowerConnected));
 
             _socketClient.Connect(Constants.WebSocketAddress, Constants.WebSocketPort, this);
         }

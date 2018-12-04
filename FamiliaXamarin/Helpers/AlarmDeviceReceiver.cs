@@ -39,15 +39,17 @@ namespace FamiliaXamarin.Helpers
 
             if (content.Equals(ChargerReceiver.INTERVAL_GLUCOSE))
             {
-                Intent intentGlucose = new Intent(context, typeof(GlucoseDeviceActivity));
+                Intent intentGlucose = new Intent(context, typeof(MainActivity));
+                intentGlucose.PutExtra("extra", "HealthDevicesFragment");
                 createNotificationChannel(CHANNEL_NAME_GLUCOSE, TITLE_GLUCOSE, CONTENT_GLUCOSE);
                 BuildNotification(context, CHANNEL_NAME_GLUCOSE, TITLE_GLUCOSE, CONTENT_GLUCOSE, intentGlucose);
 
             }
 
             if (content.Equals(ChargerReceiver.INTERVAL_BLOOD_PRESSURE))
-            {
-                Intent intentBloodPressure = new Intent(context, typeof(BloodPressureDeviceActivity));
+            {   
+                Intent intentBloodPressure = new Intent(context, typeof(MainActivity));
+                intentBloodPressure.PutExtra("extra", "HealthDevicesFragment");
                 createNotificationChannel(CHANNEL_NAME_BLOODPRESSURE, TITLE_BLOODPRESSURE, CONTENT_BLOODPRESSURE);
                 BuildNotification(context, CHANNEL_NAME_BLOODPRESSURE, TITLE_BLOODPRESSURE, CONTENT_BLOODPRESSURE, intentBloodPressure);
             }
