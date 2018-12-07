@@ -95,6 +95,7 @@
     <Compile Include="Chat\ChatModel.cs" />
     <Compile Include="Services\MedicationService.cs" />
     <Compile Include="Services\MedicalAsistanceService.cs" />
+    <Compile Include="Services\SmartBandService.cs" />
     <Compile Include="Settings\SettingsFragment.cs" />
     <Compile Include="Sharing\SharingDataFragment.cs" />
     <Compile Include="WebSocket\WebSocketClient.cs" />

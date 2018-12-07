@@ -5659,11 +5659,14 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0e0003
 			public const int CardView_Light = 2131623939;
 			
-			// aapt resource value: 0x7f0e018e
-			public const int DiseaseSpinnerTheme = 2131624334;
-			
 			// aapt resource value: 0x7f0e018d
-			public const int GenderSpinnerTheme = 2131624333;
+			public const int DevicesBar = 2131624333;
+			
+			// aapt resource value: 0x7f0e018f
+			public const int DiseaseSpinnerTheme = 2131624335;
+			
+			// aapt resource value: 0x7f0e018e
+			public const int GenderSpinnerTheme = 2131624334;
 			
 			// aapt resource value: 0x7f0e018c
 			public const int HeaderBar = 2131624332;

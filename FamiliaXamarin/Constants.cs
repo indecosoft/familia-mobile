@@ -48,10 +48,15 @@ namespace FamiliaXamarin
         public static string MedicationFile { get; } = "data.txt";
         public static string MedicationServerFile { get; } = "data_server.txt";
         #endregion
+        #region Fitbit Constants
+        public static string ClientSecret { get; } = "bb4070c932c69d3083aa90dd471c8cf3";
+        public static string ClientId { get; } = "22CZRL";
+        public static string CallbackUrl { get; } = "fittauth://finish";
+        #endregion
 
         public static string SaveDeviceDataUrl { get; } = "https://gisdev.indecosoft.net/devices/save-device-measurements";
 
-        public static string ServerAddress { get; } = "http://192.168.101.192:3000/";
+        public static string ServerAddress { get; } = "http://192.168.101.228:3000/";
 
         //public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/chat";
         public static string PublicServerAddress { get; } = "http://192.168.101.228:3000";

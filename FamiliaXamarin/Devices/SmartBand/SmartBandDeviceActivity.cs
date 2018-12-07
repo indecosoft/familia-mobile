@@ -1,4 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -36,6 +43,33 @@ namespace FamiliaXamarin.Devices.SmartBand
         private CircleImageView _avatarImage;
         private ConstraintLayout _loadingScreen;
 
+        public static  string Post(string url, string code)
+        {
+            try
+            {
+                var dict = new Dictionary<string, string>
+                {
+                    {"code", code}, {"grant_type", "authorization_code"}, {"redirect_uri", Constants.CallbackUrl}
+                };
+
+                using (var client = new HttpClient())
+                {
+                    var byteArray = Encoding.ASCII.GetBytes($"{Constants.ClientId}:{Constants.ClientSecret}");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var response =  client.PostAsync(url, new FormUrlEncodedContent(dict)).Result;
+                    return response.Content.ReadAsStringAsync().Result;
+
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -66,28 +100,26 @@ namespace FamiliaXamarin.Devices.SmartBand
             OnNewIntent(Intent);
             if (_url != null)
             {
-                Log.Error("URL", $"{_url}");
 
-                var token = _url.Substring(_url.IndexOf("&access_token", StringComparison.Ordinal) + 32);
-                var userId = _url.Substring(_url.IndexOf("&user_id=", StringComparison.Ordinal) + 9);
-                var scope = _url.Substring(_url.IndexOf("&scope=", StringComparison.Ordinal) + 7);
-                var tokenType = _url.Substring(_url.IndexOf("&token_type=", StringComparison.Ordinal) + 12);
-                var expires = _url.Substring(_url.IndexOf("&expires_in=", StringComparison.Ordinal) + 12);
+                var code= _url.Substring(_url.IndexOf("&access_token", StringComparison.Ordinal) + 24).Replace("#_=_", string.Empty);
 
-                tokenType = tokenType.Replace($"&expires_in={expires}", string.Empty);
-                token = token.Replace($"&user_id={userId}", string.Empty);
-                userId = userId.Replace($"&scope={scope}", string.Empty);
-                scope = scope.Replace($"&token_type={tokenType}&expires_in={expires}", string.Empty);
+                await Task.Run( () => {
 
-                Log.Error("Token", token);
-                Log.Error("Token_Type", tokenType);
-                Log.Error("UserId", userId);
-                Log.Error("Scope", scope);
-                Log.Error("Expires_in", expires);
+                    var response =  Post("https://api.fitbit.com/oauth2/token", code);
+                    if (response != null)
+                    {
+                        var obj = new JSONObject(response);
+                        _token = obj.GetString("access_token");
+                        var refreshToken = obj.GetString("refresh_token");
+                        var userId = obj.GetString("user_id");
+                        Utils.SetDefaults(GetString(Resource.String.smartband_device), _token, this);
+                        Utils.SetDefaults("FitbitToken", _token, this);
+                        Utils.SetDefaults("RitbitRefreshToken", refreshToken, this);
+                        Utils.SetDefaults("FitbitUserId", userId, this);
+                        Utils.SetDefaults("FitbitAuthCode", code, this);
+                    }
 
-
-                Utils.SetDefaults(GetString(Resource.String.smartband_device), token, this);
-                _token = token;
+                });
             }
             else
             {
