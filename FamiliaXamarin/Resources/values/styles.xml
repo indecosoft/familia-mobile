@@ -60,6 +60,10 @@
   <style name="HeaderBar">
     <item name="android:background">#F5F7FA</item>
     <item name="android:windowContentOverlay">@null</item>
+  </style>  
+  <style name="DevicesBar">
+    <item name="android:background">#E6E6E6</item>
+    <item name="android:windowContentOverlay">@null</item>
   </style>
   <style name="GenderSpinnerTheme" parent="android:Widget.Spinner">
     <item name="android:background">@drawable/gender_spinner</item>

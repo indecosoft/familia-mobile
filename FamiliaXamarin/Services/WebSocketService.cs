@@ -33,7 +33,7 @@ namespace FamiliaXamarin.Services
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            Log.Error("Location Service", "Started");
+            Log.Error("WebSocket Service", "Started");
 
             var notification = new NotificationCompat.Builder(this)
                 .SetContentTitle(Resources.GetString(Resource.String.app_name))
