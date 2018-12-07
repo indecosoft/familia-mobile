@@ -242,12 +242,8 @@ namespace FamiliaXamarin
                     fragmentTransactionSettings.Commit();
                     break;
                 case Resource.Id.partajare_date:
-                    var fragmentSharing = new SharingDataFragment();
-                    var fragmentManagerSharing = SupportFragmentManager;
-                    var fragmentTransactionSharing = fragmentManagerSharing.BeginTransaction();
-                    fragmentTransactionSharing.Replace(Resource.Id.fragment_container, fragmentSharing);
-                    fragmentTransactionSharing.AddToBackStack(null);
-                    fragmentTransactionSharing.Commit();
+                   
+                    StartActivity(new Intent(this, typeof(SharingDataActivity)));
 
                     break;
                 case Resource.Id.nav_asistenta:
