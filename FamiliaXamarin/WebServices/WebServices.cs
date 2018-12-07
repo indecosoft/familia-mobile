@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Org.Json;
 
@@ -173,6 +176,28 @@ namespace FamiliaXamarin
                 {
                     var result = await streamReader.ReadToEndAsync();
                     return result;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        public static string Post(string url, Dictionary<string, string> dict)
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var byteArray = Encoding.ASCII.GetBytes($"{Constants.ClientId}:{Constants.ClientSecret}");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var response = client.PostAsync(url, new FormUrlEncodedContent(dict)).Result;
+                    return response.Content.ReadAsStringAsync().Result;
+
                 }
             }
             catch (Exception e)

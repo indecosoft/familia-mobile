@@ -38,6 +38,7 @@ namespace FamiliaXamarin
         Intent _loacationServiceIntent;
         Intent _webSocketServiceIntent;
         Intent _medicationServiceIntent;
+        Intent _smartBandServiceIntent;
         private FusedLocationProviderClient _fusedLocationProviderClient;
         public static bool FromBoala;
 
@@ -69,11 +70,13 @@ namespace FamiliaXamarin
 
             _loacationServiceIntent = new Intent(this, typeof(LocationService));
             _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
+            _smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
             //_medicationServiceIntent = new Intent(this, typeof(MedicationService));
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
                     StartForegroundService(_loacationServiceIntent);
                     StartForegroundService(_webSocketServiceIntent);
+                    StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);
                 
             }
@@ -81,6 +84,7 @@ namespace FamiliaXamarin
             {
                     StartService(_loacationServiceIntent);
                     StartService(_webSocketServiceIntent);
+                    StartService(_smartBandServiceIntent);
                    // StartService(_medicationServiceIntent);
 
             }

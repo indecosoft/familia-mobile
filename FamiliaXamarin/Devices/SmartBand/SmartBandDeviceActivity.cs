@@ -43,32 +43,7 @@ namespace FamiliaXamarin.Devices.SmartBand
         private CircleImageView _avatarImage;
         private ConstraintLayout _loadingScreen;
 
-        public static  string Post(string url, string code)
-        {
-            try
-            {
-                var dict = new Dictionary<string, string>
-                {
-                    {"code", code}, {"grant_type", "authorization_code"}, {"redirect_uri", Constants.CallbackUrl}
-                };
-
-                using (var client = new HttpClient())
-                {
-                    var byteArray = Encoding.ASCII.GetBytes($"{Constants.ClientId}:{Constants.ClientSecret}");
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    var response =  client.PostAsync(url, new FormUrlEncodedContent(dict)).Result;
-                    return response.Content.ReadAsStringAsync().Result;
-
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return null;
-            }
-        }
+     
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
@@ -104,8 +79,11 @@ namespace FamiliaXamarin.Devices.SmartBand
                 var code= _url.Substring(_url.IndexOf("&access_token", StringComparison.Ordinal) + 24).Replace("#_=_", string.Empty);
 
                 await Task.Run( () => {
-
-                    var response =  Post("https://api.fitbit.com/oauth2/token", code);
+                    var dict = new Dictionary<string, string>
+                    {
+                        {"code", code}, {"grant_type", "authorization_code"}, {"redirect_uri", Constants.CallbackUrl}
+                    };
+                    var response =  WebServices.Post("https://api.fitbit.com/oauth2/token", dict);
                     if (response != null)
                     {
                         var obj = new JSONObject(response);
@@ -114,7 +92,7 @@ namespace FamiliaXamarin.Devices.SmartBand
                         var userId = obj.GetString("user_id");
                         Utils.SetDefaults(GetString(Resource.String.smartband_device), _token, this);
                         Utils.SetDefaults("FitbitToken", _token, this);
-                        Utils.SetDefaults("RitbitRefreshToken", refreshToken, this);
+                        Utils.SetDefaults("FitbitRefreshToken", refreshToken, this);
                         Utils.SetDefaults("FitbitUserId", userId, this);
                         Utils.SetDefaults("FitbitAuthCode", code, this);
                     }
