@@ -27,6 +27,7 @@ using Android.Gms.Location;
 using Android.Support.V4.Content;
 using Android.Util;
 using FamiliaXamarin.Location;
+using FamiliaXamarin.Sharing;
 using Org.Json;
 
 namespace FamiliaXamarin
@@ -239,6 +240,15 @@ namespace FamiliaXamarin
                     fragmentTransactionSettings.Replace(Resource.Id.fragment_container, fragmentSettings);
                     fragmentTransactionSettings.AddToBackStack(null);
                     fragmentTransactionSettings.Commit();
+                    break;
+                case Resource.Id.partajare_date:
+                    var fragmentSharing = new SharingDataFragment();
+                    var fragmentManagerSharing = SupportFragmentManager;
+                    var fragmentTransactionSharing = fragmentManagerSharing.BeginTransaction();
+                    fragmentTransactionSharing.Replace(Resource.Id.fragment_container, fragmentSharing);
+                    fragmentTransactionSharing.AddToBackStack(null);
+                    fragmentTransactionSharing.Commit();
+
                     break;
                 case Resource.Id.nav_asistenta:
                     var fragmentAsist = new AsistentForm();

@@ -96,6 +96,7 @@
     <Compile Include="Services\MedicationService.cs" />
     <Compile Include="Services\MedicalAsistanceService.cs" />
     <Compile Include="Settings\SettingsFragment.cs" />
+    <Compile Include="Sharing\SharingDataFragment.cs" />
     <Compile Include="WebSocket\WebSocketClient.cs" />
     <Compile Include="Services\WebSocketService.cs" />
     <Compile Include="WebSocket\IWebSocketClient.cs" />
@@ -612,7 +613,14 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_sharing_data.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\menu_navigation.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.

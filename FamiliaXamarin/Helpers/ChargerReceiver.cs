@@ -27,7 +27,7 @@ namespace FamiliaXamarin.Helpers
         private SQLiteAsyncConnection _db;
         public async  override void OnReceive(Context context, Intent intent)
         {
-            Toast.MakeText(context, "IT IS WORKING", ToastLength.Long).Show();
+           // Toast.MakeText(context, "IT IS WORKING", ToastLength.Long).Show();
             var action = intent.Action;
             if (action != null && action.Equals(Intent.ActionPowerConnected))
             {
