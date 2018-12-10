@@ -2,17 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
   <item
-    android:id="@+id/menu_home"
+    android:id="@+id/menu_tab1"
     android:enabled="true"
     android:icon="@drawable/logo"
     android:title="TAB1"
-    app:showAsAction="ifRoom" />
+    app:showAsAction="ifRoom" 
+   />
 
   <item
-    android:id="@+id/menu_audio"
+    android:id="@+id/menu_tab2"
     android:enabled="true"
     android:icon="@drawable/logo"
     android:title="TAB2"
-    app:showAsAction="ifRoom" />
+    app:showAsAction="ifRoom"
+/>
 
 </menu>

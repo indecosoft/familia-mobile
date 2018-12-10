@@ -3,41 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Android.Support.V7.App;
+using Android.App;
+using Android.Support.V4.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.V4.App;
-using Android.Support.V4.View;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Fragment = Android.Support.V4.App.Fragment;
+using FamiliaXamarin.Sharing;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Android.Content.PM;
 
-
-namespace FamiliaXamarin.Sharing
+namespace FamiliaXamarin.Services
 {
-   
-   
-    public class SharingDataFragment : FragmentActivity
+    [Activity(Label = "SharingDataActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
+    public class SharingDataActivity : AppCompatActivity
     {
-       
         private Android.Support.Design.Widget.BottomNavigationView bottomNavigation;
-        private FrameLayout frameLayout;
-
-        protected override void OnCreate(Bundle bundle)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(bundle);
+            base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.fragment_sharing_data);
-            frameLayout = FindViewById<FrameLayout>(Resource.Id.content_frame);
 
+            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
 
-//            var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-//            if (toolbar != null)
-//            {
-//                SetSupportActionBar(toolbar);
-//                SupportActionBar.SetDisplayHomeAsUpEnabled(false);
-//                SupportActionBar.SetHomeButtonEnabled(false);
-//            }
+            SetSupportActionBar(toolbar);
+
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetDisplayShowHomeEnabled(true);
+            toolbar.NavigationClick += delegate
+            {
+                var intent = new Intent(this, typeof(MainActivity));
+                intent.AddFlags(ActivityFlags.ClearTop);
+                StartActivity(intent);
+            };
+
+            Title = "Partajare date";
 
             bottomNavigation = FindViewById<Android.Support.Design.Widget.BottomNavigationView>(Resource.Id.bottom_navigation);
 
@@ -45,13 +47,16 @@ namespace FamiliaXamarin.Sharing
 
             // Load the first fragment on creation
             LoadFragment(Resource.Id.menu_tab1);
+
+        }
+        public override void OnBackPressed()
+        {
+            base.OnBackPressed();
+            var intent = new Intent(this, typeof(MainActivity));
+            intent.AddFlags(ActivityFlags.ClearTop);
+            StartActivity(intent);
         }
 
-//        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-//        {
-//            View view = inflater.Inflate(Resource.Layout.fragment_sharing_data, container, false);
-//            return view;
-//        }
         private void BottomNavigation_NavigationItemSelected(object sender, Android.Support.Design.Widget.BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
             LoadFragment(e.Item.ItemId);
@@ -59,16 +64,17 @@ namespace FamiliaXamarin.Sharing
 
         void LoadFragment(int id)
         {
-           Fragment fragment = null;
+            Android.Support.V4.App.Fragment fragment = null;
             switch (id)
             {
                 case Resource.Id.menu_tab1:
                     fragment = new Tab1Fragment();
+              
                     break;
                 case Resource.Id.menu_tab2:
                     fragment = new Tab2Fragment();
                     break;
-                   
+
             }
 
             if (fragment == null)
@@ -78,8 +84,5 @@ namespace FamiliaXamarin.Sharing
                 .Replace(Resource.Id.content_frame, fragment)
                 .Commit();
         }
-
-       
-
     }
 }
