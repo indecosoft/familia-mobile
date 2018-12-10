@@ -95,10 +95,9 @@
     <Compile Include="Chat\ChatModel.cs" />
     <Compile Include="Services\MedicationService.cs" />
     <Compile Include="Services\MedicalAsistanceService.cs" />
-    <Compile Include="Services\SharingDataActivity.cs" />
+    <Compile Include="Sharing\SharingDataActivity.cs" />
     <Compile Include="Services\SmartBandService.cs" />
     <Compile Include="Settings\SettingsFragment.cs" />
-    <Compile Include="Sharing\SharingDataFragment.cs" />
     <Compile Include="Sharing\Tab1Fragment.cs" />
     <Compile Include="Sharing\Tab2Fragment.cs" />
     <Compile Include="WebSocket\WebSocketClient.cs" />
@@ -637,6 +636,15 @@
     <AndroidResource Include="Resources\layout\layout_tab2.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\share_variant.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\search_person.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\view_list.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

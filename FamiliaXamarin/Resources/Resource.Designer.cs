@@ -2758,26 +2758,26 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f020057
 			public const int avd_hide_password = 2130837591;
 			
-			// aapt resource value: 0x7f0200c1
-			public const int avd_hide_password_1 = 2130837697;
+			// aapt resource value: 0x7f0200c4
+			public const int avd_hide_password_1 = 2130837700;
 			
-			// aapt resource value: 0x7f0200c2
-			public const int avd_hide_password_2 = 2130837698;
+			// aapt resource value: 0x7f0200c5
+			public const int avd_hide_password_2 = 2130837701;
 			
-			// aapt resource value: 0x7f0200c3
-			public const int avd_hide_password_3 = 2130837699;
+			// aapt resource value: 0x7f0200c6
+			public const int avd_hide_password_3 = 2130837702;
 			
 			// aapt resource value: 0x7f020058
 			public const int avd_show_password = 2130837592;
 			
-			// aapt resource value: 0x7f0200c4
-			public const int avd_show_password_1 = 2130837700;
+			// aapt resource value: 0x7f0200c7
+			public const int avd_show_password_1 = 2130837703;
 			
-			// aapt resource value: 0x7f0200c5
-			public const int avd_show_password_2 = 2130837701;
+			// aapt resource value: 0x7f0200c8
+			public const int avd_show_password_2 = 2130837704;
 			
-			// aapt resource value: 0x7f0200c6
-			public const int avd_show_password_3 = 2130837702;
+			// aapt resource value: 0x7f0200c9
+			public const int avd_show_password_3 = 2130837705;
 			
 			// aapt resource value: 0x7f020059
 			public const int background_black_gradation = 2130837593;
@@ -3028,11 +3028,11 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0200ab
 			public const int notification_icon_background = 2130837675;
 			
-			// aapt resource value: 0x7f0200bf
-			public const int notification_template_icon_bg = 2130837695;
+			// aapt resource value: 0x7f0200c2
+			public const int notification_template_icon_bg = 2130837698;
 			
-			// aapt resource value: 0x7f0200c0
-			public const int notification_template_icon_low_bg = 2130837696;
+			// aapt resource value: 0x7f0200c3
+			public const int notification_template_icon_low_bg = 2130837699;
 			
 			// aapt resource value: 0x7f0200ac
 			public const int notification_tile_bg = 2130837676;
@@ -3056,40 +3056,49 @@ namespace FamiliaXamarin
 			public const int round_button = 2130837682;
 			
 			// aapt resource value: 0x7f0200b3
-			public const int send = 2130837683;
+			public const int search_person = 2130837683;
 			
 			// aapt resource value: 0x7f0200b4
-			public const int setup_button = 2130837684;
+			public const int send = 2130837684;
 			
 			// aapt resource value: 0x7f0200b5
-			public const int side_nav_bar = 2130837685;
+			public const int setup_button = 2130837685;
 			
 			// aapt resource value: 0x7f0200b6
-			public const int snooze_button = 2130837686;
+			public const int share_variant = 2130837686;
 			
 			// aapt resource value: 0x7f0200b7
-			public const int swipe_left_button = 2130837687;
+			public const int side_nav_bar = 2130837687;
 			
 			// aapt resource value: 0x7f0200b8
-			public const int swipe_message = 2130837688;
+			public const int snooze_button = 2130837688;
 			
 			// aapt resource value: 0x7f0200b9
-			public const int tooltip_frame_dark = 2130837689;
+			public const int swipe_left_button = 2130837689;
 			
 			// aapt resource value: 0x7f0200ba
-			public const int tooltip_frame_light = 2130837690;
+			public const int swipe_message = 2130837690;
 			
 			// aapt resource value: 0x7f0200bb
-			public const int walk = 2130837691;
+			public const int tooltip_frame_dark = 2130837691;
 			
 			// aapt resource value: 0x7f0200bc
-			public const int watch = 2130837692;
+			public const int tooltip_frame_light = 2130837692;
 			
 			// aapt resource value: 0x7f0200bd
-			public const int water = 2130837693;
+			public const int view_list = 2130837693;
 			
 			// aapt resource value: 0x7f0200be
-			public const int wheelchair = 2130837694;
+			public const int walk = 2130837694;
+			
+			// aapt resource value: 0x7f0200bf
+			public const int watch = 2130837695;
+			
+			// aapt resource value: 0x7f0200c0
+			public const int water = 2130837696;
+			
+			// aapt resource value: 0x7f0200c1
+			public const int wheelchair = 2130837697;
 			
 			static Drawable()
 			{
@@ -3197,8 +3206,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0144
 			public const int action = 2131362116;
 			
-			// aapt resource value: 0x7f0a015a
-			public const int action0 = 2131362138;
+			// aapt resource value: 0x7f0a015c
+			public const int action0 = 2131362140;
 			
 			// aapt resource value: 0x7f0a009b
 			public const int action_bar = 2131361947;
@@ -3221,17 +3230,17 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0079
 			public const int action_bar_title = 2131361913;
 			
-			// aapt resource value: 0x7f0a0157
-			public const int action_container = 2131362135;
+			// aapt resource value: 0x7f0a0159
+			public const int action_container = 2131362137;
 			
 			// aapt resource value: 0x7f0a009c
 			public const int action_context_bar = 2131361948;
 			
-			// aapt resource value: 0x7f0a015e
-			public const int action_divider = 2131362142;
+			// aapt resource value: 0x7f0a0160
+			public const int action_divider = 2131362144;
 			
-			// aapt resource value: 0x7f0a0158
-			public const int action_image = 2131362136;
+			// aapt resource value: 0x7f0a015a
+			public const int action_image = 2131362138;
 			
 			// aapt resource value: 0x7f0a0003
 			public const int action_menu_divider = 2131361795;
@@ -3248,11 +3257,11 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a007b
 			public const int action_mode_close_button = 2131361915;
 			
-			// aapt resource value: 0x7f0a0159
-			public const int action_text = 2131362137;
+			// aapt resource value: 0x7f0a015b
+			public const int action_text = 2131362139;
 			
-			// aapt resource value: 0x7f0a0165
-			public const int actions = 2131362149;
+			// aapt resource value: 0x7f0a0167
+			public const int actions = 2131362151;
 			
 			// aapt resource value: 0x7f0a007c
 			public const int activity_chooser_view_content = 2131361916;
@@ -3383,6 +3392,9 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0109
 			public const int btn_save_med_dialog = 2131362057;
 			
+			// aapt resource value: 0x7f0a0154
+			public const int btn_scanQR = 2131362132;
+			
 			// aapt resource value: 0x7f0a00b1
 			public const int btn_snooze_alarm = 2131361969;
 			
@@ -3392,8 +3404,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0082
 			public const int buttonPanel = 2131361922;
 			
-			// aapt resource value: 0x7f0a015b
-			public const int cancel_action = 2131362139;
+			// aapt resource value: 0x7f0a015d
+			public const int cancel_action = 2131362141;
 			
 			// aapt resource value: 0x7f0a00f8
 			public const int card_frame_content_container = 2131362040;
@@ -3425,14 +3437,14 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a006e
 			public const int chains = 2131361902;
 			
-			// aapt resource value: 0x7f0a0171
-			public const int chat = 2131362161;
+			// aapt resource value: 0x7f0a0173
+			public const int chat = 2131362163;
 			
 			// aapt resource value: 0x7f0a0092
 			public const int checkbox = 2131361938;
 			
-			// aapt resource value: 0x7f0a0162
-			public const int chronometer = 2131362146;
+			// aapt resource value: 0x7f0a0164
+			public const int chronometer = 2131362148;
 			
 			// aapt resource value: 0x7f0a005d
 			public const int clip_horizontal = 2131361885;
@@ -3455,8 +3467,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a00d4
 			public const int content = 2131362004;
 			
-			// aapt resource value: 0x7f0a016b
-			public const int contentFrame = 2131362155;
+			// aapt resource value: 0x7f0a016d
+			public const int contentFrame = 2131362157;
 			
 			// aapt resource value: 0x7f0a0085
 			public const int contentPanel = 2131361925;
@@ -3521,8 +3533,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0042
 			public const int end = 2131361858;
 			
-			// aapt resource value: 0x7f0a0167
-			public const int end_padder = 2131362151;
+			// aapt resource value: 0x7f0a0169
+			public const int end_padder = 2131362153;
 			
 			// aapt resource value: 0x7f0a004f
 			public const int enterAlways = 2131361871;
@@ -3605,8 +3617,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0065
 			public const int gone = 2131361893;
 			
-			// aapt resource value: 0x7f0a0170
-			public const int harta = 2131362160;
+			// aapt resource value: 0x7f0a0172
+			public const int harta = 2131362162;
 			
 			// aapt resource value: 0x7f0a00e5
 			public const int header = 2131362021;
@@ -3626,8 +3638,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0081
 			public const int icon = 2131361921;
 			
-			// aapt resource value: 0x7f0a0166
-			public const int icon_group = 2131362150;
+			// aapt resource value: 0x7f0a0168
+			public const int icon_group = 2131362152;
 			
 			// aapt resource value: 0x7f0a002b
 			public const int icon_only = 2131361835;
@@ -3692,8 +3704,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a00e7
 			public const int lbDisplayName = 2131362023;
 			
-			// aapt resource value: 0x7f0a0156
-			public const int lbEmail = 2131362134;
+			// aapt resource value: 0x7f0a0158
+			public const int lbEmail = 2131362136;
 			
 			// aapt resource value: 0x7f0a00e8
 			public const int lbFullName = 2131362024;
@@ -3704,8 +3716,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a011d
 			public const int lbNobody = 2131362077;
 			
-			// aapt resource value: 0x7f0a0155
-			public const int lbNume = 2131362133;
+			// aapt resource value: 0x7f0a0157
+			public const int lbNume = 2131362135;
 			
 			// aapt resource value: 0x7f0a00ef
 			public const int lbSleepTime = 2131362031;
@@ -3731,17 +3743,17 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0080
 			public const int list_item = 2131361920;
 			
-			// aapt resource value: 0x7f0a0168
-			public const int loader = 2131362152;
+			// aapt resource value: 0x7f0a016a
+			public const int loader = 2131362154;
 			
 			// aapt resource value: 0x7f0a00f4
 			public const int loading = 2131362036;
 			
-			// aapt resource value: 0x7f0a0169
-			public const int loading_msg = 2131362153;
+			// aapt resource value: 0x7f0a016b
+			public const int loading_msg = 2131362155;
 			
-			// aapt resource value: 0x7f0a0176
-			public const int logout = 2131362166;
+			// aapt resource value: 0x7f0a0178
+			public const int logout = 2131362168;
 			
 			// aapt resource value: 0x7f0a001d
 			public const int lottie_layer_name = 2131361821;
@@ -3749,23 +3761,23 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a00c8
 			public const int main_content = 2131361992;
 			
-			// aapt resource value: 0x7f0a016d
-			public const int masked = 2131362157;
+			// aapt resource value: 0x7f0a016f
+			public const int masked = 2131362159;
 			
-			// aapt resource value: 0x7f0a015d
-			public const int media_actions = 2131362141;
+			// aapt resource value: 0x7f0a015f
+			public const int media_actions = 2131362143;
 			
-			// aapt resource value: 0x7f0a0173
-			public const int medicatie = 2131362163;
+			// aapt resource value: 0x7f0a0175
+			public const int medicatie = 2131362165;
 			
-			// aapt resource value: 0x7f0a0154
-			public const int menu_profile_image = 2131362132;
+			// aapt resource value: 0x7f0a0156
+			public const int menu_profile_image = 2131362134;
 			
-			// aapt resource value: 0x7f0a0177
-			public const int menu_tab1 = 2131362167;
+			// aapt resource value: 0x7f0a0179
+			public const int menu_tab1 = 2131362169;
 			
-			// aapt resource value: 0x7f0a0178
-			public const int menu_tab2 = 2131362168;
+			// aapt resource value: 0x7f0a017a
+			public const int menu_tab2 = 2131362170;
 			
 			// aapt resource value: 0x7f0a014b
 			public const int message = 2131362123;
@@ -3782,20 +3794,20 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a003a
 			public const int multiply = 2131361850;
 			
-			// aapt resource value: 0x7f0a016a
-			public const int name = 2131362154;
+			// aapt resource value: 0x7f0a016c
+			public const int name = 2131362156;
 			
-			// aapt resource value: 0x7f0a016f
-			public const int nav_QRCode = 2131362159;
+			// aapt resource value: 0x7f0a0171
+			public const int nav_QRCode = 2131362161;
 			
-			// aapt resource value: 0x7f0a016e
-			public const int nav_asistenta = 2131362158;
+			// aapt resource value: 0x7f0a0170
+			public const int nav_asistenta = 2131362160;
 			
-			// aapt resource value: 0x7f0a0172
-			public const int nav_devices = 2131362162;
+			// aapt resource value: 0x7f0a0174
+			public const int nav_devices = 2131362164;
 			
-			// aapt resource value: 0x7f0a0175
-			public const int nav_manage = 2131362165;
+			// aapt resource value: 0x7f0a0177
+			public const int nav_manage = 2131362167;
 			
 			// aapt resource value: 0x7f0a00d7
 			public const int nav_view = 2131362007;
@@ -3812,14 +3824,14 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0026
 			public const int normal = 2131361830;
 			
-			// aapt resource value: 0x7f0a0164
-			public const int notification_background = 2131362148;
+			// aapt resource value: 0x7f0a0166
+			public const int notification_background = 2131362150;
 			
-			// aapt resource value: 0x7f0a0160
-			public const int notification_main_column = 2131362144;
+			// aapt resource value: 0x7f0a0162
+			public const int notification_main_column = 2131362146;
 			
-			// aapt resource value: 0x7f0a015f
-			public const int notification_main_column_container = 2131362143;
+			// aapt resource value: 0x7f0a0161
+			public const int notification_main_column_container = 2131362145;
 			
 			// aapt resource value: 0x7f0a00d6
 			public const int overlay = 2131362006;
@@ -3839,8 +3851,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a000b
 			public const int parent_matrix = 2131361803;
 			
-			// aapt resource value: 0x7f0a0174
-			public const int partajare_date = 2131362164;
+			// aapt resource value: 0x7f0a0176
+			public const int partajare_date = 2131362166;
 			
 			// aapt resource value: 0x7f0a0068
 			public const int percent = 2131361896;
@@ -3878,11 +3890,11 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0059
 			public const int right = 2131361881;
 			
-			// aapt resource value: 0x7f0a0163
-			public const int right_icon = 2131362147;
+			// aapt resource value: 0x7f0a0165
+			public const int right_icon = 2131362149;
 			
-			// aapt resource value: 0x7f0a0161
-			public const int right_side = 2131362145;
+			// aapt resource value: 0x7f0a0163
+			public const int right_side = 2131362147;
 			
 			// aapt resource value: 0x7f0a00ad
 			public const int rl_alarm = 2131361965;
@@ -3913,6 +3925,9 @@ namespace FamiliaXamarin
 			
 			// aapt resource value: 0x7f0a012e
 			public const int rv_notes = 2131362094;
+			
+			// aapt resource value: 0x7f0a0155
+			public const int rv_persons = 2131362133;
 			
 			// aapt resource value: 0x7f0a0027
 			public const int satellite = 2131361831;
@@ -4040,8 +4055,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a00b2
 			public const int status = 2131361970;
 			
-			// aapt resource value: 0x7f0a015c
-			public const int status_bar_latest_event_content = 2131362140;
+			// aapt resource value: 0x7f0a015e
+			public const int status_bar_latest_event_content = 2131362142;
 			
 			// aapt resource value: 0x7f0a0077
 			public const int strong = 2131361911;
@@ -4217,8 +4232,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0a0016
 			public const int view_offset_helper = 2131361814;
 			
-			// aapt resource value: 0x7f0a016c
-			public const int visible = 2131362156;
+			// aapt resource value: 0x7f0a016e
+			public const int visible = 2131362158;
 			
 			// aapt resource value: 0x7f0a0078
 			public const int weak = 2131361912;

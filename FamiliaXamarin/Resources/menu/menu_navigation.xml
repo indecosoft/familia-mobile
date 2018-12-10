@@ -4,16 +4,16 @@
   <item
     android:id="@+id/menu_tab1"
     android:enabled="true"
-    android:icon="@drawable/logo"
-    android:title="TAB1"
+    android:icon="@drawable/search_person"
+    android:title="Cauta persoana"
     app:showAsAction="ifRoom" 
    />
 
   <item
     android:id="@+id/menu_tab2"
     android:enabled="true"
-    android:icon="@drawable/logo"
-    android:title="TAB2"
+    android:icon="@drawable/view_list"
+    android:title="Lista conexiuni"
     app:showAsAction="ifRoom"
 />
 
