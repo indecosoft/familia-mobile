@@ -74,9 +74,10 @@ namespace FamiliaXamarin
             //_medicationServiceIntent = new Intent(this, typeof(MedicationService));
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                    StartForegroundService(_loacationServiceIntent);
-                    StartForegroundService(_webSocketServiceIntent);
-                    StartForegroundService(_smartBandServiceIntent);
+                Context ctx = ApplicationContext;
+                StartForegroundService(_loacationServiceIntent);
+                StartForegroundService(_webSocketServiceIntent);
+                StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);
                 
             }

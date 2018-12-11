@@ -25,25 +25,50 @@ namespace FamiliaXamarin.Services
             base.OnCreate();
             Log.Error("Service:", "WebSocketService STARTED");
 
-            var charger = new ChargerReceiver();
-            RegisterReceiver(charger, new IntentFilter(Intent.ActionPowerConnected));
+            try
+            {
 
-            _socketClient.Connect(Constants.WebSocketAddress, Constants.WebSocketPort, this);
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    string CHANNEL_ID = "my_channel_01";
+                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel human readable title",
+                        NotificationManager.ImportanceDefault);
+
+                    ((NotificationManager)GetSystemService(Context.NotificationService)).CreateNotificationChannel(channel);
+
+                    Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .SetContentTitle("")
+                        .SetContentText("").Build();
+
+                    StartForeground(1, notification);
+                }
+                var charger = new ChargerReceiver();
+                RegisterReceiver(charger, new IntentFilter(Intent.ActionPowerConnected));
+
+                _socketClient.Connect(Constants.WebSocketAddress, Constants.WebSocketPort, this);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                //throw;
+            }
+
+        
         }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             Log.Error("WebSocket Service", "Started");
 
-            var notification = new NotificationCompat.Builder(this)
-                .SetContentTitle(Resources.GetString(Resource.String.app_name))
-                .SetContentText("Ruleaza in fundal")
-                .SetSmallIcon(Resource.Drawable.logo)
-                .SetOngoing(true)
-                .Build();
-
-            // Enlist this instance of the service as a foreground service
-            StartForeground(ServiceRunningNotificationId, notification);
+//            var notification = new NotificationCompat.Builder(this)
+//                .SetContentTitle(Resources.GetString(Resource.String.app_name))
+//                .SetContentText("Ruleaza in fundal")
+//                .SetSmallIcon(Resource.Drawable.logo)
+//                .SetOngoing(true)
+//                .Build();
+//
+//            // Enlist this instance of the service as a foreground service
+//            StartForeground(ServiceRunningNotificationId, notification);
             return StartCommandResult.Sticky;
         }
 
