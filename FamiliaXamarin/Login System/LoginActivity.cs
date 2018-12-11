@@ -115,7 +115,7 @@ namespace FamiliaXamarin.Login_System
 
         private void LoadLoginUi()
         {
-            SetContentView(Resource.Layout.activity_login);
+            SetContentView(Resource.Layout.activity_login);//
             // Create your application here
             InitUi();
             InitListeners();

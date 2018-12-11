@@ -33,7 +33,7 @@ namespace FamiliaXamarin.Sharing
         {
             View view = inflater.Inflate(Resource.Layout.layout_tab1, container, false);
             btnScan = Activity.FindViewById<Button>(Resource.Id.btn_scanQR);
-            btnScan.Click += BtnScan_Click;
+           // btnScan.Click += BtnScan_Click;
 
             return view;
         }
