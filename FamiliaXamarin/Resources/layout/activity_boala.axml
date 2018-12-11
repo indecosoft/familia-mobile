@@ -21,7 +21,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
             android:text="Introduceti datele:"
-            android:textColor="@android:color/black"
+            android:textColor="#3c3c3c"
             android:textSize="20dp"
             android:textStyle="bold" />
 
@@ -33,7 +33,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="30dp"
             android:text="Denumire afectiune:"
-            android:textColor="@android:color/black"
+            android:textColor="#3c3c3c"
             android:textSize="15dp"
             android:textStyle="bold" />
 
@@ -44,7 +44,7 @@
             android:layout_below="@+id/tv_label_nume_boala"
             android:hint="denumire afectiune.."
             android:padding="15dp"
-            android:textColor="@android:color/black"
+            android:textColor="#3c3c3c"
             android:textColorHint="@android:color/secondary_text_light_nodisable" />
     </RelativeLayout>
 
@@ -63,7 +63,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="30dp"
             android:text="Medicamente: "
-            android:textColor="@android:color/black"
+            android:textColor="#3c3c3c"
             android:textSize="15sp"
             android:textStyle="bold" />
 

@@ -32,5 +32,7 @@ namespace FamiliaXamarin.Sharing
 
             return view;
         }
+
+
     }
 }

@@ -19,7 +19,7 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:text="Adaugati un medicament nou:"
-            android:textColor="@android:color/black"
+            android:textColor="#3c3c3c"
             android:textSize="15sp"
             android:textStyle="bold" />
 
@@ -29,8 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_dia"
             android:layout_marginTop="10dp"
-            android:text="HourNamele medicamentului:"
-            android:textColor="@android:color/black" />
+            android:text="Denumirea medicamentului:"
+            android:textColor="#3c3c3c" />
 
         <EditText
             android:id="@+id/et_medicament_name"
@@ -39,7 +39,7 @@
             android:layout_below="@+id/tv_label_medicament"
             android:hint="..."
             android:inputType="text"
-            android:textColor="@android:color/black" />
+            android:textColor="#3c3c3c" />
 
         <TextView
             android:id="@+id/tv_interval"
@@ -48,7 +48,7 @@
             android:layout_below="@id/et_medicament_name"
             android:layout_marginTop="10dp"
             android:text="Administrare"
-            android:textColor="@android:color/black"
+            android:textColor="#3c3c3c"
             android:textSize="20dp" />
 
         <Spinner
@@ -81,7 +81,7 @@
             android:layout_below="@+id/rl_rv_meds"
             android:layout_marginTop="20dp"
             android:text="Program"
-            android:textColor="@android:color/black"
+            android:textColor="#3c3c3c"
             android:textSize="20dp" />
 
         <TextView
@@ -91,7 +91,7 @@
             android:layout_below="@+id/tv_label_program"
             android:layout_marginTop="10dp"
             android:text="Data de inceput: "
-            android:textColor="@android:color/black" />
+            android:textColor="#3c3c3c" />
 
         <TextView
             android:id="@+id/tv_start_date"
@@ -113,7 +113,7 @@
             android:layout_below="@+id/tv_data_inceput"
             android:layout_marginTop="10dp"
             android:text="Durata:"
-            android:textColor="@android:color/black" />
+            android:textColor="#3c3c3c" />
 
         <RadioGroup
             android:id="@+id/rg_durata"
@@ -128,7 +128,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Continuu"
-                android:textColor="@android:color/black" />
+                android:textColor="#3c3c3c" />
 
             <RadioButton
                 android:id="@+id/rb_numar_zile"
@@ -136,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:text="Numar de zile"
-                android:textColor="@android:color/black" />
+                android:textColor="#3c3c3c" />
 
         </RadioGroup>
 
