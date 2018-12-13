@@ -32,9 +32,9 @@ namespace FamiliaXamarin.Sharing
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View view = inflater.Inflate(Resource.Layout.layout_tab1, container, false);
-            btnScan = Activity.FindViewById<Button>(Resource.Id.btn_scanQR);
-           // btnScan.Click += BtnScan_Click;
-
+            btnScan = view.FindViewById<Button>(Resource.Id.btn_scanQR);
+            btnScan.Click += BtnScan_Click;
+           // btnScan.SetOnClickListener(Activity);
             return view;
         }
 
@@ -82,9 +82,17 @@ namespace FamiliaXamarin.Sharing
 
             var result = await StartScan();
             if (result == null) return;
-            var _qrJsonData = new JSONObject(result.Text);
+            try
+            {
+                var _qrJsonData = new JSONObject(result.Text);
 
-            Log.Error("QR_CODE", _qrJsonData.ToString());
+                Log.Error("QR_CODE", _qrJsonData.ToString());
+            }
+            catch (JSONException ex)
+            {
+                Toast.MakeText(Activity, "Cod Invalid", ToastLength.Long).Show();
+                ex.PrintStackTrace();
+            }
         }
 
     }
