@@ -17,7 +17,7 @@
 	<uses-feature android:name="android.hardware.camera" android:required="false" />
 	<uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 	<uses-feature android:name="android.hardware.camera.flash" android:required="false" />
-	<uses-sdk android:minSdkVersion="23" />
+	<uses-sdk android:minSdkVersion="23" android:targetSdkVersion="27" />
 	<application android:allowBackup="true" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:roundIcon="@mipmap/ic_launcher_round" android:supportsRtl="true" android:theme="@style/AppTheme.Dark">
 		<provider android:name="android.support.v4.content.FileProvider" android:authorities="FamiliaXamarin.FamiliaXamarin.fileprovider" android:exported="false" android:grantUriPermissions="true">
 			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths"></meta-data>

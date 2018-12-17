@@ -38,6 +38,7 @@ namespace FamiliaXamarin
         Intent _loacationServiceIntent;
         Intent _webSocketServiceIntent;
         Intent _medicationServiceIntent;
+        Intent _smartBandServiceIntent;
         private FusedLocationProviderClient _fusedLocationProviderClient;
         public static bool FromBoala;
 
@@ -47,15 +48,6 @@ namespace FamiliaXamarin
             SetContentView(Resource.Layout.activity_main);
             var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
-
-            
-            
-           
-
-           // var am = (AlarmManager)GetSystemService(Context.AlarmService);
-            //var i = new Intent(this, typeof(ChargerReceiver));
-
-
             var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             var toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
             drawer.AddDrawerListener(toggle);
@@ -69,11 +61,14 @@ namespace FamiliaXamarin
 
             _loacationServiceIntent = new Intent(this, typeof(LocationService));
             _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
+            _smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
             //_medicationServiceIntent = new Intent(this, typeof(MedicationService));
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                    StartForegroundService(_loacationServiceIntent);
-                    StartForegroundService(_webSocketServiceIntent);
+                Context ctx = ApplicationContext;
+                StartForegroundService(_loacationServiceIntent);
+                StartForegroundService(_webSocketServiceIntent);
+                //StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);
                 
             }
@@ -81,6 +76,7 @@ namespace FamiliaXamarin
             {
                     StartService(_loacationServiceIntent);
                     StartService(_webSocketServiceIntent);
+                   // StartService(_smartBandServiceIntent);
                    // StartService(_medicationServiceIntent);
 
             }
