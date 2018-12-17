@@ -18,10 +18,11 @@ using Org.Json;
 
 namespace FamiliaXamarin.Sharing
 {
-    public class Tab1Fragment : Android.Support.V4.App.Fragment
+    public class Tab1Fragment : Android.Support.V4.App.Fragment, View.IOnClickListener
     {
 
         private Button btnScan;
+        private TextView personFound;
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -34,6 +35,8 @@ namespace FamiliaXamarin.Sharing
             View view = inflater.Inflate(Resource.Layout.layout_tab1, container, false);
             btnScan = view.FindViewById<Button>(Resource.Id.btn_scanQR);
             btnScan.Click += BtnScan_Click;
+            personFound = view.FindViewById<TextView>(Resource.Id.tv_person_found);
+            personFound.SetOnClickListener(this);
            // btnScan.SetOnClickListener(Activity);
             return view;
         }
@@ -93,6 +96,25 @@ namespace FamiliaXamarin.Sharing
                 Toast.MakeText(Activity, "Cod Invalid", ToastLength.Long).Show();
                 ex.PrintStackTrace();
             }
+        }
+
+        public void OnClick(View v)
+        {
+            switch (v.Id)
+            {
+                case Resource.Id.tv_person_found:
+                    openMiniProfileDialog();
+                    break;
+            }
+        }
+
+        private CustomDialogProfileSharingData openMiniProfileDialog()
+        {
+            CustomDialogProfileSharingData cdd = new CustomDialogProfileSharingData(this.Activity);
+           
+            cdd.Show();
+
+            return cdd;
         }
 
     }
