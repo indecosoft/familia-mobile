@@ -31,6 +31,28 @@ namespace FamiliaXamarin.Services
     {
         private const int ServiceRunningNotificationId = 10000;
         private string _token;
+        private readonly Handler _handler = new Handler();
+        private int _refreshTime = 1000;
+        private bool _started;
+        private readonly Runnable _runnable;
+
+        private void HandlerRunnable()
+        {
+            RefreshToken();
+            SentData();
+            if (_started)
+            {
+                _handler.PostDelayed(_runnable, _refreshTime);
+            }
+        }
+
+        private SQLiteAsyncConnection _db;
+
+        public SmartBandService()
+        {
+            _runnable = new Runnable(HandlerRunnable);
+        }
+
         public override IBinder OnBind(Intent intent)
         {
             throw new NotImplementedException();
@@ -69,27 +91,17 @@ namespace FamiliaXamarin.Services
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
             Log.Error("SmartBand Service", "Started");
-//
-//            var notification = new NotificationCompat.Builder(this)
-//                .SetContentTitle(Resources.GetString(Resource.String.app_name))
-//                .SetContentText("Ruleaza in fundal")
-//                .SetSmallIcon(Resource.Drawable.logo)
-//                .SetOngoing(true)
-//                .Build();
-//
-//            // Enlist this instance of the service as a foreground service
-//            StartForeground(ServiceRunningNotificationId, notification);
 
             RefreshToken();
             _started = true;
-            Handler.PostDelayed(Runnable, _refreshTime*5);
+            _handler.PostDelayed(_runnable, _refreshTime*10);
 
 
 
             return StartCommandResult.Sticky;
         }
 
-        private  void RefreshToken()
+        private void RefreshToken()
         {
             string refreshToken = Utils.GetDefaults("FitbitRefreshToken", this);
             Task.Run(async () =>
@@ -99,31 +111,31 @@ namespace FamiliaXamarin.Services
                     string storedToken = Utils.GetDefaults("FitbitToken", this);
                     if (!string.IsNullOrEmpty(storedToken))
                     {
-                        var tokenStateDict = new Dictionary<string, string>
-                        {
-                            {"token", storedToken}
-                        };
+                        //  var tokenStateDict = new Dictionary<string, string>
+                        // {
+                        //     {"token", storedToken}
+                        // };
                         _token = storedToken;
-                       var responseTokenState = WebServices.Post("https://api.fitbit.com/1.1/oauth2/introspect", tokenStateDict);
-                        if (responseTokenState != null && new JSONObject(responseTokenState).GetBoolean("active") == false)
-                        {
-                            var dict = new Dictionary<string, string>
+                        //var responseTokenState = await WebServices.Post("https://api.fitbit.com/1.1/oauth2/introspect", tokenStateDict);
+                        //if (responseTokenState != null && new JSONObject(responseTokenState).GetBoolean("active") == false)
+                        //{
+                        var dict = new Dictionary<string, string>
                             {
                                 {"grant_type", "refresh_token"}, {"refresh_token", refreshToken}
                             };
-                            var response = WebServices.Post("https://api.fitbit.com/oauth2/token", dict);
-                            if (response != null)
-                            {
-                                var obj = new JSONObject(response);
-                                _token = obj.GetString("access_token");
-                                var newRefreshToken = obj.GetString("refresh_token");
-                                var userId = obj.GetString("user_id");
-                                Utils.SetDefaults(GetString(Resource.String.smartband_device), _token, this);
-                                Utils.SetDefaults("FitbitToken", _token, this);
-                                Utils.SetDefaults("RitbitRefreshToken", newRefreshToken, this);
-                                Utils.SetDefaults("FitbitUserId", userId, this);
-                            }
+                        var response = await WebServices.Post("https://api.fitbit.com/oauth2/token", dict);
+                        if (response != null)
+                        {
+                            var obj = new JSONObject(response);
+                            _token = obj.GetString("access_token");
+                            var newRefreshToken = obj.GetString("refresh_token");
+                            var userId = obj.GetString("user_id");
+                            Utils.SetDefaults(GetString(Resource.String.smartband_device), _token, this);
+                            Utils.SetDefaults("FitbitToken", _token, this);
+                            Utils.SetDefaults("RitbitRefreshToken", newRefreshToken, this);
+                            Utils.SetDefaults("FitbitUserId", userId, this);
                         }
+                        // }
                     }
                 }
                 catch (Exception e)
@@ -132,24 +144,12 @@ namespace FamiliaXamarin.Services
                 }
 
                 //SentData();
-                var a  = await GetSleepData();
+                //var a  = await GetSleepData();
 
             });
         }
 
-        private static readonly Handler Handler = new Handler();
-        private static int _refreshTime = 1000;
-        private static bool _started;
-        private static readonly Runnable Runnable = new Runnable(() =>
-        {
 
-                if (_started)
-                {
-                    Handler.PostDelayed(Runnable, _refreshTime);
-                }
-        });
-
-        private SQLiteAsyncConnection _db;
 
         private async Task<IEnumerable<DevicesRecords>> QueryValuations(SQLiteAsyncConnection db, string query)
         {
@@ -162,7 +162,7 @@ namespace FamiliaXamarin.Services
             {
                 Imei = Utils.GetImei(this),
                 DateTime = ft.Format(new Date()),
-                HoursOfSleep = sleep,
+                SecondsOfSleep = sleep,
                 MinutesOfActivity = activity["Activity"].ToString(),
                 StepCounter = activity["Steps"]
             });
@@ -170,7 +170,9 @@ namespace FamiliaXamarin.Services
         }
         private async Task<Dictionary<string, int>> GetSteps()
         {
-            var data = await WebServices.Get("https://api.fitbit.com/1/user/-/activities/date/today.json", _token);
+            try
+            {
+                var data = await WebServices.Get("https://api.fitbit.com/1/user/-/activities/date/today.json", _token);
             if (!string.IsNullOrEmpty(data))
             {
                 Log.Error("Steps Result", data);
@@ -195,8 +197,14 @@ namespace FamiliaXamarin.Services
                     e.PrintStackTrace();
                 }
             }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
             return null;
+                                          
         }
 
         private async Task<string> GetSleepData()
@@ -207,6 +215,7 @@ namespace FamiliaXamarin.Services
             {
                 try
                 {
+                    var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
                     JSONObject jsonObject;
                     var jsonArray = new JSONArray();
                     var array = new JSONObject(data).GetJSONArray("sleep").GetJSONObject(0);
@@ -218,7 +227,7 @@ namespace FamiliaXamarin.Services
                             jsonObject = new JSONObject();
                             jsonObject
                                 .Put("imei", Utils.GetImei(this))
-                                .Put("dateTimeISO", string.Empty)
+                                .Put("dateTimeISO", ft.Format(new Date()))
                                 .Put("geolocation", string.Empty)
                                 .Put("lastLocation", string.Empty)
                                 .Put("sendPanicAlerts", string.Empty)
@@ -311,6 +320,9 @@ namespace FamiliaXamarin.Services
                             .Put("bloodPressurePulseRate", el.BloodPresurePulsRate)
                             .Put("bloodGlucose", "" + el.BloodGlucose)
                             .Put("oxygenSaturation", el.OxygenSaturation)
+                            .Put("sleepType", el.SleepType)
+                            .Put("sleepSeconds", el.SecondsOfSleep)
+                            .Put("dailyActivity", el.MinutesOfActivity)
                             .Put("extension", el.Extension);
                         jsonArray.Put(jsonObject);
                     }
@@ -326,12 +338,15 @@ namespace FamiliaXamarin.Services
                     .Put("geolocation", string.Empty)
                     .Put("lastLocation", string.Empty)
                     .Put("sendPanicAlerts", string.Empty)
-                    .Put("stepCounter", string.Empty)
+                    .Put("stepCounter", activity["Steps"])
                     .Put("bloodPressureSystolic", string.Empty)
                     .Put("bloodPressureDiastolic", string.Empty)
                     .Put("bloodPressurePulseRate", string.Empty)
                     .Put("bloodGlucose", string.Empty)
                     .Put("oxygenSaturation", string.Empty)
+                    .Put("sleepType", string.Empty)
+                    .Put("sleepSeconds", string.Empty)
+                    .Put("dailyActivity", activity["Activity"].ToString())
                     .Put("extension", string.Empty);
                 jsonArray.Put(jsonObject);
                 string result = await WebServices.Post(Constants.SaveDeviceDataUrl, jsonArray);

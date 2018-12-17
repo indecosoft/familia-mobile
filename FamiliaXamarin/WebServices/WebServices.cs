@@ -185,7 +185,7 @@ namespace FamiliaXamarin
             }
         }
 
-        public static string Post(string url, Dictionary<string, string> dict)
+        public static async Task<string> Post(string url, Dictionary<string, string> dict)
         {
             try
             {
@@ -195,8 +195,8 @@ namespace FamiliaXamarin
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    var response = client.PostAsync(url, new FormUrlEncodedContent(dict)).Result;
-                    return response.Content.ReadAsStringAsync().Result;
+                    var response = await client.PostAsync(url, new FormUrlEncodedContent(dict));
+                    return await response.Content.ReadAsStringAsync();
 
                 }
             }

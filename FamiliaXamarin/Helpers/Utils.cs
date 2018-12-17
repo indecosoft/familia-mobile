@@ -119,6 +119,7 @@ namespace FamiliaXamarin.Helpers
             {
 
                 string token = GetDefaults("Token", ctx);
+                string email = GetDefaults("Email", ctx);
 
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -131,7 +132,7 @@ namespace FamiliaXamarin.Helpers
                 string expDateTime = sdf.Format(cal.Time);
                 //Log.e("newTime", expDateTime);
 
-                JSONObject qrCodeData = new JSONObject().Put("clientToken", token).Put("generationDateTime", genDateTime).Put("expirationDateTime", expDateTime);
+                JSONObject qrCodeData = new JSONObject().Put("clientToken", token).Put("generationDateTime", genDateTime).Put("expirationDateTime", expDateTime).Put("email", email);
 
 
                 var writer = new BarcodeWriter
@@ -159,15 +160,11 @@ namespace FamiliaXamarin.Helpers
                 return true;
             }
 
-            if (GoogleApiAvailability.Instance.IsUserResolvableError(queryResult))
-            {
-                // Check if there is a way the user can resolve the issue
-                var errorString = GoogleApiAvailability.Instance.GetErrorString(queryResult);
-                Log.Error("MainActivity", "There is a problem with Google Play Services on this device: {0} - {1}",
-                    queryResult, errorString);
-
-                // Alternately, display the error to the user.
-            }
+            if (!GoogleApiAvailability.Instance.IsUserResolvableError(queryResult)) return false;
+            // Check if there is a way the user can resolve the issue
+            var errorString = GoogleApiAvailability.Instance.GetErrorString(queryResult);
+            Log.Error("MainActivity", "There is a problem with Google Play Services on this device: {0} - {1}",
+                queryResult, errorString);
 
             return false;
         }
@@ -200,15 +197,6 @@ namespace FamiliaXamarin.Helpers
         }
         public static void CreateChannels(string channelId,string channel)
         {
-//            if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
-//            var androidChannel = new NotificationChannel(channelId, channel, NotificationImportance.High);
-//            androidChannel.EnableLights(true);
-//            androidChannel.EnableVibration(true);
-//            androidChannel.LightColor = Color.Green;
-//            androidChannel.LockscreenVisibility = NotificationVisibility.Private;
-
-           //
-           //GetManager().CreateNotificationChannel(androidChannel);
             if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
             var androidChannel = new NotificationChannel(channelId, channel, NotificationImportance.High);
             androidChannel.EnableLights(true);
@@ -228,8 +216,6 @@ namespace FamiliaXamarin.Helpers
         {
             var intent = new Intent(context, typeof(ChatActivity));
             var rejectintent = new Intent(context, typeof(ChatActivity));
-            //intent.setAction("ro.indecosoft.familia_ingrijire_paleativ");
-            //intent.putExtra("100", 0);
 
             switch (type)
             {

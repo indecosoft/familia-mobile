@@ -48,15 +48,6 @@ namespace FamiliaXamarin
             SetContentView(Resource.Layout.activity_main);
             var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
-
-            
-            
-           
-
-           // var am = (AlarmManager)GetSystemService(Context.AlarmService);
-            //var i = new Intent(this, typeof(ChargerReceiver));
-
-
             var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             var toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
             drawer.AddDrawerListener(toggle);
@@ -77,7 +68,7 @@ namespace FamiliaXamarin
                 Context ctx = ApplicationContext;
                 StartForegroundService(_loacationServiceIntent);
                 StartForegroundService(_webSocketServiceIntent);
-                StartForegroundService(_smartBandServiceIntent);
+                //StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);
                 
             }
@@ -85,7 +76,7 @@ namespace FamiliaXamarin
             {
                     StartService(_loacationServiceIntent);
                     StartService(_webSocketServiceIntent);
-                    StartService(_smartBandServiceIntent);
+                   // StartService(_smartBandServiceIntent);
                    // StartService(_medicationServiceIntent);
 
             }

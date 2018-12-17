@@ -21,6 +21,7 @@ namespace FamiliaXamarin.DataModels
         public int OxygenSaturation { get; set; }
         public string Extension { get; set; }
         public string MinutesOfActivity { get; set; }
-        public string HoursOfSleep { get; set; }
+        public string SecondsOfSleep { get; set; }
+        public string SleepType { get; set; }
     }
 }
