@@ -132,7 +132,7 @@ namespace FamiliaXamarin.Helpers
                 string expDateTime = sdf.Format(cal.Time);
                 //Log.e("newTime", expDateTime);
 
-                JSONObject qrCodeData = new JSONObject().Put("clientToken", token).Put("generationDateTime", genDateTime).Put("expirationDateTime", expDateTime).Put("email", email);
+                JSONObject qrCodeData = new JSONObject().Put("clientToken", token).Put("generationDateTime", genDateTime).Put("expirationDateTime", expDateTime).Put("email", email).Put("Name", GetDefaults("Name", Application.Context)).Put("Avatar", GetDefaults("Avatar", Application.Context));
 
 
                 var writer = new BarcodeWriter

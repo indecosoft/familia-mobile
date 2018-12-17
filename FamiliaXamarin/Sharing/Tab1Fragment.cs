@@ -15,10 +15,11 @@ using ZXing.Mobile;
 using System.Threading;
 using Android.App;
 using Org.Json;
+using Square.Picasso;
 
 namespace FamiliaXamarin.Sharing
 {
-    public class Tab1Fragment : Android.Support.V4.App.Fragment, View.IOnClickListener
+    public class Tab1Fragment : Android.Support.V4.App.Fragment
     {
 
         private Button btnScan;
@@ -35,8 +36,6 @@ namespace FamiliaXamarin.Sharing
             View view = inflater.Inflate(Resource.Layout.layout_tab1, container, false);
             btnScan = view.FindViewById<Button>(Resource.Id.btn_scanQR);
             btnScan.Click += BtnScan_Click;
-            personFound = view.FindViewById<TextView>(Resource.Id.tv_person_found);
-            personFound.SetOnClickListener(this);
            // btnScan.SetOnClickListener(Activity);
             return view;
         }
@@ -87,9 +86,27 @@ namespace FamiliaXamarin.Sharing
             if (result == null) return;
             try
             {
-                var _qrJsonData = new JSONObject(result.Text);
+                var qrJsonData = new JSONObject(result.Text);
 
-                Log.Error("QR_CODE", _qrJsonData.ToString());
+                var dialog = OpenMiniProfileDialog();
+                dialog.Show();
+                dialog.Name.Text = qrJsonData.GetString("Name");
+                Picasso.With(Activity)
+                    //.Load(qrJsonData.GetString("Avatar"))
+                    .Load("https://i.imgur.com/EepDV83.jpg")
+                    .Resize(100, 100)
+                    .CenterCrop()
+                    .Into(dialog.Image);
+                dialog.ButtonConfirm.Click += (o, args) =>
+                {
+                    dialog.Dismiss();
+                };dialog.ButtonCancel.Click += (o, args) =>
+                {
+                    dialog.Dismiss();
+                };
+
+
+                //Log.Error("QR_CODE", qrJsonData.ToString());
             }
             catch (JSONException ex)
             {
@@ -98,22 +115,9 @@ namespace FamiliaXamarin.Sharing
             }
         }
 
-        public void OnClick(View v)
-        {
-            switch (v.Id)
-            {
-                case Resource.Id.tv_person_found:
-                    openMiniProfileDialog();
-                    break;
-            }
-        }
-
-        private CustomDialogProfileSharingData openMiniProfileDialog()
+        private CustomDialogProfileSharingData OpenMiniProfileDialog()
         {
             CustomDialogProfileSharingData cdd = new CustomDialogProfileSharingData(this.Activity);
-           
-            cdd.Show();
-
             return cdd;
         }
 

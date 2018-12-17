@@ -10,16 +10,22 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Refractored.Controls;
 
 namespace FamiliaXamarin.Sharing
 {
     class CustomDialogProfileSharingData : Dialog
     {
-        private Activity activity;
+        private Activity _activity;
+        public TextView Name;
+        public CircleImageView Image;
+        public Button ButtonConfirm;
+        public Button ButtonCancel;
+
        
         public CustomDialogProfileSharingData(Context context) : base(context)
         {
-            this.activity = (Activity)context;
+            _activity = (Activity)context;
         }
 
        
@@ -29,7 +35,10 @@ namespace FamiliaXamarin.Sharing
             base.OnCreate(savedInstanceState);
             RequestWindowFeature((int)WindowFeatures.NoTitle);
             SetContentView(Resource.Layout.profile_sharing_data);
-            
+            Name = FindViewById<TextView>(Resource.Id.tv_person_name);
+            Image = FindViewById<CircleImageView>(Resource.Id.round_image);
+            ButtonConfirm = FindViewById<Button>(Resource.Id.btn_confirm);
+            ButtonCancel = FindViewById<Button>(Resource.Id.btn_cancel);
             Window.SetBackgroundDrawable(new ColorDrawable(Android.Graphics.Color.Transparent));
             
     
