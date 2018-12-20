@@ -13,21 +13,16 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
-using FamiliaXamarin.Active_Conversations;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
 using Newtonsoft.Json;
 using Org.Json;
-using Square.Picasso;
-using Exception = Java.Lang.Exception;
-using Fragment = Android.Support.V4.App.Fragment;
 
 namespace FamiliaXamarin.Sharing
 {
-    public class Tab2Fragment : Fragment
+    public class MonitoringFragment : Android.Support.V4.App.Fragment
     {
         private RecyclerView _sharingRecyclerView;
-
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -44,8 +39,8 @@ namespace FamiliaXamarin.Sharing
                 List<SharingModel> contacts = null;
                 await Task.Run(async () =>
                 {
-                    var response = await WebServices.Post($"{Constants.PublicServerAddress}/api/getSharedPeople",
-                        new JSONObject().Put("id", Utils.GetDefaults("IdClient", Activity)),
+                    var response = await WebServices.Post($"{Constants.PublicServerAddress}/api/getSharingPeople",
+                        new JSONObject().Put("email", Utils.GetDefaults("Email", Activity)),
                             Utils.GetDefaults("Token", Activity));
                     if (!string.IsNullOrEmpty(response))
                     {
@@ -62,22 +57,22 @@ namespace FamiliaXamarin.Sharing
                     _sharingRecyclerView.SetAdapter(adapter);
                     // Set layout manager to position the items
                     _sharingRecyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
-                    adapter.ItemClick += delegate(object sender, SharingAdapterClickEventArgs args)
+                    adapter.ItemClick += delegate (object sender, SharingAdapterClickEventArgs args)
                     {
                         var name = contacts[args.Position].Name;
                         var email = contacts[args.Position].Email;
                         var dialog = OpenMiniProfileDialog();
                         dialog.Name.Text = name;
                         Glide.With(this).Load($"{Constants.PublicServerAddress}/{contacts[args.Position].Avatar}").Into(dialog.Image);
-//                        Picasso.With(Activity)
-//                            .Load($"{Constants.PublicServerAddress}/{contacts[args.Position].Avatar}")
-//                            //.Load("https://i.imgur.com/EepDV83.jpg")
-//                            //.Resize(100, 100)
-//                            .CenterCrop()
-//                            .Into(dialog.Image);
+                        //                        Picasso.With(Activity)
+                        //                            .Load($"{Constants.PublicServerAddress}/{contacts[args.Position].Avatar}")
+                        //                            //.Load("https://i.imgur.com/EepDV83.jpg")
+                        //                            //.Resize(100, 100)
+                        //                            .CenterCrop()
+                        //                            .Into(dialog.Image);
                         dialog.ButtonConfirm.Visibility = ViewStates.Gone;
                         dialog.ButtonCancel.Text = "Anuleaza partajarea";
-                        dialog.ButtonCancel.Click += delegate(object o, EventArgs eventArgs)
+                        dialog.ButtonCancel.Click += delegate (object o, EventArgs eventArgs)
                         {
 
                             var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
@@ -140,18 +135,15 @@ namespace FamiliaXamarin.Sharing
             }
             catch (Exception e)
             {
-                e.PrintStackTrace();
+                //e.PrintStackTrace();
             }
         }
-
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-
-            View view = inflater.Inflate(Resource.Layout.layout_tab2, container, false);
-
+            // Use this to return your custom view for this Fragment
+            var view = inflater.Inflate(Resource.Layout.fragment_monitoring, container, false);
             _sharingRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.rv_persons);
             LoadData();
-
             return view;
         }
         private CustomDialogProfileSharingData OpenMiniProfileDialog()
@@ -164,11 +156,10 @@ namespace FamiliaXamarin.Sharing
             lp.CopyFrom(cdd.Window.Attributes);
             lp.Width = ViewGroup.LayoutParams.MatchParent;
             lp.Height = ViewGroup.LayoutParams.MatchParent;
-            
+
             cdd.Show();
             cdd.Window.Attributes = lp;
             return cdd;
         }
-
     }
 }

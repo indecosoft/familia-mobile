@@ -8,6 +8,7 @@ using Android.Content;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.Constraints;
 using Android.Views;
 using Android.Widget;
 using Refractored.Controls;
@@ -40,8 +41,13 @@ namespace FamiliaXamarin.Sharing
             ButtonConfirm = FindViewById<Button>(Resource.Id.btn_confirm);
             ButtonCancel = FindViewById<Button>(Resource.Id.btn_cancel);
             Window.SetBackgroundDrawable(new ColorDrawable(Android.Graphics.Color.Transparent));
-            
-    
+            var bg = FindViewById<ConstraintLayout>(Resource.Id.bg);
+            bg.Click += delegate(object sender, EventArgs args)
+            {
+                Dismiss();
+            };
+
+
             // setupViews();
 
         }

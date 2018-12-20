@@ -26,6 +26,7 @@ using Android.Content.PM;
 using Android.Gms.Location;
 using Android.Support.V4.Content;
 using Android.Util;
+using Com.Bumptech.Glide;
 using FamiliaXamarin.Location;
 using FamiliaXamarin.Sharing;
 using Org.Json;
@@ -80,12 +81,14 @@ namespace FamiliaXamarin
                    // StartService(_medicationServiceIntent);
 
             }
-          
-            Picasso.With(this)
-                .Load(avatar)
-                .Resize(100, 100)
-                .CenterCrop()
-                .Into(profileImageView);
+
+            Glide.With(this).Load(avatar).Into(profileImageView);
+
+//            Picasso.With(this)
+//                .Load(avatar)
+//                .Resize(100, 100)
+//                .CenterCrop()
+//                .Into(profileImageView);
 
             var lbNume = headerView.FindViewById<TextView>(Resource.Id.lbNume);
             var lbEmail = headerView.FindViewById<TextView>(Resource.Id.lbEmail);
@@ -249,6 +252,14 @@ namespace FamiliaXamarin
                     fragmentTransactionAsist.Replace(Resource.Id.fragment_container, fragmentAsist);
                     fragmentTransactionAsist.AddToBackStack(null);
                     fragmentTransactionAsist.Commit();
+                    break;
+                case Resource.Id.nav_monitorizare:
+                    var fragmentMonit = new MonitoringFragment();
+                    var fragmentManagerMonit = SupportFragmentManager;
+                    var fragmentTransactionMonit = fragmentManagerMonit.BeginTransaction();
+                    fragmentTransactionMonit.Replace(Resource.Id.fragment_container, fragmentMonit);
+                    fragmentTransactionMonit.AddToBackStack(null);
+                    fragmentTransactionMonit.Commit();
                     break;
                 case Resource.Id.nav_QRCode:
                     var fragment = new QrCodeGenerator();

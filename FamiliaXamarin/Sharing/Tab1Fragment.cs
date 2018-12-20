@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using ZXing.Mobile;
 using System.Threading;
 using Android.App;
+using Com.Bumptech.Glide;
+using FamiliaXamarin.Helpers;
 using Org.Json;
 using Square.Picasso;
 
@@ -89,19 +91,30 @@ namespace FamiliaXamarin.Sharing
                 var qrJsonData = new JSONObject(result.Text);
 
                 var dialog = OpenMiniProfileDialog();
-                dialog.Show();
                 dialog.Name.Text = qrJsonData.GetString("Name");
-                Picasso.With(Activity)
-                    //.Load(qrJsonData.GetString("Avatar"))
-                    .Load("https://i.imgur.com/EepDV83.jpg")
-                    .Resize(100, 100)
-                    .CenterCrop()
-                    .Into(dialog.Image);
+                Glide.With(this).Load(qrJsonData.GetString("Avatar")).Into(dialog.Image);
+
+//                Picasso.With(Activity)
+//                    .Load(qrJsonData.GetString("Avatar"))
+//                    //.Load("https://i.imgur.com/EepDV83.jpg")
+//                    .Resize(100, 100)
+//                    .CenterCrop()
+//                    .Into(dialog.Image);
                 dialog.ButtonConfirm.Click += (o, args) =>
                 {
+                    Task.Run(async () =>
+                    {
+                        var response = await WebServices.Post($"{Constants.PublicServerAddress}/api/newSharingPeople",
+                            new JSONObject().Put("from", qrJsonData.GetString("Id")).Put("dest", Utils.GetDefaults("IdClient", Application.Context)), Utils.GetDefaults("Token", Activity));
+                        if (!string.IsNullOrEmpty(response))
+                        {
+                            Activity.RunOnUiThread(() => Toast.MakeText(Activity, response, ToastLength.Long).Show());
+                        }
+                    });
                     dialog.Dismiss();
                 };dialog.ButtonCancel.Click += (o, args) =>
                 {
+                    
                     dialog.Dismiss();
                 };
 
@@ -117,7 +130,17 @@ namespace FamiliaXamarin.Sharing
 
         private CustomDialogProfileSharingData OpenMiniProfileDialog()
         {
-            CustomDialogProfileSharingData cdd = new CustomDialogProfileSharingData(this.Activity);
+            CustomDialogProfileSharingData cdd = new CustomDialogProfileSharingData(Activity);
+
+            IWindowManager windowManager = Context.GetSystemService(Context.WindowService).JavaCast<IWindowManager>();
+
+            WindowManagerLayoutParams lp = new WindowManagerLayoutParams();
+            lp.CopyFrom(cdd.Window.Attributes);
+            lp.Width = ViewGroup.LayoutParams.MatchParent;
+            lp.Height = ViewGroup.LayoutParams.MatchParent;
+
+            cdd.Show();
+            cdd.Window.Attributes = lp;
             return cdd;
         }
 
