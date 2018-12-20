@@ -89,7 +89,7 @@ namespace FamiliaXamarin
 
             var lbNume = headerView.FindViewById<TextView>(Resource.Id.lbNume);
             var lbEmail = headerView.FindViewById<TextView>(Resource.Id.lbEmail);
-            lbNume.Text = Utils.GetDefaults("HourName", this);
+            lbNume.Text = Utils.GetDefaults("Name", this);
             lbEmail.Text = Utils.GetDefaults("Email", this);
             profileImageView.Click += delegate
             {

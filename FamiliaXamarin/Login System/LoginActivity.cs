@@ -266,7 +266,7 @@ namespace FamiliaXamarin.Login_System
                             Utils.SetDefaults("Imei", Utils.GetImei(this), this);
                             Utils.SetDefaults("Email", _usernameEditText.Text, this);
                             Utils.SetDefaults("Logins", logins.ToString(), this);
-                            Utils.SetDefaults("HourName", nume, this);
+                            Utils.SetDefaults("Name", nume, this);
                             Utils.SetDefaults("Avatar", Constants.PublicServerAddress + avatar, this);
                             Utils.SetDefaults("IdClient", id, this);
 
