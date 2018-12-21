@@ -9,6 +9,10 @@
       android:icon="@drawable/account_heart"
       android:title="Asistenta Sociala" />
     <item
+      android:id="@+id/nav_monitorizare"
+      android:icon="@drawable/account_group"
+      android:title="Persoane sub monitorizare" />
+    <item
       android:id="@+id/nav_QRCode"
       android:icon="@drawable/qrcode"
       android:title="Generare cod QR" />

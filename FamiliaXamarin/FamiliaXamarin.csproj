@@ -68,6 +68,7 @@
     <Compile Include="JsonModels\ConverstionsModel.cs" />
     <Compile Include="JsonModels\DiseaseModel.cs" />
     <Compile Include="JsonModels\FirstSetupModel.cs" />
+    <Compile Include="JsonModels\SharingModel.cs" />
     <Compile Include="Location\MedicalAsistanceFusedLocationProviderCallback.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Medicatie\Alarm\AlarmActivity.cs" />
@@ -96,6 +97,8 @@
     <Compile Include="Services\MedicationService.cs" />
     <Compile Include="Services\MedicalAsistanceService.cs" />
     <Compile Include="Sharing\CustomDialogProfileSharingData.cs" />
+    <Compile Include="Sharing\MonitoringFragment.cs" />
+    <Compile Include="Sharing\SharingAdapter.cs" />
     <Compile Include="Sharing\SharingDataActivity.cs" />
     <Compile Include="Services\SmartBandService.cs" />
     <Compile Include="Settings\SettingsFragment.cs" />
@@ -657,6 +660,22 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\share_layout_bg.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\account_link.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_sharing.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\account_group.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_monitoring.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

@@ -3,65 +3,77 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="300dp"
-    android:layout_height="250dp"
+    android:id="@+id/bg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#cc111111"
 
     tools:context=".MainActivity">
-  <RelativeLayout
 
-      android:layout_width="300dp"
+  <android.support.constraint.ConstraintLayout
+
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:minWidth="25dp"
-      android:minHeight="25dp">
+      app:layout_constrainedWidth="true"
+      app:layout_constrainedHeight="true"
+      app:layout_constraintWidth_percent="0.8"
+      app:layout_constraintHeight_percent="0.5"
+
+      app:layout_constraintRight_toRightOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintLeft_toLeftOf="parent"
+>
+
     <RelativeLayout
+        android:id="@+id/box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/share_layout_bg"
         android:padding="16dp"
-        android:id="@+id/box"
-        android:layout_marginTop="-50dp"
-        android:layout_below="@+id/round_image"
-        android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_marginTop="50dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+            >
 
       <TextView
           android:id="@+id/tv_person_name"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text="Nume Prenume"
-          android:textColor="#333"
-          android:layout_marginVertical="65dp"
-          android:layout_centerHorizontal="true"/>
+          android:layout_centerHorizontal="true"
+          android:layout_marginVertical="50dp"
+          android:text="Podina Ovidiu"
+          android:textSize="20sp"
+          android:textColor="#333" />
 
       <RelativeLayout
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_centerHorizontal="true">
+          android:layout_centerHorizontal="true"
+
+          android:layout_below="@id/tv_person_name"
+                >
 
         <Button
             android:id="@+id/btn_confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:text="Renunta"
             android:background="@drawable/button_style"
-            android:textSize="10dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="40dp"
-
+            android:text="Conecteaza"
             android:textColor="#fff"
-                    />
+            android:textSize="10dp" />
+
         <Button
             android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="Conecteaza"
-            android:background="@drawable/button_style"
-            android:textSize="10dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="40dp"
             android:layout_toRightOf="@+id/btn_confirm"
+            android:background="@drawable/button_style"
+            android:text="Renunta"
             android:textColor="#fff"
-                    />
+            android:textSize="10dp" />
 
 
       </RelativeLayout>
@@ -70,26 +82,28 @@
     </RelativeLayout>
 
 
-
-
     <refractored.controls.CircleImageView
         android:id="@+id/round_image"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_centerHorizontal="true"
+
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:src="@drawable/profile"
-        app:civ_border_width="1dp"
+        app:civ_border_width="3dp"
         app:civ_border_color="@color/white"
-        app:layout_constraintHorizontal_bias="0.5"
+
+        app:layout_constrainedWidth="true"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintWidth_percent="0.4"
+        app:layout_constraintHeight_percent="0.4"
+
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.2"/>
 
+            />
 
+  </android.support.constraint.ConstraintLayout>
 
-  </RelativeLayout>
 
 
 </android.support.constraint.ConstraintLayout >

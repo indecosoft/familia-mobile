@@ -267,7 +267,7 @@ namespace FamiliaXamarin.Login_System
                             Utils.SetDefaults("Email", _usernameEditText.Text, this);
                             Utils.SetDefaults("Logins", logins.ToString(), this);
                             Utils.SetDefaults("Name", nume, this);
-                            Utils.SetDefaults("Avatar", Constants.PublicServerAddress + avatar, this);
+                            Utils.SetDefaults("Avatar", $"{Constants.PublicServerAddress}/{avatar}", this);
                             Utils.SetDefaults("IdClient", id, this);
 
                             StartActivity(logins ? typeof(MainActivity) : typeof(FirstSetup));
