@@ -69,7 +69,7 @@ namespace FamiliaXamarin
                 Context ctx = ApplicationContext;
                 StartForegroundService(_loacationServiceIntent);
                 StartForegroundService(_webSocketServiceIntent);
-                //StartForegroundService(_smartBandServiceIntent);
+               // StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);
                 
             }
@@ -77,18 +77,12 @@ namespace FamiliaXamarin
             {
                     StartService(_loacationServiceIntent);
                     StartService(_webSocketServiceIntent);
-                   // StartService(_smartBandServiceIntent);
+                    //StartService(_smartBandServiceIntent);
                    // StartService(_medicationServiceIntent);
 
             }
 
             Glide.With(this).Load(avatar).Into(profileImageView);
-
-//            Picasso.With(this)
-//                .Load(avatar)
-//                .Resize(100, 100)
-//                .CenterCrop()
-//                .Into(profileImageView);
 
             var lbNume = headerView.FindViewById<TextView>(Resource.Id.lbNume);
             var lbEmail = headerView.FindViewById<TextView>(Resource.Id.lbEmail);

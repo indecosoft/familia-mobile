@@ -109,20 +109,11 @@ namespace FamiliaXamarin.Services
                         aTimer.Start();
                         await _db.DropTableAsync<MedicineRecords>();
                         return true;
-                    case null:
-                    case "Wrong data!":
                     default:
                         aTimer.Start();
                         return false;
 
                 }
-                //                if (result != null && result.Equals("Done"))
-                //                {
-                //                    await _db.DropTableAsync<MedicineRecords>();
-                //                    return true;
-                //                }
-                //                else return false;
-
             }
             else
             {
