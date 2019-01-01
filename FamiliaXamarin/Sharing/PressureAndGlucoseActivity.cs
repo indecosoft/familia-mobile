@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Android.App;
 using Android.Graphics;
@@ -33,13 +34,11 @@ namespace FamiliaXamarin.Sharing
             public int PulseRate { get; set; }
             public DateTime Data { get; set; }
         }
-
         private class GlucoseModel
         {
             public int Avg { get; set; }
             public DateTime Data { get; set; }
         }
-
         private string _name, _email, _imei;
         private readonly List<PressureModel> _bloodPressureDataList = new List<PressureModel>();
         private readonly List<GlucoseModel> _bloodGlucoseDataList = new List<GlucoseModel>();
@@ -49,6 +48,7 @@ namespace FamiliaXamarin.Sharing
         private LinearLayout layoutButtons;
         private LinearLayout horizontalScrollLinearLayout;
         private LinearLayout verticalScrollLinearLayout;
+        private LineChart _lineChart;
         private HorizontalScrollView _scrollViewButtons;
         private BottomNavigationView bottomNavigation;
         private TextView _tvDate;
@@ -60,7 +60,6 @@ namespace FamiliaXamarin.Sharing
         [ComVisible(true)]
         public enum DayOfWeek
         {
-
             //
             // Summary:
             //     Indicates Monday.
@@ -89,7 +88,7 @@ namespace FamiliaXamarin.Sharing
             //     Indicates Sunday.
             Sunday = 6
         }
-        private async void InitUi()
+        private void InitUi()
         {
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
 
@@ -111,7 +110,7 @@ namespace FamiliaXamarin.Sharing
             buttonBackgroundA = Resources.GetDrawable(Resource.Drawable.sharing_round_button_activ, Theme);
             buttonBackgroundDatePicker = Resources.GetDrawable(Resource.Drawable.sharing_date_button_style, Theme);
             bottomNavigation = FindViewById<BottomNavigationView>(Resource.Id.top_navigation);
-
+            _lineChart = FindViewById<LineChart>(Resource.Id.chart);
             bottomNavigation.NavigationItemSelected += BottomNavigationOnNavigationItemSelected;
 
             _name = Intent.GetStringExtra("Name");
@@ -122,62 +121,65 @@ namespace FamiliaXamarin.Sharing
             {
                 case "BloodPressure":
                     Title = $"Tensiune: {_name}";
-                    try
-                    {
-                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/getUsersDataSharing",
-                            new JSONObject().Put("dataType", "bloodPressure").Put("imei", _imei)
-                                .Put("date", "2018/12/13"), Utils.GetDefaults("Token", this));
-                        if (!string.IsNullOrEmpty(result))
-                        {
-                            var dataArray = new JSONArray(result);
-
-                            for (int i = 0; i < dataArray.Length(); i++)
-                            {
-                                _bloodPressureDataList.Add(JsonConvert.DeserializeObject<PressureModel>(dataArray.GetJSONObject(i).ToString()));
-                            }
-                        }
-
-                        CreateBloodPresureChart();
-                        LoadDataInScrollLayouts();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
                     break;
                 case "BloodGlucose":
                     Title = $"Glicemie: {_name}";
-
-                    try
-                    {
-                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/getUsersDataSharing",
-                            new JSONObject().Put("dataType", "bloodGlucose").Put("imei", _imei)
-                                .Put("date", "2018/12/13"), Utils.GetDefaults("Token", this));
-                        if (!string.IsNullOrEmpty(result))
-                        {
-                            var dataArray = new JSONArray(result);
-
-                            for (int i = 0; i < dataArray.Length(); i++)
-                            {
-                                _bloodGlucoseDataList.Add(JsonConvert.DeserializeObject<GlucoseModel>(dataArray.GetJSONObject(i).ToString()));
-                            }
-                        }
-                        CreateGlucoseChart();
-
-                        LoadDataInScrollLayouts(false);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
                     break;
             }
             bottomNavigation.SelectedItemId = Resource.Id.week_tab;
+            bottomNavigation.PerformClick();
             LoadDaySelectorButtons();
             _tvDate.Text = DateTime.Now.ToShortDateString();
-
         }
 
+        private async void GetDataForChart(DateTime startDate, bool dataType = true)
+        {
+            try
+            {
+
+                if (dataType)
+                {
+                    _bloodPressureDataList.Clear();
+                    var bloodPressureResult = await WebServices.Post($"{Constants.PublicServerAddress}/api/getUsersDataSharing",
+                        new JSONObject().Put("dataType", "bloodPressure").Put("imei", _imei)
+                            .Put("date", startDate.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token", this));
+                    if (!string.IsNullOrEmpty(bloodPressureResult))
+                    {
+                        var dataArray = new JSONArray(bloodPressureResult);
+
+                        for (var i = 0; i < dataArray.Length(); i++)
+                        {
+                            _bloodPressureDataList.Add(JsonConvert.DeserializeObject<PressureModel>(dataArray.GetJSONObject(i).ToString()));
+                        }
+                    }
+
+                    CreateBloodPresureChart();
+                    LoadDataInScrollLayouts();
+                }
+                else
+                {
+                    _bloodGlucoseDataList.Clear();
+                    var bloodGlucoseResult = await WebServices.Post($"{Constants.PublicServerAddress}/api/getUsersDataSharing",
+                        new JSONObject().Put("dataType", "bloodGlucose").Put("imei", _imei)
+                            .Put("date", startDate.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token", this));
+                    if (!string.IsNullOrEmpty(bloodGlucoseResult))
+                    {
+                        var dataArray = new JSONArray(bloodGlucoseResult);
+
+                        for (var i = 0; i < dataArray.Length(); i++)
+                        {
+                            _bloodGlucoseDataList.Add(JsonConvert.DeserializeObject<GlucoseModel>(dataArray.GetJSONObject(i).ToString()));
+                        }
+                    }
+                    CreateGlucoseChart();
+                    LoadDataInScrollLayouts(false);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
         private void BottomNavigationOnNavigationItemSelected(object sender, BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
             switch (e.Item.ItemId)
@@ -196,15 +198,15 @@ namespace FamiliaXamarin.Sharing
 
         private void CreateGlucoseChart()
         {
-            LineChart chart = (LineChart)FindViewById(Resource.Id.chart);
-
-            List<Entry> glucoseEntries = new List<Entry>();
-
-
-            for (int i = 0; i < _bloodGlucoseDataList.Count; i++)
+            if (_bloodGlucoseDataList.Count == 0)
             {
-                glucoseEntries.Add(new BarEntry(i, _bloodGlucoseDataList[i].Avg));
+                _lineChart.Data.ClearValues();
+                _lineChart.Clear();
+                _lineChart.Invalidate();
+
+                return;
             }
+            List<Entry> glucoseEntries = _bloodGlucoseDataList.Select((t, i) => new BarEntry(i, t.Avg)).Cast<Entry>().ToList();
 
             LineDataSet glucoseDataSet = new LineDataSet(glucoseEntries, "Glucoza")
             {
@@ -217,24 +219,24 @@ namespace FamiliaXamarin.Sharing
             glucoseDataSet.SetColors(Color.ParseColor("#FF783F"));
             glucoseDataSet.SetCircleColor(Color.ParseColor("#FF783F"));
             LineData barData = new LineData(glucoseDataSet);
-            chart.Data = barData;
+            _lineChart.Data = barData;
 
-            chart.SetOnChartValueSelectedListener(this);
-            chart.SetDrawBorders(false);
-            chart.SetDrawGridBackground(false);
-            chart.SetNoDataText("Nu exista date");
-            chart.Description.Enabled = false;
-            chart.AxisLeft.SetDrawGridLines(false);
-            chart.AxisRight.SetDrawGridLines(false);
-            chart.XAxis.SetDrawGridLines(false);
+            _lineChart.SetOnChartValueSelectedListener(this);
+            _lineChart.SetDrawBorders(false);
+            _lineChart.SetDrawGridBackground(false);
+            _lineChart.SetNoDataText("Nu exista date");
+            _lineChart.Description.Enabled = false;
+            _lineChart.AxisLeft.SetDrawGridLines(false);
+            _lineChart.AxisRight.SetDrawGridLines(false);
+            _lineChart.XAxis.SetDrawGridLines(false);
 
-            chart.XAxis.Enabled = false;
-            chart.AxisLeft.Enabled = false;
-            chart.AxisRight.Enabled = false;
+            _lineChart.XAxis.Enabled = false;
+            _lineChart.AxisLeft.Enabled = false;
+            _lineChart.AxisRight.Enabled = false;
 
-            chart.AnimateXY(3000, 3000); // animate horizontal and vertical 3000 milliseconds
-            chart.SetPinchZoom(false);
-            Legend l = chart.Legend;
+            _lineChart.AnimateXY(3000, 3000); // animate horizontal and vertical 3000 milliseconds
+            _lineChart.SetPinchZoom(false);
+            Legend l = _lineChart.Legend;
             l.FormSize = 10f; // set the size of the legend forms/shapes
             l.Form = Legend.LegendForm.Circle; // set what type of form/shape should be used
             l.Position = Legend.LegendPosition.BelowChartCenter;
@@ -242,17 +244,23 @@ namespace FamiliaXamarin.Sharing
             l.TextColor = Color.White;
             l.XEntrySpace = 5f; // set the space between the legend entries on the x-axis
             l.YEntrySpace = 5f; // set the space between the legend entries on the y-axis
-            chart.Invalidate();
+            _lineChart.Invalidate();
         }
 
         private void CreateBloodPresureChart()
         {
-            LineChart chart = (LineChart)FindViewById(Resource.Id.chart);
+            if (_bloodPressureDataList.Count == 0)
+            {
+                _lineChart.Data.ClearValues();
+                _lineChart.Clear();
+                _lineChart.Invalidate();
 
+                return;
+            }
             List<Entry> systolicEntries = new List<Entry>();
             List<Entry> diastolicEntries = new List<Entry>();
 
-            for (int i = 0; i < _bloodPressureDataList.Count; i++)
+            for (var i = 0; i < _bloodPressureDataList.Count; i++)
             {
                 systolicEntries.Add(new BarEntry(i, _bloodPressureDataList[i].Systolic));
                 diastolicEntries.Add(new BarEntry(i, _bloodPressureDataList[i].Diastolic));
@@ -280,24 +288,24 @@ namespace FamiliaXamarin.Sharing
             diastolicDataSet.SetColors(Color.ParseColor("#ffffff"));
             diastolicDataSet.SetCircleColor(Color.ParseColor("#ffffff"));
             LineData barData = new LineData(systolicDataSet, diastolicDataSet);
-            chart.Data = barData;
+            _lineChart.Data = barData;
 
-            chart.SetOnChartValueSelectedListener(this);
-            chart.SetDrawBorders(false);
-            chart.SetDrawGridBackground(false);
-            chart.SetNoDataText("Nu exista date");
-            chart.Description.Enabled = false;
-            chart.AxisLeft.SetDrawGridLines(false);
-            chart.AxisRight.SetDrawGridLines(false);
-            chart.XAxis.SetDrawGridLines(false);
+            _lineChart.SetOnChartValueSelectedListener(this);
+            _lineChart.SetDrawBorders(false);
+            _lineChart.SetDrawGridBackground(false);
+            _lineChart.SetNoDataText("Nu exista date");
+            _lineChart.Description.Enabled = false;
+            _lineChart.AxisLeft.SetDrawGridLines(false);
+            _lineChart.AxisRight.SetDrawGridLines(false);
+            _lineChart.XAxis.SetDrawGridLines(false);
 
-            chart.XAxis.Enabled = false;
-            chart.AxisLeft.Enabled = false;
-            chart.AxisRight.Enabled = false;
+            _lineChart.XAxis.Enabled = false;
+            _lineChart.AxisLeft.Enabled = false;
+            _lineChart.AxisRight.Enabled = false;
 
-            chart.AnimateXY(3000, 3000); // animate horizontal and vertical 3000 milliseconds
-            chart.SetPinchZoom(false);
-            Legend l = chart.Legend;
+            _lineChart.AnimateXY(3000, 3000); // animate horizontal and vertical 3000 milliseconds
+            _lineChart.SetPinchZoom(false);
+            Legend l = _lineChart.Legend;
             l.FormSize = 10f; // set the size of the legend forms/shapes
             l.Form = Legend.LegendForm.Circle; // set what type of form/shape should be used
             l.Position = Legend.LegendPosition.BelowChartCenter;
@@ -305,7 +313,7 @@ namespace FamiliaXamarin.Sharing
             l.TextColor = Color.White;
             l.XEntrySpace = 5f; // set the space between the legend entries on the x-axis
             l.YEntrySpace = 5f; // set the space between the legend entries on the y-axis
-            chart.Invalidate();
+            _lineChart.Invalidate();
         }
         private void LoadDataInScrollLayouts(bool pressure = true)
         {
@@ -361,40 +369,38 @@ namespace FamiliaXamarin.Sharing
                 Height = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 40, Resources.DisplayMetrics),
                 MarginEnd = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 5, Resources.DisplayMetrics)
             };
+            var dayIndex = ReturnDayIndex();
+            DateTime baseDate = DateTime.Today;
 
+//            var today = baseDate;
+//            var yesterday = baseDate.AddDays(-1);
+            var thisWeekStart = baseDate.AddDays(-dayIndex);
+//            var thisWeekEnd = thisWeekStart.AddDays(7).AddSeconds(-1);
+//            var lastWeekStart = thisWeekStart.AddDays(-7);
+//            var lastWeekEnd = thisWeekStart.AddSeconds(-1);
+            var thisMonthStart = baseDate.AddDays(1 - baseDate.Day);
+//            var thisMonthEnd = thisMonthStart.AddMonths(1).AddSeconds(-1);
+//            var lastMonthStart = thisMonthStart.AddMonths(-1);
+//            var lastMonthEnd = thisMonthStart.AddSeconds(-1);
+
+            switch (type)
+            {
+                case 1:
+                    GetDataForChart(thisWeekStart, _dataType == "BloodPressure");
+                    break;
+                case 2:
+                    GetDataForChart(thisMonthStart, _dataType == "BloodPressure");
+                    break;
+                case 3:
+                    GetDataForChart(new DateTime(DateTime.Now.Year, 1,1), _dataType == "BloodPressure");
+                    break;
+                default:
+                    return;
+            }
+           
             if (type != 3)
             {
                 string[] days = { "L", "M", "M", "J", "V", "S", "D" };
-                var dayOfWeek = DateTime.Now.DayOfWeek;
-                int finalDayIndex;
-                switch (dayOfWeek)
-                {
-                    case System.DayOfWeek.Sunday:
-                        finalDayIndex = (int)DayOfWeek.Sunday;
-                        break;
-                    case System.DayOfWeek.Monday:
-                        finalDayIndex = (int)DayOfWeek.Monday;
-                        break;
-                    case System.DayOfWeek.Tuesday:
-                        finalDayIndex = (int)DayOfWeek.Tuesday;
-                        break;
-                    case System.DayOfWeek.Wednesday:
-                        finalDayIndex = (int)DayOfWeek.Wednesday;
-                        break;
-                    case System.DayOfWeek.Thursday:
-                        finalDayIndex = (int)DayOfWeek.Thursday;
-                        break;
-                    case System.DayOfWeek.Friday:
-                        finalDayIndex = (int)DayOfWeek.Friday;
-                        break;
-                    case System.DayOfWeek.Saturday:
-                        finalDayIndex = (int)DayOfWeek.Saturday;
-                        break;
-                    default:
-                        finalDayIndex = 0;
-                        break;
-                }
-
                 var dayOfMonth = DateTime.Now.Day;
                 int numberOfDaysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
                 int size = type == 1 && type != 3 ? (days.Length + 1) : numberOfDaysInMonth + 1;
@@ -402,12 +408,12 @@ namespace FamiliaXamarin.Sharing
                 var activeButton = new AppCompatButton(this);
                 for (int i = 0; i < size; i++)
                 {
-                    bool isActive = type == 1 && type != 3 ? i == finalDayIndex : i == dayOfMonth - 1;
+                    bool isActive = type == 1 && type != 3 ? i == dayIndex : i == dayOfMonth - 1;
                     var btn = DaySelectorButton(isActive);
                     btn.Id = i + 1;
                     btn.Text = type == 1 && type != 3 ? i < days.Length ? days[i] : i.ToString() : (i + 1).ToString();
                     btn.LayoutParameters = layoutButtonParams;
-                    if (i > finalDayIndex) btn.Enabled = false;
+                    if (i > dayIndex) btn.Enabled = false;
                     if (isActive) activeButton = btn;
 
                     if (i < size - 1)
@@ -424,11 +430,11 @@ namespace FamiliaXamarin.Sharing
             else
             {
                 Drawable img = Resources.GetDrawable(Resource.Drawable.calendar_date, Theme);
-                img.SetBounds(0,0,50,50);
+                img.SetBounds(0, 0, 50, 50);
                 AppCompatButton btn = new AppCompatButton(this)
                 {
                     Id = 1,
-                    Text= "Data",                 
+                    Text = "Data",
                     //Background = buttonBackgroundA,
                     //LayoutParameters = layoutButtonParams
                 };
@@ -436,10 +442,10 @@ namespace FamiliaXamarin.Sharing
                 btn.Background = buttonBackgroundDatePicker;
                 btn.SetAllCaps(false);
                 btn.SetCompoundDrawables(img, null, null, null);
-                btn.SetPadding((int) TypedValue.ApplyDimension(ComplexUnitType.Dip, 8, Resources.DisplayMetrics),
-                    (int) TypedValue.ApplyDimension(ComplexUnitType.Dip, 8, Resources.DisplayMetrics),
-                    (int) TypedValue.ApplyDimension(ComplexUnitType.Dip, 8, Resources.DisplayMetrics),
-                    (int) TypedValue.ApplyDimension(ComplexUnitType.Dip, 8, Resources.DisplayMetrics));
+                btn.SetPadding((int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 8, Resources.DisplayMetrics),
+                    (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 8, Resources.DisplayMetrics),
+                    (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 8, Resources.DisplayMetrics),
+                    (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 8, Resources.DisplayMetrics));
 
                 btn.Click += (sender, args) =>
                 {
@@ -464,10 +470,8 @@ namespace FamiliaXamarin.Sharing
                 };
                 layoutButtons.AddView(btn);
             }
-            
 
         }
-
         private AppCompatButton DaySelectorButton(bool active = false)
         {
             AppCompatButton btn = new AppCompatButton(this);
@@ -477,20 +481,41 @@ namespace FamiliaXamarin.Sharing
             btn.Click += DaySelectorButtonOnClick;
             return btn;
         }
+
+        private int ReturnDayIndex()
+        {
+            switch (DateTime.Now.DayOfWeek)
+            {
+                case System.DayOfWeek.Sunday:
+                    return (int)DayOfWeek.Sunday;
+                case System.DayOfWeek.Monday:
+                    return (int)DayOfWeek.Monday;
+                case System.DayOfWeek.Tuesday:
+                    return (int)DayOfWeek.Tuesday;
+                case System.DayOfWeek.Wednesday:
+                    return (int)DayOfWeek.Wednesday;
+                case System.DayOfWeek.Thursday:
+                    return (int)DayOfWeek.Thursday;
+                case System.DayOfWeek.Friday:
+                    return (int)DayOfWeek.Friday;
+                case System.DayOfWeek.Saturday:
+                    return (int)DayOfWeek.Saturday;
+                default:
+                    return 0;
+            }
+        }
         private void DaySelectorButtonOnClick(object sender, EventArgs e)
         {
             var btn = (AppCompatButton)sender;
 
             for (int i = 0; i < layoutButtons.ChildCount; i++)
             {
-                //if((layoutButtons.GetChildAt(i) as AppCompatButton).Id == btn.Id) continue;
                 if ((layoutButtons.GetChildAt(i) as AppCompatButton)?.Background == buttonBackgroundA)
-                    ((AppCompatButton) layoutButtons.GetChildAt(i)).Background = buttonBackground;
+                    ((AppCompatButton)layoutButtons.GetChildAt(i)).Background = buttonBackground;
             }
 
             if (btn.Background == buttonBackground)
                 btn.Background = buttonBackgroundA;
-
 
             switch (_dataType)
             {
@@ -505,43 +530,14 @@ namespace FamiliaXamarin.Sharing
                     break;
             }
 
-
-            var dayOfWeek = DateTime.Now.DayOfWeek;
-            int finalDayIndex;
-            switch (dayOfWeek)
-            {
-                case System.DayOfWeek.Sunday:
-                    finalDayIndex = (int)DayOfWeek.Sunday;
-                    break;
-                case System.DayOfWeek.Monday:
-                    finalDayIndex = (int)DayOfWeek.Monday;
-                    break;
-                case System.DayOfWeek.Tuesday:
-                    finalDayIndex = (int)DayOfWeek.Tuesday;
-                    break;
-                case System.DayOfWeek.Wednesday:
-                    finalDayIndex = (int)DayOfWeek.Wednesday;
-                    break;
-                case System.DayOfWeek.Thursday:
-                    finalDayIndex = (int)DayOfWeek.Thursday;
-                    break;
-                case System.DayOfWeek.Friday:
-                    finalDayIndex = (int)DayOfWeek.Friday;
-                    break;
-                case System.DayOfWeek.Saturday:
-                    finalDayIndex = (int)DayOfWeek.Saturday;
-                    break;
-                default:
-                    finalDayIndex = 0;
-                    break;
-            }
+            var dayIndex = ReturnDayIndex();
 
             DateTime baseDate = DateTime.Today;
 
             var today = baseDate;
             var yesterday = baseDate.AddDays(-1);
-            var thisWeekStart = baseDate.AddDays(-finalDayIndex);
-            var customWeekStart = baseDate.AddDays(-(finalDayIndex - (btn.Id-1)));
+            var thisWeekStart = baseDate.AddDays(-dayIndex);
+            var customWeekStart = baseDate.AddDays(-(dayIndex - (btn.Id - 1)));
             var thisWeekEnd = thisWeekStart.AddDays(7).AddSeconds(-1);
             var lastWeekStart = thisWeekStart.AddDays(-7);
             var lastWeekEnd = thisWeekStart.AddSeconds(-1);
@@ -594,15 +590,15 @@ namespace FamiliaXamarin.Sharing
                 ViewGroup.LayoutParams.WrapContent,
                 ViewGroup.LayoutParams.WrapContent)
             {
-                Width = (int) TypedValue.ApplyDimension(ComplexUnitType.Dip, 30, Resources.DisplayMetrics),
-                Height = (int) TypedValue.ApplyDimension(ComplexUnitType.Dip, 30, Resources.DisplayMetrics),
-                TopMargin = (int) TypedValue.ApplyDimension(ComplexUnitType.Dip, 3, Resources.DisplayMetrics)
+                Width = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 30, Resources.DisplayMetrics),
+                Height = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 30, Resources.DisplayMetrics),
+                TopMargin = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 3, Resources.DisplayMetrics)
             };
 
-            rlContent.SetPadding((int) TypedValue.ApplyDimension(ComplexUnitType.Dip, 16, Resources.DisplayMetrics),
-                (int) TypedValue.ApplyDimension(ComplexUnitType.Dip, 16, Resources.DisplayMetrics),
-                (int) TypedValue.ApplyDimension(ComplexUnitType.Dip, 16, Resources.DisplayMetrics),
-                (int) TypedValue.ApplyDimension(ComplexUnitType.Dip, 16, Resources.DisplayMetrics));
+            rlContent.SetPadding((int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 16, Resources.DisplayMetrics),
+                (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 16, Resources.DisplayMetrics),
+                (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 16, Resources.DisplayMetrics),
+                (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 16, Resources.DisplayMetrics));
             rlContent.LayoutParameters = rlParams;
 
             tvHour.LayoutParameters = tvHourParams;
@@ -638,7 +634,6 @@ namespace FamiliaXamarin.Sharing
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_pressure_and_glucose);
             InitUi();
-            // Create your application here
         }
         public void OnNothingSelected()
         {
