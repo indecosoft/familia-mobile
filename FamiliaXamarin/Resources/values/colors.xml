@@ -19,8 +19,10 @@
   <color name="base">#AAAAAA</color>
   <color name="iron">#CCCCCC</color>
   <color name="white">#FFFFFF</color>
-  <color name="highHealthValue">#C62828</color>
-  <color name="normalHealthValue">#2E7D32</color>
+  <color name="SharingAppBarForeground">#74818A</color>
+
+  <color name="highHealthValue">#E85571</color>
+  <color name="normalHealthValue">#95E33E</color>
 
   <color name="username0">#e21400</color>
   <color name="username1">#91580f</color>

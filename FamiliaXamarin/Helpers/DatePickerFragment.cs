@@ -1,11 +1,10 @@
 ﻿using System;
-
 using Android.App;
 using Android.OS;
 using Android.Util;
 using Android.Widget;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Helpers
 {
     public class DatePickerFragment : DialogFragment,
         DatePickerDialog.IOnDateSetListener
