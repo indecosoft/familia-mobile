@@ -10,20 +10,24 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using FamiliaXamarin.Helpers;
 
-namespace FamiliaXamarin.Medicatie
+namespace FamiliaXamarin.Helpers
 {
-    class DatePickerMedicine :DialogFragment, DatePickerDialog.IOnDateSetListener
+    class SharingDatePickerFragment : DialogFragment,
+        DatePickerDialog.IOnDateSetListener
     {
+        // TAG can be any string of your choice.
         public static readonly string TAG = "X:" + typeof(DatePickerFragment).Name.ToUpper();
 
+        // Initialize this value to prevent NullReferenceExceptions.
         Action<DateTime> _dateSelectedHandler = delegate { };
 
-        public static DatePickerMedicine NewInstance(Action<DateTime> onDateSelected)
+        public static SharingDatePickerFragment NewInstance(Action<DateTime> onDateSelected)
         {
-            DatePickerMedicine frag = new DatePickerMedicine();
-            frag._dateSelectedHandler = onDateSelected;
+            SharingDatePickerFragment frag = new SharingDatePickerFragment
+            {
+                _dateSelectedHandler = onDateSelected
+            };
             return frag;
         }
 
@@ -33,14 +37,23 @@ namespace FamiliaXamarin.Medicatie
             DatePickerDialog dialog = new DatePickerDialog(Activity,
                 this,
                 currently.Year,
-                currently.Month-1,
+                currently.Month,
                 currently.Day);
 
+            DateTime origin = new DateTime(1970, 1, 1);
+
+            DateTime minDate = new DateTime(DateTime.Now.Year,1,1);
+            long max = (long)(DateTime.Now.Date - origin.Date).TotalMilliseconds;
+            long min = (long)(minDate - origin.Date).TotalMilliseconds;
+
+            dialog.DatePicker.MaxDate = max;
+            dialog.DatePicker.MinDate = min;
             return dialog;
         }
 
         public void OnDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
         {
+            // Note: monthOfYear is a value between 0 and 11, not 1 and 12!
             DateTime selectedDate = new DateTime(year, monthOfYear + 1, dayOfMonth);
             Log.Debug(TAG, selectedDate.ToLongDateString());
             _dateSelectedHandler(selectedDate);

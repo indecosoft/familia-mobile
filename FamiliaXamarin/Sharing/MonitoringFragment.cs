@@ -61,75 +61,15 @@ namespace FamiliaXamarin.Sharing
                     {
                         var name = contacts[args.Position].Name;
                         var email = contacts[args.Position].Email;
-                        var dialog = OpenMiniProfileDialog();
-                        dialog.Name.Text = name;
-                        Glide.With(this).Load($"{Constants.PublicServerAddress}/{contacts[args.Position].Avatar}").Into(dialog.Image);
-                        //                        Picasso.With(Activity)
-                        //                            .Load($"{Constants.PublicServerAddress}/{contacts[args.Position].Avatar}")
-                        //                            //.Load("https://i.imgur.com/EepDV83.jpg")
-                        //                            //.Resize(100, 100)
-                        //                            .CenterCrop()
-                        //                            .Into(dialog.Image);
-                        dialog.ButtonConfirm.Visibility = ViewStates.Gone;
-                        dialog.ButtonCancel.Text = "Anuleaza partajarea";
-                        dialog.ButtonCancel.Click += delegate (object o, EventArgs eventArgs)
-                        {
-
-                            var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
-                            alertDialog.SetTitle(Html.FromHtml("<p style = 'text-align: center; color: #F47445;'>Avertisment</p>", FromHtmlOptions.ModeLegacy));
-                            alertDialog.SetMessage(Html.FromHtml("<br/><p style = 'text-align: center; color: #000000;'>Doriti sa stergeti aceasta conexiune?</p>", FromHtmlOptions.ModeLegacy));
-                            alertDialog.SetButton("Da", delegate
-                            {
-                                adapter.DeleteItemAt(args.Position);
-                                adapter.NotifyDataSetChanged();
-                                dialog.Dismiss();
-                                //                                var serialized = JsonConvert.SerializeObject(contacts);
-                                //                                Utils.SetDefaults("Rooms", serialized, Activity);
-                            });
-                            alertDialog.SetButton2("Nu", delegate { });
-                            alertDialog.Show();
-
-                        };
-                    };
-                    adapter.ItemLongClick += delegate (object sender, SharingAdapterClickEventArgs args)
-                    {
-
-                        if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                        {
-                            var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
-                            alertDialog.SetTitle(Html.FromHtml("<p style = 'text-align: center; color: #F47445;'>Avertisment</p>", FromHtmlOptions.ModeLegacy));
-                            alertDialog.SetMessage(Html.FromHtml("<br/><p style = 'text-align: center; color: #000000;'>Doriti sa stergeti aceasta conexiune?</p>", FromHtmlOptions.ModeLegacy));
-                            alertDialog.SetButton("Da", delegate
-                            {
-                                adapter.DeleteItemAt(args.Position);
-                                adapter.NotifyDataSetChanged();
-                                //                                var serialized = JsonConvert.SerializeObject(contacts);
-                                //                                Utils.SetDefaults("Rooms", serialized, Activity);
-                            });
-                            alertDialog.SetButton2("Nu", delegate { });
-                            alertDialog.Show();
-                        }
-                        else
-                        {
-                            var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
-                            alertDialog.SetTitle("Avertisment");
-                            alertDialog.SetMessage("Doriti sa stergeti aceasta conexiune?");
-                            alertDialog.SetButton("Da", delegate
-                            {
-                                adapter.DeleteItemAt(args.Position);
-                                adapter.NotifyDataSetChanged();
-                                //                                var serialized = JsonConvert.SerializeObject(contacts);
-                                //                                Utils.SetDefaults("Rooms", serialized, Activity);
-                            });
-                            alertDialog.SetButton2("Nu", delegate
-                            {
-                                //just close dialog
-
-                            });
-                            alertDialog.Show();
-                        }
+                        var imei = contacts[args.Position].Imei;
+                        var intent = new Intent(Activity, typeof(SharingMenuActivity));
+                        intent.PutExtra("Name", name);
+                        intent.PutExtra("Email", email);
+                        intent.PutExtra("Imei", imei);
+                        StartActivity(intent);
 
                     };
+                   
                 }
 
             }

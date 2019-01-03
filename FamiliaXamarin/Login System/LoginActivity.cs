@@ -151,7 +151,7 @@ namespace FamiliaXamarin.Login_System
                 _keyStore.Load(null);
                 IKey key = _keyStore.GetKey(_keyName, null);
                 _cipher.Init(CipherMode.EncryptMode, key);
-                return true;
+                return true; 
             }
             catch (Exception)
             {
@@ -238,7 +238,7 @@ namespace FamiliaXamarin.Login_System
             _progressBarDialog.Show();
             await Task.Run(async () => {
                 var dataToSend = new JSONObject().Put("email", _usernameEditText.Text)
-                    .Put("password", _passwordEditText.Text).Put("imei", Utils.GetImei(this));
+                    .Put("password", _passwordEditText.Text).Put("imei", "352455100741073" /*Utils.GetImei(this)*/);
 
                 string response = await WebServices.Post(Constants.PublicServerAddress + "/api/login", dataToSend);
                 if (response != null)

@@ -42,7 +42,7 @@ namespace FamiliaXamarin.Services
             SentData();
             if (_started)
             {
-                _handler.PostDelayed(_runnable, _refreshTime);
+                _handler.PostDelayed(_runnable, _refreshTime*5);
             }
         }
 
@@ -173,30 +173,30 @@ namespace FamiliaXamarin.Services
             try
             {
                 var data = await WebServices.Get("https://api.fitbit.com/1/user/-/activities/date/today.json", _token);
-            if (!string.IsNullOrEmpty(data))
-            {
-                Log.Error("Steps Result", data);
-
-                try
+                if (!string.IsNullOrEmpty(data))
                 {
-                    var fairlyActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("fairlyActiveMinutes");
-                    var veryActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("veryActiveMinutes");
-                    var activeMinutes = fairlyActiveMinutes + veryActiveMinutes;
+                    Log.Error("Steps Result", data);
 
-                    var steps = new JSONObject(data).GetJSONObject("summary").GetInt("steps");
+                    try
+                    {
+                        var fairlyActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("fairlyActiveMinutes");
+                        var veryActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("veryActiveMinutes");
+                        var activeMinutes = fairlyActiveMinutes + veryActiveMinutes;
 
-                    return new Dictionary<string, int>
+                        var steps = new JSONObject(data).GetJSONObject("summary").GetInt("steps");
+
+                        return new Dictionary<string, int>
                     {
                         {"Steps", steps},
                         {"Activity", activeMinutes},
                     };
-                  
+
+                    }
+                    catch (JSONException e)
+                    {
+                        e.PrintStackTrace();
+                    }
                 }
-                catch (JSONException e)
-                {
-                    e.PrintStackTrace();
-                }
-            }
             }
             catch (Exception e)
             {
@@ -204,7 +204,7 @@ namespace FamiliaXamarin.Services
             }
 
             return null;
-                                          
+
         }
 
         private async Task<string> GetSleepData()
@@ -290,9 +290,10 @@ namespace FamiliaXamarin.Services
             _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
 
             var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
+            var sleep = await GetSleepData();
             await _db.CreateTableAsync<DevicesRecords>();
             var activity = await GetSteps();
-            var sleep = await GetSleepData();
+           
             var pulse = await GetHeartRatePulse();
             if (!Utils.CheckNetworkAvailability())
                 AddGlucoseRecord(_db, activity, sleep, pulse);
