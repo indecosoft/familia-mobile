@@ -403,20 +403,24 @@ namespace FamiliaXamarin.Sharing
                 string[] days = { "L", "M", "M", "J", "V", "S", "D" };
                 var dayOfMonth = DateTime.Now.Day;
                 int numberOfDaysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-                int size = type == 1 && type != 3 ? (days.Length + 1) : numberOfDaysInMonth + 1;
+                int size = type == 1 && type != 3 ? (days.Length) : numberOfDaysInMonth;
 
                 var activeButton = new AppCompatButton(this);
                 for (int i = 0; i < size; i++)
                 {
-                    bool isActive = type == 1 && type != 3 ? i == dayIndex : i == dayOfMonth - 1;
+                    bool isActive = type == 1 && type != 3 ? i == dayIndex-1 : i == dayOfMonth - 1;
                     var btn = DaySelectorButton(isActive);
                     btn.Id = i + 1;
                     btn.Text = type == 1 && type != 3 ? i < days.Length ? days[i] : i.ToString() : (i + 1).ToString();
                     btn.LayoutParameters = layoutButtonParams;
-                    if (i > dayIndex) btn.Enabled = false;
+                    if (i > dayIndex - 1)
+                    {
+                        btn.Enabled = false;
+                        btn.SetTextColor(Color.ParseColor("#42535F"));
+                    }
                     if (isActive) activeButton = btn;
 
-                    if (i < size - 1)
+                    //if (i < size - 1)
                         layoutButtons.AddView(btn);
                 }
 
