@@ -35,7 +35,7 @@ namespace FamiliaXamarin.Chat
                           {
                               try
                               {
-                                  string emailFrom = Utils.GetDefaults("Email", Activity);
+                                  var emailFrom = Utils.GetDefaults("Email", Activity);
 
                                   var emailObject = new JSONObject().Put("dest", _people[_cardStackView.TopIndex - 1].Email).Put("from", emailFrom);
                                   WebSocketClient.Client.Emit("chat request", emailObject);

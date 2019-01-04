@@ -48,6 +48,12 @@ namespace FamiliaXamarin
         public static string NewMessage = "";
         readonly IWebSocketClient _socketClient = new WebSocketClient();
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+            Active = true;
+        }
+
         protected override void OnPause()
         {
             Active = false;
@@ -93,9 +99,8 @@ namespace FamiliaXamarin
             //{
             //    Toast.MakeText(this, mMessages[i].Username, ToastLength.Short).Show();
             //};
-            layoutManager = new LinearLayoutManager(this);
-            layoutManager.Orientation = LinearLayoutManager.Vertical;
-            
+            layoutManager = new LinearLayoutManager(this) {Orientation = LinearLayoutManager.Vertical};
+
             //layoutManager.ReverseLayout = true;
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.messages);
             _recyclerView.SetLayoutManager(layoutManager);
@@ -105,7 +110,7 @@ namespace FamiliaXamarin
             mInputMessageView = (EditText)FindViewById(Resource.Id.tbMessage);
             send = FindViewById<Button>(Resource.Id.Send);
             send.Click += delegate { AttemptSend(); };
-            NotificationManagerCompat.From(this).Cancel(Constants.NotifChatId--);
+            
 
 
             if (savedInstanceState == null)
@@ -113,10 +118,29 @@ namespace FamiliaXamarin
                 Bundle extras = Intent.Extras;
                 if (extras == null)
                 {
-
+                    Finish();
                 }
-                else if (extras.GetBoolean("AcceptClick"))
+                else
+                if (Intent.GetBooleanExtra("RejectClick",false))
                 {
+                    NotificationManagerCompat.From(this).Cancel(2);
+                    var emailFrom = Utils.GetDefaults("Email", this);
+                    RoomName = extras.GetString("Room");
+                    try
+                    {
+                        var mailObject = new JSONObject().Put("dest", extras.GetString("EmailFrom")).Put("from", emailFrom).Put("accepted", false);
+                        Log.Error("aici", mailObject.ToString());
+                        WebSocketClient.Client.Emit("chat accepted", mailObject);
+                    }
+                    catch (JSONException e)
+                    {
+                        e.PrintStackTrace();
+                    }
+                    Finish();
+                }
+                else if (Intent.GetBooleanExtra("AcceptClick", false))
+                {
+                    NotificationManagerCompat.From(this).Cancel(2);
                     try
                     {
                         //adaugare la lista de prieteni
@@ -130,11 +154,9 @@ namespace FamiliaXamarin
                             bool existingElement = false;
                             foreach (var conversation in model)
                             {
-                                if (conversation.Username.Equals(currentModel.Username))
-                                {
-                                    existingElement = true;
-                                    break;
-                                }
+                                if (!conversation.Username.Equals(currentModel.Username)) continue;
+                                existingElement = true;
+                                break;
                             }
                             if (!existingElement)
                             {
@@ -159,13 +181,11 @@ namespace FamiliaXamarin
                     {
                         Log.Error("Error", e.Message);
                     }
-                    RoomName = extras.GetString("Room");
-                    mUsername = extras.GetString("EmailFrom");
                     var emailFrom = Utils.GetDefaults("Email", this);
                     try
                     {
                         var dest = extras.GetString("EmailFrom");
-                        var mailObject = new JSONObject().Put("dest", dest).Put("from", emailFrom).Put("accepted", true);
+                        var mailObject = new JSONObject().Put("dest", dest).Put("from", emailFrom).Put("accepted", true).Put("room", RoomName);
                         Log.Error("aici", mailObject.ToString());
                         WebSocketClient.Client.Emit("chat accepted", mailObject);
                     }
@@ -174,27 +194,14 @@ namespace FamiliaXamarin
                         e.PrintStackTrace();
                     }
                 }
-                else if (extras.GetBoolean("RejectClick"))
-                {
-                    var emailFrom = Utils.GetDefaults("Email", this);
-                    RoomName = extras.GetString("Room");
-                    try
-                    {
-                        var mailObject = new JSONObject().Put("from", extras.GetString("EmailFrom")).Put("dest", emailFrom).Put("accepted", false);
-                        Log.Error("aici", mailObject.ToString());
-                        WebSocketClient.Client.Emit("chat accepted", mailObject);
-                    }
-                    catch (JSONException e)
-                    {
-                        e.PrintStackTrace();
-                    }
-                    Finish();
-                }
+                NotificationManagerCompat.From(this).Cancel(4);
 
-                RoomName = extras.GetString("Room");
-                mUsername = extras.GetString("EmailFrom");
-                if (extras.ContainsKey("NewMessage"))
+                RoomName = Intent.GetStringExtra("Room");
+                mUsername = Intent.GetStringExtra("EmailFrom");
+                if (extras != null && extras.ContainsKey("NewMessage"))
+                {
                     AddMessage(extras.GetString("NewMessage"), ChatModel.TypeMessage);
+                }
             }
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);

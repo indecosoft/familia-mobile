@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Android.App;
 using Android.Content;
 using Android.Gms.Common;
@@ -12,6 +14,7 @@ using Android.Telephony;
 using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
+using Java.Lang;
 using Java.Text;
 using Java.Util;
 using Org.Json;
@@ -28,6 +31,21 @@ namespace FamiliaXamarin.Helpers
     {
         public static bool util = false;
         static NotificationManager _notificationManager;
+
+        public static bool IsActivityRunning(Class activityClass, ContextWrapper ctx)
+        {
+            ActivityManager activityManager = (ActivityManager)ctx.BaseContext.GetSystemService(Context.ActivityService);
+            var tasks = activityManager.GetRunningTasks(Integer.MaxValue);
+
+            foreach (var task in tasks)
+            {
+                if (activityClass.CanonicalName.Equals(task.BaseActivity.ClassName, StringComparison.InvariantCultureIgnoreCase))
+                    return true;
+            }
+
+            return false;
+        }
+
         public static void SetDefaults(string key, string value, Context context)
         {
             var preferences = PreferenceManager.GetDefaultSharedPreferences(context);
@@ -212,6 +230,100 @@ namespace FamiliaXamarin.Helpers
             return _notificationManager ??
                    (_notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService));
         }
+        /// <summary>
+        /// Create Android Channel Notification for chat service
+        /// </summary>
+        /// <param name="title">Title of notification</param>
+        /// <param name="body">Body of notification</param>
+        /// <param name="email">Email of person that initiate the conversation</param>
+        /// <param name="room">The conversation room name</param>
+        /// <param name="type">Notification type (0 - request (default),1 - Request Rejected, 2 - Request Accepted, 3 - Message)</param>
+        /// <param name="buttonTitle">Title of Button (oprional)</param>
+        /// <returns></returns>
+        public static Notification CreateChatNotification(string title, string body, string email,
+            string room, int type = 0, string buttonTitle = "Converseaza")
+        {
+            var chatActivityAcceptedIntent = new Intent(Application.Context, typeof(ChatActivity));
+            var chatActivityRejectedIntent = new Intent(Application.Context, typeof(ChatActivity));
+
+            chatActivityAcceptedIntent.AddFlags(ActivityFlags.ClearTop);
+            chatActivityRejectedIntent.AddFlags(ActivityFlags.ClearTop);
+            chatActivityRejectedIntent.PutExtra("EmailFrom", email);
+            chatActivityAcceptedIntent.PutExtra("EmailFrom", email);
+            chatActivityAcceptedIntent.PutExtra("Room", room);
+            //0
+            switch (type)
+            {
+                case 0:
+                    //Notificare daca vrea sa vorbeasca cu celalat user
+                    chatActivityAcceptedIntent.PutExtra("AcceptClick", true);
+                    chatActivityRejectedIntent.PutExtra("RejectClick", true);
+                    chatActivityAcceptedIntent.PutExtra("EmailFrom", email);
+
+                    var acceptIntent = PendingIntent.GetActivity(Application.Context, 1, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+                    var rejectIntent = PendingIntent.GetActivity(Application.Context, 2, chatActivityRejectedIntent, PendingIntentFlags.OneShot);
+                    return new NotificationCompat.Builder(Application.Context, email)
+                        .SetContentTitle(title)
+                        .SetContentText(body)
+                        .SetSmallIcon(Resource.Drawable.logo)
+                        .AddAction(Resource.Drawable.logo, "Accepta", acceptIntent)
+                        .AddAction(Resource.Drawable.logo, "Refuza", rejectIntent)
+                        .SetStyle(new NotificationCompat.BigTextStyle()
+                            .BigText(body))
+                        .SetPriority(NotificationCompat.PriorityDefault)
+                        .SetAutoCancel(true)
+                        .SetOngoing(false)
+                        .Build();
+                        
+                case 1:
+                    //Notificare daca NU i-a acceptat cererea de chat
+                    return new NotificationCompat.Builder(Application.Context, email)
+                .SetContentTitle(title)
+                .SetContentText(body)
+                .SetSmallIcon(Resource.Drawable.logo)
+                .SetOngoing(true)
+                .Build();
+                case 2:
+                    //Notificare daca i-a acceptat cererea de chat
+
+                    var acceptIntent1 = PendingIntent.GetActivity(Application.Context, 3, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+
+  
+                        return new NotificationCompat.Builder(Application.Context, email)
+                            .SetContentTitle(title)
+                            .SetContentText(body)
+                            .SetSmallIcon(Resource.Drawable.logo)
+                            .SetStyle(new NotificationCompat.BigTextStyle()
+                                .BigText(body))
+                            .SetPriority(NotificationCompat.PriorityDefault)
+                            .SetContentIntent(acceptIntent1)
+                            .SetOngoing(false)
+                            .SetAutoCancel(true)
+                            .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent1)
+                            .Build();
+                case 3:
+                    //Notificare pentru mesaj
+                    chatActivityAcceptedIntent.PutExtra("NewMessage", body);
+
+                    var acceptIntent2 = PendingIntent.GetActivity(Application.Context, 4, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+
+                        return new NotificationCompat.Builder(Application.Context, title)
+                            .SetContentTitle(title)
+                            .SetContentText(body)
+                            .SetSmallIcon(Resource.Drawable.logo)
+                            .SetStyle(new NotificationCompat.BigTextStyle()
+                                .BigText(body))
+                            .SetOngoing(false)
+                            .SetPriority(NotificationCompat.PriorityDefault)
+                            .SetContentIntent(acceptIntent2)
+                            .SetAutoCancel(true)
+                            .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent2)
+                            .Build();
+                    
+            }
+
+            return null;
+        }
         public static NotificationCompat.Builder GetAndroidChannelNotification(string title, string body, string buttonTitle, int type, Context context, string room)
         {
             var intent = new Intent(context, typeof(ChatActivity));
@@ -232,21 +344,7 @@ namespace FamiliaXamarin.Helpers
                     var acceptIntent = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
                     var rejectIntent = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
 
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                    {
-                        return new NotificationCompat.Builder(context, body.Replace(" doreste sa ia legatura cu tine!", ""))
-                            .SetContentTitle(title)
-                            .SetContentText(body)
-                            .SetSmallIcon(Resource.Drawable.logo)
-                            .SetStyle(new NotificationCompat.BigTextStyle()
-                                .BigText(body))
-                            .SetPriority(NotificationCompat.PriorityDefault)
-                            .SetContentIntent(acceptIntent)
-                            .SetAutoCancel(true)
-                            .SetOngoing(false)
-                            .AddAction(Resource.Drawable.logo, "Refuza", rejectIntent)
-                            .AddAction(Resource.Drawable.logo, "Accepta", acceptIntent);
-                    }
+                        
 
                     break;
 
