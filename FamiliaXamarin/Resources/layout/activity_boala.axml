@@ -8,11 +8,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".medicatie.gestiune.ui.BoalaActivity">
-
+	<android.support.v7.widget.Toolbar
+           android:id="@+id/toolbar"
+           style="@style/HeaderBar"
+           android:layout_width="match_parent"
+           android:layout_height="?attr/actionBarSize"
+           app:popupTheme="@style/ActionBarPopupThemeOverlay"
+           app:theme="@style/ActionBarThemeOverlay" />
     <RelativeLayout
         android:id="@+id/rl_up"
         android:layout_width="match_parent"
-        android:layout_height="160dp">
+        android:layout_height="160dp"
+		android:layout_marginTop="50dp">
+		 
 
         <TextView
             android:id="@+id/tv_label_title"
@@ -74,10 +82,11 @@
             android:layout_above="@+id/btn_save"
             android:layout_below="@+id/tv_label_medicamente"
             android:layout_marginTop="20dp"
-            android:paddingBottom="80dp"
+            android:paddingBottom="5dp"
             android:paddingLeft="20dp"
             android:paddingStart="20dp"
             android:paddingTop="15dp"
+			
             android:scrollbars="vertical" />
 
 

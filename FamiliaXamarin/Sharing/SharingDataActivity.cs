@@ -5,12 +5,8 @@ using System.Text;
 
 using Android.Support.V7.App;
 using Android.App;
-using Android.Support.V4.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using FamiliaXamarin.Sharing;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Android.Content.PM;
@@ -26,6 +22,19 @@ namespace FamiliaXamarin.Services
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.fragment_sharing_data);
 
+            SetToolbar();
+
+            bottomNavigation = FindViewById<Android.Support.Design.Widget.BottomNavigationView>(Resource.Id.bottom_navigation);
+
+            bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
+
+            // Load the first fragment on creation
+            LoadFragment(Resource.Id.menu_tab1);
+
+        }
+
+        private void SetToolbar()
+        {
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
 
             SetSupportActionBar(toolbar);
@@ -40,15 +49,8 @@ namespace FamiliaXamarin.Services
             };
 
             Title = "Partajare date";
-
-            bottomNavigation = FindViewById<Android.Support.Design.Widget.BottomNavigationView>(Resource.Id.bottom_navigation);
-
-            bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
-
-            // Load the first fragment on creation
-            LoadFragment(Resource.Id.menu_tab1);
-
         }
+
         public override void OnBackPressed()
         {
             base.OnBackPressed();
