@@ -35,11 +35,7 @@ namespace FamiliaXamarin.Medicatie
             view.FindViewById(Resource.Id.btn_add_disease).SetOnClickListener(this);
             setupRecycleView(view);
 
-            //_progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Preluare medicatie...", Activity, false);
-           // _progressBarDialog.Show();
             GetData();
-
-           
 
             var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var numeDB = "devices_data.db";
@@ -61,13 +57,11 @@ namespace FamiliaXamarin.Medicatie
                         Log.Error("RESULT_FOR_MEDICATIE", res);
                         if (res.Equals("[]")) return;
                         _medications = ParseResultFromUrl(res);
-                       // foreach (var ms in _medications)
                         for(var ms = 0; ms <= _medications.Count; ms++)
                         {
                             Log.Error("MSSSSSTRING", _medications[ms].Timestampstring);
                             var am = (AlarmManager)Activity.GetSystemService(Context.AlarmService);
                             var i = new Intent(Activity, typeof(AlarmBroadcastReceiverServer));
-
 
                             i.PutExtra(AlarmBroadcastReceiverServer.Uuid, _medications[ms].Uuid);
                             i.PutExtra(AlarmBroadcastReceiverServer.Title, _medications[ms].Title);
@@ -106,8 +100,6 @@ namespace FamiliaXamarin.Medicatie
                
                
             });
-           // _progressBarDialog.Dismiss();
-
             
         }
 
@@ -140,12 +132,9 @@ namespace FamiliaXamarin.Medicatie
             return date.ToLocalTime();
         }
 
-//        private readonly DateTime Jan1st1970 = new DateTime
-//            (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         public int CurrentTimeMillis()
         {
-            //return (int)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
             return (int)(DateTime.UtcNow).Millisecond;
         }
 
@@ -153,8 +142,6 @@ namespace FamiliaXamarin.Medicatie
         {
             if (res != null)
             {
-
-
                 var medicationScheduleList = new List<MedicationSchedule>();
                 var results = new JSONArray(res);
 
@@ -167,7 +154,7 @@ namespace FamiliaXamarin.Medicatie
                     var content = obj.GetString("content");
                     var postpone = Convert.ToInt32(obj.GetString("postpone"));
                     medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone));
-                    Log.Error("MEDICATIONSTRING", timestampString);
+                    //Log.Error("MEDICATIONSTRING", timestampString);
                 }
 
                 return medicationScheduleList;
@@ -206,7 +193,8 @@ namespace FamiliaXamarin.Medicatie
             switch (v.Id)
             {
                 case Resource.Id.btn_add_disease:
-                    Activity.StartActivity(typeof(DiseaseActivity));
+                    var intent = new Intent(Activity, typeof(DiseaseActivity));
+                    StartActivity(intent);
                     break;
             }
         }

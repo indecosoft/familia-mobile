@@ -318,7 +318,7 @@ namespace FamiliaXamarin.Medicatie
                 }
                 else
                 {
-                    Toast.MakeText(Context, "Nu ati introdus numele MEDICAMENTULUI", ToastLength.Short).Show();
+                    Toast.MakeText(Context, "Introduceti denumirea medicmentului!", ToastLength.Long).Show();
                 }
 
             }

@@ -327,8 +327,16 @@ namespace FamiliaXamarin.Asistenta_sociala
             {
                 while (result == null)
                 {
-                    scanner.AutoFocus();
-                    Thread.Sleep(1000);
+                    try
+                    {
+                        scanner.AutoFocus();
+                        Thread.Sleep(1000);
+                    }
+                    catch
+                    {
+                        //Ignored
+                    }
+                    
                 }
             })).Start();
             result = await scanner.Scan(options);
