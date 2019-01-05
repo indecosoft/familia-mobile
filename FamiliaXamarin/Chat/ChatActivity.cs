@@ -56,7 +56,7 @@ namespace FamiliaXamarin
 
         protected override void OnPause()
         {
-            Active = false;
+            //Active = false;
             base.OnPause();
         }
         protected override void OnResume()
@@ -116,6 +116,9 @@ namespace FamiliaXamarin
             if (savedInstanceState == null)
             {
                 Bundle extras = Intent.Extras;
+                RoomName = Intent.GetStringExtra("Room");
+                mUsername = Intent.GetStringExtra("EmailFrom");
+                Active = Intent.GetBooleanExtra("Active", false);
                 if (extras == null)
                 {
                     Finish();
@@ -128,7 +131,7 @@ namespace FamiliaXamarin
                     RoomName = extras.GetString("Room");
                     try
                     {
-                        var mailObject = new JSONObject().Put("dest", extras.GetString("EmailFrom")).Put("from", emailFrom).Put("accepted", false);
+                        var mailObject = new JSONObject().Put("dest", mUsername).Put("from", emailFrom).Put("accepted", false);
                         Log.Error("aici", mailObject.ToString());
                         WebSocketClient.Client.Emit("chat accepted", mailObject);
                     }
@@ -150,7 +153,7 @@ namespace FamiliaXamarin
 
                             var model = JsonConvert.DeserializeObject<List<ConverstionsModel>>(SharedRooms);
 
-                            var currentModel = new ConverstionsModel { Username = extras.GetString("EmailFrom"), Room = extras.GetString("Room") };
+                            var currentModel = new ConverstionsModel { Username = mUsername, Room = RoomName };
                             bool existingElement = false;
                             foreach (var conversation in model)
                             {
@@ -169,7 +172,7 @@ namespace FamiliaXamarin
                         else
                         {
                             var model = new List<ConverstionsModel>();
-                            var currentModel = new ConverstionsModel { Username = extras.GetString("EmailFrom"), Room = extras.GetString("Room") };
+                            var currentModel = new ConverstionsModel { Username = mUsername, Room = RoomName };
 
                             model.Add(currentModel);
 
@@ -196,8 +199,7 @@ namespace FamiliaXamarin
                 }
                 NotificationManagerCompat.From(this).Cancel(4);
 
-                RoomName = Intent.GetStringExtra("Room");
-                mUsername = Intent.GetStringExtra("EmailFrom");
+
                 if (extras != null && extras.ContainsKey("NewMessage"))
                 {
                     AddMessage(extras.GetString("NewMessage"), ChatModel.TypeMessage);

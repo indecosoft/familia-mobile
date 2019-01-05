@@ -143,8 +143,6 @@ namespace FamiliaXamarin
                     Utils.GetManager().Notify(4, nb);
                 }
 
-                Constants.NotifChatId++;
-
             }
             catch (Exception ex)
             {
@@ -212,7 +210,6 @@ namespace FamiliaXamarin
             }
             var nb = Utils.CreateChatNotification("Cerere acceptata", $"{email} ti-a acceptat cererea de chat!", email, room, 2);
             Utils.GetManager().Notify(1, nb);
-            Constants.NotifChatId++;
         }
 
         private void OnChatRequest(Object[] obj)
@@ -238,7 +235,6 @@ namespace FamiliaXamarin
             //var nb = Utils.GetAndroidChannelNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
             var nb = Utils.CreateChatNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", email, room);
             Utils.GetManager().Notify(2, nb);
-            Constants.NotifChatId++;
         }
         private void OnChatRejected(Object[] obj)
         {
@@ -261,7 +257,6 @@ namespace FamiliaXamarin
             //var nb = Utils.GetAndroidChannelNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
             var nb = Utils.CreateChatNotification(email, "Ti-a respins cererea de convorbire!", email, null, 1);
             Utils.GetManager().Notify(3, nb);
-            Constants.NotifChatId++;
         }
     }
 }

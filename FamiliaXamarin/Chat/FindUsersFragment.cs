@@ -77,7 +77,7 @@ namespace FamiliaXamarin.Chat
         {
             await Task.Run(async () =>
             {
-                var dataToSent = new JSONObject().Put("id", Utils.GetDefaults("IdClient", Activity));
+                var dataToSent = new JSONObject().Put("id", Utils.GetDefaults("IdClient", Activity)).Put("distance", 3000);
                 var response = await WebServices.Post(Constants.PublicServerAddress + "/api/nearMe", dataToSent, Utils.GetDefaults("Token", Activity));
                 Log.Error("Response: ", "" + response);
                 try

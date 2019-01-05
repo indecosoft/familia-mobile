@@ -248,9 +248,15 @@ namespace FamiliaXamarin.Helpers
 
             chatActivityAcceptedIntent.AddFlags(ActivityFlags.ClearTop);
             chatActivityRejectedIntent.AddFlags(ActivityFlags.ClearTop);
+
             chatActivityRejectedIntent.PutExtra("EmailFrom", email);
             chatActivityAcceptedIntent.PutExtra("EmailFrom", email);
+
             chatActivityAcceptedIntent.PutExtra("Room", room);
+            chatActivityRejectedIntent.PutExtra("Room", room);
+
+            chatActivityAcceptedIntent.PutExtra("Active", true);
+            chatActivityRejectedIntent.PutExtra("Active", true);
             //0
             switch (type)
             {
@@ -258,7 +264,6 @@ namespace FamiliaXamarin.Helpers
                     //Notificare daca vrea sa vorbeasca cu celalat user
                     chatActivityAcceptedIntent.PutExtra("AcceptClick", true);
                     chatActivityRejectedIntent.PutExtra("RejectClick", true);
-                    chatActivityAcceptedIntent.PutExtra("EmailFrom", email);
 
                     var acceptIntent = PendingIntent.GetActivity(Application.Context, 1, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
                     var rejectIntent = PendingIntent.GetActivity(Application.Context, 2, chatActivityRejectedIntent, PendingIntentFlags.OneShot);
@@ -281,7 +286,8 @@ namespace FamiliaXamarin.Helpers
                 .SetContentTitle(title)
                 .SetContentText(body)
                 .SetSmallIcon(Resource.Drawable.logo)
-                .SetOngoing(true)
+                .SetOngoing(false)
+                .SetAutoCancel(true)
                 .Build();
                 case 2:
                     //Notificare daca i-a acceptat cererea de chat
@@ -304,6 +310,7 @@ namespace FamiliaXamarin.Helpers
                 case 3:
                     //Notificare pentru mesaj
                     chatActivityAcceptedIntent.PutExtra("NewMessage", body);
+                    
 
                     var acceptIntent2 = PendingIntent.GetActivity(Application.Context, 4, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
 
