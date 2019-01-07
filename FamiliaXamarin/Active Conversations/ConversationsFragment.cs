@@ -41,7 +41,7 @@ namespace FamiliaXamarin.Active_Conversations
                         var intent = new Intent(Activity, typeof(ChatActivity));
                         intent.PutExtra("Room", room);
                         intent.PutExtra("EmailFrom", name);
-
+                        intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
                         StartActivity(intent);
                     };
                     adapter.ItemLongClick += delegate (object sender, ConvAdapterClickEventArgs args)
