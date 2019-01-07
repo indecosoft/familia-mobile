@@ -41,7 +41,7 @@ namespace FamiliaXamarin
         Intent _medicationServiceIntent;
         Intent _smartBandServiceIntent;
         private FusedLocationProviderClient _fusedLocationProviderClient;
-        public static bool FromBoala;
+        //public static bool FromDisease;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -93,16 +93,26 @@ namespace FamiliaXamarin
                 //TODO: Implementateaza acivitaste pentru profil 
             };
 
-             if (FromBoala)
-                {
-                    var medFragment = new MedicineFragment();
-                    var medsupportFragmentManager = SupportFragmentManager;
-                    var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
-                    medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
-                    medbeginTransaction.AddToBackStack(null);
-                    medbeginTransaction.Commit();
-                    FromBoala = false;
-                }
+             if (Intent.GetBooleanExtra("FromChat", false))
+             {
+                 var convFragment = new ConversationsFragment();
+                 var convsupportFragmentManager = SupportFragmentManager;
+                 var medbeginTransaction = convsupportFragmentManager.BeginTransaction();
+                 medbeginTransaction.Replace(Resource.Id.fragment_container, convFragment);
+                 medbeginTransaction.AddToBackStack(null);
+                 medbeginTransaction.Commit();
+                 Title = "Conversatii active";
+             }
+             else if (Intent.GetBooleanExtra("FromDisease", false))
+             {
+                var medFragment = new MedicineFragment();
+                var medsupportFragmentManager = SupportFragmentManager;
+                var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
+                medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
+                medbeginTransaction.AddToBackStack(null);
+                medbeginTransaction.Commit();
+                Title = "Medicatie";
+            }
             //_isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
             if (!Utils.IsGooglePlayServicesInstalled(this)) return;
             new LocationRequest()
