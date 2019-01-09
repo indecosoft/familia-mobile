@@ -73,9 +73,9 @@ namespace FamiliaXamarin.Sharing
                 }
 
             }
-            catch (Exception e)
+            catch (Java.Lang.Exception e)
             {
-                //e.PrintStackTrace();
+                e.PrintStackTrace();
             }
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

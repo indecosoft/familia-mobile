@@ -69,7 +69,7 @@ namespace FamiliaXamarin.Services
                 {
                     string CHANNEL_ID = "my_channel_01";
                     NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel human readable title",
-                        NotificationManager.ImportanceDefault);
+                        NotificationImportance.Default);
 
                     ((NotificationManager)GetSystemService(Context.NotificationService)).CreateNotificationChannel(channel);
 

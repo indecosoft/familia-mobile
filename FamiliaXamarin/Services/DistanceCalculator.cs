@@ -7,6 +7,7 @@ using Android.Util;
 using Android.Widget;
 using FamiliaXamarin.Helpers;
 using Java.Lang;
+using Exception = System.Exception;
 using Math = System.Math;
 using String = System.String;
 
@@ -41,22 +42,39 @@ namespace FamiliaXamarin.Services
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            var notification = new NotificationCompat.Builder(this)
-                .SetContentTitle("Familia")
-                .SetContentText("Ruleaza in fundal")
-                .SetSmallIcon(Resource.Drawable.logo)
-                .SetOngoing(true)
-                .Build();
+            try
+            {
 
+                    string CHANNEL_ID = "my_channel_01";
+                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel human readable title",
+                        NotificationImportance.Default);
+
+                    ((NotificationManager)GetSystemService(NotificationService))
+                        .CreateNotificationChannel(channel);
+
+                    Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .SetContentTitle("Familia")
+                        .SetContentText("Ruleaza in fundal")
+                        .SetSmallIcon(Resource.Drawable.logo)
+                        .SetOngoing(true)
+                        .Build();
+
+                    StartForeground(ServiceRunningNotificationId, notification);
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                //throw;
+            }
             // Enlist this instance of the service as a foreground service
-            StartForeground(ServiceRunningNotificationId, notification);
             return StartCommandResult.Sticky;
         }
 
         private void CreateChannels()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
-            NotificationChannel androidChannel = new NotificationChannel("ANDROID_CHANNEL_ID", "ANDROID_CHANNEL_NAME", NotificationImportance.High);
+            var androidChannel = new NotificationChannel("ANDROID_CHANNEL_ID", "ANDROID_CHANNEL_NAME", NotificationImportance.High);
             androidChannel.EnableLights(true);
             androidChannel.EnableVibration(true);
             androidChannel.LightColor = Android.Resource.Color.HoloRedLight;
@@ -71,7 +89,7 @@ namespace FamiliaXamarin.Services
                    (_mNotificationManager = (NotificationManager) GetSystemService(NotificationService));
         }
 
-        private static NotificationCompat.Builder GetAndroidChannelNotification(String title, String body)
+        private static NotificationCompat.Builder GetAndroidChannelNotification(string title, string body)
         {
             Intent intent = new Intent(_ctx, typeof(MainActivity));
             //Intent rejectintent = new Intent(this, MenuActivity.class);
@@ -101,7 +119,7 @@ namespace FamiliaXamarin.Services
 
                 double distance = Utils.HaversineFormula(_ctx._latitude, _ctx._longitude, _ctx._currentLatitude, _ctx._currentLongitude);
                 Log.Error("Distance", "" + distance);
-                Toast.MakeText(_ctx, "" + distance + " metri", ToastLength.Short).Show();
+                //Toast.MakeText(_ctx, "" + distance + " metri", ToastLength.Short).Show();
                 if (distance > 180 && distance < 220)
                 {
                     Log.Warn("Distance warning", "mai mult de 200 metri.Esti la " + Math.Round(distance) + " metrii distanta");
@@ -115,7 +133,7 @@ namespace FamiliaXamarin.Services
                 else if (distance > 220)
                 {
                     _ctx._refreshTime = 60000;
-                    Toast.MakeText(_ctx, "" + distance + " metri " + _ctx._verifications, ToastLength.Short).Show();
+                    //Toast.MakeText(_ctx, "" + distance + " metri " + _ctx._verifications, ToastLength.Short).Show();
 
                     if (_ctx._verifications == 15)
                     {

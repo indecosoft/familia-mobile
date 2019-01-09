@@ -180,7 +180,7 @@ namespace FamiliaXamarin.Login_System
             return image;
         }
 
-        async void TakePhotoFromCamera()
+        private void TakePhotoFromCamera()
             {
                 if (IsThereAnAppToTakePictures())
                 {
@@ -369,7 +369,7 @@ namespace FamiliaXamarin.Login_System
                                 _tbDate.Text = $"{a[1]}-{Convert.ToInt32(a[0]) + 1}-{a[2]}";
                                 FragmentContext._firstSetupModel.DateOfBirth = $"{a[2]}-{Convert.ToInt32(a[0]) + 1}-{a[1]}";
                             });
-                            frag.Show(FragmentContext.FragmentManager, DatePickerFragment.TAG);
+                            frag.Show(FragmentContext.SupportFragmentManager, DatePickerFragment.TAG);
                         };
                         _tbDate.FocusChange += delegate
                         {
@@ -381,7 +381,7 @@ namespace FamiliaXamarin.Login_System
                                 _tbDate.Text = $"{a[1]}-{Convert.ToInt32(a[0]) + 1}-{a[2]}";
                                 FragmentContext._firstSetupModel.DateOfBirth = $"{a[2]}-{Convert.ToInt32(a[0])+ 1}-{a[1]}";
                             });
-                            frag.Show(FragmentContext.FragmentManager, DatePickerFragment.TAG);
+                            frag.Show(FragmentContext.SupportFragmentManager, DatePickerFragment.TAG);
                         };
                         _tbDate.Click += delegate
                         {
@@ -392,7 +392,7 @@ namespace FamiliaXamarin.Login_System
                                 _tbDate.Text = $"{a[1]}-{Convert.ToInt32(a[0]) + 1}-{a[2]}";
                                 FragmentContext._firstSetupModel.DateOfBirth = $"{a[2]}-{Convert.ToInt32(a[0]) + 1}-{a[1]}";
                             });
-                            frag.Show(FragmentContext.FragmentManager, DatePickerFragment.TAG);
+                            frag.Show(FragmentContext.SupportFragmentManager, DatePickerFragment.TAG);
                         };
 
                         

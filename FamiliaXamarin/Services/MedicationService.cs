@@ -74,7 +74,7 @@ namespace FamiliaXamarin.Services
             throw new NotImplementedException();
         }
 
-        public async override void OnCreate()
+        public override void OnCreate()
         {
             base.OnCreate();
             Log.Error("Service:", "STARTED");
@@ -137,20 +137,28 @@ namespace FamiliaXamarin.Services
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             aTimer.Start();
 
-            var notification = new NotificationCompat.Builder(this)
-                .SetContentTitle(Resources.GetString(Resource.String.app_name))
-                .SetContentText("Ruleaza in fundal")
-                .SetSmallIcon(Resource.Drawable.logo)
-                .SetOngoing(true)
-                .Build();
+            try
+            {
+                string CHANNEL_ID = "my_channel_01";
+                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel human readable title",
+                    NotificationImportance.Default);
 
-            // Enlist this instance of the service as a foreground service
-            StartForeground(ServiceRunningNotificationId, notification);
+                ((NotificationManager)GetSystemService(NotificationService))
+                    .CreateNotificationChannel(channel);
+                Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .SetContentTitle("Familia")
+                    .SetContentText("Ruleaza in fundal")
+                    .SetSmallIcon(Resource.Drawable.logo)
+                    .SetOngoing(true)
+                    .Build();
 
-            
-
-            
-
+                StartForeground(ServiceRunningNotificationId, notification);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
             return StartCommandResult.Sticky;   
         }
     }

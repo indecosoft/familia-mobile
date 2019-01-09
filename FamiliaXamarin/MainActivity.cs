@@ -38,7 +38,7 @@ namespace FamiliaXamarin
     {
         Intent _loacationServiceIntent;
         Intent _webSocketServiceIntent;
-        Intent _medicationServiceIntent;
+//        Intent _medicationServiceIntent;
         Intent _smartBandServiceIntent;
         private FusedLocationProviderClient _fusedLocationProviderClient;
         //public static bool FromDisease;

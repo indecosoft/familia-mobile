@@ -21,9 +21,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
         private Hour _mHour;
         private Disease _mDisease;
         private Medicine _mMed;
-        private PowerManager.WakeLock _wakeLock;
-
-        public static Class PowerService { get; private set; }
 
         public override void OnReceive(Context context, Intent intent)
         {   
