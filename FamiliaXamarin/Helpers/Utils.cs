@@ -278,13 +278,18 @@ namespace FamiliaXamarin.Helpers
                     //Notificare daca vrea sa vorbeasca cu celalat user
                     chatActivityAcceptedIntent.PutExtra("AcceptClick", true);
                     chatActivityRejectedIntent.PutExtra("RejectClick", true);
-                    var stackBuilder = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
-                    stackBuilder.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
+                    var stackBuilderAccept = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
+                    stackBuilderAccept.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
                     // Get the PendingIntent containing the entire back stack
-                    var acceptIntent = stackBuilder.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
+                    var acceptIntent = stackBuilderAccept.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
 
-                   // var acceptIntent = PendingIntent.GetActivity(Application.Context, 1, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+                    // var acceptIntent = PendingIntent.GetActivity(Application.Context, 1, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
                     var rejectIntent = PendingIntent.GetActivity(Application.Context, 2, chatActivityRejectedIntent, PendingIntentFlags.OneShot);
+
+//                    var stackBuilderReject = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
+//                    stackBuilderReject.AddNextIntentWithParentStack(chatActivityRejectedIntent);
+
+                   // var rejectIntent = stackBuilderReject.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
                     return new NotificationCompat.Builder(Application.Context, email)
                         .SetContentTitle(title)
                         .SetContentText(body)
@@ -309,11 +314,14 @@ namespace FamiliaXamarin.Helpers
                 .Build();
                 case 2:
                     //Notificare daca i-a acceptat cererea de chat
+                    var stackBuilder = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
+                    stackBuilder.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
 
-                    var acceptIntent1 = PendingIntent.GetActivity(Application.Context, 3, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+                   // var acceptIntent1 = PendingIntent.GetActivity(Application.Context, 3, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+                    var acceptIntent1 = stackBuilder.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
 
-  
-                        return new NotificationCompat.Builder(Application.Context, email)
+
+                    return new NotificationCompat.Builder(Application.Context, email)
                             .SetContentTitle(title)
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)
@@ -328,11 +336,14 @@ namespace FamiliaXamarin.Helpers
                 case 3:
                     //Notificare pentru mesaj
                     chatActivityAcceptedIntent.PutExtra("NewMessage", body);
-                    
 
-                    var acceptIntent2 = PendingIntent.GetActivity(Application.Context, 4, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+                    var stackBuilderIntent2 = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
+                    stackBuilderIntent2.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
 
-                        return new NotificationCompat.Builder(Application.Context, title)
+                   // var acceptIntent2 = PendingIntent.GetActivity(Application.Context, 4, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+                    var acceptIntent2 = stackBuilderIntent2.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
+
+                    return new NotificationCompat.Builder(Application.Context, title)
                             .SetContentTitle(title)
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)

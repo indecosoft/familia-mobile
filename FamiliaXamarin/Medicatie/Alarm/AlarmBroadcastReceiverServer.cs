@@ -53,7 +53,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     var uuid = intent.GetStringExtra(Uuid);
                     var title = intent.GetStringExtra(Title);
                     var content = intent.GetStringExtra(Content);
-                    var channel = uuid;
+                   // var channel = uuid;
+                    var channel = "channelabsolut";
 
                     createNotificationChannel(channel, title, content);
 
@@ -64,7 +65,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     okIntent.PutExtra("notifyId", NotifyId);
                     okIntent.SetAction(ActionOk);
 
-                    PendingIntent piNotification = PendingIntent.GetBroadcast(context, NotifyId, okIntent, PendingIntentFlags.UpdateCurrent);
+                   // PendingIntent piNotification = PendingIntent.GetBroadcast(context, NotifyId, okIntent, PendingIntentFlags.UpdateCurrent);
+                    PendingIntent piNotification = PendingIntent.GetBroadcast(context, 2019, okIntent, PendingIntentFlags.OneShot);
 
                     NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(context, channel)

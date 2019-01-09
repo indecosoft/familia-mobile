@@ -69,7 +69,9 @@ namespace FamiliaXamarin.Medicatie
                             i.SetAction(AlarmBroadcastReceiverServer.ActionReceive);
                             var random = new System.Random();
                             var id = CurrentTimeMillis() * random.Next();
-                            var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.OneShot);
+                            //var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.OneShot);
+                            var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.UpdateCurrent);
+                            //var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.UpdateCurrent);
                             if (am == null) continue;
                             var date = parseTimestampStringToDate(_medications[ms]);
 
