@@ -14,7 +14,7 @@ using FamiliaXamarin.Helpers;
 
 namespace FamiliaXamarin.Medicatie
 {
-    class DatePickerMedicine :DialogFragment, DatePickerDialog.IOnDateSetListener
+    class DatePickerMedicine : Android.Support.V4.App.DialogFragment, DatePickerDialog.IOnDateSetListener
     {
         public static readonly string TAG = "X:" + typeof(DatePickerFragment).Name.ToUpper();
 
@@ -22,8 +22,7 @@ namespace FamiliaXamarin.Medicatie
 
         public static DatePickerMedicine NewInstance(Action<DateTime> onDateSelected)
         {
-            DatePickerMedicine frag = new DatePickerMedicine();
-            frag._dateSelectedHandler = onDateSelected;
+            DatePickerMedicine frag = new DatePickerMedicine {_dateSelectedHandler = onDateSelected};
             return frag;
         }
 

@@ -132,13 +132,13 @@ namespace FamiliaXamarin.Login_System
                 LoadLoginUi();
             }
 
-            var av = BiometricUtils.IsPermissionGranted(this);
-            var a = new BiometricPrompt.Builder(this)
-                .SetTitle("aaa")
-                .SetSubtitle("bbb")
-                .SetDescription("Desc")
-                .SetNegativeButton("nu", this.MainExecutor, this)
-                .Build();
+//            var av = BiometricUtils.IsPermissionGranted(this);
+//            var a = new BiometricPrompt.Builder(this)
+//                .SetTitle("aaa")
+//                .SetSubtitle("bbb")
+//                .SetDescription("Desc")
+//                .SetNegativeButton("nu", this.MainExecutor, this)
+//                .Build();
         }
 
         private void LoadLoginUi()

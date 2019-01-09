@@ -32,16 +32,16 @@ namespace FamiliaXamarin.Medicatie
         private Medicine medicament;
         private IMode mode;
         private int intervalZi;
-        private Activity activity;
+        private DiseaseActivity activity;
         private string timeSelected;
         private TextView tvStartDate;
         private bool listmode = true;
-        private bool _isEdited = false;
+        private bool _isEdited;
         private string currentMed = string.Empty;
 
         public CustomDialogMedicamentDetails(Context context, Medicine medicament) : base(context)
         {
-            this.activity = (Activity)context;
+            this.activity = (DiseaseActivity)context;
             mode = medicament == null ? IMode.SAVE : IMode.UPDATE;
             this.medicament = medicament;
         }
@@ -303,7 +303,7 @@ namespace FamiliaXamarin.Medicatie
             {
                 tvStartDate.Text = time.ToShortDateString();
             });
-            frag.Show(activity.FragmentManager, DatePickerMedicine.TAG);
+            frag.Show(activity.SupportFragmentManager, DatePickerMedicine.TAG);
         }
 
         private void onSaveClicked()
