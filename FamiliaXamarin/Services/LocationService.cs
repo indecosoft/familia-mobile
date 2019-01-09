@@ -40,15 +40,18 @@ namespace FamiliaXamarin.Services
                 {
                     string CHANNEL_ID = "my_channel_01";
                     NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel human readable title",
-                        NotificationManager.ImportanceDefault);
+                        NotificationImportance.Default);
 
                     ((NotificationManager)GetSystemService(Context.NotificationService)).CreateNotificationChannel(channel);
 
                     Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .SetContentTitle("")
-                        .SetContentText("").Build();
+                        .SetContentTitle("Familia")
+                        .SetContentText("Ruleaza in fundal")
+                        .SetSmallIcon(Resource.Drawable.logo)
+                        .SetOngoing(true)
+                        .Build();
 
-                    StartForeground(1, notification);
+                    StartForeground(ServiceRunningNotificationId, notification);
                 }
 
                 _isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);

@@ -6,7 +6,7 @@ using Android.Widget;
 
 namespace FamiliaXamarin.Helpers
 {
-    public class DatePickerFragment : DialogFragment,
+    public class DatePickerFragment : Android.Support.V4.App.DialogFragment,
         DatePickerDialog.IOnDateSetListener
     {
         // TAG can be any string of your choice.

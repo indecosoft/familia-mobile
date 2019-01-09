@@ -236,14 +236,7 @@ namespace FamiliaXamarin.Sharing
 
             _lineChart.AnimateXY(3000, 3000); // animate horizontal and vertical 3000 milliseconds
             _lineChart.SetPinchZoom(false);
-            Legend l = _lineChart.Legend;
-            l.FormSize = 10f; // set the size of the legend forms/shapes
-            l.Form = Legend.LegendForm.Circle; // set what type of form/shape should be used
-            l.Position = Legend.LegendPosition.BelowChartCenter;
-            l.TextSize = 12f;
-            l.TextColor = Color.White;
-            l.XEntrySpace = 5f; // set the space between the legend entries on the x-axis
-            l.YEntrySpace = 5f; // set the space between the legend entries on the y-axis
+            SetLegend();
             _lineChart.Invalidate();
         }
 
@@ -303,18 +296,25 @@ namespace FamiliaXamarin.Sharing
             _lineChart.AxisLeft.Enabled = false;
             _lineChart.AxisRight.Enabled = false;
 
-            _lineChart.AnimateXY(3000, 3000); // animate horizontal and vertical 3000 milliseconds
+            _lineChart.AnimateXY(1000, 1000); // animate horizontal and vertical 3000 milliseconds
             _lineChart.SetPinchZoom(false);
+            SetLegend();
+            _lineChart.Invalidate();
+        }
+
+        private void SetLegend()
+        {
             Legend l = _lineChart.Legend;
             l.FormSize = 10f; // set the size of the legend forms/shapes
             l.Form = Legend.LegendForm.Circle; // set what type of form/shape should be used
-            l.Position = Legend.LegendPosition.BelowChartCenter;
+            l.VerticalAlignment = Legend.LegendVerticalAlignment.Bottom;
+            l.HorizontalAlignment = Legend.LegendHorizontalAlignment.Center;
             l.TextSize = 12f;
             l.TextColor = Color.White;
             l.XEntrySpace = 5f; // set the space between the legend entries on the x-axis
             l.YEntrySpace = 5f; // set the space between the legend entries on the y-axis
-            _lineChart.Invalidate();
         }
+
         private void LoadDataInScrollLayouts(bool pressure = true)
         {
             Drawable bloodPressureIconDrawable = Resources.GetDrawable(Resource.Drawable.heart, Theme);
@@ -470,7 +470,7 @@ namespace FamiliaXamarin.Sharing
                                 break;
                         }
                     });
-                    frag.Show(FragmentManager, SharingDatePickerFragment.TAG);
+                    frag.Show(SupportFragmentManager, SharingDatePickerFragment.TAG);
                 };
                 layoutButtons.AddView(btn);
             }

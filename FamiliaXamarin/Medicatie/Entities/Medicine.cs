@@ -63,7 +63,7 @@ namespace FamiliaXamarin.Medicatie.Entities
                 return true;
             }
 
-            if (obj.GetType() != typeof(Medicine))
+            if (obj?.GetType() != typeof(Medicine))
             {
                 return false;
             }
@@ -71,6 +71,11 @@ namespace FamiliaXamarin.Medicatie.Entities
             Medicine m = (Medicine)obj;
 
             return Name.Equals(m.Name);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

@@ -46,20 +46,6 @@ namespace FamiliaXamarin.Helpers
             return false;
         }
 
-        public static bool isRunning(Context ctx)
-        {
-            ActivityManager activityManager = (ActivityManager)ctx.GetSystemService(Context.ActivityService);
-            var tasks = activityManager.GetRunningTasks(Integer.MaxValue);
-
-            foreach (var task in tasks)
-            {
-                if (ctx.PackageName.Equals(task.BaseActivity.PackageName))
-                    return true;
-            }
-
-            return false;
-        }
-
         public static void SetDefaults(string key, string value, Context context)
         {
             var preferences = PreferenceManager.GetDefaultSharedPreferences(context);
@@ -461,7 +447,7 @@ namespace FamiliaXamarin.Helpers
         {
             ConnectivityManager cm = (ConnectivityManager)Application.Context.GetSystemService(Context.ConnectivityService);
             NetworkInfo activeNetwork = cm.ActiveNetworkInfo;
-            return activeNetwork != null && activeNetwork.IsConnectedOrConnecting;
+            return activeNetwork != null && activeNetwork.IsConnected;
         }
 
     }
