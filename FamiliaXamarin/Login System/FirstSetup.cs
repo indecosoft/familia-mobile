@@ -365,9 +365,8 @@ namespace FamiliaXamarin.Login_System
                             var frag = DatePickerFragment.NewInstance(delegate (DateTime time)
                             {
                                 _tbDate.Text = time.ToShortDateString();
-                                var a = _tbDate.Text.Split('/');
-                                _tbDate.Text = $"{a[1]}-{Convert.ToInt32(a[0]) + 1}-{a[2]}";
-                                FragmentContext._firstSetupModel.DateOfBirth = $"{a[2]}-{Convert.ToInt32(a[0]) + 1}-{a[1]}";
+                               
+                                FragmentContext._firstSetupModel.DateOfBirth = time.ToString("yyyy-MM-dd");
                             });
                             frag.Show(FragmentContext.SupportFragmentManager, DatePickerFragment.TAG);
                         };
@@ -377,9 +376,7 @@ namespace FamiliaXamarin.Login_System
                             var frag = DatePickerFragment.NewInstance(delegate (DateTime time)
                             {
                                 _tbDate.Text = time.ToShortDateString();
-                                var a = _tbDate.Text.Split('/');
-                                _tbDate.Text = $"{a[1]}-{Convert.ToInt32(a[0]) + 1}-{a[2]}";
-                                FragmentContext._firstSetupModel.DateOfBirth = $"{a[2]}-{Convert.ToInt32(a[0])+ 1}-{a[1]}";
+                                FragmentContext._firstSetupModel.DateOfBirth = time.ToString("yyyy-MM-dd");
                             });
                             frag.Show(FragmentContext.SupportFragmentManager, DatePickerFragment.TAG);
                         };
@@ -388,9 +385,7 @@ namespace FamiliaXamarin.Login_System
                             var frag = DatePickerFragment.NewInstance(delegate (DateTime time)
                             {
                                 _tbDate.Text = time.ToShortDateString();
-                                var a = _tbDate.Text.Split('/');
-                                _tbDate.Text = $"{a[1]}-{Convert.ToInt32(a[0]) + 1}-{a[2]}";
-                                FragmentContext._firstSetupModel.DateOfBirth = $"{a[2]}-{Convert.ToInt32(a[0]) + 1}-{a[1]}";
+                                FragmentContext._firstSetupModel.DateOfBirth = time.ToString("yyyy-MM-dd");
                             });
                             frag.Show(FragmentContext.SupportFragmentManager, DatePickerFragment.TAG);
                         };

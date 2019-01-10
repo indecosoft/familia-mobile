@@ -7,12 +7,12 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-  <style name="AppTheme.Dark" parent="Theme.AppCompat.Light.NoActionBar">
-    <item name="colorPrimary">@color/customBG</item>
-    <item name="colorPrimaryDark">@color/customDark</item>
-    <item name="colorAccent">@color/customDark</item>
+  <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorAccent">@color/colorAccent</item>
 
-    <item name="android:windowBackground">@color/customBG</item>
+    <item name="android:windowBackground">@color/colorPrimary</item>
 
     <item name="colorControlNormal">@color/customDark</item>
     <item name="colorControlActivated">@color/customDark</item>

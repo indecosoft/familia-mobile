@@ -12,6 +12,7 @@ using Android.Support.Constraints;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Hardware.Fingerprint;
 using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Widget;
 using FamiliaXamarin.Helpers;
 using Java.Lang;
@@ -31,9 +32,9 @@ namespace FamiliaXamarin.Login_System
 
         private EditText _usernameEditText;
         private EditText _passwordEditText;
-        private TextView _registerTextView;
+        private AppCompatButton _registerButton;
         private TextView _pwdResetTextView;
-        private Button _loginButton;
+        private AppCompatButton _loginButton;
         private KeyStore _keyStore;
         private Cipher _cipher;
         private readonly string _keyName = "EDMTDev";
@@ -230,13 +231,13 @@ namespace FamiliaXamarin.Login_System
 
             _layout = FindViewById<ConstraintLayout>(Resource.Id.layout);
 
-            _usernameEditText = FindViewById<EditText>(Resource.Id.UsernameEditText);
-            _passwordEditText = FindViewById<EditText>(Resource.Id.PasswordEditText);
+            _usernameEditText = FindViewById<EditText>(Resource.Id.et_email);
+            _passwordEditText = FindViewById<EditText>(Resource.Id.et_password);
 
-            _loginButton = FindViewById<Button>(Resource.Id.btnLogin);
+            _loginButton = FindViewById<AppCompatButton>(Resource.Id.btn_login);
 
-            _registerTextView = FindViewById<TextView>(Resource.Id.Signup);
-            _pwdResetTextView = FindViewById<TextView>(Resource.Id.PasswordReset);
+            _registerButton = FindViewById<AppCompatButton>(Resource.Id.btn_register);
+            _pwdResetTextView = FindViewById<TextView>(Resource.Id.tv_password_forgot);
 
             //_progressBarDialog = new ProgressBarDialog("Progress de test", "Alege butoane...", this, false, "Bine", (sender, args) => {Toast.MakeText(this,"Bine", ToastLength.Short).Show();}, "Nu stiu", (sender, args) => { Toast.MakeText(this, "Nu stiu", ToastLength.Short).Show(); }, "Anulare", (sender, args) => { Toast.MakeText(this, "Anulare", ToastLength.Short).Show(); });
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Autentificare...", this, false);
@@ -245,7 +246,7 @@ namespace FamiliaXamarin.Login_System
         private void InitListeners()
         {
             _loginButton.Click += BtnOnClick;
-            _registerTextView.Click += RegisterTextViewOnClick;
+            _registerButton.Click += RegisterButtonOnClick;
             _pwdResetTextView.Click += PwdResetTextViewOnClick;
 
         }
@@ -255,7 +256,7 @@ namespace FamiliaXamarin.Login_System
            StartActivity(typeof(PwdResetActivity));
         }
 
-        private void RegisterTextViewOnClick(object sender, EventArgs e)
+        private void RegisterButtonOnClick(object sender, EventArgs e)
         {
             StartActivity(typeof(RegisterActivity));
         }

@@ -18,8 +18,6 @@ using FamiliaXamarin.Medicatie;
 using FamiliaXamarin.Services;
 using FamiliaXamarin.Settings;
 using Refractored.Controls;
-using Square.Picasso;
-using System.Threading;
 using System.Threading.Tasks;
 using Android;
 using Android.Content.PM;
