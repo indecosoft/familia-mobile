@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Android;
 using Android.App;
@@ -19,6 +20,7 @@ using Java.Lang;
 using Java.Security;
 using Javax.Crypto;
 using Org.Json;
+using static Android.Hardware.Biometrics.BiometricPrompt;
 using Exception = System.Exception;
 using Permission = Android.Content.PM.Permission;
 
@@ -28,6 +30,23 @@ namespace FamiliaXamarin.Login_System
     public class LoginActivity : AppCompatActivity, IDialogInterfaceOnClickListener
     {
 
+        public class Test : BiometricPrompt.AuthenticationCallback
+        {
+            public override void OnAuthenticationFailed()
+            {
+                base.OnAuthenticationFailed();
+            }
+
+            public override void OnAuthenticationSucceeded(AuthenticationResult result)
+            {
+                base.OnAuthenticationSucceeded(result);
+            }
+
+            public override void OnAuthenticationHelp(BiometricAcquiredStatus helpCode, ICharSequence helpString)
+            {
+                base.OnAuthenticationHelp(helpCode, helpString);
+            }
+        }
         private ConstraintLayout _layout;
 
         private EditText _usernameEditText;
@@ -55,7 +74,6 @@ namespace FamiliaXamarin.Login_System
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
             var fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint", this)) && Convert.ToBoolean(Utils.GetDefaults("fingerprint", this));
 
             var checkHardware = FingerprintManagerCompat.From(this);
@@ -133,13 +151,22 @@ namespace FamiliaXamarin.Login_System
                 LoadLoginUi();
             }
 
-//            var av = BiometricUtils.IsPermissionGranted(this);
-//            var a = new BiometricPrompt.Builder(this)
-//                .SetTitle("aaa")
-//                .SetSubtitle("bbb")
-//                .SetDescription("Desc")
-//                .SetNegativeButton("nu", this.MainExecutor, this)
-//                .Build();
+            //            var av = BiometricUtils.IsPermissionGranted(this);
+            /*var a = new BiometricPrompt.Builder(this)
+                .SetTitle("Title")
+                .SetSubtitle("Subtitle")
+                .SetDescription("Description: blablablablablablablablablablabla...")
+                .SetNegativeButton("Use password", this.MainExecutor, this)
+                .Build();
+
+            CancellationSignal cancellationSignal = new CancellationSignal();
+            cancellationSignal.CancelEvent += delegate(object sender, EventArgs args)
+                {
+                    Toast.MakeText(this, "onCancel", ToastLength.Short);
+                };
+            var ab = new Test();
+            
+            a.Authenticate(cancellationSignal,MainExecutor,ab);*/
         }
 
         private void LoadLoginUi()
@@ -318,6 +345,7 @@ namespace FamiliaXamarin.Login_System
         public void OnClick(IDialogInterface dialog, int which)
         {
             //biometricCallback.onAuthenticationCancelled();
+            Toast.MakeText(this, "You requested password.", ToastLength.Short);
         }
     }
 }
