@@ -5,16 +5,21 @@ using Android;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Graphics;
 using Android.Hardware.Biometrics;
 using Android.Hardware.Fingerprints;
 using Android.OS;
 using Android.Security.Keystore;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
 using Android.Support.V4.Hardware.Fingerprint;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Widget;
+using Com.Airbnb.Lottie;
+using Com.Airbnb.Lottie.Model;
+using Com.Airbnb.Lottie.Value;
 using FamiliaXamarin.Helpers;
 using Java.Lang;
 using Java.Security;
@@ -99,6 +104,9 @@ namespace FamiliaXamarin.Login_System
             {
 
                 SetContentView(Resource.Layout.activity_finger);
+                LottieAnimationView animationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
+                SimpleColorFilter filter = new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.colorAccent));
+                animationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter, new LottieValueCallback(filter));
                 //Using the Android Support Library v4
                 var keyguardManager = (KeyguardManager)GetSystemService(KeyguardService);
                 var fingerprintManager = (FingerprintManager)GetSystemService(FingerprintService);
