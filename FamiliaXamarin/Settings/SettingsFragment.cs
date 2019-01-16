@@ -22,7 +22,7 @@ namespace FamiliaXamarin.Settings
     {
         private Spinner spinner;
         private int optionOfSnooze;
-        private string key;
+//        private string key;
         private Switch enablefingerprint;
         public override void OnCreate(Bundle savedInstanceState)
         {

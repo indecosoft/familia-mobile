@@ -30,23 +30,59 @@ namespace FamiliaXamarin.Services
         {
             throw new NotImplementedException();
         }
-
         public override void OnCreate()
         {
             Log.Info("Service", "OnCreate: the service is initializing.");
-            
-            _isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
+            try
+            {
 
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    string CHANNEL_ID = "my_channel_01";
+                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel human readable title",
+                        NotificationImportance.Default);
 
-            if (!_isGooglePlayServicesInstalled) return;
-            _locationRequest = new LocationRequest()
-                .SetPriority(LocationRequest.PriorityHighAccuracy)
-                .SetInterval(1000 * 60 * 5)
-                .SetFastestInterval(1000 * 60 * 5);
-            _locationCallback = new FusedLocationProviderCallback(this);
+                    ((NotificationManager)GetSystemService(Context.NotificationService)).CreateNotificationChannel(channel);
 
-            _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);
-            RequestLocationUpdatesButtonOnClick();
+                    Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .SetContentTitle("Familia")
+                        .SetContentText("Ruleaza in fundal")
+                        .SetSmallIcon(Resource.Drawable.logo)
+                        .SetOngoing(true)
+                        .Build();
+
+                    StartForeground(ServiceRunningNotificationId, notification);
+                }
+
+                _isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
+
+                if (!_isGooglePlayServicesInstalled) return;
+                _locationRequest = new LocationRequest()
+                    .SetPriority(LocationRequest.PriorityHighAccuracy)
+                    .SetInterval(1000 * 60 * 30)
+                    .SetFastestInterval(1000 * 60 * 30);
+                _locationCallback = new FusedLocationProviderCallback(this);
+
+                _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);
+                RequestLocationUpdatesButtonOnClick();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                //throw;
+            }
+            //
+            //
+            //            var notification = new NotificationCompat.Builder(ApplicationContext)
+            //                .SetContentTitle("Familia")
+            //                .SetContentText("Ruleaza in fundal")
+            //                .SetSmallIcon(Resource.Drawable.logo)
+            //                .SetOngoing(true)
+            //                .Build();
+            //
+            //            // Enlist this instance of the service as a foreground service
+            //            StartForeground(ServiceRunningNotificationId, notification);
+
 
         }
 
@@ -84,15 +120,6 @@ namespace FamiliaXamarin.Services
         {
             Log.Info("Location Service", "Started");
 
-            var notification = new NotificationCompat.Builder(this)
-                .SetContentTitle("Familia")
-                .SetContentText("Ruleaza in fundal")
-                .SetSmallIcon(Resource.Drawable.logo)
-                .SetOngoing(true)
-                .Build();
-
-            // Enlist this instance of the service as a foreground service
-            StartForeground(ServiceRunningNotificationId, notification);
             return StartCommandResult.Sticky;
         }
     }

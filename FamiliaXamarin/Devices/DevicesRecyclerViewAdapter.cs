@@ -37,7 +37,7 @@ namespace FamiliaXamarin.Devices
         {
             var viewholder = holder as DevicesRecyclerViewAdapterViewHolder;
             var currentCrewMember = mData[position];
-            viewholder.TextViewName.Text = currentCrewMember;
+            if (viewholder != null) viewholder.TextViewName.Text = currentCrewMember;
 
             // Replace the contents of the view with that element
             //var holder = viewHolder as DevicesRecyclerViewAdapterViewHolder;
@@ -61,7 +61,7 @@ namespace FamiliaXamarin.Devices
         public DevicesRecyclerViewAdapterViewHolder(View itemView, Action<int> listener) : base(itemView)
         {
             TextViewName = (TextView) itemView.FindViewById(Resource.Id.name);
-            itemView.Click += (sender, e) => listener(obj: base.Position);
+            itemView.Click += (sender, e) => listener?.Invoke(obj: Position);
         }
 
     }

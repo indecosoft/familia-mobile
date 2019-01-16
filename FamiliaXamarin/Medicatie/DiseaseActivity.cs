@@ -19,6 +19,7 @@ using FamiliaXamarin.Medicatie.Alarm;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
 using Java.Util;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Calendar = Java.Util.Calendar;
 
 namespace FamiliaXamarin.Medicatie
@@ -43,6 +44,21 @@ namespace FamiliaXamarin.Medicatie
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_boala);
+
+            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+
+            SetSupportActionBar(toolbar);
+
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetDisplayShowHomeEnabled(true);
+            toolbar.NavigationClick += delegate
+            {
+                var intent = new Intent(this, typeof(MainActivity));
+                intent.AddFlags(ActivityFlags.ClearTop);
+                StartActivity(intent);
+            };
+
+            Title = "Tratament";
 
             SetupViews();
 
@@ -82,6 +98,10 @@ namespace FamiliaXamarin.Medicatie
             else
             {
                 base.OnBackPressed();
+                var intent = new Intent(this, typeof(MainActivity));
+                intent.AddFlags(ActivityFlags.ClearTop);
+                intent.PutExtra("FromDisease", true);
+                StartActivity(intent);
             }
             
         }
@@ -182,7 +202,7 @@ namespace FamiliaXamarin.Medicatie
             string numeBoala = etNumeBoala.Text;
             if (numeBoala.Equals(string.Empty))
             {
-                Toast.MakeText(this, "Nu ati introdus numele BOLII", ToastLength.Short).Show();
+                Toast.MakeText(this, "Introduceti denumirea afectiunii!", ToastLength.Long).Show();
                 return;
             }
             disease.ListOfMedicines = medicamentAdapter.getMedicaments();
@@ -219,9 +239,9 @@ namespace FamiliaXamarin.Medicatie
         }
         private void setAlarm(Hour hour, Medicine med, Disease boala, ref List<int> alarms, int position)
         {
-            var id = CurrentTimeMillis(); ;
+            var idAlarm = DateTime.Now.Millisecond ;
             var am = (AlarmManager)GetSystemService(AlarmService);
-
+            var id = 0;
             var i = new Intent(this, typeof(AlarmBroadcastReceiver));
             i.PutExtra(BOALA_ID, boala.Id);
             i.PutExtra(MED_ID, med.IdMed);
@@ -234,8 +254,8 @@ namespace FamiliaXamarin.Medicatie
             
             alarms.Add(id);
             i.PutExtra(ALARM_ID, id);
-
-            var pi = PendingIntent.GetBroadcast(this, id, i, PendingIntentFlags.OneShot);
+           // Log.Error("MEDICAMENT", med.Name);
+            var pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
 
             if (am == null) return;
 
@@ -250,7 +270,7 @@ namespace FamiliaXamarin.Medicatie
             setCalendar.Set(CalendarField.Second, 0);
 
             var dateString = med.Date;
-            Log.Error("MY DATE", med.Date);
+           // Log.Error("MY DATE", med.Date);
             parts = dateString.Split('.');
             var day = Convert.ToInt32(parts[0]);
             var month = Convert.ToInt32(parts[1]) - 1;

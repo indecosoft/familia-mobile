@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:background="#E6E6E6"
+	android:fitsSystemWindows="true">
+
+	<android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="false">
+
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/AppTheme.AppBarOverlay">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    style="@style/DevicesBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:popupTheme="@style/ActionBarPopupThemeOverlay"
+                    app:theme="@style/ActionBarThemeOverlay" />
+
+            </android.support.design.widget.AppBarLayout>
+        </android.support.constraint.ConstraintLayout>
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+
+        android:layout_width="0dp"
+        android:layout_height="160dp"
+        android:layout_gravity="center"
+        card_view:cardCornerRadius="4dp"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+		
+        card_view:layout_constraintLeft_toLeftOf="parent"
+        card_view:layout_constraintRight_toRightOf="parent"
+        card_view:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/heart" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/image"
+                android:text="Tensiune arteriala"
+                android:textAlignment="center" />
+
+            <Button
+                android:id="@+id/BloodPressureButton"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/title"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/health_button"
+                android:textColor="#F88A67"
+                android:textAllCaps="false"
+                android:text="Vizualizare" />
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view1"
+
+        android:layout_width="0dp"
+        android:layout_height="160dp"
+        android:layout_gravity="center"
+        card_view:cardCornerRadius="4dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+
+        card_view:layout_constraintLeft_toLeftOf="parent"
+        card_view:layout_constraintRight_toRightOf="parent"
+
+        card_view:layout_constraintTop_toBottomOf="@+id/card_view">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageGlucose"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/water" />
+
+            <TextView
+                android:id="@+id/titleGlucose"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageGlucose"
+                android:text="Glicemie"
+                android:textAlignment="center" />
+
+            <Button
+                android:id="@+id/BloodGlucoseButton"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/titleGlucose"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/health_button"
+                android:textColor="#F88A67"
+                android:textAllCaps="false"
+                android:text="Vizualizare" />
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view2"
+
+        android:layout_width="0dp"
+        android:layout_height="160dp"
+        android:layout_gravity="center"
+        card_view:cardCornerRadius="4dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+
+        card_view:layout_constraintLeft_toLeftOf="parent"
+        card_view:layout_constraintRight_toRightOf="parent"
+        card_view:layout_constraintTop_toBottomOf="@+id/card_view1">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageWatch"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/watch" />
+
+            <TextView
+                android:id="@+id/titleWatch"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageWatch"
+                android:text="SmartBand"
+                android:textAlignment="center" />
+
+            <Button
+                android:id="@+id/SmartbandButton"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/titleWatch"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/health_button"
+                android:textColor="#F88A67"
+                android:textAllCaps="false"
+                android:text="Vizualizare" />
+
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+</android.support.constraint.ConstraintLayout>

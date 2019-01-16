@@ -4,6 +4,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
+using Android.Util;
 using Android.Widget;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
@@ -20,9 +21,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
         private Hour _mHour;
         private Disease _mDisease;
         private Medicine _mMed;
-        private PowerManager.WakeLock _wakeLock;
-
-        public static Class PowerService { get; private set; }
 
         public override void OnReceive(Context context, Intent intent)
         {   
@@ -38,7 +36,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
             if (_mMed == null) return;
             _mHour = _mMed.FindHourById(hourId);
-
+            Log.Error("MEDICAMENT_RECEIVER",_mMed.Name);
             if (_mMed.NumberOfDays != 0)
             {   
                 var hourString = _mHour.HourName;
@@ -81,7 +79,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
         private void LaunchAlarm(Context context, Intent intent, string medId, string boalaId)
         {
            
-                Toast.MakeText(context, "ALARMA !!!", ToastLength.Long).Show();
                 var i = new Intent(context, typeof(AlarmActivity));
                 var intentNotification = new Intent(context, typeof(MedicineFragment));
                 //context.startActivity(new Intent(context, AlarmActivity.class));

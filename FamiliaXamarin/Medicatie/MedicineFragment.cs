@@ -24,7 +24,7 @@ namespace FamiliaXamarin.Medicatie
     public class MedicineFragment : Android.Support.V4.App.Fragment ,View.IOnClickListener, IOnBoalaClickListener, CustomDialogDeleteDisease.ICustomDialogDeleteDiseaseListener
     {
 
-        private ProgressBarDialog _progressBarDialog;
+//        private ProgressBarDialog _progressBarDialog;
         public static string IdBoala = "id_boala";
         private DiseaseAdapter _boalaAdapter;
         private List<MedicationSchedule> _medications;
@@ -35,8 +35,6 @@ namespace FamiliaXamarin.Medicatie
             view.FindViewById(Resource.Id.btn_add_disease).SetOnClickListener(this);
             setupRecycleView(view);
 
-            _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Preluare medicatie...", Activity, false);
-            _progressBarDialog.Show();
             GetData();
 
             var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
@@ -53,32 +51,36 @@ namespace FamiliaXamarin.Medicatie
                 try
                 {
                     var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("IdClient", Activity)}", Utils.GetDefaults("Token", Activity));
+
                     if (res != null)
                     {
+                        Log.Error("RESULT_FOR_MEDICATIE", res);
                         if (res.Equals("[]")) return;
                         _medications = ParseResultFromUrl(res);
-                        foreach (var ms in _medications)
+                        for(var ms = 0; ms <= _medications.Count; ms++)
                         {
+                            Log.Error("MSSSSSTRING", _medications[ms].Timestampstring);
                             var am = (AlarmManager)Activity.GetSystemService(Context.AlarmService);
                             var i = new Intent(Activity, typeof(AlarmBroadcastReceiverServer));
 
-
-                            i.PutExtra(AlarmBroadcastReceiverServer.Uuid, ms.Uuid);
-                            i.PutExtra(AlarmBroadcastReceiverServer.Title, ms.Title);
-                            i.PutExtra(AlarmBroadcastReceiverServer.Content, ms.Content);
+                            i.PutExtra(AlarmBroadcastReceiverServer.Uuid, _medications[ms].Uuid);
+                            i.PutExtra(AlarmBroadcastReceiverServer.Title, _medications[ms].Title);
+                            i.PutExtra(AlarmBroadcastReceiverServer.Content, _medications[ms].Content);
                             i.SetAction(AlarmBroadcastReceiverServer.ActionReceive);
-
-                            var id = CurrentTimeMillis();
-                            var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.OneShot);
+                            var random = new System.Random();
+                            var id = CurrentTimeMillis() * random.Next();
+                            //var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.OneShot);
+                            var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.UpdateCurrent);
+                            //var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.UpdateCurrent);
                             if (am == null) continue;
-                            var date = parseTimestampStringToDate(ms);
+                            var date = parseTimestampStringToDate(_medications[ms]);
 
                             Calendar calendar = Calendar.Instance;
                             Calendar setcalendar = Calendar.Instance;
 
                             setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
-
-                            if (setcalendar.Before(calendar)) return;
+                            Log.Error("DATE YEAR:", date.Year.ToString());
+                            if (setcalendar.Before(calendar)) continue;
 
                             am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
                         }
@@ -87,6 +89,7 @@ namespace FamiliaXamarin.Medicatie
                     {
                         Activity.RunOnUiThread(() =>
                         {
+                            Log.Error("RESULT_FOR_MEDICATIE", "nu se poate conecta la server");
                             Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
 
                         });
@@ -99,8 +102,6 @@ namespace FamiliaXamarin.Medicatie
                
                
             });
-            _progressBarDialog.Dismiss();
-
             
         }
 
@@ -108,6 +109,7 @@ namespace FamiliaXamarin.Medicatie
 
         private DateTime parseTimestampStringToDate(MedicationSchedule ms)
         {
+           
             DateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             {
                 TimeZone = Java.Util.TimeZone.GetTimeZone("UTC")
@@ -132,20 +134,16 @@ namespace FamiliaXamarin.Medicatie
             return date.ToLocalTime();
         }
 
-        private readonly DateTime Jan1st1970 = new DateTime
-            (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         public int CurrentTimeMillis()
         {
-            return (int)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
+            return (int)(DateTime.UtcNow).Millisecond;
         }
 
         private List<MedicationSchedule> ParseResultFromUrl(string res)
         {
             if (res != null)
             {
-
-
                 var medicationScheduleList = new List<MedicationSchedule>();
                 var results = new JSONArray(res);
 
@@ -158,6 +156,7 @@ namespace FamiliaXamarin.Medicatie
                     var content = obj.GetString("content");
                     var postpone = Convert.ToInt32(obj.GetString("postpone"));
                     medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone));
+                    //Log.Error("MEDICATIONSTRING", timestampString);
                 }
 
                 return medicationScheduleList;
@@ -196,7 +195,8 @@ namespace FamiliaXamarin.Medicatie
             switch (v.Id)
             {
                 case Resource.Id.btn_add_disease:
-                    Activity.StartActivity(typeof(DiseaseActivity));
+                    var intent = new Intent(Activity, typeof(DiseaseActivity));
+                    StartActivity(intent);
                     break;
             }
         }

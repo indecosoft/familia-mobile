@@ -8,6 +8,7 @@ using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Constraints;
@@ -28,7 +29,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.Devices.PressureDevice
 {
-    [Activity(Label = "BloodPressureDeviceActivity", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "BloodPressureDeviceActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class BloodPressureDeviceActivity : AppCompatActivity, Animator.IAnimatorListener
     {
         private BluetoothAdapter _bluetoothAdapter;

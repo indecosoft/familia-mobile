@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+  <item
+    android:id="@+id/week_tab"
+    android:enabled="true"
+    android:title="Saptamana"
+  />
+
+  <item
+    android:id="@+id/month_tab"
+    android:enabled="true"
+    android:title="Luna"
+  />  
+  <item
+    android:id="@+id/year_tab"
+    android:enabled="true"
+    android:title="An"
+    
+  />
+
+</menu>

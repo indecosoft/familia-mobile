@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Android.App;
+using Android.Content.PM;
 using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Text;
 using Android.Widget;
 using FamiliaXamarin.Helpers;
@@ -12,20 +14,22 @@ using Org.Json;
 
 namespace FamiliaXamarin
 {
-    [Activity(Label = "RegisterActivity", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "RegisterActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class RegisterActivity : AppCompatActivity
     {
-        private ConstraintLayout _layout;
-        private TextInputLayout _nameInputLayout;
+        private RelativeLayout _layout;
+        private TextInputLayout _lastNameInputLayout;
+        private TextInputLayout _firstNameInputLayout;
         private TextInputLayout _emailInputLayout;
         private TextInputLayout _passwordInputLayout;
         private TextInputLayout _passwordRetypeInputLayout;
         private EditText _nameEditText;
         private EditText _emailEditText;
+        private EditText _firstNameEditText;
         private EditText _passwordEditText;
         private EditText _passwordRetypeEditText;
-        private Button _btnRegister;
-        private TextView _signInTextView;
+        private AppCompatButton _btnRegister;
+        private AppCompatButton _bntCancel;
         private ProgressBarDialog _progressBarDialog;
 
         //private readonly IWebServices _webServices = new WebServices();
@@ -48,17 +52,21 @@ namespace FamiliaXamarin
             SetSupportActionBar(toolbar);
             Title = string.Empty;
 
-            _layout = FindViewById<ConstraintLayout>(Resource.Id.layout);
-            _nameInputLayout = FindViewById<TextInputLayout>(Resource.Id.NameInputLayout);
-            _emailInputLayout = FindViewById<TextInputLayout>(Resource.Id.EmailInputLayout);
-            _passwordInputLayout = FindViewById<TextInputLayout>(Resource.Id.PasswordInputLayout);
-            _passwordRetypeInputLayout = FindViewById<TextInputLayout>(Resource.Id.PasswordRetypeInputLayout);
-            _nameEditText = FindViewById<EditText>(Resource.Id.etName);
-            _emailEditText = FindViewById<EditText>(Resource.Id.etEmail);
-            _passwordEditText = FindViewById<EditText>(Resource.Id.etPassword);
-            _passwordRetypeEditText = FindViewById<EditText>(Resource.Id.etPasswordRetype);
-            _btnRegister = FindViewById<Button>(Resource.Id.btnRegister);
-            _signInTextView = FindViewById<TextView>(Resource.Id.tvSignIn);
+            _layout = FindViewById<RelativeLayout>(Resource.Id.layout);
+            _lastNameInputLayout = FindViewById<TextInputLayout>(Resource.Id.et_last_name_layout);
+            _firstNameInputLayout = FindViewById<TextInputLayout>(Resource.Id.et_first_name_layout);
+            _emailInputLayout = FindViewById<TextInputLayout>(Resource.Id.et_email_layout);
+
+            _passwordInputLayout = FindViewById<TextInputLayout>(Resource.Id.et_password_layout);
+            _passwordRetypeInputLayout = FindViewById<TextInputLayout>(Resource.Id.et_retype_password_layout);
+
+            _nameEditText = FindViewById<EditText>(Resource.Id.et_last_name);
+            _firstNameEditText = FindViewById<EditText>(Resource.Id.et_first_name);
+            _emailEditText = FindViewById<EditText>(Resource.Id.et_email);
+            _passwordEditText = FindViewById<EditText>(Resource.Id.et_password);
+            _passwordRetypeEditText = FindViewById<EditText>(Resource.Id.et_retype_password);
+            _btnRegister = FindViewById<AppCompatButton>(Resource.Id.btn_register);
+            _bntCancel = FindViewById<AppCompatButton>(Resource.Id.btn_cancel);
 
 
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Inregistrare...", this, false);
@@ -69,16 +77,34 @@ namespace FamiliaXamarin
         private void InitListeners()
         {        
             _btnRegister.Click += BtnRegisterOnClick;
-            _signInTextView.Click += SignInTextViewOnClick;
+            _bntCancel.Click += BntCancelOnClick;
             _nameEditText.TextChanged +=NameEditTextOnTextChanged;
+            _firstNameEditText.TextChanged += FirstNameEditTextOnTextChanged;
             _emailEditText.TextChanged += EmailEditTextOnTextChanged;
             _passwordEditText.TextChanged += PasswordEditTextOnTextChanged;
             _passwordRetypeEditText.TextChanged += PasswordRetypeEditTextOnTextChanged;
         }
 
+        private void FirstNameEditTextOnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            string name = _nameEditText.Text;
+            if (name == string.Empty)
+            {
+                _firstNameInputLayout.Error = "Camp obligatoriu";
+                _validateForm = false;
+            }
+            else
+            {
+                _firstNameInputLayout.Error = null;
+                _validateForm = true;
+            }
+            _btnRegister.Enabled = ValidateForm();
+        }
+
         private bool ValidateForm()
         {
-            return _nameEditText.Text != string.Empty &&
+            return _nameEditText.Text != string.Empty && 
+                   _firstNameEditText.Text != string.Empty &&
                    _emailEditText.Text != string.Empty &&
                    _passwordEditText.Text != string.Empty &&
                    _passwordRetypeEditText.Text != string.Empty &&
@@ -99,10 +125,7 @@ namespace FamiliaXamarin
                 _validateForm = false;
             }
 
-            if (ValidateForm())
-            {
-                _btnRegister.Enabled = true;
-            }
+            _btnRegister.Enabled = ValidateForm();
         }
 
         private void PasswordEditTextOnTextChanged(object sender, TextChangedEventArgs e)
@@ -124,12 +147,7 @@ namespace FamiliaXamarin
                 _passwordInputLayout.Error = null;
                 _validateForm = true;
             }
-            if (ValidateForm())
-            {
-                _btnRegister.Enabled = true;
-            }
-            else
-                _btnRegister.Enabled = false;
+            _btnRegister.Enabled = ValidateForm();
         }
 
         private void EmailEditTextOnTextChanged(object sender, TextChangedEventArgs e)
@@ -151,12 +169,7 @@ namespace FamiliaXamarin
                 _emailInputLayout.Error = null;
                 _validateForm = true;
             }
-            if (ValidateForm())
-            {
-                _btnRegister.Enabled= true;
-            }
-            else
-                _btnRegister.Enabled= false;
+            _btnRegister.Enabled = ValidateForm();
         }
 
         private void NameEditTextOnTextChanged(object sender, TextChangedEventArgs e)
@@ -164,23 +177,18 @@ namespace FamiliaXamarin
             string name = _nameEditText.Text;
             if (name == string.Empty)
             {
-                _nameInputLayout.Error = "Camp obligatoriu";
+                _lastNameInputLayout.Error = "Camp obligatoriu";
                 _validateForm = false;
             }
             else
             {
-                _nameInputLayout.Error = null;
+                _lastNameInputLayout.Error = null;
                 _validateForm = true;
             }
-            if (ValidateForm())
-            {
-                _btnRegister.Enabled = true;
-            }
-            else
-                _btnRegister.Enabled = false;
+            _btnRegister.Enabled = ValidateForm();
         }
 
-        private void SignInTextViewOnClick(object sender, EventArgs e)
+        private void BntCancelOnClick(object sender, EventArgs e)
         {
             Finish();
         }
@@ -191,7 +199,7 @@ namespace FamiliaXamarin
 
             await Task.Run(async () => {
 
-                var dataToSend = new JSONObject().Put("name", _nameEditText.Text).Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text).Put("type", 4).Put("imei", Utils.GetImei(this));
+                var dataToSend = new JSONObject().Put("name", $"{_nameEditText.Text} {_firstNameEditText.Text}").Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text).Put("type", 4).Put("imei", Utils.GetImei(this));
 
                 var response = await WebServices.Post(Constants.PublicServerAddress + "/api/register", dataToSend);
                 if (response != null)
@@ -212,7 +220,6 @@ namespace FamiliaXamarin
                             snack = Snackbar.Make(_layout, "Account created", Snackbar.LengthLong);
                             snack.Show();
                             Finish();
-                            
                             break;
                     }
                 }

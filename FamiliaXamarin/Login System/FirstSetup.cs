@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
+using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Provider;
@@ -16,11 +18,16 @@ using Android.Support.V4.Content;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Com.Bumptech.Glide;
 using FamiliaXamarin.Asistenta_sociala;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
+using Java.IO;
+using Java.Text;
+using Java.Util;
 using Newtonsoft.Json;
 using Org.Json;
+using Plugin.Media;
 using Refractored.Controls;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Environment = Android.OS.Environment;
@@ -30,10 +37,15 @@ using FragmentPagerAdapter = Android.Support.V4.App.FragmentPagerAdapter;
 
 namespace FamiliaXamarin.Login_System
 {
-    [Activity(Label = "FirstSetup", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "FirstSetup", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class FirstSetup : FragmentActivity
     {
-
+        public static class App
+        {
+            public static File _file;
+            public static File _dir;
+            public static Bitmap bitmap;
+        }
         SectionsPagerAdapter _sectionsPagerAdapter;
         FirstSetupViewPager _viewPager;
         readonly FirstSetupModel _firstSetupModel = new FirstSetupModel();
@@ -132,13 +144,56 @@ namespace FamiliaXamarin.Login_System
 
             }
 
-            void TakePhotoFromCamera()
+            private void CreateDirectoryForPictures()
             {
-                var intentCamera = new Intent(MediaStore.ActionImageCapture);
-                var filePhoto = new File(Environment.ExternalStorageDirectory + "/Familia", "Avatar [" + DateTime.Now + "].jpg");
-                _photoUri = Android.Net.Uri.FromFile(filePhoto);
-                intentCamera.PutExtra(MediaStore.ExtraOutput, _photoUri);
-                StartActivityForResult(intentCamera, Constants.RequestCamera);
+                App._dir = new File(
+                    Environment.GetExternalStoragePublicDirectory(
+                        Environment.DirectoryPictures), "Familia");
+                if (!App._dir.Exists())
+                {
+                    App._dir.Mkdirs();
+                }
+            }
+            private bool IsThereAnAppToTakePictures()
+            {
+                Intent intent = new Intent(MediaStore.ActionImageCapture);
+                IList<ResolveInfo> availableActivities = Activity.PackageManager.QueryIntentActivities(intent, PackageInfoFlags.MatchDefaultOnly);
+                return availableActivities != null && availableActivities.Count > 0;
+            }
+
+            private File createImageFile()
+            {
+                // Create an image file name
+                string timeStamp = new SimpleDateFormat("yyyy.MM.dd_HH:mm").Format(new Date());
+            string imageFileName = $"Avatar_" + timeStamp + "";
+                File storageDir = Activity.GetExternalFilesDir(Environment.DirectoryPictures);
+                //File storageDir = new File(Environment.GetExternalStoragePublicDirectory(
+                //Environment.DirectoryDcim), "Camera");
+            File image = File.CreateTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+            );
+                
+                // Save a file: path for use with ACTION_VIEW intents
+                _imagePath = image.AbsolutePath;
+            return image;
+        }
+
+        private void TakePhotoFromCamera()
+            {
+                if (IsThereAnAppToTakePictures())
+                {
+                    CreateDirectoryForPictures();
+
+                    Intent intent = new Intent(MediaStore.ActionImageCapture);
+                    //App._file = new File(App._dir, "Avatar [" + DateTime.Now + "].jpg");
+                    _photoUri = FileProvider.GetUriForFile(Activity, "FamiliaXamarin.FamiliaXamarin.fileprovider",
+                        createImageFile());
+
+                    intent.PutExtra(MediaStore.ExtraOutput, _photoUri);
+                    StartActivityForResult(intent, Constants.RequestCamera);
+                }
             }
             static string GetPathToImage(Android.Net.Uri uri)
             {
@@ -170,10 +225,12 @@ namespace FamiliaXamarin.Login_System
                     switch (requestCode)
                     {
                         case 1:
-                            _imagePath = _photoUri.Path;
-                            _profileImage.SetImageBitmap(Utils.CheckRotation(_photoUri.Path, MediaStore.Images.Media.GetBitmap(FragmentContext.ContentResolver, _photoUri)));
+                            //_imagePath = _photoUri.Path;
+                            Glide.With(this).Load(new File(_imagePath)).Into(_profileImage);
+
+                            //_profileImage.SetImageBitmap(Utils.CheckRotation(new File(_imagePath).Path, MediaStore.Images.Media.GetBitmap(FragmentContext.ContentResolver, _photoUri)));
                             GalleryAddPic();
-                            _fileInformations = new FileInfo(_imagePath);
+                            _fileInformations = new FileInfo(new File(_imagePath).Path);
                             Log.Error("Size", _fileInformations.Length.ToString());
                             if (_fileInformations.Length >= 10485760)
                             {
@@ -187,8 +244,12 @@ namespace FamiliaXamarin.Login_System
                             break;
                         case 2:
                             var uri = data.Data;
-                            _profileImage.SetImageBitmap(Utils.CheckRotation(GetPathToImage(uri), MediaStore.Images.Media.GetBitmap(FragmentContext.ContentResolver, uri)));
+
+                            
+
+                            //_profileImage.SetImageBitmap(Utils.CheckRotation(GetPathToImage(uri), MediaStore.Images.Media.GetBitmap(FragmentContext.ContentResolver, uri)));
                             _imagePath = GetPathToImage(uri);
+                            Glide.With(this).Load(new File(_imagePath)).Into(_profileImage);
                             _fileInformations = new FileInfo(_imagePath);
                             Log.Error("Size", _fileInformations.Length.ToString());
                             if (_fileInformations.Length >= 10485760)
@@ -304,9 +365,10 @@ namespace FamiliaXamarin.Login_System
                             var frag = DatePickerFragment.NewInstance(delegate (DateTime time)
                             {
                                 _tbDate.Text = time.ToShortDateString();
-                                FragmentContext._firstSetupModel.DateOfBirth = time.ToShortDateString();
+                               
+                                FragmentContext._firstSetupModel.DateOfBirth = time.ToString("yyyy-MM-dd");
                             });
-                            frag.Show(FragmentContext.FragmentManager, DatePickerFragment.TAG);
+                            frag.Show(FragmentContext.SupportFragmentManager, DatePickerFragment.TAG);
                         };
                         _tbDate.FocusChange += delegate
                         {
@@ -314,18 +376,18 @@ namespace FamiliaXamarin.Login_System
                             var frag = DatePickerFragment.NewInstance(delegate (DateTime time)
                             {
                                 _tbDate.Text = time.ToShortDateString();
-                                FragmentContext._firstSetupModel.DateOfBirth = time.ToShortDateString();
+                                FragmentContext._firstSetupModel.DateOfBirth = time.ToString("yyyy-MM-dd");
                             });
-                            frag.Show(FragmentContext.FragmentManager, DatePickerFragment.TAG);
+                            frag.Show(FragmentContext.SupportFragmentManager, DatePickerFragment.TAG);
                         };
                         _tbDate.Click += delegate
                         {
                             var frag = DatePickerFragment.NewInstance(delegate (DateTime time)
                             {
                                 _tbDate.Text = time.ToShortDateString();
-                                FragmentContext._firstSetupModel.DateOfBirth = time.ToShortDateString();
+                                FragmentContext._firstSetupModel.DateOfBirth = time.ToString("yyyy-MM-dd");
                             });
-                            frag.Show(FragmentContext.FragmentManager, DatePickerFragment.TAG);
+                            frag.Show(FragmentContext.SupportFragmentManager, DatePickerFragment.TAG);
                         };
 
                         
@@ -377,27 +439,6 @@ namespace FamiliaXamarin.Login_System
                 _diseaseSpinner.Adapter = myAdapter;
 
 
-                //                var adapter = new ArrayAdapter<string>(Context, Resource.Layout.spinner_item, stringArray);
-                //                // Specify the layout to use when the list of choices appears
-                //                adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
-                //                // Apply the adapter to the spinner
-                //                _diseaseSpinner.Adapter = adapter;
-                //var _benefitsArray = new JSONArray();
-                //_diseaseSpinner.ItemSelected +=delegate(object sender, AdapterView.ItemSelectedEventArgs args)
-                //{
-                //        FragmentContext._firstSetupModel.Disease.Put(new JSONObject().Put("cod", a[_diseaseSpinner.SelectedItemPosition].Cod));
-                //};
-                
-//                foreach (var t in _listVOs)
-//                {
-//                    if (t.IsSelected)
-//                    {
-//                        _benefitsArray = _benefitsArray.Put(t.Title);
-//                    }
-//                    //BenefitAdapter el = listVOs.get(i).isSelected();
-//                }
-
-                //_btnBack.Click += delegate { FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber) - 2; };
             }
 
 
@@ -412,14 +453,9 @@ namespace FamiliaXamarin.Login_System
                         {
                             new DiseaseModel
                             {
-                                Cod = -2,
+                                Cod = -1,
                                 Name = "Selectati Afectiuni"
                             },
-                            new DiseaseModel
-                            {
-                                Cod = -1,
-                                Name = "Niciuna"
-                            }
 
                         };
                     JSONArray arrayOfDiseases = new JSONArray(result);
@@ -466,9 +502,10 @@ namespace FamiliaXamarin.Login_System
 
                         await Task.Run(async () =>
                         {
-
+//                            var a = FragmentContext._firstSetupModel.DateOfBirth.Split('/');
+//                            FragmentContext._firstSetupModel.DateOfBirth = $"{a[2]}/{a[0]+1}/{a[1]}";
                             var jsonData = JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
-                            Log.Error("datra to send", jsonData);
+                            Log.Error("data to send", jsonData);
                             var response = await WebServices.Post(Constants.PublicServerAddress + "/api/firstSetup", new JSONObject(jsonData), Utils.GetDefaults("Token", Activity));
                             if (response != null)
                             {

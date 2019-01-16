@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+  <android.support.design.widget.BottomNavigationView
+    android:id="@+id/top_navigation"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start"
+    android:background="#182E3D"
+    android:layout_marginTop="-30dp"   
+    app:elevation="0dp"
+    app:menu="@menu/menu_sharing_navigation"
+    android:layout_below="@+id/top_bar"
+    app:itemIconTint="@drawable/nav_sharing_item_color"
+    app:itemTextColor="@drawable/nav_sharing_item_color"
+  />
+  <android.support.constraint.ConstraintLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:fitsSystemWindows="false">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="@style/SharingBar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/ActionBarPopupThemeOverlayDark"
+                app:theme="@style/ActionBarThemeOverlayDark" />
+
+        </android.support.design.widget.AppBarLayout>
+    </android.support.constraint.ConstraintLayout>
+
+
+    <!--<FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/top_navigation"/>-->
+
+    <LinearLayout
+        android:id="@+id/chart_content"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@+id/top_navigation">
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart"
+            android:layout_width="match_parent"
+            android:background="#19303F"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+    <HorizontalScrollView
+        android:id="@+id/ScrollViewButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:layout_below="@+id/chart_content"
+        android:background="#19303F">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/layout_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="65dp"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:layout_centerHorizontal="true">
+            </LinearLayout>
+        </RelativeLayout>
+    </HorizontalScrollView>
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ScrollViewButtons"
+        android:text="27/12/2018"
+        android:background="#19303F"
+        android:textColor="#fff"
+        android:padding="16dp"
+        android:textSize="18sp"/>
+
+    <HorizontalScrollView
+        android:id="@+id/ScrollViewH"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvDate"
+        android:background="#19303F">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:id="@+id/linearLayout2"
+            android:padding="10dp">
+
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <ScrollView
+        android:id="@+id/ScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ScrollViewH"
+        android:background="#19303F">
+
+        <LinearLayout
+            android:id="@+id/LinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:orientation="vertical">
+
+
+        </LinearLayout>
+
+    </ScrollView>
+</RelativeLayout>

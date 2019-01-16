@@ -50,8 +50,8 @@ namespace FamiliaXamarin.Devices
                                 Activity.StartActivity(typeof(AddNewGucoseDeviceActivity));
                                 break;
                             case Resource.Id.SmartbandButton:
-                                string url = "https://www.fitbit.com/oauth2/authorize?" +
-                                             "response_type=token" +
+                                string url = "https://www.fitbit.com/oauth2/authorize?" + /*"grant_type=authorization_code"+*/
+                                             "response_type=code" +
                                              "&client_id=22CZRL" +
                                              "&redirect_uri=fittauth%3A%2F%2Ffinish" +
                                              "&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight" +

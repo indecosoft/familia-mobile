@@ -11,6 +11,7 @@ using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Medicatie.Entities;
@@ -31,16 +32,16 @@ namespace FamiliaXamarin.Medicatie
         private Medicine medicament;
         private IMode mode;
         private int intervalZi;
-        private Activity activity;
+        private DiseaseActivity activity;
         private string timeSelected;
         private TextView tvStartDate;
         private bool listmode = true;
-        private bool _isEdited = false;
+        private bool _isEdited;
         private string currentMed = string.Empty;
 
         public CustomDialogMedicamentDetails(Context context, Medicine medicament) : base(context)
         {
-            this.activity = (Activity)context;
+            this.activity = (DiseaseActivity)context;
             mode = medicament == null ? IMode.SAVE : IMode.UPDATE;
             this.medicament = medicament;
         }
@@ -302,7 +303,7 @@ namespace FamiliaXamarin.Medicatie
             {
                 tvStartDate.Text = time.ToShortDateString();
             });
-            frag.Show(activity.FragmentManager, DatePickerMedicine.TAG);
+            frag.Show(activity.SupportFragmentManager, DatePickerMedicine.TAG);
         }
 
         private void onSaveClicked()
@@ -317,7 +318,7 @@ namespace FamiliaXamarin.Medicatie
                 }
                 else
                 {
-                    Toast.MakeText(Context, "Nu ati introdus numele MEDICAMENTULUI", ToastLength.Short).Show();
+                    Toast.MakeText(Context, "Introduceti denumirea medicmentului!", ToastLength.Long).Show();
                 }
 
             }
@@ -420,6 +421,7 @@ namespace FamiliaXamarin.Medicatie
         public void OnDateSet(DatePicker view, int year, int month, int dayOfMonth)
         {
             string dateSaved = $"{dayOfMonth}.{(month + 1)}.{year}";
+            Log.Error("DATE SAVED", dateSaved);
             tvStartDate.Text = dateSaved;
             this.medicament.Date = dateSaved;
         }

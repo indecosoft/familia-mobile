@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Support.Constraints;
 using Android.Support.V7.App;
@@ -17,12 +19,12 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.Devices.SmartBand
 {
-    [Activity(Label = "SmartBandDeviceActivity", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "SmartBandDeviceActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     [IntentFilter(new[] { Intent.ActionView },
         Categories = new[] { Intent.CategoryDefault, Intent.CategoryBrowsable },
         DataScheme = "fittauth",
         DataHost = "finish")]
-    public  class SmartBandDeviceActivity : AppCompatActivity
+    public class SmartBandDeviceActivity : AppCompatActivity
     {
         private string _url = string.Empty;
         private string _token = string.Empty;
@@ -35,6 +37,43 @@ namespace FamiliaXamarin.Devices.SmartBand
         private CircleImageView _avatarImage;
         private ConstraintLayout _loadingScreen;
 
+
+        private void RefreshToken()
+        {
+            var refreshToken = Utils.GetDefaults("FitbitRefreshToken", this);
+            Task.Run(async () =>
+            {
+                try
+                {
+                    string storedToken = Utils.GetDefaults("FitbitToken", this);
+                    if (!string.IsNullOrEmpty(storedToken))
+                    {
+                        _token = storedToken;
+                        var dict = new Dictionary<string, string>
+                            {
+                                {"grant_type", "refresh_token"}, {"refresh_token", refreshToken}
+                            };
+                        var response = await WebServices.Post("https://api.fitbit.com/oauth2/token", dict);
+                        if (response != null)
+                        {
+                            var obj = new JSONObject(response);
+                            _token = obj.GetString("access_token");
+                            var newRefreshToken = obj.GetString("refresh_token");
+                            var userId = obj.GetString("user_id");
+                            Utils.SetDefaults(GetString(Resource.String.smartband_device), _token, this);
+                            Utils.SetDefaults("FitbitToken", _token, this);
+                            Utils.SetDefaults("RitbitRefreshToken", newRefreshToken, this);
+                            Utils.SetDefaults("FitbitUserId", userId, this);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("FitbitServiceError", e.Message);
+                }
+
+            });
+        }
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -65,39 +104,40 @@ namespace FamiliaXamarin.Devices.SmartBand
             OnNewIntent(Intent);
             if (_url != null)
             {
-                Log.Error("URL", $"{_url}");
 
-                var token = _url.Substring(_url.IndexOf("&access_token", StringComparison.Ordinal) + 32);
-                var userId = _url.Substring(_url.IndexOf("&user_id=", StringComparison.Ordinal) + 9);
-                var scope = _url.Substring(_url.IndexOf("&scope=", StringComparison.Ordinal) + 7);
-                var tokenType = _url.Substring(_url.IndexOf("&token_type=", StringComparison.Ordinal) + 12);
-                var expires = _url.Substring(_url.IndexOf("&expires_in=", StringComparison.Ordinal) + 12);
+                var code = _url.Substring(_url.IndexOf("&access_token", StringComparison.Ordinal) + 24).Replace("#_=_", string.Empty);
 
-                tokenType = tokenType.Replace($"&expires_in={expires}", string.Empty);
-                token = token.Replace($"&user_id={userId}", string.Empty);
-                userId = userId.Replace($"&scope={scope}", string.Empty);
-                scope = scope.Replace($"&token_type={tokenType}&expires_in={expires}", string.Empty);
+                await Task.Run(async () =>
+                {
+                    var dict = new Dictionary<string, string>
+                    {
+                        {"code", code}, {"grant_type", "authorization_code"}, {"redirect_uri", Constants.CallbackUrl}
+                    };
+                    var response = await WebServices.Post("https://api.fitbit.com/oauth2/token", dict);
+                    if (response != null)
+                    {
+                        var obj = new JSONObject(response);
+                        _token = obj.GetString("access_token");
+                        var refreshToken = obj.GetString("refresh_token");
+                        var userId = obj.GetString("user_id");
+                        Utils.SetDefaults(GetString(Resource.String.smartband_device), _token, this);
+                        Utils.SetDefaults("FitbitToken", _token, this);
+                        Utils.SetDefaults("FitbitRefreshToken", refreshToken, this);
+                        Utils.SetDefaults("FitbitUserId", userId, this);
+                        Utils.SetDefaults("FitbitAuthCode", code, this);
+                    }
 
-                Log.Error("Token", token);
-                Log.Error("Token_Type", tokenType);
-                Log.Error("UserId", userId);
-                Log.Error("Scope", scope);
-                Log.Error("Expires_in", expires);
-
-
-                Utils.SetDefaults(GetString(Resource.String.smartband_device), token, this);
-                _token = token;
+                });
             }
             else
             {
+                RefreshToken();
                 _token = Utils.GetDefaults(GetString(Resource.String.smartband_device), this);
                 Log.Error("TokenFromShared", _token);
             }
             _loadingScreen.Visibility = ViewStates.Visible;
             await Task.Run(function: async () => await PopulateFields());
             _loadingScreen.Visibility = ViewStates.Gone;
-
-            // Create your application here
         }
 
         private async Task PopulateFields()
@@ -119,13 +159,13 @@ namespace FamiliaXamarin.Devices.SmartBand
                 try
                 {
                     var displayName = new JSONObject(data).GetJSONObject("user").GetString("displayName");
-                    
+
                     var fullName = new JSONObject(data).GetJSONObject("user").GetString("fullName");
 
 
                     var avatarUrl = new JSONObject(data).GetJSONObject("user").GetString("avatar640");
                     Log.Error("Fitbit Avatar", avatarUrl);
-                    
+
                     RunOnUiThread(() =>
                     {
                         _lbDisplayName.Text = displayName;
@@ -136,7 +176,7 @@ namespace FamiliaXamarin.Devices.SmartBand
                             .CenterCrop()
                             .Into(_avatarImage);
                     });
-                    
+
                 }
                 catch (JSONException e)
                 {
@@ -232,5 +272,5 @@ namespace FamiliaXamarin.Devices.SmartBand
             intent.AddFlags(ActivityFlags.ClearTop);
             StartActivity(intent);
         }
-}
+    }
 }

@@ -9,6 +9,10 @@
       android:icon="@drawable/account_heart"
       android:title="Asistenta Sociala" />
     <item
+      android:id="@+id/nav_monitorizare"
+      android:icon="@drawable/account_group"
+      android:title="Persoane sub monitorizare" />
+    <item
       android:id="@+id/nav_QRCode"
       android:icon="@drawable/qrcode"
       android:title="Generare cod QR" />
@@ -28,6 +32,10 @@
       android:id="@+id/medicatie"
       android:icon="@drawable/pill"
       android:title="Medicatie" />
+    <item
+      android:id="@+id/partajare_date"
+      android:icon="@drawable/share_variant"
+      android:title="Partajare Date" />
     <item
       android:id="@+id/nav_manage"
       android:icon="@drawable/ic_menu_manage"
