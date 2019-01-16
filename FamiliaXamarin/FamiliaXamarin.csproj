@@ -18,7 +18,7 @@
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
@@ -32,9 +32,11 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
-    <AndroidLinkMode>None</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -57,32 +59,108 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsistentForm.cs" />
-    <Compile Include="BenefitAdapter.cs" />
-    <Compile Include="BenefitSpinnerState.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="DatePickerFragment.cs" />
-    <Compile Include="DistanceCalculator.cs" />
-    <Compile Include="FirstSetup.cs" />
-    <Compile Include="FirstSetupViewPager.cs" />
-    <Compile Include="FusedLocationProviderCallback.cs" />
-    <Compile Include="IWebServices.cs" />
+    <Compile Include="DataModels\DeviceConfigRecords.cs" />
+    <Compile Include="DataModels\DevicesRecords.cs" />
+    <Compile Include="DataModels\MedicineRecords.cs" />
+    <Compile Include="Helpers\AlarmDeviceReceiver.cs" />
+    <Compile Include="Helpers\BiometricUtils.cs" />
+    <Compile Include="Helpers\ChargerReceiver.cs" />
+    <Compile Include="Helpers\FingerprintHandler.cs" />
+    <Compile Include="Helpers\ProgressBarDialog.cs" />
+    <Compile Include="Helpers\SharingDatePickerFragment.cs" />
+    <Compile Include="JsonModels\ConverstionsModel.cs" />
+    <Compile Include="JsonModels\DiseaseModel.cs" />
     <Compile Include="JsonModels\FirstSetupModel.cs" />
-    <Compile Include="LocationService.cs" />
-    <Compile Include="LoginActivity.cs" />
+    <Compile Include="JsonModels\SharingModel.cs" />
+    <Compile Include="Location\MedicalAsistanceFusedLocationProviderCallback.cs" />
     <Compile Include="MainActivity.cs" />
-    <Compile Include="PwdResetActivity.cs" />
-    <Compile Include="QrCodeGenerator.cs" />
-    <Compile Include="RegisterActivity.cs" />
+    <Compile Include="Medicatie\Alarm\AlarmActivity.cs" />
+    <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiver.cs" />
+    <Compile Include="Medicatie\Alarm\App.cs" />
+    <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiverServer.cs" />
+    <Compile Include="Medicatie\CustomDialogDeleteDisease.cs" />
+    <Compile Include="Medicatie\DiseaseActivity.cs" />
+    <Compile Include="Medicatie\DiseaseAdapter.cs" />
+    <Compile Include="Medicatie\CustomDialogDeleteMedicament.cs" />
+    <Compile Include="Medicatie\CustomDialogMedicamentDetails.cs" />
+    <Compile Include="Medicatie\Data\Storage.cs" />
+    <Compile Include="Medicatie\DatePickerMedicine.cs" />
+    <Compile Include="Medicatie\Entities\Disease.cs" />
+    <Compile Include="Medicatie\Entities\Hour.cs" />
+    <Compile Include="Medicatie\Entities\Medicine.cs" />
+    <Compile Include="Medicatie\Entities\MedicationSchedule.cs" />
+    <Compile Include="Medicatie\HourAdapter.cs" />
+    <Compile Include="Medicatie\MedicineAdapter.cs" />
+    <Compile Include="Medicatie\MedicineFragment.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="WebServices.cs" />
+    <Compile Include="Chat\ChatActivity.cs" />
+    <Compile Include="Chat\ChatAdapter.cs" />
+    <Compile Include="Chat\ChatModel.cs" />
+    <Compile Include="Services\MedicationService.cs" />
+    <Compile Include="Services\MedicalAsistanceService.cs" />
+    <Compile Include="Sharing\CustomDialogProfileSharingData.cs" />
+    <Compile Include="Sharing\MonitoringFragment.cs" />
+    <Compile Include="Sharing\PressureAndGlucoseActivity.cs" />
+    <Compile Include="Sharing\SharingAdapter.cs" />
+    <Compile Include="Sharing\SharingDataActivity.cs" />
+    <Compile Include="Services\SmartBandService.cs" />
+    <Compile Include="Settings\SettingsFragment.cs" />
+    <Compile Include="Sharing\SharingMenuActivity.cs" />
+    <Compile Include="Sharing\Tab1Fragment.cs" />
+    <Compile Include="Sharing\Tab2Fragment.cs" />
+    <Compile Include="WebSocket\WebSocketClient.cs" />
+    <Compile Include="Services\WebSocketService.cs" />
+    <Compile Include="WebSocket\IWebSocketClient.cs" />
+    <Compile Include="Devices\GlucoseDevice\AddNewGucoseDeviceActivity.cs" />
+    <Compile Include="Devices\GlucoseDevice\GlucoseDeviceActivity.cs" />
+    <Compile Include="Devices\GlucoseDevice\GlucoseDeviceData.cs" />
+    <Compile Include="Devices\PressureDevice\AddNewBloodPressureDeviceActivity.cs" />
+    <Compile Include="Devices\PressureDevice\BloodPressureData.cs" />
+    <Compile Include="Devices\PressureDevice\BloodPressureDeviceActivity.cs" />
+    <Compile Include="Devices\SmartBand\SmartBandDeviceActivity.cs" />
+    <Compile Include="Devices\DevicesRecyclerViewAdapter.cs" />
+    <Compile Include="Devices\HealthDevicesFragment.cs" />
+    <Compile Include="Services\DistanceCalculator.cs" />
+    <Compile Include="Location\FusedLocationProviderCallback.cs" />
+    <Compile Include="Services\LocationService.cs" />
+    <Compile Include="Chat\UserCard.cs" />
+    <Compile Include="Chat\UserCardAdapter.cs" />
+    <Compile Include="Chat\FindUsersFragment.cs" />
+    <Compile Include="Active Conversations\ConvAdapter.cs" />
+    <Compile Include="Active Conversations\ConversationsFragment.cs" />
+    <Compile Include="Asistenta sociala\AsistentForm.cs" />
+    <Compile Include="Asistenta sociala\BenefitAdapter.cs" />
+    <Compile Include="Asistenta sociala\BenefitSpinnerState.cs" />
+    <Compile Include="Asistenta sociala\QrCodeGenerator.cs" />
+    <Compile Include="Login System\FirstSetup.cs" />
+    <Compile Include="Login System\FirstSetupViewPager.cs" />
+    <Compile Include="Login System\LoginActivity.cs" />
+    <Compile Include="Login System\PwdResetActivity.cs" />
+    <Compile Include="Login System\RegisterActivity.cs" />
+    <Compile Include="Helpers\DatePickerFragment.cs" />
+    <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="WebServices\WebServices.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
-    <None Include="Properties\AndroidManifest.xml" />
+    <None Include="Properties\AndroidManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Assets\AboutAssets.txt" />
+    <AndroidResource Include="Resources\raw\drop.json" />
+    <AndroidResource Include="Resources\raw\heart.json" />
+    <AndroidResource Include="Resources\raw\location.json" />
+    <AndroidResource Include="Resources\raw\map_loading.json" />
+    <AndroidResource Include="Resources\raw\new_notification.json" />
+    <AndroidResource Include="Resources\raw\notification.json" />
+    <AndroidResource Include="Resources\raw\loading.json" />
+    <AndroidResource Include="Resources\layout\fragment_conversations.axml" />
+    <AndroidResource Include="Resources\layout\item_conversations.xml" />
+    <AndroidResource Include="Resources\raw\bell.json" />
+    <AndroidResource Include="Resources\raw\fingerprint.json" />
+    <AndroidResource Include="Resources\raw\devices_data.db" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -133,32 +211,56 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Com.Airbnb.Android.Lottie">
-      <Version>2.6.0</Version>
+      <Version>2.7.0</Version>
     </PackageReference>
     <PackageReference Include="Glide.Xamarin">
       <Version>4.1.1</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Net.Http">
+      <Version>2.2.29</Version>
+    </PackageReference>
+    <PackageReference Include="MPAndroidChart">
+      <Version>3.0.3</Version>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>11.0.2</Version>
+      <Version>12.0.1</Version>
     </PackageReference>
     <PackageReference Include="Refractored.Controls.CircleImageView">
       <Version>1.0.1</Version>
     </PackageReference>
+    <PackageReference Include="SkiaSharp">
+      <Version>1.68.0</Version>
+    </PackageReference>
     <PackageReference Include="Socket.IO.Client">
       <Version>1.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="sqlite-net-pcl">
+      <Version>1.5.231</Version>
     </PackageReference>
     <PackageReference Include="Square.Picasso">
       <Version>2.5.2.1</Version>
     </PackageReference>
+    <PackageReference Include="Xam.Plugin.Media">
+      <Version>4.0.1.5</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Constraint.Layout">
       <Version>1.1.2</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Android.Support.Design" Version="27.0.2.1" />
+    <PackageReference Include="Xamarin.Android.Support.CustomTabs">
+      <Version>28.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0" />
     <PackageReference Include="Xamarin.Android.Support.v4">
-      <Version>27.0.2.1</Version>
+      <Version>28.0.0</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
-      <Version>27.0.2.1</Version>
+      <Version>28.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.v7.CardView">
+      <Version>28.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.v7.RecyclerView">
+      <Version>28.0.0</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.GooglePlayServices.Location">
       <Version>60.1142.1</Version>
@@ -337,6 +439,349 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\item_benefit.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_tourist_spot_card.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\overlay_left.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\overlay_right.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\overlay_top.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\find_users_fragment.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\background_black_gradation.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\close.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\swipe_left_button.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\swipe_message.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\dislike.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\message.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\send.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_chat.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_conversation.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_my_message.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_message.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_log.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_action.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_blood_pressure_device.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\health_button.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_health_devices.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\heart.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\water.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\watch.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_add_new_blood_pressure_device.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\rowlayout.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\add_new_blood_glucose_device.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\blood_glucose_device.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_smart_band_device.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\power_sleep.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\walk.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\fitbit_sleep_badge.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\fitbit_activity_badge.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\fitbit_bpm_badge.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\my_message_style.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\message_style.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\message_off.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\buttonshape.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\delete_circle.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\delete_circle_white.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\delete_empty.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\pill.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_boala.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\custom_dialog_delete_boala.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\custom_dialog.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\custom_dialog_delete_medicament.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_medicine.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_boala.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_hour.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_med.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_alarm.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\snooze_button.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_settings.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_finger.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\progress_dialog_layout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_sharing_data.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\menu_navigation.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\nav_item_colors.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\layout_tab1.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\layout_tab2.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\share_variant.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\search_person.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\view_list.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\profile_sharing_data.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\test_Sharing.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\share_layout_bg.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\account_link.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_sharing.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\account_group.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_monitoring.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_sharing_menu.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_pressure_and_glucose.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\menu_sharing_navigation.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\pulse.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\nav_sharing_item_color.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\sharing_day_button_color_state_list.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\sharing_day_button_color_state_list_checked.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\sharing_round_button_activ.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\sharing_round_button_inactiv.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\sharing_date_button_style.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\calendar_date.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\drawable_tint_selector.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\edit_text_layout.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\main_button_style.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\secondary_button_style.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\text_button_style.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\tv_tint_selector.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\lock_outline.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\at.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\qrcode_scan.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\account_heart_outline.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\drawer_item_background.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\drawer_item_tint.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

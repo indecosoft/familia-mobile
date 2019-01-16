@@ -1,38 +1,52 @@
 ﻿using System;
-using Android;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.V7.App;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Java.Lang;
-using Java.Util;
+using FamiliaXamarin.Active_Conversations;
+using FamiliaXamarin.Asistenta_sociala;
+using FamiliaXamarin.Chat;
+using FamiliaXamarin.Devices;
+using FamiliaXamarin.Helpers;
+using FamiliaXamarin.Login_System;
+using FamiliaXamarin.Medicatie;
+using FamiliaXamarin.Services;
+using FamiliaXamarin.Settings;
 using Refractored.Controls;
-using Square.Picasso;
-using String = System.String;
+using System.Threading.Tasks;
+using Android;
+using Android.Content.PM;
+using Android.Gms.Location;
+using Android.Support.V4.Content;
+using Android.Util;
+using Com.Bumptech.Glide;
+using FamiliaXamarin.Location;
+using FamiliaXamarin.Sharing;
+using Org.Json;
 
 namespace FamiliaXamarin
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-        private Intent _loacationServiceIntent;
+        Intent _loacationServiceIntent;
+        Intent _webSocketServiceIntent;
+//        Intent _medicationServiceIntent;
+        Intent _smartBandServiceIntent;
+        private FusedLocationProviderClient _fusedLocationProviderClient;
+        //public static bool FromDisease;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
-
-//            var fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
-//            fab.Click += FabOnClick;
-
             var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             var toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
             drawer.AddDrawerListener(toggle);
@@ -43,34 +57,129 @@ namespace FamiliaXamarin
             var headerView = navigationView.GetHeaderView(0);
             var profileImageView = headerView.FindViewById<CircleImageView>(Resource.Id.menu_profile_image);
             var avatar = Utils.GetDefaults("Avatar", this);
-            Log.Error("Avatar", avatar);
-            //            StartService(new Intent(this, typeof(LocationService)));
-            //            StartForegroundService(new Intent(this, typeof(LocationService)));
+
             _loacationServiceIntent = new Intent(this, typeof(LocationService));
+            _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
+            _smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
+            //_medicationServiceIntent = new Intent(this, typeof(MedicationService));
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                    StartForegroundService(_loacationServiceIntent);
+                Context ctx = ApplicationContext;
+                StartForegroundService(_loacationServiceIntent);
+                StartForegroundService(_webSocketServiceIntent);
+               // StartForegroundService(_smartBandServiceIntent);
+                   // StartForegroundService(_medicationServiceIntent);
+                
             }
             else
             {
-                    StartService(new Intent(this, typeof(LocationService)));
+                    StartService(_loacationServiceIntent);
+                    StartService(_webSocketServiceIntent);
+                    //StartService(_smartBandServiceIntent);
+                   // StartService(_medicationServiceIntent);
+
             }
-            Picasso.With(this)
-                .Load(avatar)
-                .Resize(100, 100)
-                .CenterCrop()
-                .Into(profileImageView);
+
+            Glide.With(this).Load(avatar).Into(profileImageView);
 
             var lbNume = headerView.FindViewById<TextView>(Resource.Id.lbNume);
-            var lbEmail = headerView.FindViewById<TextView>(Resource.Id.lbEmail);
-            lbNume.Text = Utils.GetDefaults("Nume", this);
-            lbEmail.Text = Utils.GetDefaults("Email", this);
+            //var lbEmail = headerView.FindViewById<TextView>(Resource.Id.lbEmail);
+            lbNume.Text = Utils.GetDefaults("Name", this);
+            //lbEmail.Text = Utils.GetDefaults("Email", this);
             profileImageView.Click += delegate
             {
-//                startActivity(new Intent(MenuActivity.this, ProfileActivity.class));
+                //TODO: Implementateaza acivitaste pentru profil 
             };
+
+             if (Intent.GetBooleanExtra("FromChat", false))
+             {
+                 var convFragment = new ConversationsFragment();
+                 var convsupportFragmentManager = SupportFragmentManager;
+                 var medbeginTransaction = convsupportFragmentManager.BeginTransaction();
+                 medbeginTransaction.Replace(Resource.Id.fragment_container, convFragment);
+                 medbeginTransaction.AddToBackStack(null);
+                 medbeginTransaction.Commit();
+                 Title = "Conversatii active";
+             }
+             else if (Intent.GetBooleanExtra("FromDisease", false))
+             {
+                var medFragment = new MedicineFragment();
+                var medsupportFragmentManager = SupportFragmentManager;
+                var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
+                medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
+                medbeginTransaction.AddToBackStack(null);
+                medbeginTransaction.Commit();
+                Title = "Medicatie";
+            }
+            //_isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
+            if (!Utils.IsGooglePlayServicesInstalled(this)) return;
+            new LocationRequest()
+                .SetPriority(LocationRequest.PriorityHighAccuracy)
+                .SetInterval(1000)
+                .SetFastestInterval(1000);
+            new FusedLocationProviderCallback(this);
+
+            _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);
+            // Utils.CreateNotificationChannel();
+            GetLastLocationButtonOnClick();
+
+
+            if (Intent.HasExtra("extra"))
+            {
+                openHealthDevicesFragment();
+            }
+
         }
 
+        private void openMedicationFragment()
+        {
+            var medFragment = new MedicineFragment();
+            var medsupportFragmentManager = SupportFragmentManager;
+            var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
+            medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
+            medbeginTransaction.AddToBackStack(null);
+            medbeginTransaction.Commit();
+        }
+
+        private async void GetLastLocationButtonOnClick()
+        {
+            if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) == Permission.Granted)
+            {
+                await GetLastLocationFromDevice();
+            }
+        }
+
+        private async Task GetLastLocationFromDevice()
+        {
+            var location = await _fusedLocationProviderClient.GetLastLocationAsync();
+
+            if (location == null)
+            {
+                // Seldom happens, but should code that handles this scenario
+                Log.Error("Location is null", "******************");
+            }
+            else
+            {
+                Log.Debug("Sample", "The Latitude is " + location.Latitude);
+                Log.Debug("Sample", "The Longitude is " + location.Longitude);
+                JSONObject obj = new JSONObject().Put("latitude", (double) location.Latitude).Put("longitude", (double) location.Longitude);
+                JSONObject finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("IdClient", this)).Put("location", obj);
+                try
+                {
+                    await Task.Run(async () =>
+                    {
+                        string p = await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token", this));
+                        Log.Debug("Latitude ", location.Latitude.ToString());
+                        Log.Debug("Longitude", location.Longitude.ToString());
+                    });
+                }
+                catch (Exception e)
+                {
+                    Log.Error("****************************", e.Message);
+                }
+
+            }
+        }
         public override void OnBackPressed()
         {
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
@@ -93,36 +202,50 @@ namespace FamiliaXamarin
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            int id = item.ItemId;
-            if (id == Resource.Id.action_settings)
-            {
-                return true;
-            }
-
+            var id = item.ItemId;
             return base.OnOptionsItemSelected(item);
-        }
-
-        private void FabOnClick(object sender, EventArgs eventArgs)
-        {
-            View view = (View) sender;
-            Snackbar.Make(view, "Replace with your own action", Snackbar.LengthLong)
-                .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)
         {
-            int id = item.ItemId;
+            var id = item.ItemId;
 
             switch (id)
             {
                 case Resource.Id.harta:
-                    // Handle the camera action
+                    var fragmentMap = new FindUsersFragment();
+                    var fragmentManagerMap = SupportFragmentManager;
+                    var fragmentTransactionMap = fragmentManagerMap.BeginTransaction();
+                    fragmentTransactionMap.Replace(Resource.Id.fragment_container, fragmentMap);
+                    fragmentTransactionMap.AddToBackStack(null);
+                    fragmentTransactionMap.Commit();
                     break;
                 case Resource.Id.nav_devices:
+                    openHealthDevicesFragment();
+                    break;
+                case Resource.Id.medicatie:
+                    openMedicationFragment();
                     break;
                 case Resource.Id.chat:
+                    var convFragment = new ConversationsFragment();
+                    var fragmentManagerConv = SupportFragmentManager;
+                    var fragmentTransactionConv = fragmentManagerConv.BeginTransaction();
+                    fragmentTransactionConv.Replace(Resource.Id.fragment_container, convFragment);
+                    fragmentTransactionConv.AddToBackStack(null);
+                    fragmentTransactionConv.Commit();
                     break;
                 case Resource.Id.nav_manage:
+                    var fragmentSettings = new SettingsFragment();
+                    var fragmentManagerSettings = SupportFragmentManager;
+                    var fragmentTransactionSettings = fragmentManagerSettings.BeginTransaction();
+                    fragmentTransactionSettings.Replace(Resource.Id.fragment_container, fragmentSettings);
+                    fragmentTransactionSettings.AddToBackStack(null);
+                    fragmentTransactionSettings.Commit();
+                    break;
+                case Resource.Id.partajare_date:
+                   
+                    StartActivity(new Intent(this, typeof(SharingDataActivity)));
+
                     break;
                 case Resource.Id.nav_asistenta:
                     var fragmentAsist = new AsistentForm();
@@ -131,6 +254,14 @@ namespace FamiliaXamarin
                     fragmentTransactionAsist.Replace(Resource.Id.fragment_container, fragmentAsist);
                     fragmentTransactionAsist.AddToBackStack(null);
                     fragmentTransactionAsist.Commit();
+                    break;
+                case Resource.Id.nav_monitorizare:
+                    var fragmentMonit = new MonitoringFragment();
+                    var fragmentManagerMonit = SupportFragmentManager;
+                    var fragmentTransactionMonit = fragmentManagerMonit.BeginTransaction();
+                    fragmentTransactionMonit.Replace(Resource.Id.fragment_container, fragmentMonit);
+                    fragmentTransactionMonit.AddToBackStack(null);
+                    fragmentTransactionMonit.Commit();
                     break;
                 case Resource.Id.nav_QRCode:
                     var fragment = new QrCodeGenerator();
@@ -143,8 +274,12 @@ namespace FamiliaXamarin
                 case Resource.Id.logout:
 
                     Utils.SetDefaults("Token", null, this);
-                    //WebSoketClientClass.mSocket.disconnect();
-                    //stopService(new Intent(this, WebSoketService.class));
+                    Utils.SetDefaults("fingerprint", false.ToString(), this);
+                    WebSocketClient.Disconect();
+                        StopService(_loacationServiceIntent);
+                        StopService(_webSocketServiceIntent);
+                       // StopService(_medicationServiceIntent);
+   
                     StartActivity(typeof(LoginActivity));
                     Finish();
                     break;
@@ -153,9 +288,19 @@ namespace FamiliaXamarin
             item.SetChecked(true);
             // Set action bar title
             Title = item.ToString();
-            DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+            var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
             return true;
+        }
+
+        private void openHealthDevicesFragment()
+        {
+            var devicesFragment = new HealthDevicesFragment();
+            var supportFragmentManager = SupportFragmentManager;
+            var beginTransaction = supportFragmentManager.BeginTransaction();
+            beginTransaction.Replace(Resource.Id.fragment_container, devicesFragment);
+            beginTransaction.AddToBackStack(null);
+            beginTransaction.Commit();
         }
     }
 }

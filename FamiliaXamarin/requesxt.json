@@ -1,0 +1,57 @@
+[
+    {
+        "imei": "353118092166985",
+        "dateTimeISO": "2018-11-05 12:33:59",
+        "geolocation": {
+            "latitude": "0",
+            "longitude": "0"
+        },
+        "lastLocation": false,
+        "sendPanicAlerts": false,
+        "stepCounter": 0,
+        "bloodPressureSystolic": 0,
+        "bloodPressureDiastolic": 0,
+        "bloodPressurePulseRate": 0,
+        "bloodGlucose": "254",
+        "oxygenSaturation": 0
+    },
+    {
+        "imei": "353118092166985",
+        "dateTimeISO": "2018-11-05 12:35:09",
+        "geolocation": {
+            "latitude": "0",
+            "longitude": "0"
+        },
+        "lastLocation": false,
+        "sendPanicAlerts": false,
+        "stepCounter": 0,
+        "bloodPressureSystolic": 0,
+        "bloodPressureDiastolic": 0,
+        "bloodPressurePulseRate": 0,
+        "bloodGlucose": "254",
+        "oxygenSaturation": 0
+    },
+    {
+        "imei": "353118092166985",
+        "dateTimeISO": "2018-11-05 12:55:58",
+        "geolocation": "",
+        "lastLocation": "",
+        "sendPanicAlerts": "",
+        "stepCounter": "",
+        "bloodPressureSystolic": "",
+        "bloodPressureDiastolic": "",
+        "bloodPressurePulseRate": "",
+        "bloodGlucose": 214,
+        "oxygenSaturation": "",
+        "extension": ""
+    }
+]
+jsonData	"{\"Base64Image\":\"data:image/jpg;base64,/9j/4VChRXhpZgAASUkqAAgAAAALAA8BAgAIAAAAogAAABABAgAKAAAAqgAAAB…"	string
+
+
+    "{\"Base64Image\":\"data:image/jpg;base64,/9j/4VChRXhpZgAASUkqAAgAAAALAA8BAgAIAAAAogAAABABAgAKAAAAqgAAAB…"
+
+
+
+
+

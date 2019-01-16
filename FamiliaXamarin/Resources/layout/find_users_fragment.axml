@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--<pl.bclogic.pulsator4droid.library.PulsatorLayout-->
+        <!--android:id="@+id/pulsator"-->
+        <!--android:layout_width="200dp"-->
+        <!--android:layout_height="200dp"-->
+        <!--app:pulse_count="4"-->
+        <!--app:pulse_duration="3000"-->
+        <!--app:pulse_repeat="0"-->
+        <!--app:pulse_color="#F9BBBD"-->
+        <!--app:pulse_startFromScratch="false"-->
+        <!--app:pulse_interpolator="AccelerateDecelerate"-->
+
+        <!--app:layout_constraintHorizontal_bias="0.5"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintVertical_bias="0.5"/>-->
+    <!--&lt;!&ndash; TODO: Update blank fragment layout &ndash;&gt;-->
+    <!--<de.hdodenhof.circleimageview.CircleImageView-->
+        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+        <!--android:id="@+id/profile_image"-->
+        <!--android:layout_width="120dp"-->
+        <!--android:layout_height="120dp"-->
+        <!--android:src="@drawable/profile"-->
+        <!--app:layout_constraintHorizontal_bias="0.5"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintVertical_bias="0.5"/>-->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+
+        app:lottie_rawRes="@raw/location"
+
+
+    app:lottie_loop="true"
+    app:lottie_autoPlay="false"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintVertical_bias="0.5"/>
+    <TextView
+        android:id="@+id/lbNobody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+
+
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/animation_view" />
+
+<!--<android.support.v7.widget.AppCompatButton-->
+        <!--android:id="@+id/btnChat"-->
+        <!--android:background="@drawable/button_style"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="24dp"-->
+        <!--android:layout_marginBottom="24dp"-->
+        <!--android:padding="12dp"-->
+        <!--android:textColor="@color/white"-->
+        <!--android:textAllCaps="false"-->
+        <!--android:text="Vorbeste cu Ghiuri"-->
+        <!--app:layout_constraintHorizontal_bias="0.5"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+
+        <!--app:layout_constraintTop_toBottomOf="@+id/profile_image"-->
+        <!--app:layout_constraintVertical_bias="0.5"/>-->
+
+    <com.yuyakaido.android.cardstackview.CardStackView
+        android:id="@+id/activity_main_card_stack_view"
+        app:visibleCount="2"
+        app:elevationEnabled="false"
+        app:swipeEnabled="true"
+        android:layout_marginStart="10dp"
+        app:swipeDirection="horizontal"
+        app:leftOverlay="@layout/overlay_left"
+        app:rightOverlay="@layout/overlay_right"
+        android:layout_marginBottom="100dp"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+
+    </com.yuyakaido.android.cardstackview.CardStackView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_main_card_stack_view">
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnLeft"
+        android:background="@drawable/swipe_left_button"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="10dp"
+		android:backgroundTint="#FE3267"
+        android:padding="28dp"
+        android:drawableStart="@drawable/message_off"
+
+        />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnRight"
+        android:background="@drawable/swipe_left_button"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="10dp"
+        android:padding="28dp"
+		android:backgroundTint="#10D2AD"
+		
+        android:drawableStart="@drawable/swipe_message"
+        />
+
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
