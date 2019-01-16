@@ -585,7 +585,7 @@
     <AndroidResource Include="Resources\drawable\pill.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\item_boala.xml" />
+    <AndroidResource Include="Resources\layout\item_boala.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\custom_dialog_delete_boala.xml" />
@@ -784,6 +784,9 @@
     <AndroidResource Include="Resources\drawable\drawer_item_tint.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\trash.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

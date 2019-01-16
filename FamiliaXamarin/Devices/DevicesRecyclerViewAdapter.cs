@@ -61,7 +61,7 @@ namespace FamiliaXamarin.Devices
         public DevicesRecyclerViewAdapterViewHolder(View itemView, Action<int> listener) : base(itemView)
         {
             TextViewName = (TextView) itemView.FindViewById(Resource.Id.name);
-            itemView.Click += (sender, e) => listener?.Invoke(obj: LayoutPosition);
+            itemView.Click += (sender, e) => listener?.Invoke(obj: Position);
         }
 
     }
