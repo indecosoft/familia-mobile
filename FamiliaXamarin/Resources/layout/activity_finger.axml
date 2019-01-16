@@ -18,7 +18,6 @@
 
 <TextView
     android:layout_below="@+id/animation_view"
-    android:textColor="@color/customDark"
     android:textSize="20sp"
     android:gravity="center"
     android:text="Asezati-va degetul pe senzorul de amprenta pentru a va putea verifica identitatea"
@@ -31,9 +30,8 @@
     android:layout_height="wrap_content"
 	android:layout_centerHorizontal="true"
 	android:textAllCaps="false"
-	android:textColor="@color/customDark"
 	android:layout_alignParentBottom="true"
 	android:text="Foloseste codul PIN"
-	android:padding="14dp"
-	android:background="#F5F7FA"/>
+        android:background="@drawable/secondary_button_style"
+	android:padding="14dp"/>
 </RelativeLayout>

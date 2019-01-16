@@ -88,15 +88,39 @@ namespace FamiliaXamarin.Services
 
             Log.Info("MedicalAsistent Service", "Started");
 
-            var notification = new NotificationCompat.Builder(this)
-                .SetContentTitle("Familia")
-                .SetContentText("Ruleaza in fundal")
-                .SetSmallIcon(Resource.Drawable.logo)
-                .SetOngoing(true)
-                .Build();
 
-            // Enlist this instance of the service as a foreground service
-            StartForeground(ServiceRunningNotificationId, notification);
+            try
+            {
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    string CHANNEL_ID = "my_channel_01";
+                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel human readable title",
+                        NotificationImportance.Default);
+
+                    ((NotificationManager) GetSystemService(NotificationService))
+                        .CreateNotificationChannel(channel);
+
+                    Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .SetContentTitle("Familia")
+                        .SetContentText("Ruleaza in fundal")
+                        .SetSmallIcon(Resource.Drawable.logo)
+                        .SetOngoing(true)
+                        .Build();
+
+                    StartForeground(ServiceRunningNotificationId, notification);
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                //throw;
+            }
+
+
+           
             return StartCommandResult.Sticky;
         }
     }

@@ -31,15 +31,15 @@ namespace FamiliaXamarin.Helpers
     {
         public static bool util = false;
         static NotificationManager _notificationManager;
-
-        public static bool IsActivityRunning(Class activityClass, ContextWrapper ctx)
+        public static bool IsActivityRunning(Class activityClass)
         {
-            ActivityManager activityManager = (ActivityManager)ctx.BaseContext.GetSystemService(Context.ActivityService);
-            var tasks = activityManager.GetRunningTasks(Integer.MaxValue);
+            ActivityManager activityManager = (ActivityManager)Application.Context.GetSystemService(Context.ActivityService);
+            //var tasks = activityManager.GetRunningTasks(Integer.MaxValue);
+            var tasks = activityManager.AppTasks;
 
             foreach (var task in tasks)
             {
-                if (activityClass.CanonicalName.Equals(task.BaseActivity.ClassName, StringComparison.InvariantCultureIgnoreCase))
+                if (activityClass.CanonicalName.Equals(task.TaskInfo.BaseActivity.ClassName))
                     return true;
             }
 
@@ -241,7 +241,7 @@ namespace FamiliaXamarin.Helpers
         /// <param name="buttonTitle">Title of Button (oprional)</param>
         /// <returns></returns>
         public static Notification CreateChatNotification(string title, string body, string email,
-            string room, int type = 0, string buttonTitle = "Converseaza")
+            string room, Context ctx, int type = 0, string buttonTitle = "Converseaza")
         {
             var chatActivityAcceptedIntent = new Intent(Application.Context, typeof(ChatActivity));
             var chatActivityRejectedIntent = new Intent(Application.Context, typeof(ChatActivity));
@@ -264,9 +264,18 @@ namespace FamiliaXamarin.Helpers
                     //Notificare daca vrea sa vorbeasca cu celalat user
                     chatActivityAcceptedIntent.PutExtra("AcceptClick", true);
                     chatActivityRejectedIntent.PutExtra("RejectClick", true);
+                    var stackBuilderAccept = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
+                    stackBuilderAccept.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
+                    // Get the PendingIntent containing the entire back stack
+                    var acceptIntent = stackBuilderAccept.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
 
-                    var acceptIntent = PendingIntent.GetActivity(Application.Context, 1, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+                    // var acceptIntent = PendingIntent.GetActivity(Application.Context, 1, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
                     var rejectIntent = PendingIntent.GetActivity(Application.Context, 2, chatActivityRejectedIntent, PendingIntentFlags.OneShot);
+
+//                    var stackBuilderReject = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
+//                    stackBuilderReject.AddNextIntentWithParentStack(chatActivityRejectedIntent);
+
+                   // var rejectIntent = stackBuilderReject.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
                     return new NotificationCompat.Builder(Application.Context, email)
                         .SetContentTitle(title)
                         .SetContentText(body)
@@ -291,11 +300,14 @@ namespace FamiliaXamarin.Helpers
                 .Build();
                 case 2:
                     //Notificare daca i-a acceptat cererea de chat
+                    var stackBuilder = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
+                    stackBuilder.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
 
-                    var acceptIntent1 = PendingIntent.GetActivity(Application.Context, 3, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+                   // var acceptIntent1 = PendingIntent.GetActivity(Application.Context, 3, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+                    var acceptIntent1 = stackBuilder.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
 
-  
-                        return new NotificationCompat.Builder(Application.Context, email)
+
+                    return new NotificationCompat.Builder(Application.Context, email)
                             .SetContentTitle(title)
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)
@@ -310,11 +322,14 @@ namespace FamiliaXamarin.Helpers
                 case 3:
                     //Notificare pentru mesaj
                     chatActivityAcceptedIntent.PutExtra("NewMessage", body);
-                    
 
-                    var acceptIntent2 = PendingIntent.GetActivity(Application.Context, 4, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+                    var stackBuilderIntent2 = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
+                    stackBuilderIntent2.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
 
-                        return new NotificationCompat.Builder(Application.Context, title)
+                   // var acceptIntent2 = PendingIntent.GetActivity(Application.Context, 4, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+                    var acceptIntent2 = stackBuilderIntent2.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
+
+                    return new NotificationCompat.Builder(Application.Context, title)
                             .SetContentTitle(title)
                             .SetContentText(body)
                             .SetSmallIcon(Resource.Drawable.logo)
@@ -432,7 +447,7 @@ namespace FamiliaXamarin.Helpers
         {
             ConnectivityManager cm = (ConnectivityManager)Application.Context.GetSystemService(Context.ConnectivityService);
             NetworkInfo activeNetwork = cm.ActiveNetworkInfo;
-            return activeNetwork != null && activeNetwork.IsConnectedOrConnecting;
+            return activeNetwork != null && activeNetwork.IsConnected;
         }
 
     }

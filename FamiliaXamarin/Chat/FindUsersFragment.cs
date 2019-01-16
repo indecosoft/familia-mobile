@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.Animation;
 using Android.OS;
+using Android.Support.V4.Content;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Airbnb.Lottie;
+using Com.Airbnb.Lottie.Model;
+using Com.Airbnb.Lottie.Value;
 using Com.Yuyakaido.Android.CardStackView;
 using FamiliaXamarin.Helpers;
 using Org.Json;
@@ -203,6 +206,8 @@ namespace FamiliaXamarin.Chat
             Setup();
             _animationView.AddAnimatorListener(this);
             //start annimation
+            SimpleColorFilter filter = new SimpleColorFilter(ContextCompat.GetColor(Activity, Resource.Color.colorAccent));
+            _animationView.AddValueCallback(new KeyPath("bocht", "Path 1", "Fill"), LottieProperty.ColorFilter, new LottieValueCallback(filter));
             _animationView.PlayAnimation();
 
 

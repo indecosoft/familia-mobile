@@ -36,7 +36,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
         public static int NotifyId = Constants.NotifId;
         private SQLiteAsyncConnection _db;
         Intent _medicationServiceIntent;
-        public async override void OnReceive(Context context, Intent intent)
+        public override async void OnReceive(Context context, Intent intent)
         {
             string action = intent.Action;
             if (action != null)
@@ -53,7 +53,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     var uuid = intent.GetStringExtra(Uuid);
                     var title = intent.GetStringExtra(Title);
                     var content = intent.GetStringExtra(Content);
-                    var channel = uuid;
+                   // var channel = uuid;
+                    var channel = "channelabsolut";
 
                     createNotificationChannel(channel, title, content);
 
@@ -64,7 +65,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     okIntent.PutExtra("notifyId", NotifyId);
                     okIntent.SetAction(ActionOk);
 
-                    PendingIntent piNotification = PendingIntent.GetBroadcast(context, NotifyId, okIntent, PendingIntentFlags.UpdateCurrent);
+                   // PendingIntent piNotification = PendingIntent.GetBroadcast(context, NotifyId, okIntent, PendingIntentFlags.UpdateCurrent);
+                    PendingIntent piNotification = PendingIntent.GetBroadcast(context, 2019, okIntent, PendingIntentFlags.OneShot);
 
                     NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(context, channel)
@@ -120,12 +122,16 @@ namespace FamiliaXamarin.Medicatie.Alarm
             }
         }
 
-        public bool IsServiceRunning(System.Type ClassTypeof, Context context)
+        public bool IsServiceRunning(System.Type classTypeof, Context context)
         {
             ActivityManager manager = (ActivityManager)context.GetSystemService(Context.ActivityService);
+            //ActivityManager activityManager = (ActivityManager)Application.Context.GetSystemService(Context.ActivityService);
+            //var tasks = activityManager.GetRunningTasks(Integer.MaxValue);
+#pragma warning disable 618
             foreach (var service in manager.GetRunningServices(int.MaxValue))
+#pragma warning restore 618
             {
-                if (service.Service.ShortClassName == ClassTypeof.ToString())
+                if (service.Service.ShortClassName == classTypeof.ToString())
                 {
                     return true;
                 }
@@ -152,8 +158,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 {
                     case "Done":
                         return true;
-                    case null:
-                    case "Wrong data!":
                     default:
                         return false;
                     

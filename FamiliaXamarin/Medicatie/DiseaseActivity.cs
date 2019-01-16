@@ -98,6 +98,10 @@ namespace FamiliaXamarin.Medicatie
             else
             {
                 base.OnBackPressed();
+                var intent = new Intent(this, typeof(MainActivity));
+                intent.AddFlags(ActivityFlags.ClearTop);
+                intent.PutExtra("FromDisease", true);
+                StartActivity(intent);
             }
             
         }

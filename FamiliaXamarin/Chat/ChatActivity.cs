@@ -43,7 +43,7 @@ namespace FamiliaXamarin
         readonly Handler mTypingHandler = new Handler();
         static string mUsername;
         public static string EmailDest;
-        static ChatActivity Ctx;
+        public static ChatActivity Ctx;
         public static string Avatar;
         public static string NewMessage = "";
         readonly IWebSocketClient _socketClient = new WebSocketClient();
@@ -87,7 +87,10 @@ namespace FamiliaXamarin
         {
             base.OnBackPressed();
             Utils.HideKeyboard(this);
-            Finish();
+            var intent = new Intent(this, typeof(MainActivity));
+            intent.AddFlags(ActivityFlags.ClearTop);
+            intent.PutExtra("FromChat", true);
+            StartActivity(intent);
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -213,7 +216,7 @@ namespace FamiliaXamarin
             }
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
-            toolbar.NavigationClick += delegate { Finish(); };
+            toolbar.NavigationClick += delegate { OnBackPressed(); };
             Title = mUsername;
         }
         void AttemptSend()

@@ -18,8 +18,6 @@ using FamiliaXamarin.Medicatie;
 using FamiliaXamarin.Services;
 using FamiliaXamarin.Settings;
 using Refractored.Controls;
-using Square.Picasso;
-using System.Threading;
 using System.Threading.Tasks;
 using Android;
 using Android.Content.PM;
@@ -38,10 +36,10 @@ namespace FamiliaXamarin
     {
         Intent _loacationServiceIntent;
         Intent _webSocketServiceIntent;
-        Intent _medicationServiceIntent;
+//        Intent _medicationServiceIntent;
         Intent _smartBandServiceIntent;
         private FusedLocationProviderClient _fusedLocationProviderClient;
-        public static bool FromBoala;
+        //public static bool FromDisease;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -85,24 +83,34 @@ namespace FamiliaXamarin
             Glide.With(this).Load(avatar).Into(profileImageView);
 
             var lbNume = headerView.FindViewById<TextView>(Resource.Id.lbNume);
-            var lbEmail = headerView.FindViewById<TextView>(Resource.Id.lbEmail);
+            //var lbEmail = headerView.FindViewById<TextView>(Resource.Id.lbEmail);
             lbNume.Text = Utils.GetDefaults("Name", this);
-            lbEmail.Text = Utils.GetDefaults("Email", this);
+            //lbEmail.Text = Utils.GetDefaults("Email", this);
             profileImageView.Click += delegate
             {
                 //TODO: Implementateaza acivitaste pentru profil 
             };
 
-             if (FromBoala)
-                {
-                    var medFragment = new MedicineFragment();
-                    var medsupportFragmentManager = SupportFragmentManager;
-                    var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
-                    medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
-                    medbeginTransaction.AddToBackStack(null);
-                    medbeginTransaction.Commit();
-                    FromBoala = false;
-                }
+             if (Intent.GetBooleanExtra("FromChat", false))
+             {
+                 var convFragment = new ConversationsFragment();
+                 var convsupportFragmentManager = SupportFragmentManager;
+                 var medbeginTransaction = convsupportFragmentManager.BeginTransaction();
+                 medbeginTransaction.Replace(Resource.Id.fragment_container, convFragment);
+                 medbeginTransaction.AddToBackStack(null);
+                 medbeginTransaction.Commit();
+                 Title = "Conversatii active";
+             }
+             else if (Intent.GetBooleanExtra("FromDisease", false))
+             {
+                var medFragment = new MedicineFragment();
+                var medsupportFragmentManager = SupportFragmentManager;
+                var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
+                medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
+                medbeginTransaction.AddToBackStack(null);
+                medbeginTransaction.Commit();
+                Title = "Medicatie";
+            }
             //_isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
             if (!Utils.IsGooglePlayServicesInstalled(this)) return;
             new LocationRequest()

@@ -24,7 +24,7 @@ namespace FamiliaXamarin.Medicatie
     public class MedicineFragment : Android.Support.V4.App.Fragment ,View.IOnClickListener, IOnBoalaClickListener, CustomDialogDeleteDisease.ICustomDialogDeleteDiseaseListener
     {
 
-        private ProgressBarDialog _progressBarDialog;
+//        private ProgressBarDialog _progressBarDialog;
         public static string IdBoala = "id_boala";
         private DiseaseAdapter _boalaAdapter;
         private List<MedicationSchedule> _medications;
@@ -69,7 +69,9 @@ namespace FamiliaXamarin.Medicatie
                             i.SetAction(AlarmBroadcastReceiverServer.ActionReceive);
                             var random = new System.Random();
                             var id = CurrentTimeMillis() * random.Next();
-                            var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.OneShot);
+                            //var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.OneShot);
+                            var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.UpdateCurrent);
+                            //var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.UpdateCurrent);
                             if (am == null) continue;
                             var date = parseTimestampStringToDate(_medications[ms]);
 

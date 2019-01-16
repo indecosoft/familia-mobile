@@ -1,34 +1,64 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Android;
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
+using Android.Graphics;
+using Android.Hardware.Biometrics;
 using Android.Hardware.Fingerprints;
 using Android.OS;
 using Android.Security.Keystore;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
 using Android.Support.V4.Hardware.Fingerprint;
 using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Widget;
+using Com.Airbnb.Lottie;
+using Com.Airbnb.Lottie.Model;
+using Com.Airbnb.Lottie.Value;
 using FamiliaXamarin.Helpers;
+using Java.Lang;
 using Java.Security;
 using Javax.Crypto;
 using Org.Json;
+using static Android.Hardware.Biometrics.BiometricPrompt;
+using Exception = System.Exception;
 using Permission = Android.Content.PM.Permission;
 
 namespace FamiliaXamarin.Login_System
 {
     [Activity(Label = "Familia", Theme = "@style/AppTheme.Dark", MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait)]
-    public class LoginActivity : AppCompatActivity
+    public class LoginActivity : AppCompatActivity, IDialogInterfaceOnClickListener
     {
+
+        public class Test : BiometricPrompt.AuthenticationCallback
+        {
+            public override void OnAuthenticationFailed()
+            {
+                base.OnAuthenticationFailed();
+            }
+
+            public override void OnAuthenticationSucceeded(AuthenticationResult result)
+            {
+                base.OnAuthenticationSucceeded(result);
+            }
+
+            public override void OnAuthenticationHelp(BiometricAcquiredStatus helpCode, ICharSequence helpString)
+            {
+                base.OnAuthenticationHelp(helpCode, helpString);
+            }
+        }
         private ConstraintLayout _layout;
 
         private EditText _usernameEditText;
         private EditText _passwordEditText;
-        private TextView _registerTextView;
+        private AppCompatButton _registerButton;
         private TextView _pwdResetTextView;
-        private Button _loginButton;
+        private AppCompatButton _loginButton;
         private KeyStore _keyStore;
         private Cipher _cipher;
         private readonly string _keyName = "EDMTDev";
@@ -49,16 +79,34 @@ namespace FamiliaXamarin.Login_System
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
             var fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint", this)) && Convert.ToBoolean(Utils.GetDefaults("fingerprint", this));
 
             var checkHardware = FingerprintManagerCompat.From(this);
             var keyguardManager1 = (KeyguardManager)GetSystemService(KeyguardService);
 
+
+//            private void displayBiometricPrompt(final BiometricCallback biometricCallback)
+//            {
+//                
+//            }
+            
+//            BiometricPrompt.AuthenticationCallback authenticationCallback = BiometricUtils.;
+//
+//            // Show biometric prompt
+//            if (signature != null)
+//            {
+//                Log.i(TAG, "Show biometric prompt");
+//                mBiometricPrompt.authenticate(new BiometricPrompt.CryptoObject(signature), cancellationSignal, getMainExecutor(), authenticationCallback);
+//            }
+//
+
             if (fingerprint && checkHardware.IsHardwareDetected && keyguardManager1.IsKeyguardSecure)
             {
 
                 SetContentView(Resource.Layout.activity_finger);
+                LottieAnimationView animationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
+                SimpleColorFilter filter = new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.colorAccent));
+                animationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter, new LottieValueCallback(filter));
                 //Using the Android Support Library v4
                 var keyguardManager = (KeyguardManager)GetSystemService(KeyguardService);
                 var fingerprintManager = (FingerprintManager)GetSystemService(FingerprintService);
@@ -111,6 +159,22 @@ namespace FamiliaXamarin.Login_System
                 LoadLoginUi();
             }
 
+            //            var av = BiometricUtils.IsPermissionGranted(this);
+            /*var a = new BiometricPrompt.Builder(this)
+                .SetTitle("Title")
+                .SetSubtitle("Subtitle")
+                .SetDescription("Description: blablablablablablablablablablabla...")
+                .SetNegativeButton("Use password", this.MainExecutor, this)
+                .Build();
+
+            CancellationSignal cancellationSignal = new CancellationSignal();
+            cancellationSignal.CancelEvent += delegate(object sender, EventArgs args)
+                {
+                    Toast.MakeText(this, "onCancel", ToastLength.Short);
+                };
+            var ab = new Test();
+            
+            a.Authenticate(cancellationSignal,MainExecutor,ab);*/
         }
 
         private void LoadLoginUi()
@@ -202,13 +266,13 @@ namespace FamiliaXamarin.Login_System
 
             _layout = FindViewById<ConstraintLayout>(Resource.Id.layout);
 
-            _usernameEditText = FindViewById<EditText>(Resource.Id.UsernameEditText);
-            _passwordEditText = FindViewById<EditText>(Resource.Id.PasswordEditText);
+            _usernameEditText = FindViewById<EditText>(Resource.Id.et_email);
+            _passwordEditText = FindViewById<EditText>(Resource.Id.et_password);
 
-            _loginButton = FindViewById<Button>(Resource.Id.btnLogin);
+            _loginButton = FindViewById<AppCompatButton>(Resource.Id.btn_login);
 
-            _registerTextView = FindViewById<TextView>(Resource.Id.Signup);
-            _pwdResetTextView = FindViewById<TextView>(Resource.Id.PasswordReset);
+            _registerButton = FindViewById<AppCompatButton>(Resource.Id.btn_register);
+            _pwdResetTextView = FindViewById<TextView>(Resource.Id.tv_password_forgot);
 
             //_progressBarDialog = new ProgressBarDialog("Progress de test", "Alege butoane...", this, false, "Bine", (sender, args) => {Toast.MakeText(this,"Bine", ToastLength.Short).Show();}, "Nu stiu", (sender, args) => { Toast.MakeText(this, "Nu stiu", ToastLength.Short).Show(); }, "Anulare", (sender, args) => { Toast.MakeText(this, "Anulare", ToastLength.Short).Show(); });
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Autentificare...", this, false);
@@ -217,7 +281,7 @@ namespace FamiliaXamarin.Login_System
         private void InitListeners()
         {
             _loginButton.Click += BtnOnClick;
-            _registerTextView.Click += RegisterTextViewOnClick;
+            _registerButton.Click += RegisterButtonOnClick;
             _pwdResetTextView.Click += PwdResetTextViewOnClick;
 
         }
@@ -227,7 +291,7 @@ namespace FamiliaXamarin.Login_System
            StartActivity(typeof(PwdResetActivity));
         }
 
-        private void RegisterTextViewOnClick(object sender, EventArgs e)
+        private void RegisterButtonOnClick(object sender, EventArgs e)
         {
             StartActivity(typeof(RegisterActivity));
         }
@@ -284,6 +348,12 @@ namespace FamiliaXamarin.Login_System
             });
             _progressBarDialog.Dismiss();
 
+        }
+
+        public void OnClick(IDialogInterface dialog, int which)
+        {
+            //biometricCallback.onAuthenticationCancelled();
+            Toast.MakeText(this, "You requested password.", ToastLength.Short);
         }
     }
 }

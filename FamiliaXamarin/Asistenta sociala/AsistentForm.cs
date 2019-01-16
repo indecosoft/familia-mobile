@@ -136,11 +136,9 @@ namespace FamiliaXamarin.Asistenta_sociala
         private async void BtnScan_Click(object sender, EventArgs e)
         {
             //IntentIntegrator.forSupportFragment(this).InitiateScan();
-#if __ANDROID__
             // Initialize the scanner first so it can track the current context
             var app = new Application();
             MobileBarcodeScanner.Initialize(app);
-#endif
 
             var result = await StartScan();
             if (result == null) return;
@@ -174,15 +172,8 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 _progressBarDialog.Show();
                                 _dateTimeStart = currentDateandTime;
                                 _dateTimeEnd = null;
-                                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                                {
-                                    Activity.StartForegroundService(_medicalAsistanceService);
-                                    
-                                }
-                                else
-                                {
-                                    Activity.StartService(_medicalAsistanceService);
-                                }
+                                Activity.StartForegroundService(_medicalAsistanceService);
+          
 
                         
                                 _latitude = double.Parse(Utils.GetDefaults("Latitude", Activity));
@@ -261,11 +252,11 @@ namespace FamiliaXamarin.Asistenta_sociala
                                         switch (responseJson.GetInt("status"))
                                         {
                                             case 0:
-                                                snack = Snackbar.Make(_formContainer, "Nu esti la pacient!", Snackbar.LengthLong);
+                                                snack = Snackbar.Make(_formContainer, "Nu sunteti la pacient!", Snackbar.LengthLong);
                                                 snack.Show();
                                                 break;
                                             case 1:
-                                                snack = Snackbar.Make(_formContainer, "Internal Server Error", Snackbar.LengthLong);
+                                                snack = Snackbar.Make(_formContainer, "Eroare conectare la server", Snackbar.LengthLong);
                                                 snack.Show();
                                                 break;
                                             case 2:
@@ -274,7 +265,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                                         _progressBarDialog.Dismiss();
                                     }
                                     else
-                                        Snackbar.Make(_formContainer, "Unable to reach the server!", Snackbar.LengthLong).Show();
+                                        Snackbar.Make(_formContainer, "Nu se poate conecta la server!", Snackbar.LengthLong).Show();
                                 });
                                 Activity.StopService(_medicalAsistanceService);
                                 Activity.StopService(_distanceCalculatorService);
@@ -287,7 +278,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                     }
                     else
                     {
-                        Snackbar.Make(_formContainer, "QRCode Expirat! Va rugam sa generati alt cod QR!", Snackbar.LengthLong).Show();
+                        Snackbar.Make(_formContainer, "QRCode expirat! Va rugam sa generati alt cod QR!", Snackbar.LengthLong).Show();
                         _progressBarDialog.Dismiss();
                     }
 

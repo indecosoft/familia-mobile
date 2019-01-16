@@ -25,7 +25,7 @@ namespace FamiliaXamarin.Sharing
     {
 
         private Button btnScan;
-        private TextView personFound;
+//        private TextView personFound;
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
