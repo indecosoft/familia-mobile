@@ -3,9 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Map"
-    android:background="#F5F7FA">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!--<pl.bclogic.pulsator4droid.library.PulsatorLayout-->
         <!--android:id="@+id/pulsator"-->
@@ -57,7 +55,6 @@
         android:id="@+id/lbNobody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/customDark"
         android:layout_marginTop="5dp"
 
 

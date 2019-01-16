@@ -83,9 +83,9 @@ namespace FamiliaXamarin
             Glide.With(this).Load(avatar).Into(profileImageView);
 
             var lbNume = headerView.FindViewById<TextView>(Resource.Id.lbNume);
-            var lbEmail = headerView.FindViewById<TextView>(Resource.Id.lbEmail);
+            //var lbEmail = headerView.FindViewById<TextView>(Resource.Id.lbEmail);
             lbNume.Text = Utils.GetDefaults("Name", this);
-            lbEmail.Text = Utils.GetDefaults("Email", this);
+            //lbEmail.Text = Utils.GetDefaults("Email", this);
             profileImageView.Click += delegate
             {
                 //TODO: Implementateaza acivitaste pentru profil 
