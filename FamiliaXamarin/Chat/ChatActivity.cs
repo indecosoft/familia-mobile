@@ -77,6 +77,12 @@ namespace FamiliaXamarin
             mAdapter.Clear();
         }
 
+        protected override void OnPostResume()
+        {
+            Active = true;
+            base.OnPostResume();
+        }
+
         public override void OnBackPressed()
         {
             base.OnBackPressed();
