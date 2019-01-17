@@ -102,7 +102,7 @@ namespace FamiliaXamarin.Medicatie
     {
         etMedicamentName = FindViewById<EditText>(Resource.Id.et_medicament_name);
         etNumarZile = FindViewById<EditText>(Resource.Id.et_numar_zile);
-        etNumarZile.Visibility = ViewStates.Invisible;
+        etNumarZile.Visibility = ViewStates.Gone;
         rgDurata = FindViewById<RadioGroup>(Resource.Id.rg_durata);
         rbContinuu = FindViewById<RadioButton>(Resource.Id.rb_continuu);
         rbContinuu.SetOnClickListener(this);
@@ -274,7 +274,7 @@ namespace FamiliaXamarin.Medicatie
                     onSaveClicked();
                     break;
                 case Resource.Id.rb_continuu:
-                    setFirstRadioButton(rbContinuu.Checked, (int)ViewStates.Invisible);
+                    setFirstRadioButton(rbContinuu.Checked, (int)ViewStates.Gone);
                     break;
                 case Resource.Id.rb_numar_zile:
                     setSecondRadioButton(rbNrZile.Checked, (int)ViewStates.Visible);

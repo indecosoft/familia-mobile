@@ -588,13 +588,13 @@
     <AndroidResource Include="Resources\layout\item_boala.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\custom_dialog_delete_boala.xml" />
+    <AndroidResource Include="Resources\layout\custom_dialog_delete_boala.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\custom_dialog.xml" />
+    <AndroidResource Include="Resources\layout\custom_dialog.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\custom_dialog_delete_medicament.xml" />
+    <AndroidResource Include="Resources\layout\custom_dialog_delete_medicament.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\fragment_medicine.axml">
@@ -607,10 +607,10 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\item_hour.xml" />
+    <AndroidResource Include="Resources\layout\item_hour.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\item_med.xml" />
+    <AndroidResource Include="Resources\layout\item_med.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_alarm.axml">
@@ -787,6 +787,15 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\trash.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\plus.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\medical_bag.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\calendar_multiselect.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

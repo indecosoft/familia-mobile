@@ -47,7 +47,7 @@ namespace FamiliaXamarin.Medicatie
 
         public interface ICustomDialogDeleteMedicamentListener
         {
-            void onYesClicked(String result, Medicine medicament);
+            void onYesClicked(string result, Medicine medicament);
         }
 
         public void OnClick(View v)

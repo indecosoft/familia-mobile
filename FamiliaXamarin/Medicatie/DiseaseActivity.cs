@@ -6,9 +6,12 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Text;
@@ -112,7 +115,7 @@ namespace FamiliaXamarin.Medicatie
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             rvMeds.SetLayoutManager(layoutManager);
             medicamentAdapter = new MedicineAdapter();
-            medicamentAdapter.setListener(this);
+            medicamentAdapter.SetListener(this);
 
             rvMeds.SetAdapter(medicamentAdapter);
         }
@@ -125,7 +128,7 @@ namespace FamiliaXamarin.Medicatie
             {
                 string idBoala = intent.GetStringExtra(MedicineFragment.IdBoala);
                 disease = Storage.GetInstance().GetDisease(idBoala);
-                medicamentAdapter.setMedicaments(disease.ListOfMedicines);
+                medicamentAdapter.SetMedicaments(disease.ListOfMedicines);
                 medicamentAdapter.NotifyDataSetChanged();
                 etNumeBoala.Text = disease.DiseaseName;
                 currentDisease = disease.DiseaseName;
@@ -172,15 +175,16 @@ namespace FamiliaXamarin.Medicatie
         {
             CustomDialogMedicamentDetails cdd = new CustomDialogMedicamentDetails(this, medicament);
             cdd.SetListener(this);
+            
             cdd.Show();
-
+            cdd.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimary);
             return cdd;
         }
 
         private void addNewMed(Medicine medicament)
         {
             disease.AddMedicine(medicament);
-            medicamentAdapter.addMedicament(medicament);
+            medicamentAdapter.AddMedicament(medicament);
             medicamentAdapter.NotifyDataSetChanged();
         }
 
@@ -188,7 +192,7 @@ namespace FamiliaXamarin.Medicatie
         {
             string numeBoala = etNumeBoala.Text;
 
-            disease.ListOfMedicines = medicamentAdapter.getMedicaments();
+            disease.ListOfMedicines = medicamentAdapter.GetMedicaments();
             disease.DiseaseName = numeBoala;
             Storage.GetInstance().updateBoala(this, disease);
 
@@ -205,7 +209,7 @@ namespace FamiliaXamarin.Medicatie
                 Toast.MakeText(this, "Introduceti denumirea afectiunii!", ToastLength.Long).Show();
                 return;
             }
-            disease.ListOfMedicines = medicamentAdapter.getMedicaments();
+            disease.ListOfMedicines = medicamentAdapter.GetMedicaments();
             disease.DiseaseName = numeBoala;
             Storage.GetInstance().AddDisease(this, disease);
 
@@ -296,7 +300,7 @@ namespace FamiliaXamarin.Medicatie
 
         public void onMedUpdated(Medicine medicament)
         {
-            medicamentAdapter.updateMedicament(medicament, medicament.IdMed);
+            medicamentAdapter.UpdateMedicament(medicament, medicament.IdMed);
             medicamentAdapter.NotifyDataSetChanged();
         }
 
@@ -312,17 +316,15 @@ namespace FamiliaXamarin.Medicatie
             cddb.setListener(this);
             cddb.setMedicament(medicament);
             cddb.Show();
+            cddb.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimary);
         }
 
         public void onYesClicked(string result, Medicine medicament)
         {
-            if (result.Equals("yes"))
-            {
-                disease.RemoveMedicine(medicament);
-                medicamentAdapter.removeMedicament(medicament);
-                medicamentAdapter.NotifyDataSetChanged();
-                
-            }
+            if (!result.Equals("yes")) return;
+            disease.RemoveMedicine(medicament);
+            medicamentAdapter.RemoveMedicament(medicament);
+            medicamentAdapter.NotifyDataSetChanged();
         }
     }
 }

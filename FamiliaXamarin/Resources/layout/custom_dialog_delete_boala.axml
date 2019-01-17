@@ -11,8 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
-        android:text="Doriti sa stergeti ?"
-        android:textColor="@android:color/black"
+        android:text="Doriti sa stergeti?"
         android:textSize="20dp" />
 
 
@@ -24,9 +23,9 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/button_style"
-        android:text="DA"
-        android:textColor="@android:color/white" />
+        android:background="@drawable/main_button_style"
+        android:text="da"
+        android:textColor="@color/white" />
 
 
     <Button
@@ -35,14 +34,14 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_txt"
         android:layout_marginBottom="10dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginTop="20dp"
         android:layout_toEndOf="@+id/btn_da_delete_boala"
         android:layout_toRightOf="@+id/btn_da_delete_boala"
-        android:background="@drawable/button_style"
-        android:text="NU"
-        android:textColor="@android:color/white" />
+        android:background="@drawable/secondary_button_style"
+        android:text="nu"
+        android:textColor="@color/white" />
 
 
 </RelativeLayout>
