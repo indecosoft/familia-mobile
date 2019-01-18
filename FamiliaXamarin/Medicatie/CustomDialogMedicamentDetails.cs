@@ -332,9 +332,16 @@ namespace FamiliaXamarin.Medicatie
                     string zile = etNumarZile.Text;
                     if (!zile.Equals(string.Empty))
                     {
-                        int nrZile = int.Parse(zile);
-                        medicament.NumberOfDays = nrZile;
-                        
+                        var canParse = int.TryParse(zile, out int nrZile);
+                        if (canParse)
+                        {
+                            medicament.NumberOfDays = nrZile;
+                        }
+                        else
+                        {
+                            Toast.MakeText(Application.Context,
+                                "Numarul de zile este prea mare", ToastLength.Short).Show();
+                        }
                     }
                     else
                     {

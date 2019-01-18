@@ -18,7 +18,6 @@ using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
 using Newtonsoft.Json;
 using Org.Json;
-using Square.Picasso;
 using Exception = Java.Lang.Exception;
 using Fragment = Android.Support.V4.App.Fragment;
 
