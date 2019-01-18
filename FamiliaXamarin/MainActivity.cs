@@ -124,14 +124,14 @@ namespace FamiliaXamarin
             GetLastLocationButtonOnClick();
 
 
-            if (Intent.HasExtra("extra"))
-            {
-                openHealthDevicesFragment();
-            }
+//            if (Intent.HasExtra("extra"))
+//            {
+//                openHealthDevicesFragment();
+//            }
 
         }
 
-        private void openMedicationFragment()
+        private void OpenMedicationFragment()
         {
             var medFragment = new MedicineFragment();
             var medsupportFragmentManager = SupportFragmentManager;
@@ -224,7 +224,7 @@ namespace FamiliaXamarin
                     openHealthDevicesFragment();
                     break;
                 case Resource.Id.medicatie:
-                    openMedicationFragment();
+                    OpenMedicationFragment();
                     break;
                 case Resource.Id.chat:
                     var convFragment = new ConversationsFragment();

@@ -24,13 +24,13 @@ namespace FamiliaXamarin.Medicatie
         private Spinner spinner;
         private EditText etMedicamentName;
         private EditText etNumarZile;
-        private RadioGroup rgDurata;
+        //private RadioGroup rgDurata;
         private RadioButton rbContinuu;
         private RadioButton rbNrZile;
         private HourAdapter hourAdapter;
         private IMedSaveListener listener;
         private Medicine medicament;
-        private IMode mode;
+        private Mode mode;
         private int intervalZi;
         private DiseaseActivity activity;
         private string timeSelected;
@@ -41,13 +41,13 @@ namespace FamiliaXamarin.Medicatie
 
         public CustomDialogMedicamentDetails(Context context, Medicine medicament) : base(context)
         {
-            this.activity = (DiseaseActivity)context;
-            mode = medicament == null ? IMode.SAVE : IMode.UPDATE;
+            activity = (DiseaseActivity)context;
+            mode = medicament == null ? Mode.Save : Mode.Update;
             this.medicament = medicament;
         }
-        public void SetListener(IMedSaveListener listener)
+        public void SetListener(IMedSaveListener saveMedListener)
         {
-            this.listener = listener;
+            listener = saveMedListener;
         }
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -55,7 +55,7 @@ namespace FamiliaXamarin.Medicatie
             RequestWindowFeature((int)WindowFeatures.NoTitle);
             SetContentView(Resource.Layout.custom_dialog);
             listmode = true;
-            setupViews();
+            SetupViews();
 
         }
 
@@ -82,7 +82,7 @@ namespace FamiliaXamarin.Medicatie
             }
 
         }
-        private void setCurrentDate()
+        private void SetCurrentDate()
         {
             string dateSaved = getCurrentDate();
             tvStartDate.Text = dateSaved;
@@ -98,35 +98,33 @@ namespace FamiliaXamarin.Medicatie
         }
        
 
-        private void setupViews()
+        private void SetupViews()
     {
         etMedicamentName = FindViewById<EditText>(Resource.Id.et_medicament_name);
         etNumarZile = FindViewById<EditText>(Resource.Id.et_numar_zile);
-        etNumarZile.Visibility = ViewStates.Invisible;
-        rgDurata = FindViewById<RadioGroup>(Resource.Id.rg_durata);
+        etNumarZile.Visibility = ViewStates.Gone;
+        //rgDurata = FindViewById<RadioGroup>(Resource.Id.rg_durata);
         rbContinuu = FindViewById<RadioButton>(Resource.Id.rb_continuu);
         rbContinuu.SetOnClickListener(this);
         rbNrZile = FindViewById<RadioButton>(Resource.Id.rb_numar_zile);
         rbNrZile.SetOnClickListener(this);
         tvStartDate = FindViewById<TextView>(Resource.Id.tv_start_date);
         tvStartDate.SetOnClickListener(this);
-
-        setupSpinner();
-        setupRvHours();
+        rbContinuu.Checked = true;
+        
+        SetupSpinner();
+        SetupRvHours();
 
         FindViewById(Resource.Id.btn_save_med_dialog).SetOnClickListener(this);
 
         if (medicament != null)
         {
             etMedicamentName.Text = medicament.Name;
-            etMedicamentName.TextChanged += delegate (object sender, Android.Text.TextChangedEventArgs args)
+            etMedicamentName.TextChanged += delegate
             {
                 try
                 {
-                    if (!currentMed.Equals(etMedicamentName.Text))
-                        _isEdited = true;
-                    else
-                        _isEdited = false;
+                    _isEdited = !currentMed.Equals(etMedicamentName.Text);
                 }
                 catch (Exception e)
                 {
@@ -140,16 +138,16 @@ namespace FamiliaXamarin.Medicatie
 
         switch (mode)
         {
-            case IMode.UPDATE:
-                setViewOnUpdate();
+            case Mode.Update:
+                SetViewOnUpdate();
                 break;
-            case IMode.SAVE:
-                setCurrentDate();
+            case Mode.Save:
+                SetCurrentDate();
                 break;
         }
     }
 
-    private void setViewOnUpdate()
+    private void SetViewOnUpdate()
     {
         listmode = false;
         spinner.SetSelection(medicament.IntervalOfDay - 1);
@@ -170,7 +168,7 @@ namespace FamiliaXamarin.Medicatie
         tvStartDate.Text = medicament.Date;
 
     }
-        private void setIntervalOfHours(int i)
+        private void SetIntervalOfHours(int i)
         {
 
             hourAdapter.ClearList();
@@ -205,16 +203,16 @@ namespace FamiliaXamarin.Medicatie
             }
         }
 
-        private void setupSpinner()
+        private void SetupSpinner()
     {
         spinner = FindViewById<Spinner>(Resource.Id.spinner);
         spinner.ItemSelected += delegate(object sender, AdapterView.ItemSelectedEventArgs args)
         {
-            Contract.Requires(sender != null);
+           // Contract.Requires(sender != null);
             intervalZi = args.Position + 1;
             if (listmode)
             {
-                setIntervalOfHours(args.Position);
+                SetIntervalOfHours(args.Position);
             }
 
             if (!listmode)
@@ -242,7 +240,7 @@ namespace FamiliaXamarin.Medicatie
         spinner.Adapter = dataAdapter;
     }
 
-    private void setupRvHours()
+    private void SetupRvHours()
     {
         RecyclerView rvHours = FindViewById<RecyclerView>(Resource.Id.rv_hours);
         LinearLayoutManager layoutManager = new LinearLayoutManager(Context);
@@ -254,16 +252,16 @@ namespace FamiliaXamarin.Medicatie
     }
         public interface IMedSaveListener
         {
-            void onMedSaved(Medicine medicament);
+            void OnMedSaved(Medicine medicament);
 
-            void onMedUpdated(Medicine medicament);
+            void OnMedUpdated(Medicine medicament);
 
         }
 
-        private enum IMode
+        private enum Mode
         {
-            SAVE,
-            UPDATE
+            Save,
+            Update
         }
 
         public void OnClick(View v)
@@ -271,33 +269,26 @@ namespace FamiliaXamarin.Medicatie
             switch (v.Id)
             {
                 case Resource.Id.btn_save_med_dialog:
-                    onSaveClicked();
+                    OnSaveClicked();
                     break;
                 case Resource.Id.rb_continuu:
-                    setFirstRadioButton(rbContinuu.Checked, (int)ViewStates.Invisible);
+                    SetSecondRadioButton(rbContinuu.Checked, ViewStates.Gone);
                     break;
                 case Resource.Id.rb_numar_zile:
-                    setSecondRadioButton(rbNrZile.Checked, (int)ViewStates.Visible);
+                    SetSecondRadioButton(rbNrZile.Checked, ViewStates.Visible);
                     break;
                 case Resource.Id.tv_start_date:
-                    onDateClick();
+                    OnDateClick();
                     break;
-
             }
         }
-        private void setSecondRadioButton(bool isChecked, int visible)
+        private void SetSecondRadioButton(bool isChecked, ViewStates visibility)
         {
             if (isChecked) {
-                etNumarZile.Visibility = (ViewStates)visible;
+                etNumarZile.Visibility = visibility;
             }
         }
-
-        private void setFirstRadioButton(bool isChecked, int invisible)
-        {
-            setSecondRadioButton(isChecked, invisible);
-        }
-
-        private void onDateClick()
+        private void OnDateClick()
         {
             var frag = DatePickerMedicine.NewInstance(delegate (DateTime time)
             {
@@ -306,14 +297,14 @@ namespace FamiliaXamarin.Medicatie
             frag.Show(activity.SupportFragmentManager, DatePickerMedicine.TAG);
         }
 
-        private void onSaveClicked()
+        private void OnSaveClicked()
         {
             if (listener != null)
             {
                 string name = etMedicamentName.Text;
                 if (!string.IsNullOrWhiteSpace(name))
                 {
-                    notifyListener(name);
+                    NotifyListener(name);
                     Dismiss();
                 }
                 else
@@ -324,7 +315,7 @@ namespace FamiliaXamarin.Medicatie
             }
 
         }
-        private void notifyListener(string name)
+        private void NotifyListener(string name)
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
@@ -352,11 +343,11 @@ namespace FamiliaXamarin.Medicatie
                 }
                 switch (mode)
                 {
-                    case IMode.SAVE:
-                        saveNewMed();
+                    case Mode.Save:
+                        SaveNewMed();
                         break;
-                    case IMode.UPDATE:
-                        updateMed();
+                    case Mode.Update:
+                        UpdateMed();
                         break;
                 }
             }
@@ -365,19 +356,19 @@ namespace FamiliaXamarin.Medicatie
                 Toast.MakeText(Context, "Nu ati introdus numele MEDICAMENTULUI", ToastLength.Short).Show();
             }
         }
-        private void updateMed()
+        private void UpdateMed()
         {
             medicament.Hours = hourAdapter.GetList();
-            listener.onMedUpdated(medicament);
+            listener.OnMedUpdated(medicament);
 
         }
 
-        private void saveNewMed()
+        private void SaveNewMed()
         {
             medicament.Hours = hourAdapter.GetList();
-            listener.onMedSaved(medicament);
+            listener.OnMedSaved(medicament);
         }
-        private void onTimeClicked(Hour myHour)
+        private void OnTimeClicked(Hour myHour)
         {
             Calendar mcurrentTime = Calendar.Instance;
             int hour = mcurrentTime.Get(CalendarField.HourOfDay);
@@ -385,24 +376,24 @@ namespace FamiliaXamarin.Medicatie
 
             TimePickerDialog mTimePicker = new TimePickerDialog(Context, delegate(object sender, TimePickerDialog.TimeSetEventArgs args)
                 {
-                    onTimeSelected(sender as TimePicker, args.HourOfDay, args.Minute, myHour);
+                    OnTimeSelected(sender as TimePicker, args.HourOfDay, args.Minute, myHour);
                 }, hour,minute,true);
 
             mTimePicker.SetTitle("Select Time");
             mTimePicker.Show();
         }
 
-        private void onTimeSelected(TimePicker timePicker, int selectedHour, int selectedMinute, Hour myHour)
+        private void OnTimeSelected(TimePicker timePicker, int selectedHour, int selectedMinute, Hour myHour)
         {
             timeSelected = selectedHour + ":" + selectedMinute;
             myHour.HourName = timeSelected;
             hourAdapter.updateHour(myHour);
             hourAdapter.NotifyDataSetChanged();
-            Calendar calendar = getCalendar(timePicker, selectedHour, selectedMinute);
+            Calendar calendar = GetCalendar(timePicker, selectedHour, selectedMinute);
             
         }
 
-        private Calendar getCalendar(TimePicker timePicker, int selectedHour, int selectedMinute)
+        private Calendar GetCalendar(TimePicker timePicker, int selectedHour, int selectedMinute)
         {
             Calendar calendar = Calendar.Instance;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
@@ -420,15 +411,15 @@ namespace FamiliaXamarin.Medicatie
 
         public void OnDateSet(DatePicker view, int year, int month, int dayOfMonth)
         {
-            string dateSaved = $"{dayOfMonth}.{(month + 1)}.{year}";
+            string dateSaved = $"{dayOfMonth}.{month + 1}.{year}";
             Log.Error("DATE SAVED", dateSaved);
             tvStartDate.Text = dateSaved;
-            this.medicament.Date = dateSaved;
+            medicament.Date = dateSaved;
         }
 
         public void onHourClicked(Hour hour)
         {   
-            onTimeClicked(hour);
+            OnTimeClicked(hour);
             _isEdited = true;
         }
     }

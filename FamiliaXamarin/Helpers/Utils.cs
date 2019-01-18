@@ -14,6 +14,7 @@ using Android.Telephony;
 using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
+using FamiliaXamarin.Chat;
 using Java.Lang;
 using Java.Text;
 using Java.Util;

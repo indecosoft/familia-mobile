@@ -18,8 +18,7 @@
     app:menu="@menu/menu_sharing_navigation"
     android:layout_below="@+id/top_bar"
     app:itemIconTint="@drawable/nav_sharing_item_color"
-    app:itemTextColor="@drawable/nav_sharing_item_color"
-  />
+    app:itemTextColor="@drawable/nav_sharing_item_color"/>
   <android.support.constraint.ConstraintLayout
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
