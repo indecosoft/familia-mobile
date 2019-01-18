@@ -14,6 +14,7 @@ using Android.Telephony;
 using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
+using FamiliaXamarin.Chat;
 using Java.Lang;
 using Java.Text;
 using Java.Util;
@@ -52,6 +53,10 @@ namespace FamiliaXamarin.Helpers
             var editor = preferences.Edit();
             editor.PutString(key, value);
             editor.Apply();
+        }
+        public static void RemoveDefaults()
+        {
+            Application.Context.GetSharedPreferences(PreferenceManager.GetDefaultSharedPreferencesName(Application.Context), 0).Edit().Clear().Commit();
         }
 
         public static string GetDefaults(string key, Context context)

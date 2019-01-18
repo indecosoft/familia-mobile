@@ -32,26 +32,8 @@ using Permission = Android.Content.PM.Permission;
 namespace FamiliaXamarin.Login_System
 {
     [Activity(Label = "Familia", Theme = "@style/AppTheme.Dark", MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait)]
-    public class LoginActivity : AppCompatActivity, IDialogInterfaceOnClickListener
+    public class LoginActivity : AppCompatActivity
     {
-
-        public class Test : BiometricPrompt.AuthenticationCallback
-        {
-            public override void OnAuthenticationFailed()
-            {
-                base.OnAuthenticationFailed();
-            }
-
-            public override void OnAuthenticationSucceeded(AuthenticationResult result)
-            {
-                base.OnAuthenticationSucceeded(result);
-            }
-
-            public override void OnAuthenticationHelp(BiometricAcquiredStatus helpCode, ICharSequence helpString)
-            {
-                base.OnAuthenticationHelp(helpCode, helpString);
-            }
-        }
         private ConstraintLayout _layout;
 
         private EditText _usernameEditText;
@@ -84,22 +66,6 @@ namespace FamiliaXamarin.Login_System
             var checkHardware = FingerprintManagerCompat.From(this);
             var keyguardManager1 = (KeyguardManager)GetSystemService(KeyguardService);
 
-
-//            private void displayBiometricPrompt(final BiometricCallback biometricCallback)
-//            {
-//                
-//            }
-            
-//            BiometricPrompt.AuthenticationCallback authenticationCallback = BiometricUtils.;
-//
-//            // Show biometric prompt
-//            if (signature != null)
-//            {
-//                Log.i(TAG, "Show biometric prompt");
-//                mBiometricPrompt.authenticate(new BiometricPrompt.CryptoObject(signature), cancellationSignal, getMainExecutor(), authenticationCallback);
-//            }
-//
-
             if (fingerprint && checkHardware.IsHardwareDetected && keyguardManager1.IsKeyguardSecure)
             {
 
@@ -111,7 +77,7 @@ namespace FamiliaXamarin.Login_System
                 var keyguardManager = (KeyguardManager)GetSystemService(KeyguardService);
                 var fingerprintManager = (FingerprintManager)GetSystemService(FingerprintService);
 
-                if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(this, Manifest.Permission.UseFingerprint) != (int)Permission.Granted)
+                if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.UseFingerprint) != (int)Permission.Granted)
                     return;
                 if (!fingerprintManager.IsHardwareDetected)
                 {
@@ -158,23 +124,6 @@ namespace FamiliaXamarin.Login_System
                 Toast.MakeText(this, "Telefonul trebuie sa fie securizat utilizand senzorul de amprente", ToastLength.Long).Show();
                 LoadLoginUi();
             }
-
-            //            var av = BiometricUtils.IsPermissionGranted(this);
-            /*var a = new BiometricPrompt.Builder(this)
-                .SetTitle("Title")
-                .SetSubtitle("Subtitle")
-                .SetDescription("Description: blablablablablablablablablablabla...")
-                .SetNegativeButton("Use password", this.MainExecutor, this)
-                .Build();
-
-            CancellationSignal cancellationSignal = new CancellationSignal();
-            cancellationSignal.CancelEvent += delegate(object sender, EventArgs args)
-                {
-                    Toast.MakeText(this, "onCancel", ToastLength.Short);
-                };
-            var ab = new Test();
-            
-            a.Authenticate(cancellationSignal,MainExecutor,ab);*/
         }
 
         private void LoadLoginUi()
@@ -259,11 +208,6 @@ namespace FamiliaXamarin.Login_System
             SetSupportActionBar(toolbar);
             Title = string.Empty;
 
-//            Utils.CreateChannels("fdf", "fdf");
-//
-//            var nb = Utils.GetAndroidChannelNotification("Cerere de chat", "eu doreste sa ia legatura cu tine!", "Accept", 1, this, "12:14");
-//            Utils.GetManager().Notify(235646, nb.Build());
-
             _layout = FindViewById<ConstraintLayout>(Resource.Id.layout);
 
             _usernameEditText = FindViewById<EditText>(Resource.Id.et_email);
@@ -307,17 +251,14 @@ namespace FamiliaXamarin.Login_System
                 string response = await WebServices.Post(Constants.PublicServerAddress + "/api/login", dataToSend);
                 if (response != null)
                 {
-                    Snackbar snack;
                     var responseJson = new JSONObject(response);
                     switch (responseJson.GetInt("status"))
                     {
                         case 0:
-                            snack = Snackbar.Make(_layout, "Wrong Username or Password", Snackbar.LengthLong);
-                            snack.Show();
+                            Snackbar.Make(_layout, "Wrong Username or Password", Snackbar.LengthLong).Show();
                             break;
                         case 1:
-                            snack = Snackbar.Make(_layout, "Internal Server Error", Snackbar.LengthLong);
-                            snack.Show();
+                            Snackbar.Make(_layout, "Internal Server Error", Snackbar.LengthLong).Show();
                             break;
                         case 2:
                             var token = new JSONObject(response).GetString("token");
@@ -338,6 +279,9 @@ namespace FamiliaXamarin.Login_System
 
                             Finish();
                             break;
+                        case 3:
+                            Snackbar.Make(_layout, "Dispozitivul nu este inregistrat!", Snackbar.LengthLong).Show();
+                            break;
                     }
                 }
                 else
@@ -348,12 +292,6 @@ namespace FamiliaXamarin.Login_System
             });
             _progressBarDialog.Dismiss();
 
-        }
-
-        public void OnClick(IDialogInterface dialog, int which)
-        {
-            //biometricCallback.onAuthenticationCancelled();
-            Toast.MakeText(this, "You requested password.", ToastLength.Short);
         }
     }
 }

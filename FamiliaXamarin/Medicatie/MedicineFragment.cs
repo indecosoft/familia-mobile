@@ -137,7 +137,7 @@ namespace FamiliaXamarin.Medicatie
 
         public int CurrentTimeMillis()
         {
-            return (int)(DateTime.UtcNow).Millisecond;
+            return (DateTime.UtcNow).Millisecond;
         }
 
         private List<MedicationSchedule> ParseResultFromUrl(string res)
@@ -215,6 +215,7 @@ namespace FamiliaXamarin.Medicatie
             cddb.SetListener(this);
             cddb.SetBoala(boala);
             cddb.Show();
+            cddb.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimary);
         }
 
 

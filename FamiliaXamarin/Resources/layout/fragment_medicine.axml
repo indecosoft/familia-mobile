@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_notes"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/btn_add"
-		android:layout_marginBottom="71dp"
-		android:scrollbars="vertical"
-
-        />
+        android:layout_above="@+id/btn_add_disease"
+        android:scrollbars="vertical"/>
 
     <Button
         android:id="@+id/btn_add_disease"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="20dp"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/button_style"
         android:text="Adauga tratament"
-        android:textColor="@android:color/white"
-		 android:layout_above="@+id/btn_add"
-        android:paddingLeft="50dp"
-        android:paddingRight="50dp"/>
+        android:backgroundTint="@color/colorAccent"
+        android:drawableLeft="@drawable/plus"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/white"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"/>
 
 
 </RelativeLayout>

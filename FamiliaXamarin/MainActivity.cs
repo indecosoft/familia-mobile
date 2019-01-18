@@ -93,24 +93,11 @@ namespace FamiliaXamarin
 
              if (Intent.GetBooleanExtra("FromChat", false))
              {
-                 var convFragment = new ConversationsFragment();
-                 var convsupportFragmentManager = SupportFragmentManager;
-                 var medbeginTransaction = convsupportFragmentManager.BeginTransaction();
-                 medbeginTransaction.Replace(Resource.Id.fragment_container, convFragment);
-                 medbeginTransaction.AddToBackStack(null);
-                 medbeginTransaction.Commit();
+                 SupportFragmentManager.BeginTransaction()
+                     .Replace(Resource.Id.fragment_container, new ConversationsFragment())
+                     .AddToBackStack(null).Commit();
                  Title = "Conversatii active";
              }
-             else if (Intent.GetBooleanExtra("FromDisease", false))
-             {
-                var medFragment = new MedicineFragment();
-                var medsupportFragmentManager = SupportFragmentManager;
-                var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
-                medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
-                medbeginTransaction.AddToBackStack(null);
-                medbeginTransaction.Commit();
-                Title = "Medicatie";
-            }
             //_isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
             if (!Utils.IsGooglePlayServicesInstalled(this)) return;
             new LocationRequest()
@@ -122,23 +109,6 @@ namespace FamiliaXamarin
             _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);
             // Utils.CreateNotificationChannel();
             GetLastLocationButtonOnClick();
-
-
-            if (Intent.HasExtra("extra"))
-            {
-                openHealthDevicesFragment();
-            }
-
-        }
-
-        private void openMedicationFragment()
-        {
-            var medFragment = new MedicineFragment();
-            var medsupportFragmentManager = SupportFragmentManager;
-            var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
-            medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
-            medbeginTransaction.AddToBackStack(null);
-            medbeginTransaction.Commit();
         }
 
         private async void GetLastLocationButtonOnClick()
@@ -213,34 +183,29 @@ namespace FamiliaXamarin
             switch (id)
             {
                 case Resource.Id.harta:
-                    var fragmentMap = new FindUsersFragment();
-                    var fragmentManagerMap = SupportFragmentManager;
-                    var fragmentTransactionMap = fragmentManagerMap.BeginTransaction();
-                    fragmentTransactionMap.Replace(Resource.Id.fragment_container, fragmentMap);
-                    fragmentTransactionMap.AddToBackStack(null);
-                    fragmentTransactionMap.Commit();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new FindUsersFragment())
+                        .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.nav_devices:
-                    openHealthDevicesFragment();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
+                        .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.medicatie:
-                    openMedicationFragment();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new MedicineFragment())
+                        .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.chat:
-                    var convFragment = new ConversationsFragment();
-                    var fragmentManagerConv = SupportFragmentManager;
-                    var fragmentTransactionConv = fragmentManagerConv.BeginTransaction();
-                    fragmentTransactionConv.Replace(Resource.Id.fragment_container, convFragment);
-                    fragmentTransactionConv.AddToBackStack(null);
-                    fragmentTransactionConv.Commit();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new ConversationsFragment())
+                        .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.nav_manage:
-                    var fragmentSettings = new SettingsFragment();
-                    var fragmentManagerSettings = SupportFragmentManager;
-                    var fragmentTransactionSettings = fragmentManagerSettings.BeginTransaction();
-                    fragmentTransactionSettings.Replace(Resource.Id.fragment_container, fragmentSettings);
-                    fragmentTransactionSettings.AddToBackStack(null);
-                    fragmentTransactionSettings.Commit();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new SettingsFragment())
+                        .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.partajare_date:
                    
@@ -248,34 +213,25 @@ namespace FamiliaXamarin
 
                     break;
                 case Resource.Id.nav_asistenta:
-                    var fragmentAsist = new AsistentForm();
-                    var fragmentManagerAsist = SupportFragmentManager;
-                    var fragmentTransactionAsist = fragmentManagerAsist.BeginTransaction();
-                    fragmentTransactionAsist.Replace(Resource.Id.fragment_container, fragmentAsist);
-                    fragmentTransactionAsist.AddToBackStack(null);
-                    fragmentTransactionAsist.Commit();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new AsistentForm())
+                        .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.nav_monitorizare:
-                    var fragmentMonit = new MonitoringFragment();
-                    var fragmentManagerMonit = SupportFragmentManager;
-                    var fragmentTransactionMonit = fragmentManagerMonit.BeginTransaction();
-                    fragmentTransactionMonit.Replace(Resource.Id.fragment_container, fragmentMonit);
-                    fragmentTransactionMonit.AddToBackStack(null);
-                    fragmentTransactionMonit.Commit();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new MonitoringFragment())
+                        .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.nav_QRCode:
-                    var fragment = new QrCodeGenerator();
-                    var fragmentManager = SupportFragmentManager;
-                    var fragmentTransaction = fragmentManager.BeginTransaction();
-                    fragmentTransaction.Replace(Resource.Id.fragment_container, fragment);
-                    fragmentTransaction.AddToBackStack(null);
-                    fragmentTransaction.Commit();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new QrCodeGenerator())
+                        .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.logout:
 
-                    Utils.SetDefaults("Token", null, this);
-                    Utils.SetDefaults("fingerprint", false.ToString(), this);
+                    Utils.RemoveDefaults();
                     WebSocketClient.Disconect();
+                    //Process.KillProcess(Process.MyPid());
                         StopService(_loacationServiceIntent);
                         StopService(_webSocketServiceIntent);
                        // StopService(_medicationServiceIntent);
@@ -291,16 +247,6 @@ namespace FamiliaXamarin
             var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
             return true;
-        }
-
-        private void openHealthDevicesFragment()
-        {
-            var devicesFragment = new HealthDevicesFragment();
-            var supportFragmentManager = SupportFragmentManager;
-            var beginTransaction = supportFragmentManager.BeginTransaction();
-            beginTransaction.Replace(Resource.Id.fragment_container, devicesFragment);
-            beginTransaction.AddToBackStack(null);
-            beginTransaction.Commit();
         }
     }
 }
