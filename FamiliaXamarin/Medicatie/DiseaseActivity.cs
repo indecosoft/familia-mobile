@@ -1,21 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-
 using Android.App;
 using Android.Content;
-using Android.Graphics;
-using Android.Graphics.Drawables;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Design.Widget;
-using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
-using Android.Text;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Medicatie.Alarm;
@@ -40,7 +30,7 @@ namespace FamiliaXamarin.Medicatie
         private string currentDisease = string.Empty;
 
         private MedicineAdapter medicamentAdapter;
-        private bool _isEdited = false;
+        private bool _isEdited;
 
         private Disease disease;
         protected override void OnCreate(Bundle savedInstanceState)
@@ -65,19 +55,19 @@ namespace FamiliaXamarin.Medicatie
 
             SetupViews();
 
-            setMode();
+            SetMode();
         }
         private void SetupViews()
         {
             save = FindViewById<Button>(Resource.Id.btn_save);
-            save.Click += delegate (object sender, EventArgs args) { addNewBoala(); };
+            save.Click += delegate { AddNewBoala(); };
             update = FindViewById<Button>(Resource.Id.btn_update);
-            update.Click += delegate (object sender, EventArgs args) { updateBoala(); };
+            update.Click += delegate { UpdateBoala(); };
             FloatingActionButton addMed = FindViewById<FloatingActionButton>(Resource.Id.fab_add_med);
-            addMed.Click += delegate (object sender, EventArgs args) { openMedDialog(null); };
+            addMed.Click += delegate { OpenMedDialog(null); };
             etNumeBoala = FindViewById<EditText>(Resource.Id.et_nume_boala);
          
-            setRecyclerView();
+            SetRecyclerView();
 
         }
 
@@ -85,11 +75,15 @@ namespace FamiliaXamarin.Medicatie
         {
             if (_isEdited)
             {
-                Android.Support.V7.App.AlertDialog.Builder alert = new Android.Support.V7.App.AlertDialog.Builder(this);
+                var alert = new Android.Support.V7.App.AlertDialog.Builder(this);
                 alert.SetTitle("Avertisment");
                 alert.SetMessage("Esti pe cale sa renunti la modificarile facute. Renuntati?");
                 alert.SetPositiveButton("Da", (senderAlert, args) => {
                     base.OnBackPressed();
+                    /*var intent = new Intent(this, typeof(MainActivity));
+                    intent.AddFlags(ActivityFlags.ClearTop);
+                    intent.PutExtra("FromDisease", true);
+                    StartActivity(intent);*/
                 });
 
                 alert.SetNegativeButton("Nu", (senderAlert, args) => {
@@ -101,15 +95,15 @@ namespace FamiliaXamarin.Medicatie
             else
             {
                 base.OnBackPressed();
-                var intent = new Intent(this, typeof(MainActivity));
+                /*var intent = new Intent(this, typeof(MainActivity));
                 intent.AddFlags(ActivityFlags.ClearTop);
                 intent.PutExtra("FromDisease", true);
-                StartActivity(intent);
+                StartActivity(intent);*/
             }
             
         }
 
-        private void setRecyclerView()
+        private void SetRecyclerView()
         {
             RecyclerView rvMeds = FindViewById<RecyclerView>(Resource.Id.rv_meds);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -121,7 +115,7 @@ namespace FamiliaXamarin.Medicatie
         }
 
 
-        private void setMode()
+        private void SetMode()
         {
             Intent intent = Intent;
             if (intent.HasExtra(MedicineFragment.IdBoala))
@@ -132,14 +126,11 @@ namespace FamiliaXamarin.Medicatie
                 medicamentAdapter.NotifyDataSetChanged();
                 etNumeBoala.Text = disease.DiseaseName;
                 currentDisease = disease.DiseaseName;
-                etNumeBoala.TextChanged += delegate (object sender, TextChangedEventArgs args)
+                etNumeBoala.TextChanged += delegate
                 {
                     try
                     {
-                        if (!currentDisease.Equals(etNumeBoala.Text))
-                            _isEdited = true;
-                        else
-                            _isEdited = false;
+                        _isEdited = !currentDisease.Equals(etNumeBoala.Text);
                     }
                     catch (Exception e)
                     {
@@ -161,34 +152,34 @@ namespace FamiliaXamarin.Medicatie
             switch (v.Id)
             {
                 case Resource.Id.btn_save:
-                    addNewBoala();
+                    AddNewBoala();
                     break;
                 case Resource.Id.btn_update:
-                    updateBoala();
+                    UpdateBoala();
                     break;
                 case Resource.Id.fab_add_med:
-                    openMedDialog(null);
+                    OpenMedDialog(null);
                     break;
             }
         }
-        private CustomDialogMedicamentDetails openMedDialog(Medicine medicament)
+        private void OpenMedDialog(Medicine medicament)
         {
             CustomDialogMedicamentDetails cdd = new CustomDialogMedicamentDetails(this, medicament);
             cdd.SetListener(this);
             
             cdd.Show();
             cdd.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimary);
-            return cdd;
+            //return;
         }
 
-        private void addNewMed(Medicine medicament)
+        private void AddNewMed(Medicine medicament)
         {
             disease.AddMedicine(medicament);
             medicamentAdapter.AddMedicament(medicament);
             medicamentAdapter.NotifyDataSetChanged();
         }
 
-        private void updateBoala()
+        private void UpdateBoala()
         {
             string numeBoala = etNumeBoala.Text;
 
@@ -196,12 +187,12 @@ namespace FamiliaXamarin.Medicatie
             disease.DiseaseName = numeBoala;
             Storage.GetInstance().updateBoala(this, disease);
 
-            setupAlarm();
+            SetupAlarm();
 
             Finish();
         }
 
-        private void addNewBoala()
+        private void AddNewBoala()
         {
             string numeBoala = etNumeBoala.Text;
             if (numeBoala.Equals(string.Empty))
@@ -213,12 +204,12 @@ namespace FamiliaXamarin.Medicatie
             disease.DiseaseName = numeBoala;
             Storage.GetInstance().AddDisease(this, disease);
 
-            setupAlarm();
+            SetupAlarm();
 
             Finish();
         }
 
-        private void setupAlarm()
+        private void SetupAlarm()
         {
             List<Medicine> meds = disease.ListOfMedicines;
             foreach (Medicine med in meds)
@@ -227,7 +218,7 @@ namespace FamiliaXamarin.Medicatie
                 List<int> alarms = new List<int>();
                 for (int i = 0; i < hours.Count; i++)
                 {
-                    setAlarm(hours[i], med, disease, ref alarms, i);
+                    SetAlarm(hours[i], med, disease, ref alarms, i);
                 }
 
                 med.Alarms = alarms;
@@ -241,7 +232,7 @@ namespace FamiliaXamarin.Medicatie
         {
             return (int)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
         }
-        private void setAlarm(Hour hour, Medicine med, Disease boala, ref List<int> alarms, int position)
+        private void SetAlarm(Hour hour, Medicine med, Disease boala, ref List<int> alarms, int position)
         {
             var idAlarm = DateTime.Now.Millisecond ;
             var am = (AlarmManager)GetSystemService(AlarmService);
@@ -293,12 +284,12 @@ namespace FamiliaXamarin.Medicatie
 
         }
 
-        public void onMedSaved(Medicine medicament)
+        public void OnMedSaved(Medicine medicament)
         {
-            addNewMed(medicament);
+            AddNewMed(medicament);
         }
 
-        public void onMedUpdated(Medicine medicament)
+        public void OnMedUpdated(Medicine medicament)
         {
             medicamentAdapter.UpdateMedicament(medicament, medicament.IdMed);
             medicamentAdapter.NotifyDataSetChanged();
@@ -306,7 +297,7 @@ namespace FamiliaXamarin.Medicatie
 
         public void OnMedicamentClick(Medicine medicament)
         {
-            openMedDialog(medicament);
+            OpenMedDialog(medicament);
             _isEdited = true;
         }
 

@@ -1,0 +1,753 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config />
+    </shared>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3402a518-2f96-44cb-8065-2f114e5935df" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/.idea/libraries/constraint_layout_1_1_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/.idea/libraries/constraint_layout_solver_1_1_3.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Active Conversations/ConversationsFragment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Active Conversations/ConversationsFragment.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Chat/ChatActivity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Chat/ChatActivity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Helpers/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Helpers/Utils.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/MainActivity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/MainActivity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Medicatie/CustomDialogMedicamentDetails.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Medicatie/CustomDialogMedicamentDetails.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Medicatie/DiseaseActivity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Medicatie/DiseaseActivity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_alarm.axml" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_alarm.axml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_boala.axml" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_boala.axml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_login.axml" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_login.axml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/custom_dialog_delete_boala.axml" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/custom_dialog_delete_boala.axml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/custom_dialog_delete_medicament.axml" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/custom_dialog_delete_medicament.axml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/WebSocket/WebSocketClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/WebSocket/WebSocketClient.cs" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Chat/ChatActivity.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="302">
+              <caret line="89" column="13" lean-forward="true" selection-start-line="89" selection-start-column="13" selection-end-line="89" selection-end-column="13" />
+              <folding>
+                <marker date="1547810598198" expanded="false" signature="6:407" ph="..." />
+                <marker date="1547810598198" expanded="true" signature="438:9040" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="445:567" ph="[...]" />
+                <marker date="1547810598198" expanded="true" signature="617:9038" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="1026:1088" ph="/* readonly Handler mTypingHandler = new Handler(); ... */" />
+                <marker date="1547810598198" expanded="true" signature="1221:1335" ph="/* public static string NewMessage = &quot;&quot;; ... */" />
+                <marker date="1547810598198" expanded="true" signature="1380:1491" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="1537:1829" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="1898:7601" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="2278:2455" ph="/* mAdapter.ItemClick += delegate (object sender, int i) ... */" />
+                <marker date="1547810598198" expanded="true" signature="3073:7365" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="3357:3423" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="3494:4291" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="3731:4109" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="4153:4242" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="4362:7089" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="4472:6237" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="4675:5711" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="5106:5361" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="5412:5529" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="5740:6215" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="6284:6383" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="6478:6938" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="6982:7071" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="7228:7351" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="7637:8378" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="7926:8142" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="8178:8243" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="8443:8697" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="8489:8685" ph="{...}" />
+                <marker date="1547810598198" expanded="true" signature="8743:9032" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_alarm.axml">
+          <provider editor-type-id="android-designer2" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="544">
+              <caret line="34" column="52" selection-start-line="34" selection-start-column="52" selection-end-line="34" selection-end-column="52" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_login.axml">
+          <provider editor-type-id="android-designer2" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-16">
+              <caret line="77" column="39" selection-start-line="77" selection-start-column="39" selection-end-line="77" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_boala.axml">
+          <provider editor-type-id="android-designer2" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-16">
+              <caret line="38" selection-start-line="38" selection-end-line="38" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Resources/layout/custom_dialog_delete_medicament.axml">
+          <provider editor-type-id="android-designer2" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-16">
+              <caret line="32" column="39" selection-start-line="32" selection-start-column="39" selection-end-line="32" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Resources/layout/custom_dialog_delete_boala.axml">
+          <provider editor-type-id="android-designer2" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/FamiliaXamarin/MainActivity.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="256">
+              <caret line="103" selection-start-line="103" selection-end-line="103" />
+              <folding>
+                <marker date="1547802571011" expanded="false" signature="6:830" ph="..." />
+                <marker date="1547802571011" expanded="true" signature="856:13718" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="1081:13716" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="1435:5758" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="2781:3145" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="2991:3114" ph="/* StartForegroundService(_smartBandServiceIntent); ... */" />
+                <marker date="1547802571011" expanded="true" signature="3162:3432" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="3315:3417" ph="/* StartService(_smartBandServiceIntent); ... */" />
+                <marker date="1547802571011" expanded="true" signature="3989:4493" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="4561:5039" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="5625:5747" ph="/* if (Intent.HasExtra(&quot;extra&quot;)) ... */" />
+                <marker date="1547802571011" expanded="true" signature="5805:6213" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="6272:6490" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="6401:6480" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="6546:7943" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="6677:6852" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="6869:7933" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="7328:7772" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="7393:7752" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="7808:7918" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="7988:8352" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="8144:8271" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="8288:8342" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="8414:8524" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="8592:8699" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="8761:13257" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="8830:12906" ph="{...}" />
+                <marker date="1547802571011" expanded="true" signature="13307:13710" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Medicatie/DiseaseActivity.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="480">
+              <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
+              <folding>
+                <marker date="1547813299463" expanded="true" signature="6:471" ph="..." />
+                <marker date="1547813299463" expanded="true" signature="507:11187" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="800:11185" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="1378:2071" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="2105:2652" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="2698:3861" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="2735:3532" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="3044:3344" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="3108:3326" ph="/* var intent = new Intent(this, typeof(MainActivity)); ... */" />
+                <marker date="1547813299463" expanded="true" signature="3417:3436" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="3549:3838" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="3618:3824" ph="/* var intent = new Intent(this, typeof(MainActivity)); ... */" />
+                <marker date="1547813299463" expanded="true" signature="3901:4290" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="4323:5417" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="4428:5268" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="4930:5052" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="5092:5183" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="5285:5407" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="5453:5853" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="5489:5843" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="5909:6207" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="6260:6436" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="6472:6773" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="6809:7308" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="6916:7068" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="7343:7789" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="7455:7779" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="7621:7726" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="7942:8036" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="8142:10053" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="8531:8603" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="9844:9928" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="10106:10161" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="10216:10368" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="10428:10517" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="10583:10880" ph="{...}" />
+                <marker date="1547813299463" expanded="true" signature="10950:11179" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Medicatie/CustomDialogMedicamentDetails.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="113" column="8" lean-forward="true" selection-start-line="113" selection-start-column="8" selection-end-line="113" selection-end-column="8" />
+              <folding>
+                <marker date="1547813710026" expanded="false" signature="6:417" ph="..." />
+                <marker date="1547813710026" expanded="true" signature="453:13749" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="597:13747" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="1351:1527" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="1593:1653" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="1721:1966" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="2012:2744" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="2049:2650" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="2401:2462" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="2535:2554" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="2667:2733" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="2782:2894" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="2934:3213" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="3256:4776" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="4097:4554" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="4247:4358" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="4394:4473" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="4577:4770" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="4812:5336" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="5038:5213" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="5226:5285" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="5383:6324" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="5553:5658" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="5675:6314" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="5738:6300" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="5818:5947" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="5972:6281" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="6081:6174" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="6361:7550" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="6654:6733" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="6761:6822" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="6859:7005" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="7202:7276" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="7583:7925" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="7967:8091" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="8118:8175" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="8212:8821" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="8248:8811" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="8902:9018" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="8940:9008" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="9053:9323" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="9361:9828" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="9405:9817" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="9526:9635" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="9656:9802" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="9877:11218" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="9937:11055" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="9991:10080" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="10101:10764" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="10443:10624" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="10649:10746" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="10794:11041" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="11072:11208" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="11251:11373" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="11408:11527" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="11575:12152" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="12263:12583" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="12682:13306" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="12804:13030" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="13047:13267" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="13391:13609" ph="{...}" />
+                <marker date="1547813710026" expanded="true" signature="13655:13741" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/FamiliaXamarin/MainActivity.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/FamiliaXamarin/Medicatie/CustomDialogMedicamentDetails.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/FamiliaXamarin/Medicatie/DiseaseActivity.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/FamiliaXamarin/Chat/ChatActivity.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_alarm.axml" />
+        <option value="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/custom_dialog_delete_boala.axml" />
+        <option value="$PROJECT_DIR$/FamiliaXamarin/MainActivity.cs" />
+        <option value="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/custom_dialog_delete_medicament.axml" />
+        <option value="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_boala.axml" />
+        <option value="$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_login.axml" />
+        <option value="$PROJECT_DIR$/FamiliaXamarin/Chat/ChatActivity.cs" />
+        <option value="$PROJECT_DIR$/FamiliaXamarin/Medicatie/DiseaseActivity.cs" />
+        <option value="$PROJECT_DIR$/FamiliaXamarin/Medicatie/CustomDialogMedicamentDetails.cs" />
+      </list>
+    </option>
+  </component>
+  <component name="InvalidFacetManager">
+    <ignored-facets>
+      <facet id="FamiliaXamarin/invalid/Android Facet - FamiliaXamarin" />
+    </ignored-facets>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="2576" />
+    <option name="height" value="1416" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="SolutionExplorer" proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="AssemblyExplorer" />
+      <pane id="FileSystemExplorer" />
+      <pane id="SolutionExplorer">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Project" type="784c90a0:SolutionExplorerRootNode" />
+              <item name="FamiliaXamarin" type="24d0babc:SolutionExplorerModelNode" />
+            </path>
+            <path>
+              <item name="Project" type="784c90a0:SolutionExplorerRootNode" />
+              <item name="FamiliaXamarin" type="24d0babc:SolutionExplorerModelNode" />
+              <item name="FamiliaXamarin" type="24d0babc:SolutionExplorerModelNode" />
+            </path>
+            <path>
+              <item name="Project" type="784c90a0:SolutionExplorerRootNode" />
+              <item name="FamiliaXamarin" type="24d0babc:SolutionExplorerModelNode" />
+              <item name="FamiliaXamarin" type="24d0babc:SolutionExplorerModelNode" />
+              <item name="Medicatie" type="24d0babc:SolutionExplorerModelNode" />
+            </path>
+            <path>
+              <item name="Project" type="784c90a0:SolutionExplorerRootNode" />
+              <item name="FamiliaXamarin" type="24d0babc:SolutionExplorerModelNode" />
+              <item name="FamiliaXamarin" type="24d0babc:SolutionExplorerModelNode" />
+              <item name="Medicatie" type="24d0babc:SolutionExplorerModelNode" />
+              <item name="Entities" type="24d0babc:SolutionExplorerModelNode" />
+            </path>
+            <path>
+              <item name="Project" type="784c90a0:SolutionExplorerRootNode" />
+              <item name="FamiliaXamarin" type="24d0babc:SolutionExplorerModelNode" />
+              <item name="FamiliaXamarin" type="24d0babc:SolutionExplorerModelNode" />
+              <item name="Resources" type="24d0babc:SolutionExplorerModelNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <option name="show-all-files" value="false" />
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="Rider.DefaultBreakpoints.AreToggled" value="true" />
+    <property name="Rider.ProjectViewActivator.IsNotFirstRun" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="device.picker.selection" value="288d8798123f7ece" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.C#" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="Android Default" type="XamarinAndroidProject" factoryName="Xamarin.Android">
+      <option name="PROJECT_PATH" value="$PROJECT_DIR$/FamiliaXamarin/FamiliaXamarin.csproj" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="DEPLOY_BEHAVIOUR_NAME" value="Default" />
+      <method v="2">
+        <option name="Build" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3402a518-2f96-44cb-8065-2f114e5935df" name="Default Changelist" comment="" />
+      <created>1547799210075</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1547799210075</updated>
+      <workItem from="1547799213847" duration="566000" />
+      <workItem from="1547799850455" duration="6862000" />
+      <workItem from="1547809144209" duration="4205000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="11633000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="2576" height="1416" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13314785" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Image Layers" order="2" />
+      <window_info id="Capture Tool" order="3" />
+      <window_info id="Favorites" order="4" side_tool="true" />
+      <window_info id="Captures" order="5" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32969603" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3998441" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Android Profiler" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Docker" order="9" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Performance Profiler" order="10" />
+      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
+      <window_info anchor="bottom" id="NuGet" order="12" />
+      <window_info anchor="bottom" id="Logcat" order="13" />
+      <window_info anchor="bottom" id="Unit Tests" order="14" />
+      <window_info anchor="bottom" id="Database Changes" order="15" />
+      <window_info anchor="bottom" id="Version Control" order="16" />
+      <window_info anchor="bottom" id="Build" order="17" visible="true" weight="0.32969603" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Capture Analysis" order="3" />
+      <window_info anchor="right" id="Preview" order="4" weight="0.3298887" />
+      <window_info anchor="right" id="Device File Explorer" order="5" side_tool="true" />
+      <window_info anchor="right" id="Database" order="6" />
+      <window_info anchor="right" id="Unit Tests Coverage" order="7" />
+      <window_info anchor="right" id="Errors In Solution" order="8" />
+    </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13314785" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Image Layers" order="2" />
+      <window_info id="Capture Tool" order="3" />
+      <window_info id="Favorites" order="4" side_tool="true" />
+      <window_info id="Captures" order="5" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32969603" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3998441" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Android Profiler" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Docker" order="9" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Performance Profiler" order="10" />
+      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
+      <window_info anchor="bottom" id="NuGet" order="12" />
+      <window_info anchor="bottom" id="Logcat" order="13" />
+      <window_info anchor="bottom" id="Unit Tests" order="14" />
+      <window_info anchor="bottom" id="Database Changes" order="15" />
+      <window_info anchor="bottom" id="Version Control" order="16" />
+      <window_info active="true" anchor="bottom" id="Build" order="17" visible="true" weight="0.32969603" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Capture Analysis" order="3" />
+      <window_info anchor="right" id="Preview" order="4" visible="true" weight="0.3298887" />
+      <window_info anchor="right" id="Device File Explorer" order="5" side_tool="true" />
+      <window_info anchor="right" id="Database" order="6" />
+      <window_info anchor="right" id="Unit Tests Coverage" order="7" />
+      <window_info anchor="right" id="Errors In Solution" order="8" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" suspend="NONE" type="DotNet Exception Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Resources/layout/custom_dialog_delete_boala.axml">
+      <provider editor-type-id="android-designer2" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Resources/layout/custom_dialog_delete_medicament.axml">
+      <provider editor-type-id="android-designer2" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-16">
+          <caret line="32" column="39" selection-start-line="32" selection-start-column="39" selection-end-line="32" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_boala.axml">
+      <provider editor-type-id="android-designer2" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-16">
+          <caret line="38" selection-start-line="38" selection-end-line="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_login.axml">
+      <provider editor-type-id="android-designer2" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-16">
+          <caret line="77" column="39" selection-start-line="77" selection-start-column="39" selection-end-line="77" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Resources/layout/activity_alarm.axml">
+      <provider editor-type-id="android-designer2" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="544">
+          <caret line="34" column="52" selection-start-line="34" selection-start-column="52" selection-end-line="34" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Chat/ChatActivity.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="89" column="13" lean-forward="true" selection-start-line="89" selection-start-column="13" selection-end-line="89" selection-end-column="13" />
+          <folding>
+            <marker date="1547810598198" expanded="false" signature="6:407" ph="..." />
+            <marker date="1547810598198" expanded="true" signature="438:9040" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="445:567" ph="[...]" />
+            <marker date="1547810598198" expanded="true" signature="617:9038" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="1026:1088" ph="/* readonly Handler mTypingHandler = new Handler(); ... */" />
+            <marker date="1547810598198" expanded="true" signature="1221:1335" ph="/* public static string NewMessage = &quot;&quot;; ... */" />
+            <marker date="1547810598198" expanded="true" signature="1380:1491" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="1537:1829" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="1898:7601" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="2278:2455" ph="/* mAdapter.ItemClick += delegate (object sender, int i) ... */" />
+            <marker date="1547810598198" expanded="true" signature="3073:7365" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="3357:3423" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="3494:4291" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="3731:4109" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="4153:4242" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="4362:7089" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="4472:6237" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="4675:5711" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="5106:5361" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="5412:5529" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="5740:6215" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="6284:6383" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="6478:6938" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="6982:7071" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="7228:7351" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="7637:8378" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="7926:8142" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="8178:8243" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="8443:8697" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="8489:8685" ph="{...}" />
+            <marker date="1547810598198" expanded="true" signature="8743:9032" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FamiliaXamarin/MainActivity.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="103" selection-start-line="103" selection-end-line="103" />
+          <folding>
+            <marker date="1547802571011" expanded="false" signature="6:830" ph="..." />
+            <marker date="1547802571011" expanded="true" signature="856:13718" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="1081:13716" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="1435:5758" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="2781:3145" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="2991:3114" ph="/* StartForegroundService(_smartBandServiceIntent); ... */" />
+            <marker date="1547802571011" expanded="true" signature="3162:3432" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="3315:3417" ph="/* StartService(_smartBandServiceIntent); ... */" />
+            <marker date="1547802571011" expanded="true" signature="3989:4493" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="4561:5039" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="5625:5747" ph="/* if (Intent.HasExtra(&quot;extra&quot;)) ... */" />
+            <marker date="1547802571011" expanded="true" signature="5805:6213" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="6272:6490" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="6401:6480" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="6546:7943" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="6677:6852" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="6869:7933" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="7328:7772" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="7393:7752" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="7808:7918" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="7988:8352" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="8144:8271" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="8288:8342" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="8414:8524" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="8592:8699" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="8761:13257" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="8830:12906" ph="{...}" />
+            <marker date="1547802571011" expanded="true" signature="13307:13710" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Medicatie/DiseaseActivity.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
+          <folding>
+            <marker date="1547813299463" expanded="true" signature="6:471" ph="..." />
+            <marker date="1547813299463" expanded="true" signature="507:11187" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="800:11185" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="1378:2071" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="2105:2652" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="2698:3861" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="2735:3532" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="3044:3344" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="3108:3326" ph="/* var intent = new Intent(this, typeof(MainActivity)); ... */" />
+            <marker date="1547813299463" expanded="true" signature="3417:3436" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="3549:3838" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="3618:3824" ph="/* var intent = new Intent(this, typeof(MainActivity)); ... */" />
+            <marker date="1547813299463" expanded="true" signature="3901:4290" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="4323:5417" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="4428:5268" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="4930:5052" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="5092:5183" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="5285:5407" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="5453:5853" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="5489:5843" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="5909:6207" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="6260:6436" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="6472:6773" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="6809:7308" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="6916:7068" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="7343:7789" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="7455:7779" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="7621:7726" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="7942:8036" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="8142:10053" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="8531:8603" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="9844:9928" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="10106:10161" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="10216:10368" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="10428:10517" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="10583:10880" ph="{...}" />
+            <marker date="1547813299463" expanded="true" signature="10950:11179" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FamiliaXamarin/Medicatie/CustomDialogMedicamentDetails.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="113" column="8" lean-forward="true" selection-start-line="113" selection-start-column="8" selection-end-line="113" selection-end-column="8" />
+          <folding>
+            <marker date="1547813710026" expanded="false" signature="6:417" ph="..." />
+            <marker date="1547813710026" expanded="true" signature="453:13749" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="597:13747" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="1351:1527" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="1593:1653" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="1721:1966" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="2012:2744" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="2049:2650" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="2401:2462" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="2535:2554" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="2667:2733" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="2782:2894" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="2934:3213" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="3256:4776" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="4097:4554" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="4247:4358" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="4394:4473" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="4577:4770" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="4812:5336" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="5038:5213" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="5226:5285" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="5383:6324" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="5553:5658" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="5675:6314" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="5738:6300" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="5818:5947" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="5972:6281" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="6081:6174" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="6361:7550" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="6654:6733" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="6761:6822" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="6859:7005" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="7202:7276" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="7583:7925" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="7967:8091" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="8118:8175" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="8212:8821" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="8248:8811" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="8902:9018" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="8940:9008" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="9053:9323" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="9361:9828" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="9405:9817" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="9526:9635" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="9656:9802" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="9877:11218" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="9937:11055" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="9991:10080" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="10101:10764" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="10443:10624" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="10649:10746" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="10794:11041" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="11072:11208" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="11251:11373" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="11408:11527" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="11575:12152" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="12263:12583" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="12682:13306" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="12804:13030" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="13047:13267" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="13391:13609" ph="{...}" />
+            <marker date="1547813710026" expanded="true" signature="13655:13741" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

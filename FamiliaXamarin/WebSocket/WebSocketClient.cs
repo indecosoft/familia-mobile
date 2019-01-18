@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.Support.V4.App;
 using Android.Util;
+using FamiliaXamarin.Chat;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
 using Java.Lang;
