@@ -14,7 +14,10 @@
     <content url="file://$MODULE_DIR$/../../FamiliaXamarin" />
     <orderEntry type="jdk" jdkName="Android API 28 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+<<<<<<< Updated upstream
     <orderEntry type="library" name="constraint-layout-1.1.3" level="project" />
     <orderEntry type="library" name="constraint-layout-solver-1.1.3" level="project" />
+=======
+>>>>>>> Stashed changes
   </component>
 </module>
