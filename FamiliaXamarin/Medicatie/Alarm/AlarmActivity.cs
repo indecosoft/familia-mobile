@@ -44,6 +44,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
         {
             LaunchSnoozeAlarm();
             base.OnUserLeaveHint();
+            Finish();
         }
 
 
