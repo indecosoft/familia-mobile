@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -9,15 +8,14 @@
     <ImageView
         android:id="@+id/image"
         android:layout_marginTop="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:src="@drawable/qrcode_scan"
         android:tint="@color/colorAccent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constrainedHeight="true"
-                app:layout_constraintHeight_percent="0.1"
->
-            </ImageView>
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btnScan"
         android:layout_width="fill_parent"
@@ -34,7 +32,6 @@
         app:layout_constraintTop_toBottomOf="@+id/container" />
 
 
-
     <android.support.constraint.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
@@ -42,7 +39,7 @@
         android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@+id/image">
 
-          
+
         <Spinner
             android:id="@+id/benefits_spinner"
             android:layout_width="match_parent"
@@ -82,7 +79,7 @@
                 android:minLines="6"
                 android:scrollbars="vertical"
                 android:singleLine="false"
-                android:textAlignment="gravity"/>
+                android:textAlignment="gravity" />
 
         </android.support.design.widget.TextInputLayout>
 

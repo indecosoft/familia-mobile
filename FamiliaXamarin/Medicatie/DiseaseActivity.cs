@@ -80,10 +80,6 @@ namespace FamiliaXamarin.Medicatie
                 alert.SetMessage("Esti pe cale sa renunti la modificarile facute. Renuntati?");
                 alert.SetPositiveButton("Da", (senderAlert, args) => {
                     base.OnBackPressed();
-                    /*var intent = new Intent(this, typeof(MainActivity));
-                    intent.AddFlags(ActivityFlags.ClearTop);
-                    intent.PutExtra("FromDisease", true);
-                    StartActivity(intent);*/
                 });
 
                 alert.SetNegativeButton("Nu", (senderAlert, args) => {
@@ -95,10 +91,6 @@ namespace FamiliaXamarin.Medicatie
             else
             {
                 base.OnBackPressed();
-                /*var intent = new Intent(this, typeof(MainActivity));
-                intent.AddFlags(ActivityFlags.ClearTop);
-                intent.PutExtra("FromDisease", true);
-                StartActivity(intent);*/
             }
             
         }

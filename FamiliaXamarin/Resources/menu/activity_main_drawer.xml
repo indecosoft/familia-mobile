@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:showIn="navigation_view">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
 
-  <group android:checkableBehavior="single">
-    <item
-      android:id="@+id/nav_asistenta"
-      android:icon="@drawable/account_heart"
-      android:title="Asistenta Sociala" />
-    <item
-      android:id="@+id/nav_monitorizare"
-      android:icon="@drawable/account_group"
-      android:title="Persoane sub monitorizare" />
-    <item
-      android:id="@+id/nav_QRCode"
-      android:icon="@drawable/qrcode"
-      android:title="Generare cod QR" />
-    <item
-      android:id="@+id/harta"
-      android:icon="@drawable/account_search"
-      android:title="Cauta prieteni" />
-    <item
-      android:id="@+id/chat"
-      android:icon="@drawable/message_text"
-      android:title="Conversatii active" />
-    <item
-      android:id="@+id/nav_devices"
-      android:icon="@drawable/heart_pulse"
-      android:title="Dispozitive de masurare" />
-    <item
-      android:id="@+id/medicatie"
-      android:icon="@drawable/pill"
-      android:title="Medicatie" />
-    <item
-      android:id="@+id/partajare_date"
-      android:icon="@drawable/share_variant"
-      android:title="Partajare Date" />
-    <item
-      android:id="@+id/nav_manage"
-      android:icon="@drawable/ic_menu_manage"
-      android:title="Setari" />
-    <item
-      android:id="@+id/logout"
-      android:icon="@drawable/logout"
-      android:title="Delogare" />
-  </group>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_asistenta"
+            android:icon="@drawable/account_heart"
+            android:title="Asistenta Sociala" />
+        <item
+            android:id="@+id/nav_monitorizare"
+            android:icon="@drawable/account_group"
+            android:title="Persoane sub monitorizare" />
+        <item
+            android:id="@+id/nav_QRCode"
+            android:icon="@drawable/qrcode"
+            android:title="Generare cod QR" />
+        <item
+            android:id="@+id/harta"
+            android:icon="@drawable/account_search"
+            android:title="Cauta prieteni" />
+        <item
+            android:id="@+id/chat"
+            android:icon="@drawable/message_text"
+            android:title="Conversatii active" />
+        <item
+            android:id="@+id/nav_devices"
+            android:icon="@drawable/heart_pulse"
+            android:title="Dispozitive de masurare" />
+        <item
+            android:id="@+id/medicatie"
+            android:icon="@drawable/pill"
+            android:title="Medicatie" />
+        <item
+            android:id="@+id/partajare_date"
+            android:icon="@drawable/share_variant"
+            android:title="Partajare Date" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Setari" />
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/logout"
+            android:title="Delogare" />
+    </group>
 
-  <!--<item android:title="Communicate">-->
-  <!--<menu>-->
-  <!--<item-->
-  <!--android:id="@+id/nav_share"-->
-  <!--android:icon="@drawable/ic_menu_share"-->
-  <!--android:title="Share" />-->
-  <!--<item-->
-  <!--android:id="@+id/nav_send"-->
-  <!--android:icon="@drawable/ic_menu_send"-->
-  <!--android:title="Send" />-->
-  <!--</menu>-->
-  <!--</item>-->
+    <!--<item android:title="Communicate">-->
+    <!--<menu>-->
+    <!--<item-->
+    <!--android:id="@+id/nav_share"-->
+    <!--android:icon="@drawable/ic_menu_share"-->
+    <!--android:title="Share" />-->
+    <!--<item-->
+    <!--android:id="@+id/nav_send"-->
+    <!--android:icon="@drawable/ic_menu_send"-->
+    <!--android:title="Send" />-->
+    <!--</menu>-->
+    <!--</item>-->
 
 </menu>

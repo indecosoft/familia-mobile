@@ -1,13 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    
-        android:padding="16dp">
+
+    android:padding="16dp">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -31,24 +29,24 @@
             android:layout_marginTop="10dp"
             android:text="Denumirea medicamentului:" />
 
-           <EditText
-        android:id="@+id/et_medicament_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Denumire medicament"
-        android:textColor="@color/white"
-        android:textColorHint="@color/colorSecondary"
-        android:layout_marginTop="5dp"
-        android:drawableStart="@drawable/pill"
-        android:drawableTint="@drawable/drawable_tint_selector"
-        android:drawablePadding="5dp"
-        android:paddingStart="10dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:paddingEnd="10dp"
-        android:inputType="text"
-        android:background="@drawable/edit_text_layout"
-        android:layout_below="@+id/tv_label_medicament"/>
+        <EditText
+            android:id="@+id/et_medicament_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Denumire medicament"
+            android:textColor="@color/white"
+            android:textColorHint="@color/colorSecondary"
+            android:layout_marginTop="5dp"
+            android:drawableStart="@drawable/pill"
+            android:drawableTint="@drawable/drawable_tint_selector"
+            android:drawablePadding="5dp"
+            android:paddingStart="10dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingEnd="10dp"
+            android:inputType="text"
+            android:background="@drawable/edit_text_layout"
+            android:layout_below="@+id/tv_label_medicament" />
 
         <TextView
             android:id="@+id/tv_interval"
@@ -113,7 +111,7 @@
             android:layout_toRightOf="@+id/tv_data_inceput"
             android:text="Today, 18 sept"
             android:textColor="@color/colorAccent"
-            android:textSize="20dp"/>
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/tv_durata"
@@ -135,7 +133,7 @@
                 android:id="@+id/rb_continuu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                 android:buttonTint="@color/colorAccent"
+                android:buttonTint="@color/colorAccent"
                 android:text="Continuu" />
 
             <RadioButton
@@ -180,8 +178,7 @@
             android:paddingRight="30dp"
             android:text="Salveaza datele"
             android:layout_below="@+id/et_numar_zile"
-            android:layout_marginTop="10dp"
-            />
+            android:layout_marginTop="10dp" />
 
 
     </RelativeLayout>
