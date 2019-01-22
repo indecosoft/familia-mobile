@@ -12,8 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/btn_delete_boala"
         android:layout_centerVertical="true"
-        android:textSize="30dp"
-        />
+        android:textSize="30dp" />
 
     <Button
         android:id="@+id/btn_delete_boala"

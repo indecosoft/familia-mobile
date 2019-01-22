@@ -25,6 +25,7 @@ using Java.Lang;
 using Java.Security;
 using Javax.Crypto;
 using Org.Json;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
 using static Android.Hardware.Biometrics.BiometricPrompt;
 using Exception = System.Exception;
 using Permission = Android.Content.PM.Permission;
@@ -204,7 +205,7 @@ namespace FamiliaXamarin.Login_System
         }
         private void InitUi()
         {
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             Title = string.Empty;
 
@@ -220,6 +221,7 @@ namespace FamiliaXamarin.Login_System
 
             //_progressBarDialog = new ProgressBarDialog("Progress de test", "Alege butoane...", this, false, "Bine", (sender, args) => {Toast.MakeText(this,"Bine", ToastLength.Short).Show();}, "Nu stiu", (sender, args) => { Toast.MakeText(this, "Nu stiu", ToastLength.Short).Show(); }, "Anulare", (sender, args) => { Toast.MakeText(this, "Anulare", ToastLength.Short).Show(); });
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Autentificare...", this, false);
+            _progressBarDialog.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimary);
         }
 
         private void InitListeners()

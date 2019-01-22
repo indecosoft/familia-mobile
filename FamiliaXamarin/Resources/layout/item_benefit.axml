@@ -10,8 +10,7 @@
         android:layout_marginLeft="20dp"
         android:layout_toLeftOf="@+id/checkbox"
         android:layout_centerVertical="true"
-        android:text="text"
-        />
+        android:text="text" />
 
     <CheckBox
         android:id="@+id/checkbox"
@@ -19,5 +18,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:buttonTint="@color/colorAccent"/>
+        android:buttonTint="@color/colorAccent" />
 </RelativeLayout>

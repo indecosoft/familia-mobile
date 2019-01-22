@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    tools:context=".MainActivity">
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/tv_header"
@@ -24,6 +21,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="40dp"
         android:layout_below="@+id/tv_header">
+
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -232,7 +230,6 @@
             </android.support.design.widget.TextInputLayout>
 
 
-
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_cancel"
                 android:layout_width="0dp"
@@ -256,8 +253,8 @@
                 android:padding="16dp"
                 android:text="Inregistrare"
                 app:layout_constrainedWidth="true"
-                app:layout_constraintTop_toBottomOf="@+id/et_retype_password_layout"
                 app:layout_constraintLeft_toRightOf="@+id/btn_cancel"
+                app:layout_constraintTop_toBottomOf="@+id/et_retype_password_layout"
                 app:layout_constraintWidth_percent="0.49" />
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
