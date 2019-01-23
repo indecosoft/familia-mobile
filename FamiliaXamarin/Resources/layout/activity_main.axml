@@ -7,11 +7,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
-
-    <!--<include-->
-    <!--layout="@layout/app_bar_menu"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent" />-->
+    
     <RelativeLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
@@ -65,10 +61,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:itemBackground="@drawable/drawer_item_background"
-        app:itemTextColor="@drawable/drawer_item_tint"
-        app:itemIconTint="@drawable/drawer_item_tint"
         app:headerLayout="@layout/nav_header_main"
-		app:menu="@menu/activity_main_drawer" />
+        app:itemBackground="@drawable/drawer_item_background"
+        app:itemIconTint="@drawable/drawer_item_tint"
+        app:itemTextColor="@drawable/drawer_item_tint"
+        app:menu="@menu/activity_main_drawer" />
 
 </android.support.v4.widget.DrawerLayout>

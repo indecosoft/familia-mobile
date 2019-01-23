@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:paddingTop="10dp"
-  android:paddingBottom="10dp"
-  android:padding="10dp"
->
-  <android.support.v7.widget.AppCompatImageView
-    android:id="@+id/imagine"
-    android:layout_width="40dp"
-    android:layout_height="40dp"
-    android:src="@drawable/account_link"
-    android:tint="#ED7C3A"
-    android:layout_marginEnd="5dp"/>
-  <TextView
-    android:id="@+id/person_name"
-    android:layout_width="wrap_content"
-    android:textColor="@color/customDark"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_toRightOf="@+id/imagine"
-    android:text="Ovidiu Podina"
-    android:layout_centerVertical="true"
-    android:textSize="18sp"
-  />
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:padding="10dp">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/imagine"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/account_link"
+        android:tint="#ED7C3A"
+        android:layout_marginEnd="5dp" />
+
+    <TextView
+        android:id="@+id/person_name"
+        android:layout_width="wrap_content"
+        android:textColor="@color/customDark"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/imagine"
+        android:text="Ovidiu Podina"
+        android:layout_centerVertical="true"
+        android:textSize="18sp" />
 </RelativeLayout>
