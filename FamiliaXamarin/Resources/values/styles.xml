@@ -11,12 +11,13 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+    <item name="colorControlHighlight">@color/colorAccent</item>
+    <item name="colorSwitchThumbNormal">@color/colorAccent</item>
 
     <item name="android:windowBackground">@color/colorPrimary</item>
 
     <item name="colorControlNormal">@color/customDark</item>
-    <item name="colorControlActivated">@color/customDark</item>
-    <item name="colorControlHighlight">@color/customDark</item>
+    <item name="colorControlActivated">@color/colorAccent</item>
     <item name="android:textColorHint">@color/iron</item>
 
     <item name="colorButtonNormal">@color/primary</item>
