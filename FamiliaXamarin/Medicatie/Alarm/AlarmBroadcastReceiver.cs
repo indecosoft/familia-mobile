@@ -69,7 +69,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     setCalendar.Add(CalendarField.Date, _mMed.NumberOfDays);*/
 
                     var setDt = new DateTime(date.Year, date.Month, date.Day,timeHour,timeMinute,0).AddDays(_mMed.NumberOfDays);
-                    if( DateTime.Compare(setDt,DateTime.Now) > 0)
+                    //if( DateTime.Compare(setDt,DateTime.Now) == 0)
                         LaunchAlarm(context, intent, medId, boalaId);
 
                     /*if (setCalendar.After(calendar))

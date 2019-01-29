@@ -226,8 +226,24 @@ namespace FamiliaXamarin.Medicatie
         }
         private void SetAlarm(Hour hour, Medicine med, Disease boala, ref List<int> alarms, int position)
         {
-            var idAlarm = DateTime.Now.Millisecond ;
             var am = (AlarmManager)GetSystemService(AlarmService);
+            var idAlarm = DateTime.Now.Millisecond ;
+            PendingIntent pi;
+            if (med.NumberOfDays != 0)
+            {
+                for (int j = 0; j < med.NumberOfDays; j++)
+                {
+                    for (int k = 0; k < med.Hours.Count; k++)
+                    {    
+                        idAlarm = DateTime.Now.Millisecond ;
+                         pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
+                        am.SetInexactRepeating(AlarmType.RtcWakeup, setCalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
+                    }
+                }
+            }
+
+            
+            
             var id = 0;
             var i = new Intent(this, typeof(AlarmBroadcastReceiver));
             i.PutExtra(BOALA_ID, boala.Id);
@@ -242,7 +258,7 @@ namespace FamiliaXamarin.Medicatie
             alarms.Add(id);
             i.PutExtra(ALARM_ID, id);
            // Log.Error("MEDICAMENT", med.Name);
-            var pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
+             pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
 
             if (am == null) return;
 
