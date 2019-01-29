@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rv_boala_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="5dp">
 
 
     <TextView
@@ -11,20 +12,16 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/btn_delete_boala"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="20dp"
-        android:textSize="30dp"
-        />
+        android:textSize="30dp" />
 
     <Button
         android:id="@+id/btn_delete_boala"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
         android:drawableTop="@drawable/trash"
-        android:padding="14dp"
+        android:padding="8dp"
         android:drawableTint="#fff"
         android:backgroundTint="@color/colorDanger"
         android:background="@drawable/round_button" />

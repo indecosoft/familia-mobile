@@ -1,15 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+
+    android:padding="16dp">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/txt_dia"
@@ -19,7 +18,6 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:text="Adaugati un medicament nou:"
-            android:textColor="#3c3c3c"
             android:textSize="15sp"
             android:textStyle="bold" />
 
@@ -29,17 +27,26 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_dia"
             android:layout_marginTop="10dp"
-            android:text="Denumirea medicamentului:"
-            android:textColor="#3c3c3c" />
+            android:text="Denumirea medicamentului:" />
 
         <EditText
             android:id="@+id/et_medicament_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_label_medicament"
-            android:hint="..."
+            android:hint="Denumire medicament"
+            android:textColor="@color/white"
+            android:textColorHint="@color/colorSecondary"
+            android:layout_marginTop="5dp"
+            android:drawableStart="@drawable/pill"
+            android:drawableTint="@drawable/drawable_tint_selector"
+            android:drawablePadding="5dp"
+            android:paddingStart="10dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingEnd="10dp"
             android:inputType="text"
-            android:textColor="#3c3c3c" />
+            android:background="@drawable/edit_text_layout"
+            android:layout_below="@+id/tv_label_medicament" />
 
         <TextView
             android:id="@+id/tv_interval"
@@ -47,16 +54,18 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/et_medicament_name"
             android:layout_marginTop="10dp"
-            android:text="Administrare"
-            android:textColor="#3c3c3c"
-            android:textSize="20dp" />
+            android:text="Administrare" />
 
         <Spinner
             android:id="@+id/spinner"
+            android:background="@drawable/edit_text_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_interval"
-            android:layout_marginTop="10dp"
+            android:paddingStart="10dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingEnd="10dp"
             android:prompt="@string/app_name" />
 
         <RelativeLayout
@@ -81,7 +90,6 @@
             android:layout_below="@+id/rl_rv_meds"
             android:layout_marginTop="20dp"
             android:text="Program"
-            android:textColor="#3c3c3c"
             android:textSize="20dp" />
 
         <TextView
@@ -90,8 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_label_program"
             android:layout_marginTop="10dp"
-            android:text="Data de inceput: "
-            android:textColor="#3c3c3c" />
+            android:text="Data de inceput:" />
 
         <TextView
             android:id="@+id/tv_start_date"
@@ -99,12 +106,12 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_label_program"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_toEndOf="@+id/tv_data_inceput"
             android:layout_toRightOf="@+id/tv_data_inceput"
             android:text="Today, 18 sept"
-            android:textColor="@android:color/holo_orange_dark"
-            android:textSize="20dp"/>
+            android:textColor="@color/colorAccent"
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/tv_durata"
@@ -112,46 +119,53 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_data_inceput"
             android:layout_marginTop="10dp"
-            android:text="Durata:"
-            android:textColor="#3c3c3c" />
+            android:text="Durata:" />
 
         <RadioGroup
             android:id="@+id/rg_durata"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_durata"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/rb_continuu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Continuu"
-                android:textColor="#3c3c3c" />
+                android:buttonTint="@color/colorAccent"
+                android:text="Continuu" />
 
             <RadioButton
                 android:id="@+id/rb_numar_zile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:text="Numar de zile"
-                android:textColor="#3c3c3c" />
+                android:buttonTint="@color/colorAccent"
+                android:text="Numar de zile" />
 
         </RadioGroup>
 
         <EditText
             android:id="@+id/et_numar_zile"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="false"
+            android:drawableStart="@drawable/calendar_multiselect"
+            android:drawableTint="@drawable/drawable_tint_selector"
+            android:drawablePadding="5dp"
             android:layout_below="@+id/rg_durata"
-            android:layout_marginBottom="10dp"
-            android:hint="numar zile"
+            android:layout_marginTop="10dp"
+            android:hint="Numar zile"
             android:inputType="number"
-            android:textColor="@android:color/holo_orange_dark"
-            android:textSize="25dp" />
+            android:textColorHint="@color/colorSecondary"
+            android:paddingStart="10dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingEnd="10dp"
+            android:textColor="@color/white"
+            android:background="@drawable/edit_text_layout"
+            android:textSize="18dp" />
 
 
         <Button
@@ -159,14 +173,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/button_style"
-            android:paddingLeft="50dp"
-            android:paddingRight="50dp"
+            android:background="@drawable/main_button_style"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
             android:text="Salveaza datele"
-            android:layout_below="@+id/rg_durata"
-            android:layout_marginTop="60dp"
-            android:textColor="@android:color/white"
-            />
+            android:layout_below="@+id/et_numar_zile"
+            android:layout_marginTop="10dp" />
 
 
     </RelativeLayout>

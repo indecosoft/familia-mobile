@@ -9,11 +9,11 @@ using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Com.Bumptech.Glide;
 using FamiliaXamarin.Helpers;
 using Java.Util.Concurrent;
 using Org.Json;
 using Refractored.Controls;
-using Square.Picasso;
 using Task = System.Threading.Tasks.Task;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
@@ -170,11 +170,7 @@ namespace FamiliaXamarin.Devices.SmartBand
                     {
                         _lbDisplayName.Text = displayName;
                         _lbFullName.Text = fullName;
-                        Picasso.With(this)
-                            .Load(avatarUrl)
-                            .Resize(640, 640)
-                            .CenterCrop()
-                            .Into(_avatarImage);
+                        Glide.With(this).Load(avatarUrl).Into(_avatarImage);
                     });
 
                 }

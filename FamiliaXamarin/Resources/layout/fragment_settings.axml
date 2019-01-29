@@ -3,98 +3,93 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-	android:padding="16dp">
+    android:padding="16dp">
 
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="Securitate"
-		android:textSize="20sp"
-		android:textStyle="bold"
-		android:textColor="@color/customDark"
-	/>
-	 <View
-	android:layout_width="fill_parent"
-	android:layout_height="0.5dip"
-	android:layout_marginTop="3dp"
-	android:background="@color/customDark"/>
-	<RelativeLayout
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-		android:padding="16dp"
-		
-		>
-		<TextView 
-			android:id="@+id/fingerPrint"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-		android:text="Autentificare prin amprenta"
-			android:textSize="18sp"
-		android:textColor="@color/customDark"/>
-		<Switch 
-			android:id="@+id/fingerPrintSwitch"
-		android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Securitate"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
-			android:layout_toRightOf="@+id/fingerPrint"
-			android:layout_alignParentRight="true"
-		/>
-		<TextView 
-			android:id="@+id/pin"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-		android:text="Autentificare folosind PIN"
-			android:textSize="18sp"
-			android:layout_marginTop="20dp"
-			android:layout_below="@+id/fingerPrint"
-		android:textColor="@color/customDark"/>
-		<Switch 
-		android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="20dp"
-			android:layout_below="@+id/fingerPrint"
-			android:layout_toRightOf="@+id/fingerPrint"
-			android:layout_alignParentRight="true"
-		/>
-	/>
-		</RelativeLayout>
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="Medicatie"
-		android:textSize="20sp"
-		android:textStyle="bold"
-		android:textColor="@color/customDark"
-	/>
-	 <View
-	android:layout_width="fill_parent"
-	android:layout_height="0.5dip"
-	android:layout_marginTop="3dp"
-	android:background="@color/customDark"/>
-	<RelativeLayout
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-		
-		
-		>
-		<TextView 
-			android:id="@+id/alarm"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-		android:text="Durata amanare alarma"
-			android:textSize="18sp"
-			android:layout_marginStart ="16dp"
-			android:layout_marginTop ="16dp"
-		android:textColor="@color/customDark"/>
-		<Spinner 
-			android:id="@+id/alarmSpinner"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="5dp"
-			android:layout_marginTop ="18dp"
-			android:layout_toRightOf="@+id/alarm"
-			android:layout_alignParentRight="true"
-		/>
-		
-		</RelativeLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.5dip"
+        android:layout_marginTop="3dp" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+
+        >
+
+        <TextView
+            android:id="@+id/fingerPrint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Autentificare prin amprenta"
+            android:textSize="18sp" />
+
+        <Switch
+            android:id="@+id/fingerPrintSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"                                                      
+            android:layout_toRightOf="@+id/fingerPrint"
+            android:layout_alignParentRight="true" />
+
+        <TextView
+            android:id="@+id/pin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Autentificare folosind PIN"
+            android:textSize="18sp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/fingerPrint"/>
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/fingerPrint"
+            android:layout_toRightOf="@+id/fingerPrint"
+            android:layout_alignParentRight="true" />
+        />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Medicatie"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.5dip"
+        android:layout_marginTop="3dp"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Durata amanare alarma"
+            android:textSize="18sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp" />
+
+        <Spinner
+            android:id="@+id/alarmSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="18dp"
+            android:layout_toRightOf="@+id/alarm"
+            android:layout_alignParentRight="true" />
+
+    </RelativeLayout>
 </LinearLayout>

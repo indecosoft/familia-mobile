@@ -27,7 +27,6 @@ using Java.Text;
 using Java.Util;
 using Newtonsoft.Json;
 using Org.Json;
-using Plugin.Media;
 using Refractored.Controls;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Environment = Android.OS.Environment;

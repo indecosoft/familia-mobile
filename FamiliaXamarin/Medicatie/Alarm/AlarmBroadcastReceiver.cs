@@ -11,6 +11,7 @@ using FamiliaXamarin.Medicatie.Entities;
 using Java.Lang;
 using Java.Util;
 using Calendar = Java.Util.Calendar;
+using Exception = Java.Lang.Exception;
 
 namespace FamiliaXamarin.Medicatie.Alarm
 {
@@ -38,35 +39,50 @@ namespace FamiliaXamarin.Medicatie.Alarm
             _mHour = _mMed.FindHourById(hourId);
             Log.Error("MEDICAMENT_RECEIVER",_mMed.Name);
             if (_mMed.NumberOfDays != 0)
-            {   
-                var hourString = _mHour.HourName;
-                var parts = hourString.Split(':');
-                var timeHour = Convert.ToInt32(parts[0]);
-                var timeMinute = Convert.ToInt32(parts[1]);
-                var calendar = Calendar.Instance;
-                var setCalendar = Calendar.Instance;
-                setCalendar.Set(CalendarField.HourOfDay, timeHour);
-                setCalendar.Set(CalendarField.Minute, timeMinute);
-                setCalendar.Set(CalendarField.Second, 0);
-                var dateString = _mMed.Date;
-                parts = dateString.Split('.');
-                var day = Convert.ToInt32(parts[0]);
-                var month = Convert.ToInt32(parts[1]) - 1;
-                var year = Convert.ToInt32(parts[2]);
-
-
-                setCalendar.Set(CalendarField.Year, year);
-                setCalendar.Set(CalendarField.Month, month);
-                setCalendar.Set(CalendarField.DayOfMonth, day);
-
-                        
-                setCalendar.Add(CalendarField.Date, _mMed.NumberOfDays);
-
-                if (setCalendar.After(calendar))
+            {
+                try
                 {
+                    var hourString = _mHour.HourName;
+                    var parts = hourString.Split(':');
+                    var timeHour = Convert.ToInt32(parts[0]);
+                    var timeMinute = Convert.ToInt32(parts[1]);
+                    /*var calendar = Calendar.Instance;
+                    var setCalendar = Calendar.Instance;*/
                     
-                    LaunchAlarm(context, intent, medId, boalaId);
-                }          
+                    /*setCalendar.Set(CalendarField.HourOfDay, timeHour);
+                    setCalendar.Set(CalendarField.Minute, timeMinute);
+                    setCalendar.Set(CalendarField.Second, 0);
+                    */
+
+                    var date = DateTime.Parse(_mMed.Date);
+//                    parts = dateString.Split('.');
+//                    var day = Convert.ToInt32(parts[0]);
+//                    var month = Convert.ToInt32(parts[1]) - 1;
+//                    var year = Convert.ToInt32(parts[2]);
+
+
+                    /*setCalendar.Set(CalendarField.Year, year);
+                    setCalendar.Set(CalendarField.Month, month);
+                    setCalendar.Set(CalendarField.DayOfMonth, day);
+
+
+                    setCalendar.Add(CalendarField.Date, _mMed.NumberOfDays);*/
+
+                    var setDt = new DateTime(date.Year, date.Month, date.Day,timeHour,timeMinute,0).AddDays(_mMed.NumberOfDays);
+                    if( DateTime.Compare(setDt,DateTime.Now) > 0)
+                        LaunchAlarm(context, intent, medId, boalaId);
+
+                    /*if (setCalendar.After(calendar))
+                    {
+
+                        LaunchAlarm(context, intent, medId, boalaId);
+                    }*/
+                }
+                catch (Exception e)
+                {
+                    Log.Error("ERROOOOR", e.ToString());
+
+                }
             }
             else
             {
