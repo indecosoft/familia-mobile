@@ -11,25 +11,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3402a518-2f96-44cb-8065-2f114e5935df" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/.idea/libraries/animated_vector_drawable_28_0_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/.idea/libraries/appcompat_v7_28_0_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/.idea/libraries/cardview_v7_28_0_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/.idea/libraries/recyclerview_v7_28_0_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/.idea/libraries/support_media_compat_28_0_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/.idea/libraries/support_v4_28_0_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/.idea/libraries/support_vector_drawable_28_0_0.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/FamiliaXamarin.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.FamiliaXamarin/FamiliaXamarin.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Chat/ChatAdapter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Chat/ChatAdapter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Devices/SmartBand/SmartBandDeviceActivity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Devices/SmartBand/SmartBandDeviceActivity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/FamiliaXamarin.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/FamiliaXamarin.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Helpers/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Helpers/Utils.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Login System/FirstSetup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Login System/FirstSetup.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Login System/LoginActivity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Login System/LoginActivity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/MainActivity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/MainActivity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Medicatie/CustomDialogMedicamentDetails.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Medicatie/CustomDialogMedicamentDetails.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Sharing/Tab1Fragment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Sharing/Tab1Fragment.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FamiliaXamarin/Sharing/Tab2Fragment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/FamiliaXamarin/Sharing/Tab2Fragment.cs" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -42,33 +24,33 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/FamiliaXamarin/MainActivity.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="397">
-              <caret line="235" column="24" lean-forward="true" selection-start-line="235" selection-start-column="24" selection-end-line="235" selection-end-column="24" />
+            <state relative-caret-position="45">
+              <caret line="213" column="26" lean-forward="true" selection-start-line="213" selection-start-column="26" selection-end-line="213" selection-end-column="26" />
               <folding>
-                <marker date="1547820211791" expanded="false" signature="6:830" ph="..." />
-                <marker date="1547820211791" expanded="true" signature="856:10786" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="1081:10784" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="1435:4862" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="2781:3145" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="2991:3114" ph="/* StartForegroundService(_smartBandServiceIntent); ... */" />
-                <marker date="1547820211791" expanded="true" signature="3162:3432" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="3315:3417" ph="/* StartService(_smartBandServiceIntent); ... */" />
-                <marker date="1547820211791" expanded="true" signature="3989:4269" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="4921:5139" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="5050:5129" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="5195:6592" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="5326:5501" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="5518:6582" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="5977:6421" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="6042:6401" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="6457:6567" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="6637:7001" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="6793:6920" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="6937:6991" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="7063:7173" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="7241:7348" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="7410:10778" ph="{...}" />
-                <marker date="1547820211791" expanded="true" signature="7479:10427" ph="{...}" />
+                <marker date="1548136627038" expanded="false" signature="6:830" ph="..." />
+                <marker date="1548136627038" expanded="true" signature="856:10786" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="1081:10784" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="1435:4862" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="2781:3145" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="2991:3114" ph="/* StartForegroundService(_smartBandServiceIntent); ... */" />
+                <marker date="1548136627038" expanded="true" signature="3162:3432" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="3315:3417" ph="/* StartService(_smartBandServiceIntent); ... */" />
+                <marker date="1548136627038" expanded="true" signature="3989:4269" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="4921:5139" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="5050:5129" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="5195:6592" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="5326:5501" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="5518:6582" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="5977:6421" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="6042:6401" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="6457:6567" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="6637:7001" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="6793:6920" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="6937:6991" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="7063:7173" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="7241:7348" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="7410:10778" ph="{...}" />
+                <marker date="1548136627038" expanded="true" signature="7479:10427" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -677,12 +659,12 @@
       <updated>1547799210075</updated>
       <workItem from="1547799213847" duration="566000" />
       <workItem from="1547799850455" duration="6862000" />
-      <workItem from="1547809144209" duration="10385000" />
+      <workItem from="1547809144209" duration="11358000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17813000" />
+    <option name="totallyTimeSpent" value="18786000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -705,7 +687,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32969603" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.4183908" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.4255651" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -1300,33 +1282,33 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/FamiliaXamarin/MainActivity.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="397">
-          <caret line="235" column="24" lean-forward="true" selection-start-line="235" selection-start-column="24" selection-end-line="235" selection-end-column="24" />
+        <state relative-caret-position="45">
+          <caret line="213" column="26" lean-forward="true" selection-start-line="213" selection-start-column="26" selection-end-line="213" selection-end-column="26" />
           <folding>
-            <marker date="1547820211791" expanded="false" signature="6:830" ph="..." />
-            <marker date="1547820211791" expanded="true" signature="856:10786" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="1081:10784" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="1435:4862" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="2781:3145" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="2991:3114" ph="/* StartForegroundService(_smartBandServiceIntent); ... */" />
-            <marker date="1547820211791" expanded="true" signature="3162:3432" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="3315:3417" ph="/* StartService(_smartBandServiceIntent); ... */" />
-            <marker date="1547820211791" expanded="true" signature="3989:4269" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="4921:5139" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="5050:5129" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="5195:6592" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="5326:5501" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="5518:6582" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="5977:6421" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="6042:6401" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="6457:6567" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="6637:7001" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="6793:6920" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="6937:6991" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="7063:7173" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="7241:7348" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="7410:10778" ph="{...}" />
-            <marker date="1547820211791" expanded="true" signature="7479:10427" ph="{...}" />
+            <marker date="1548136627038" expanded="false" signature="6:830" ph="..." />
+            <marker date="1548136627038" expanded="true" signature="856:10786" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="1081:10784" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="1435:4862" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="2781:3145" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="2991:3114" ph="/* StartForegroundService(_smartBandServiceIntent); ... */" />
+            <marker date="1548136627038" expanded="true" signature="3162:3432" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="3315:3417" ph="/* StartService(_smartBandServiceIntent); ... */" />
+            <marker date="1548136627038" expanded="true" signature="3989:4269" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="4921:5139" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="5050:5129" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="5195:6592" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="5326:5501" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="5518:6582" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="5977:6421" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="6042:6401" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="6457:6567" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="6637:7001" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="6793:6920" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="6937:6991" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="7063:7173" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="7241:7348" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="7410:10778" ph="{...}" />
+            <marker date="1548136627038" expanded="true" signature="7479:10427" ph="{...}" />
           </folding>
         </state>
       </provider>

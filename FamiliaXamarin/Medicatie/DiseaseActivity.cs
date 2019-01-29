@@ -228,22 +228,7 @@ namespace FamiliaXamarin.Medicatie
         {
             var am = (AlarmManager)GetSystemService(AlarmService);
             var idAlarm = DateTime.Now.Millisecond ;
-            PendingIntent pi;
-            if (med.NumberOfDays != 0)
-            {
-                for (int j = 0; j < med.NumberOfDays; j++)
-                {
-                    for (int k = 0; k < med.Hours.Count; k++)
-                    {    
-                        idAlarm = DateTime.Now.Millisecond ;
-                         pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
-                        am.SetInexactRepeating(AlarmType.RtcWakeup, setCalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
-                    }
-                }
-            }
-
-            
-            
+          
             var id = 0;
             var i = new Intent(this, typeof(AlarmBroadcastReceiver));
             i.PutExtra(BOALA_ID, boala.Id);
@@ -252,13 +237,13 @@ namespace FamiliaXamarin.Medicatie
             if (med.Alarms != null)
             {
                 id = med.Alarms[position];
-
             }
             
             alarms.Add(id);
             i.PutExtra(ALARM_ID, id);
            // Log.Error("MEDICAMENT", med.Name);
-             pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
+           
+            var pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
 
             if (am == null) return;
 
@@ -266,6 +251,7 @@ namespace FamiliaXamarin.Medicatie
             var parts = hourString.Split(':');
             var timeHour = Convert.ToInt32(parts[0]);
             var timeMinute = Convert.ToInt32(parts[1]);
+            
             var calendar = Calendar.Instance;
             var setCalendar = Calendar.Instance;
             setCalendar.Set(CalendarField.HourOfDay, timeHour);
@@ -287,8 +273,28 @@ namespace FamiliaXamarin.Medicatie
             {
                 setCalendar.Add(CalendarField.Date, 1);
             }
+            
+            
+            
+            if (med.NumberOfDays != 0)
+            {
+                for (int j = 0; j < med.NumberOfDays; j++)
+                {
+                    for (int k = 0; k < med.Hours.Count; k++)
+                    {    
+                        idAlarm = DateTime.Now.Millisecond ;
+                        pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
+                        setCalendar.Add(CalendarField.Date, j);
+                        am.SetInexactRepeating(AlarmType.RtcWakeup, setCalendar.TimeInMillis, 0, pi);
+                    }
+                }
+            }
+            else
+            {
+                am.SetInexactRepeating(AlarmType.RtcWakeup, setCalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
+            }
 
-            am.SetInexactRepeating(AlarmType.RtcWakeup, setCalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
+            
 
         }
 
