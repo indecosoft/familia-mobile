@@ -46,6 +46,19 @@ namespace FamiliaXamarin.Helpers
 
             return false;
         }
+        
+        public static void CloseRunningActivity(Type activityType)
+        {
+            ActivityManager activityManager = (ActivityManager)Application.Context.GetSystemService(Context.ActivityService);
+            //var tasks = activityManager.GetRunningTasks(Integer.MaxValue);
+            var tasks = activityManager.AppTasks;
+
+            foreach (var task in tasks)
+            {
+                if (Class.FromType(activityType).CanonicalName.Equals(task.TaskInfo.BaseActivity.ClassName))
+                    task.FinishAndRemoveTask();
+            }
+        }
 
         public static void SetDefaults(string key, string value, Context context)
         {
@@ -145,7 +158,7 @@ namespace FamiliaXamarin.Helpers
                 string email = GetDefaults("Email", ctx);
 
 
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
                 string genDateTime = sdf.Format(new Date());
                 Date d1 = sdf.Parse(genDateTime);
@@ -249,7 +262,7 @@ namespace FamiliaXamarin.Helpers
             string room, Context ctx, int type = 0, string buttonTitle = "Converseaza")
         {
             var chatActivityAcceptedIntent = new Intent(Application.Context, typeof(ChatActivity));
-            var chatActivityRejectedIntent = new Intent(Application.Context, typeof(ChatActivity));
+            var chatActivityRejectedIntent = new Intent(Application.Context, typeof(RejectChatBroadcastReceiver));
 
             chatActivityAcceptedIntent.AddFlags(ActivityFlags.ClearTop);
             chatActivityRejectedIntent.AddFlags(ActivityFlags.ClearTop);
@@ -270,12 +283,14 @@ namespace FamiliaXamarin.Helpers
                     chatActivityAcceptedIntent.PutExtra("AcceptClick", true);
                     chatActivityRejectedIntent.PutExtra("RejectClick", true);
                     var stackBuilderAccept = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
+                   
                     stackBuilderAccept.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
+                   
                     // Get the PendingIntent containing the entire back stack
                     var acceptIntent = stackBuilderAccept.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
 
-                    // var acceptIntent = PendingIntent.GetActivity(Application.Context, 1, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
-                    var rejectIntent = PendingIntent.GetActivity(Application.Context, 2, chatActivityRejectedIntent, PendingIntentFlags.OneShot);
+                     var rejectIntent = PendingIntent.GetBroadcast(Application.Context, 1, chatActivityRejectedIntent, PendingIntentFlags.OneShot);
+                    //var rejectIntent = stackBuilderReject.Get(2, (int)PendingIntentFlags.OneShot);
 
 //                    var stackBuilderReject = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
 //                    stackBuilderReject.AddNextIntentWithParentStack(chatActivityRejectedIntent);
@@ -326,8 +341,8 @@ namespace FamiliaXamarin.Helpers
                             .Build();
                 case 3:
                     //Notificare pentru mesaj
-                    chatActivityAcceptedIntent.PutExtra("NewMessage", body);
-
+                    //chatActivityAcceptedIntent.PutExtra("NewMessage", body);
+                    ChatActivity.Messages.Add(new MessagesModel(){Room = room, Message = body});
                     var stackBuilderIntent2 = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
                     stackBuilderIntent2.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
 

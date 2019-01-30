@@ -257,10 +257,10 @@ namespace FamiliaXamarin.Login_System
                     switch (responseJson.GetInt("status"))
                     {
                         case 0:
-                            Snackbar.Make(_layout, "Wrong Username or Password", Snackbar.LengthLong).Show();
+                            Snackbar.Make(_layout, "Nu esti autorizat sa faci acest request!", Snackbar.LengthLong).Show();
                             break;
                         case 1:
-                            Snackbar.Make(_layout, "Internal Server Error", Snackbar.LengthLong).Show();
+                            Snackbar.Make(_layout, "Eroare la comunicarea cu serverul", Snackbar.LengthLong).Show();
                             break;
                         case 2:
                             var token = new JSONObject(response).GetString("token");
@@ -284,11 +284,14 @@ namespace FamiliaXamarin.Login_System
                         case 3:
                             Snackbar.Make(_layout, "Dispozitivul nu este inregistrat!", Snackbar.LengthLong).Show();
                             break;
+                        case 4:
+                            Snackbar.Make(_layout, "Nume de utilizator sau parola incorecte!", Snackbar.LengthLong).Show();
+                            break;
                     }
                 }
                 else
                 {
-                    var snack = Snackbar.Make(_layout, "Unable to reach the server!", Snackbar.LengthLong);
+                    var snack = Snackbar.Make(_layout, "Nu se poate conecta la server!", Snackbar.LengthLong);
                     snack.Show();
                 }
             });

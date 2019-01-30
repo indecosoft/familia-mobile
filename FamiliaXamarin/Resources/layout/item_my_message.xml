@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/my_message_style"
+        android:backgroundTint="@color/colorAccent"
         android:padding="5dp"
 
 

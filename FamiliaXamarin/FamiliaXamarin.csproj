@@ -68,6 +68,7 @@
     <Compile Include="Helpers\ChargerReceiver.cs" />
     <Compile Include="Helpers\FingerprintHandler.cs" />
     <Compile Include="Helpers\ProgressBarDialog.cs" />
+    <Compile Include="Helpers\RejectChatBroadcastReceiver.cs" />
     <Compile Include="Helpers\SharingDatePickerFragment.cs" />
     <Compile Include="JsonModels\ConverstionsModel.cs" />
     <Compile Include="JsonModels\DiseaseModel.cs" />
@@ -787,6 +788,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\calendar_multiselect.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\network_security_config.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
