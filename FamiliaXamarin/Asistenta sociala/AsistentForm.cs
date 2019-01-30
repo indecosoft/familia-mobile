@@ -49,13 +49,13 @@ namespace FamiliaXamarin.Asistenta_sociala
             _btnScan = v.FindViewById<Button>(Resource.Id.btnScan);
             _formContainer = v.FindViewById<ConstraintLayout>(Resource.Id.container);
 
-
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se trimit datele...", Activity, false);
+            _progressBarDialog.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimary);
         }
 
         private bool FieldsValidation()
         {
-            return _benefitsSpinner.SelectedItem != null && !_benefitsSpinner.SelectedItem.Equals("") && !_tbDetails.Text.Equals("");
+            return _benefitsSpinner.SelectedItem != null && !_benefitsSpinner.SelectedItem.Equals(string.Empty) && !_tbDetails.Text.Equals(string.Empty);
 
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -82,11 +82,13 @@ namespace FamiliaXamarin.Asistenta_sociala
             }
             var myAdapter = new BenefitAdapter(Activity, 0, _listVOs);
             _benefitsSpinner.Adapter = myAdapter;
+            var fromPreferences = Utils.GetDefaults("ActivityStart", Activity);
             _tbDetails.TextChanged += delegate
             {
+
                 _btnScan.Enabled = FieldsValidation();
             };
-            var fromPreferences = Utils.GetDefaults("ActivityStart", Activity);
+            
             if (string.IsNullOrEmpty(fromPreferences))
             {
                 _formContainer.Visibility = ViewStates.Gone;
@@ -144,7 +146,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             if (result == null) return;
             try
             {
-                var sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                var sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 var currentDateandTime = sdf.Format(new Date());
 
                 var dateTimeNow = sdf.Parse(currentDateandTime);
@@ -223,7 +225,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 {
                                     if (t.IsSelected)
                                     {
-                                        _benefitsArray = _benefitsArray.Put(t.Title);
+                                        _benefitsArray.Put(t.Title);
                                     }
                                     //BenefitAdapter el = listVOs.get(i).isSelected();
                                 }
@@ -269,6 +271,13 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 });
                                 Activity.StopService(_medicalAsistanceService);
                                 Activity.StopService(_distanceCalculatorService);
+                                _tbDetails.Text = string.Empty;
+                                foreach (var t in _listVOs)
+                                {
+                                    t.IsSelected = false;
+                                }
+
+                                _btnScan.Enabled = true;
                             }
                             catch (JSONException ex)
                             {
@@ -289,6 +298,8 @@ namespace FamiliaXamarin.Asistenta_sociala
                     _progressBarDialog.Dismiss();
 
                 }
+
+                
             }
             catch (Exception)
             {
@@ -321,7 +332,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                     try
                     {
                         scanner.AutoFocus();
-                        Thread.Sleep(1000);
+                        Thread.Sleep(3000);
                     }
                     catch
                     {

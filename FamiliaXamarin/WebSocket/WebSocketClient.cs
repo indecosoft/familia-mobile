@@ -114,11 +114,11 @@ namespace FamiliaXamarin
                 Log.Error("message send error: ", e.Message);
                 return;
             }
-            Utils.CreateChannels(username, username);
 
             try
             {
 
+                Utils.CreateChannels(username, username);
                 //CAZUL 1 chat simplu intre 2 useri
                 //var c = Utils.isRunning(ChatActivity.Ctx);
                 var c = Utils.IsActivityRunning(Class.FromType(typeof(ChatActivity)));
@@ -126,6 +126,7 @@ namespace FamiliaXamarin
                 if (c && ChatActivity.RoomName.Equals(room))
                 {
                     Log.Error("Caz 1", "*********************");
+                    //Utils.CreateChannels("Caz 1", "Caz 1");
                     ChatActivity.AddMessage(message, ChatModel.TypeMessage);
                 }
                 //CAZUL 2 user offline primeste chat
@@ -133,17 +134,19 @@ namespace FamiliaXamarin
                 {
                     Log.Error("Caz 2", "*********************");
 
-                   var nb = Utils.CreateChatNotification(username, message, username, room, _context,3, "Vizualizare");
-                    Utils.GetManager().Notify(4, nb);
+                    var nb = Utils.CreateChatNotification(username, message, username, room, _context,3, "Vizualizare");
+                    
+                    var ids = room.Split(":");
+                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient", _context)? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
                 }
                 //CAZUL 3 user 1, user 2 converseaza, al3lea se baga in seama
                 else if (!ChatActivity.RoomName.Equals(room))
                 {
 
                     Log.Error("Caz 3", "*********************");
-
                     var nb = Utils.CreateChatNotification(username, message, username, room, _context,3, "Vizualizare");
-                    Utils.GetManager().Notify(4, nb);
+                    var ids = room.Split(":");
+                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient", _context)? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
                 }
 
             }
@@ -212,7 +215,8 @@ namespace FamiliaXamarin
                 Log.Error("Error OnConversation", e.Message);
             }
             var nb = Utils.CreateChatNotification("Cerere acceptata", $"{email} ti-a acceptat cererea de chat!", email, room, _context, 2);
-            Utils.GetManager().Notify(1, nb);
+            var ids = room.Split(":");
+            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient", _context)? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
         }
 
         private void OnChatRequest(Object[] obj)
@@ -237,7 +241,8 @@ namespace FamiliaXamarin
 
             //var nb = Utils.GetAndroidChannelNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
             var nb = Utils.CreateChatNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", email, room, _context);
-            Utils.GetManager().Notify(2, nb);
+            var ids = room.Split(":");
+            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient", _context)? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
         }
         private void OnChatRejected(Object[] obj)
         {
@@ -259,7 +264,7 @@ namespace FamiliaXamarin
 
             //var nb = Utils.GetAndroidChannelNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
             var nb = Utils.CreateChatNotification(email, "Ti-a respins cererea de convorbire!", email, null, _context, 1);
-            Utils.GetManager().Notify(3, nb);
+            Utils.GetManager().Notify(1000, nb);
         }
     }
 }
