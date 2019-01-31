@@ -93,7 +93,7 @@ namespace FamiliaXamarin.Chat
 
             mAdapter.Clear();
             
-            NotificationManagerCompat.From(this).Cancel(100);
+            //NotificationManagerCompat.From(this).Cancel(100);
             if (savedInstanceState == null)
             {
                 var extras = Intent.Extras;
@@ -169,19 +169,14 @@ namespace FamiliaXamarin.Chat
                     }
                 }
 
-                NotificationManagerCompat.From(this).Cancel(400);
+                //NotificationManagerCompat.From(this).Cancel(400);
 
-
-//                if (extras != null && extras.ContainsKey("NewMessage"))
-//                {
-                    foreach (var item in Messages)
-                    {
-                        if(item.Room == RoomName)
-                            AddMessage(item.Message, ChatModel.TypeMessage);
-                        Messages.Remove(item);
-                    } 
-                    //Messages.Clear();
-//                }
+                for (var i = 0; i < Messages.Count; i++)
+                {
+                    if (Messages[i].Room != RoomName) continue;
+                    AddMessage(Messages[i].Message, ChatModel.TypeMessage);
+                    Messages.RemoveAt(i--);
+                }
             }
 
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);

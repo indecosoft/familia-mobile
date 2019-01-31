@@ -118,7 +118,7 @@ namespace FamiliaXamarin
             try
             {
 
-                Utils.CreateChannels(username, username);
+                Utils.CreateChannels("1", "1");
                 //CAZUL 1 chat simplu intre 2 useri
                 //var c = Utils.isRunning(ChatActivity.Ctx);
                 var c = Utils.IsActivityRunning(Class.FromType(typeof(ChatActivity)));
