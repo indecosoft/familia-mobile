@@ -129,6 +129,7 @@
             <e p="calendar.xml" t="Include" />
             <e p="calendar_date.xml" t="Include" />
             <e p="calendar_multiselect.xml" t="Include" />
+            <e p="card.png" t="Include" />
             <e p="chevron_left.xml" t="Include" />
             <e p="chevron_right.xml" t="Include" />
             <e p="close.xml" t="Include" />

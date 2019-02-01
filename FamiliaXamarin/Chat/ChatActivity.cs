@@ -33,25 +33,14 @@ namespace FamiliaXamarin.Chat
         private static List<ChatModel> mMessages;
         private static ChatAdapter mAdapter;
         public static List<MessagesModel> Messages = new List<MessagesModel>();
-        //public static string Email;
         public static string RoomName = "";
         private static LinearLayoutManager layoutManager;
-        //public static bool Active;
-
-/*
-        readonly Handler mTypingHandler = new Handler();
-*/
         private static string mUsername;
-        //public static string EmailDest;
         private static ChatActivity Ctx;
-        //public static string NewMessage = "";
-        //readonly IWebSocketClient _socketClient = new WebSocketClient();
 
         protected override void OnUserLeaveHint()
         {
-            //Finish();
             Utils.CloseRunningActivity(typeof(ChatActivity));
-            //base.OnUserLeaveHint();
         }
 
         public override void OnBackPressed()
@@ -93,7 +82,6 @@ namespace FamiliaXamarin.Chat
 
             mAdapter.Clear();
             
-            //NotificationManagerCompat.From(this).Cancel(100);
             if (savedInstanceState == null)
             {
                 var extras = Intent.Extras;
