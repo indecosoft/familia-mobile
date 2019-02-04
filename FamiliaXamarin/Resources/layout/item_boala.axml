@@ -22,7 +22,7 @@
         android:layout_centerVertical="true"
         android:drawableTop="@drawable/trash"
         android:padding="8dp"
-        android:drawableTint="#fff"
+        android:drawableTint="@color/white"
         android:backgroundTint="@color/colorDanger"
         android:background="@drawable/round_button" />
 

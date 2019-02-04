@@ -40,7 +40,7 @@
         android:layout_height="56dp"
         android:layout_gravity="start"
         android:layout_alignParentBottom="true"
-        android:background="#F5F7FA"
+        android:background="@color/colorPrimaryDark"
         app:elevation="16dp"
         app:itemIconTint="@drawable/nav_item_colors"
         app:itemTextColor="@drawable/nav_item_colors"

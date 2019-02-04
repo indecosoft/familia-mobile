@@ -16,6 +16,12 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.Chat
 {
+    public class MessagesModel
+    {
+        public string Room { get; set; }
+        public string Message { get; set; }
+    }
+    
     [Activity(Label = "ChatActivity", Theme = "@style/AppTheme.Dark",
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class ChatActivity : AppCompatActivity
@@ -26,26 +32,15 @@ namespace FamiliaXamarin.Chat
         public static EditText mInputMessageView;
         private static List<ChatModel> mMessages;
         private static ChatAdapter mAdapter;
-        //public static string Email;
+        public static List<MessagesModel> Messages = new List<MessagesModel>();
         public static string RoomName = "";
         private static LinearLayoutManager layoutManager;
-        //public static bool Active;
-
-/*
-        readonly Handler mTypingHandler = new Handler();
-*/
         private static string mUsername;
-        //public static string EmailDest;
         private static ChatActivity Ctx;
-        //public static string NewMessage = "";
-        //readonly IWebSocketClient _socketClient = new WebSocketClient();
 
-        protected override void OnDestroy()
+        protected override void OnUserLeaveHint()
         {
-            base.OnDestroy();
-
-            //Active = false;
-            mAdapter.Clear();
+            Utils.CloseRunningActivity(typeof(ChatActivity));
         }
 
         public override void OnBackPressed()
@@ -85,40 +80,23 @@ namespace FamiliaXamarin.Chat
             send = FindViewById<Button>(Resource.Id.Send);
             send.Click += delegate { AttemptSend(); };
 
-
+            mAdapter.Clear();
+            
             if (savedInstanceState == null)
             {
                 var extras = Intent.Extras;
                 RoomName = Intent.GetStringExtra("Room");
                 mUsername = Intent.GetStringExtra("EmailFrom");
+                var ids = RoomName.Split(":");
+                NotificationManagerCompat.From(this).Cancel(ids[0] == Utils.GetDefaults("IdClient", this)? int.Parse(ids[1]) : int.Parse(ids[0]));
                 //Active = Intent.GetBooleanExtra("Active", false);
                 if (extras == null)
                 {
                     Finish();
                 }
-                else if (Intent.GetBooleanExtra("RejectClick", false))
-                {
-                    NotificationManagerCompat.From(this).Cancel(2);
-                    var emailFrom = Utils.GetDefaults("Email", this);
-                    RoomName = extras.GetString("Room");
-                    try
-                    {
-                        var mailObject = new JSONObject().Put("dest", mUsername)
-                            .Put("from", emailFrom)
-                            .Put("accepted", false);
-                        Log.Error("aici", mailObject.ToString());
-                        WebSocketClient.Client.Emit("chat accepted", mailObject);
-                    }
-                    catch (JSONException e)
-                    {
-                        e.PrintStackTrace();
-                    }
-
-                    Finish();
-                }
                 else if (Intent.GetBooleanExtra("AcceptClick", false))
                 {
-                    NotificationManagerCompat.From(this).Cancel(2);
+                    
                     try
                     {
                         //adaugare la lista de prieteni
@@ -179,12 +157,13 @@ namespace FamiliaXamarin.Chat
                     }
                 }
 
-                NotificationManagerCompat.From(this).Cancel(4);
+                //NotificationManagerCompat.From(this).Cancel(400);
 
-
-                if (extras != null && extras.ContainsKey("NewMessage"))
+                for (var i = 0; i < Messages.Count; i++)
                 {
-                    AddMessage(extras.GetString("NewMessage"), ChatModel.TypeMessage);
+                    if (Messages[i].Room != RoomName) continue;
+                    AddMessage(Messages[i].Message, ChatModel.TypeMessage);
+                    Messages.RemoveAt(i--);
                 }
             }
 

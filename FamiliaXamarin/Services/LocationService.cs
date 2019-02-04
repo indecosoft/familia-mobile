@@ -30,6 +30,12 @@ namespace FamiliaXamarin.Services
         {
             throw new NotImplementedException();
         }
+
+        public override void OnDestroy()
+        {
+            StopRequestionLocationUpdates();
+        }
+
         public override void OnCreate()
         {
             Log.Info("Service", "OnCreate: the service is initializing.");
