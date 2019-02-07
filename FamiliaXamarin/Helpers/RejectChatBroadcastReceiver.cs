@@ -11,7 +11,10 @@ namespace FamiliaXamarin.Helpers
         public override void OnReceive(Context context, Intent intent)
         {
             var ids = intent.GetStringExtra("Room").Split(":");
-            NotificationManagerCompat.From(context).Cancel(ids[0] == Utils.GetDefaults("IdClient", context)? int.Parse(ids[1]) : int.Parse(ids[0]));
+            NotificationManagerCompat.From(context).Cancel(
+                ids[0] == Utils.GetDefaults("IdClient", context)
+                    ? int.Parse(ids[1])
+                    : int.Parse(ids[0]));
             var emailFrom = Utils.GetDefaults("Email", context);
             try
             {
@@ -25,7 +28,6 @@ namespace FamiliaXamarin.Helpers
             {
                 e.PrintStackTrace();
             }
-
         }
     }
 }
