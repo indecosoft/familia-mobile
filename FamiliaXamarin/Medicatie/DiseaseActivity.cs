@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Android.App;
 using Android.Content;
+using Android.Gms.Location;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
@@ -161,7 +162,6 @@ namespace FamiliaXamarin.Medicatie
             
             cdd.Show();
             cdd.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimary);
-            //return;
         }
 
         private void AddNewMed(Medicine medicament)
@@ -226,9 +226,10 @@ namespace FamiliaXamarin.Medicatie
         }
         private void SetAlarm(Hour hour, Medicine med, Disease boala, ref List<int> alarms, int position)
         {
-            var idAlarm = DateTime.Now.Millisecond ;
             var am = (AlarmManager)GetSystemService(AlarmService);
+            var idAlarm = DateTime.Now.Millisecond ;
             var id = 0;
+            var days = 0;
             var i = new Intent(this, typeof(AlarmBroadcastReceiver));
             i.PutExtra(BOALA_ID, boala.Id);
             i.PutExtra(MED_ID, med.IdMed);
@@ -236,9 +237,7 @@ namespace FamiliaXamarin.Medicatie
             if (med.Alarms != null)
             {
                 id = med.Alarms[position];
-
             }
-            
             alarms.Add(id);
             i.PutExtra(ALARM_ID, id);
            // Log.Error("MEDICAMENT", med.Name);
@@ -250,30 +249,49 @@ namespace FamiliaXamarin.Medicatie
             var parts = hourString.Split(':');
             var timeHour = Convert.ToInt32(parts[0]);
             var timeMinute = Convert.ToInt32(parts[1]);
+
+            var date = DateTime.Parse(med.Date);
+            var setDt = new DateTime(date.Year, date.Month, date.Day,timeHour,timeMinute,0);
+
             var calendar = Calendar.Instance;
             var setCalendar = Calendar.Instance;
-            setCalendar.Set(CalendarField.HourOfDay, timeHour);
-            setCalendar.Set(CalendarField.Minute, timeMinute);
-            setCalendar.Set(CalendarField.Second, 0);
-
-            var dateString = med.Date;
-           // Log.Error("MY DATE", med.Date);
-            parts = dateString.Split('.');
-            var day = Convert.ToInt32(parts[0]);
-            var month = Convert.ToInt32(parts[1]) - 1;
-            var year = Convert.ToInt32(parts[2]);
-
-            setCalendar.Set(CalendarField.Year, year);
-            setCalendar.Set(CalendarField.Month, month);
-            setCalendar.Set(CalendarField.DayOfMonth, day);
-
-            if (setCalendar.Before(calendar))
+//            setCalendar.Set(CalendarField.Year, setDt.Year);
+//            setCalendar.Set(CalendarField.Month, setDt.Month);
+//            setCalendar.Set(CalendarField.DayOfMonth, setDt.Day);
+//            setCalendar.Set(CalendarField.HourOfDay, setDt.Hour);
+//            setCalendar.Set(CalendarField.Minute, setDt.Minute);
+//            setCalendar.Set(CalendarField.Second, 0);
+            
+            if (setDt < DateTime.Now)
             {
-                setCalendar.Add(CalendarField.Date, 1);
+                TimeSpan difference = DateTime.Now.Subtract(setDt);
+                days = (int) difference.TotalDays + 1;
+                setDt = setDt.AddDays(days);
             }
 
-            am.SetInexactRepeating(AlarmType.RtcWakeup, setCalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
-
+            if (med.NumberOfDays != 0)
+            {
+                days = med.NumberOfDays - days;
+                for (int j = 0; j < days; j++)
+                {
+                        idAlarm = DateTime.Now.Millisecond ;
+                        pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
+                        setDt = setDt.AddDays(j);
+                   
+                    var mili = (long) setDt.ToUniversalTime()
+                        .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
+                        .TotalMilliseconds;
+                    
+                        am.SetInexactRepeating(AlarmType.RtcWakeup, mili, 0, pi);
+                }
+            }
+            else
+            {
+                var mili = (long) setDt.ToUniversalTime()
+                    .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
+                    .TotalMilliseconds;
+                am.SetInexactRepeating(AlarmType.RtcWakeup, mili, AlarmManager.IntervalDay, pi);
+            }
         }
 
         public void OnMedSaved(Medicine medicament)

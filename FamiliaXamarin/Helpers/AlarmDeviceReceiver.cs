@@ -33,71 +33,67 @@ namespace FamiliaXamarin.Helpers
         public override void OnReceive(Context context, Intent intent)
         {
             var content = intent.GetStringExtra(INTERVAL_CONTENT);
-
+            var intervalMilis = intent.GetStringExtra("IntervalMilis");
             Log.Error("INTERVAL_CONTENT", content);
-            Toast.MakeText(context, content, ToastLength.Short).Show();
+            Toast.MakeText(context, content + ", " + intervalMilis, ToastLength.Long).Show();
+            //Toast.MakeText(context, intervalMilis, ToastLength.Short).Show();
 
-            if (content.Equals(ChargerReceiver.INTERVAL_GLUCOSE))
+            if (content.Equals(Constants.IntervalGlucose))
             {
-                Intent intentGlucose = new Intent(context, typeof(MainActivity));
+                var intentGlucose = new Intent(context, typeof(MainActivity));
                 intentGlucose.PutExtra("extra", "HealthDevicesFragment");
-                createNotificationChannel(CHANNEL_NAME_GLUCOSE, TITLE_GLUCOSE, CONTENT_GLUCOSE);
-                BuildNotification(context, CHANNEL_NAME_GLUCOSE, TITLE_GLUCOSE, CONTENT_GLUCOSE, intentGlucose);
+                CreateNotificationChannel(CHANNEL_NAME_GLUCOSE, TITLE_GLUCOSE, CONTENT_GLUCOSE);
+                BuildNotification(context, Constants.GlucoseNotifId, CHANNEL_NAME_GLUCOSE,
+                    TITLE_GLUCOSE, CONTENT_GLUCOSE, intentGlucose);
 
             }
 
-            if (content.Equals(ChargerReceiver.INTERVAL_BLOOD_PRESSURE))
-            {   
-                Intent intentBloodPressure = new Intent(context, typeof(MainActivity));
-                intentBloodPressure.PutExtra("extra", "HealthDevicesFragment");
-                createNotificationChannel(CHANNEL_NAME_BLOODPRESSURE, TITLE_BLOODPRESSURE, CONTENT_BLOODPRESSURE);
-                BuildNotification(context, CHANNEL_NAME_BLOODPRESSURE, TITLE_BLOODPRESSURE, CONTENT_BLOODPRESSURE, intentBloodPressure);
-            }
+            if (!content.Equals(Constants.IntervalBloodPressure)) return;
+            var intentBloodPressure = new Intent(context, typeof(MainActivity));
+            intentBloodPressure.PutExtra("extra", "HealthDevicesFragment");
+            CreateNotificationChannel(CHANNEL_NAME_BLOODPRESSURE, TITLE_BLOODPRESSURE,
+                CONTENT_BLOODPRESSURE);
+            BuildNotification(context, Constants.BloodPressureNotifId, CHANNEL_NAME_GLUCOSE,
+                TITLE_BLOODPRESSURE, CONTENT_BLOODPRESSURE, intentBloodPressure);
 
 
         }
 
-        private void createNotificationChannel(string mChannel, string mTitle, string mContent)
+        private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent)
         {
-            string name = mTitle;
-            string description = mContent;
+            var description = mContent;
 
-            NotificationChannel channel =
+            var channel =
                 new NotificationChannel(mChannel, mTitle, NotificationImportance.Default)
                 {
                     Description = description
                 };
 
-            var notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
+            var notificationManager =
+                (NotificationManager) Application.Context.GetSystemService(
+                    Context.NotificationService);
             notificationManager.CreateNotificationChannel(channel);
 
         }
 
-        private void BuildNotification(Context context, string channel, string title, string content, Intent intent)
+        private static void BuildNotification(Context context, int notifyId, string channel, string title, string content, Intent intent)
         {
 
-            NotifyId += 1;
-
-            
-
-
-            PendingIntent piNotification = PendingIntent.GetActivity(context, NotifyId, intent, PendingIntentFlags.UpdateCurrent);
-
-            NotificationCompat.Builder mBuilder =
+           // NotifyId += 1;
+            var piNotification = PendingIntent.GetActivity(context, notifyId, intent,
+                PendingIntentFlags.UpdateCurrent);
+            var mBuilder =
                 new NotificationCompat.Builder(context, channel)
                     .SetSmallIcon(Resource.Drawable.logo)
                     .SetContentTitle(title)
                     .SetContentText(content)
                     .SetAutoCancel(true)
                     .SetContentIntent(piNotification)
-                    .SetPriority(NotificationCompat.PriorityHigh)
-                    .SetAutoCancel(true);
+                    .SetPriority(NotificationCompat.PriorityHigh);
 
+            var notificationManager = NotificationManagerCompat.From(context);
 
-
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
-
-            notificationManager.Notify(NotifyId, mBuilder.Build());
+            notificationManager.Notify(notifyId, mBuilder.Build());
         }
 
     }

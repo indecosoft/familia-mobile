@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Util;
-using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.DataModels;
 using Org.Json;
@@ -19,90 +14,80 @@ namespace FamiliaXamarin.Helpers
 {
 
     [BroadcastReceiver(Enabled = true, Exported = true)]
-    [IntentFilter(new[] { Android.Content.Intent.ActionPowerConnected })]
+    [IntentFilter(new[] { Intent.ActionPowerConnected })]
     public class ChargerReceiver : BroadcastReceiver
     {
-        public static readonly string INTERVAL_GLUCOSE = "INTERVAL_GLUCOSE";
-        public static readonly string INTERVAL_BLOOD_PRESSURE = "INTERVAL_BLOOD_PRESSURE";
+
         private SQLiteAsyncConnection _db;
-        public async  override void OnReceive(Context context, Intent intent)
+        public override async void OnReceive(Context context, Intent intent)
         {
            // Toast.MakeText(context, "IT IS WORKING", ToastLength.Long).Show();
             var action = intent.Action;
-            if (action != null && action.Equals(Intent.ActionPowerConnected))
+            if (action == null || !action.Equals(Intent.ActionPowerConnected)) return;
+            var path =
+                System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            var numeDB = "devices_data.db";
+            _db = new SQLiteAsyncConnection(Path.Combine(path, numeDB));
+            await _db.CreateTableAsync<DeviceConfigRecords>();
+
+
+            await Task.Run(async () =>
             {
-                var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-                var numeDB = "devices_data.db";
-                _db = new SQLiteAsyncConnection(Path.Combine(path, numeDB));
-                await _db.CreateTableAsync<DeviceConfigRecords>();
+                var data = await GetData();
+                var obj = new JSONObject(data);
+                var bloodPressure = obj.GetJSONObject("bloodPressureSystolic");
+                var intervalBloodPressure = bloodPressure.GetString("interval");
+                var bloodGlucose = obj.GetJSONObject("bloodGlucose");
+                var intervalGlucose = bloodGlucose.GetString("interval");
+                Log.Error("INTERVAL_BLOOD_PRESSURE", intervalBloodPressure);
+                Log.Error("INTERVAL_GLUCOSE", intervalGlucose);
 
+                AddDeviceConfig(_db, intervalBloodPressure, intervalGlucose);
 
-                await Task.Run(async () =>
-                {
-                    var data = await GetData(context);
-                    var obj = new JSONObject(data);
-                    var bloodPressure = obj.GetJSONObject("bloodPressureSystolic");
-                    var intervalBloodPressure = bloodPressure.GetString("interval");
-                    var bloodGlucose = obj.GetJSONObject("bloodGlucose");
-                    var intervalGlucose = bloodGlucose.GetString("interval");
-                    Log.Error("INTERVAL_BLOOD_PRESSURE", intervalBloodPressure);
-                    Log.Error("INTERVAL_GLUCOSE", intervalGlucose);
-
-                    AddDeviceConfig(_db, intervalBloodPressure, intervalGlucose);
-
-                    LaunchAlarm(context, intervalGlucose, INTERVAL_GLUCOSE);
-                    LaunchAlarm(context, intervalBloodPressure, INTERVAL_BLOOD_PRESSURE);
-                });
-
-
-            }
+                LaunchAlarm(context, intervalGlucose, Constants.IntervalGlucose);
+                LaunchAlarm(context, intervalBloodPressure, Constants.IntervalBloodPressure);
+            });
         }
 
-        private void LaunchAlarm(Context context, string interval, string content)
+        private static void LaunchAlarm(Context context, string interval, string content)
         {
             //=int.Parse(interval) * 60000
-            int intervalMilisec;
-            bool a = int.TryParse(interval, out intervalMilisec);
-            if (a)
+            if (int.TryParse(interval,  out var intervalMilisec))
                 intervalMilisec *= 60000;
             else
                 intervalMilisec = 60000;
             var am = (AlarmManager) context.GetSystemService(Context.AlarmService);
             var i = new Intent(context, typeof(AlarmDeviceReceiver));
             i.PutExtra(AlarmDeviceReceiver.INTERVAL_CONTENT, content);
+            i.PutExtra("IntervalMilis", interval);
             var random = new Random();
             var id = (DateTime.UtcNow).Millisecond * random.Next();
             var pi = PendingIntent.GetBroadcast(context, id, i, PendingIntentFlags.OneShot);
 
-            if (am != null)
-            {
-                am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + intervalMilisec, intervalMilisec, pi);
-            }
+            am?.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup,
+                SystemClock.ElapsedRealtime() + intervalMilisec, intervalMilisec , pi);
+          //  Toast.MakeText(context, intervalMilisec, ToastLength.Short);
 
-           
+
         }
 
 
-        private async Task<string> GetData(Context context)
+        private static async Task<string> GetData()
         {
-            if (Utils.CheckNetworkAvailability())
-            {
-               var result = await WebServices.Get("https://gis.indecosoft.net/devices/get-device-config/864190030936193");
-                //var result = await WebServices.Get($"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetImei(context)}", Utils.GetDefaults("Token", context));
-                if (result != null)
-                {
-                    Log.Error("RESULT_FROM_GIS", result);
-                    return result;
-                }
-
-                return null;
-
-            }
-            else return null;
+            if (!Utils.CheckNetworkAvailability()) return null;
+            var result =
+                await WebServices.Get(
+                    "https://gis.indecosoft.net/devices/get-device-config/864190030936193");
+//               var result = await WebServices.Get(
+//                   $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetImei(Application.Context)}",
+//                   Utils.GetDefaults("Token", context));
+            if (result == null) return null;
+            Log.Error("RESULT_FROM_GIS", result);
+            return result;
         }
 
 
-        private async void AddDeviceConfig(SQLiteAsyncConnection db, string intervalBlood, string intervalGlucose)
+        private static async void AddDeviceConfig(SQLiteAsyncConnection db, string intervalBlood, string intervalGlucose)
         {
 
             await db.InsertAsync(new DeviceConfigRecords()
