@@ -5,6 +5,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Util;
+using Android.Widget;
 using FamiliaXamarin.DataModels;
 using Org.Json;
 using SQLite;
@@ -58,12 +59,14 @@ namespace FamiliaXamarin.Helpers
             var am = (AlarmManager) context.GetSystemService(Context.AlarmService);
             var i = new Intent(context, typeof(AlarmDeviceReceiver));
             i.PutExtra(AlarmDeviceReceiver.INTERVAL_CONTENT, content);
+            i.PutExtra("IntervalMilis", interval);
             var random = new Random();
             var id = (DateTime.UtcNow).Millisecond * random.Next();
             var pi = PendingIntent.GetBroadcast(context, id, i, PendingIntentFlags.OneShot);
 
             am?.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup,
                 SystemClock.ElapsedRealtime() + intervalMilisec, intervalMilisec , pi);
+          //  Toast.MakeText(context, intervalMilisec, ToastLength.Short);
 
 
         }

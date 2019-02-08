@@ -33,9 +33,10 @@ namespace FamiliaXamarin.Helpers
         public override void OnReceive(Context context, Intent intent)
         {
             var content = intent.GetStringExtra(INTERVAL_CONTENT);
-
+            var intervalMilis = intent.GetStringExtra("IntervalMilis");
             Log.Error("INTERVAL_CONTENT", content);
-            Toast.MakeText(context, content, ToastLength.Short).Show();
+            Toast.MakeText(context, content + ", " + intervalMilis, ToastLength.Long).Show();
+            //Toast.MakeText(context, intervalMilis, ToastLength.Short).Show();
 
             if (content.Equals(Constants.IntervalGlucose))
             {
@@ -52,7 +53,7 @@ namespace FamiliaXamarin.Helpers
             intentBloodPressure.PutExtra("extra", "HealthDevicesFragment");
             CreateNotificationChannel(CHANNEL_NAME_BLOODPRESSURE, TITLE_BLOODPRESSURE,
                 CONTENT_BLOODPRESSURE);
-            BuildNotification(context, Constants.BloodPressureNotifId, CHANNEL_NAME_BLOODPRESSURE,
+            BuildNotification(context, Constants.BloodPressureNotifId, CHANNEL_NAME_GLUCOSE,
                 TITLE_BLOODPRESSURE, CONTENT_BLOODPRESSURE, intentBloodPressure);
 
 
@@ -78,7 +79,7 @@ namespace FamiliaXamarin.Helpers
         private static void BuildNotification(Context context, int notifyId, string channel, string title, string content, Intent intent)
         {
 
-//            NotifyId += 1;
+           // NotifyId += 1;
             var piNotification = PendingIntent.GetActivity(context, notifyId, intent,
                 PendingIntentFlags.UpdateCurrent);
             var mBuilder =
@@ -92,7 +93,7 @@ namespace FamiliaXamarin.Helpers
 
             var notificationManager = NotificationManagerCompat.From(context);
 
-            notificationManager.Notify(NotifyId, mBuilder.Build());
+            notificationManager.Notify(notifyId, mBuilder.Build());
         }
 
     }
