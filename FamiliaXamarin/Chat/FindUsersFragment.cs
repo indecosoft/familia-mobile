@@ -95,7 +95,7 @@ namespace FamiliaXamarin.Chat
                             {
                                 var nearMeObj = (JSONObject)nearMe.Get(i);
                                 _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                    "caca pisu tot pe el", nearMeObj.GetString("avatar"),
+                                    string.Empty, nearMeObj.GetString("avatar"),
                                     Resource.Drawable.card));
                             }
                         }
