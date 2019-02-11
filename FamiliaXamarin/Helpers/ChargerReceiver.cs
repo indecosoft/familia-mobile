@@ -14,7 +14,7 @@ namespace FamiliaXamarin.Helpers
 {
 
     [BroadcastReceiver(Enabled = true, Exported = true)]
-    [IntentFilter(new[] { Intent.ActionPowerConnected })]
+    [IntentFilter(new[] { Intent.ActionHeadsetPlug })]
     public class ChargerReceiver : BroadcastReceiver
     {
 
@@ -29,7 +29,7 @@ namespace FamiliaXamarin.Helpers
             var numeDB = "devices_data.db";
             _db = new SQLiteAsyncConnection(Path.Combine(path, numeDB));
             await _db.CreateTableAsync<DeviceConfigRecords>();
-
+            Log.Error("PPP", "Received action headset plug");
 
             await Task.Run(async () =>
             {

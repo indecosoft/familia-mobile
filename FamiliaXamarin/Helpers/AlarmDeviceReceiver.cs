@@ -36,8 +36,8 @@ namespace FamiliaXamarin.Helpers
             var intervalMilis = intent.GetStringExtra("IntervalMilis");
             Log.Error("INTERVAL_CONTENT", content);
             Toast.MakeText(context, content + ", " + intervalMilis, ToastLength.Long).Show();
-            //Toast.MakeText(context, intervalMilis, ToastLength.Short).Show();
-
+            
+            Log.Error("PPP", "receiver " + content);
             if (content.Equals(Constants.IntervalGlucose))
             {
                 var intentGlucose = new Intent(context, typeof(MainActivity));
@@ -68,7 +68,8 @@ namespace FamiliaXamarin.Helpers
                 {
                     Description = description
                 };
-
+            
+            Log.Error("PPP", "create channel for " + mTitle);
             var notificationManager =
                 (NotificationManager) Application.Context.GetSystemService(
                     Context.NotificationService);
@@ -80,6 +81,8 @@ namespace FamiliaXamarin.Helpers
         {
 
            // NotifyId += 1;
+           Log.Error("PPP", "build notification for " + title + "with id: " + notifyId);
+           
             var piNotification = PendingIntent.GetActivity(context, notifyId, intent,
                 PendingIntentFlags.UpdateCurrent);
             var mBuilder =

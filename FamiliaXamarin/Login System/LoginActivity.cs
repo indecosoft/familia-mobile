@@ -227,7 +227,8 @@ namespace FamiliaXamarin.Login_System
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions,
             Permission[] grantResults)
-        {
+        {    
+            
             if (grantResults[0] != Permission.Granted)
             {
                 var snack = Snackbar.Make(_layout, "Permisiuni pentru telefon refuzate",
