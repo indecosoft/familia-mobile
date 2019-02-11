@@ -43,7 +43,7 @@ namespace FamiliaXamarin.Login_System
         private readonly string _keyName = "EDMTDev";
         private ProgressBarDialog _progressBarDialog;
 
-        private readonly string[] _permissionsLocation =
+        private readonly string[] _permissionsArray =
         {
             Manifest.Permission.ReadPhoneState,
             Manifest.Permission.AccessCoarseLocation,
@@ -56,22 +56,101 @@ namespace FamiliaXamarin.Login_System
         protected override void OnResume()
         {
             base.OnResume();
-            IntitLogin();
+            var fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint", this)) &&
+                              Convert.ToBoolean(Utils.GetDefaults("fingerprint", this));
+
+            var checkHardware = FingerprintManagerCompat.From(this);
+            var keyguardManager1 = (KeyguardManager) GetSystemService(KeyguardService);
+            if (!fingerprint || !checkHardware.IsHardwareDetected ||
+                !keyguardManager1.IsKeyguardSecure) return;
+            SetContentView(Resource.Layout.activity_finger);
+            var animationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
+            var filter =
+                new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.colorAccent));
+            animationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter,
+                new LottieValueCallback(filter));
+            //Using the Android Support Library v4
+            var keyguardManager = (KeyguardManager) GetSystemService(KeyguardService);
+            var fingerprintManager = (FingerprintManager) GetSystemService(FingerprintService);
+
+            if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.UseFingerprint) !=
+                (int) Permission.Granted)
+                return;
+            if (!fingerprintManager.IsHardwareDetected)
+            {
+                Toast.MakeText(this,
+                    "Nu exista permisiuni pentru autentificare utilizand amprenta",
+                    ToastLength.Long).Show();
+                LoadLoginUi();
+            }
+            else
+            {
+                if (!fingerprintManager.HasEnrolledFingerprints)
+                {
+                    Toast.MakeText(this,
+                        "Nu ati inregistrat nici o amprenta in setari",
+                        ToastLength.Long).Show();
+                    LoadLoginUi();
+                }
+                else
+                {
+                    if (!keyguardManager.IsKeyguardSecure)
+                    {
+                        Toast.MakeText(this,
+                            "Telefonul trebuie sa fie securizat utilizand senzorul de amprente",
+                            ToastLength.Long).Show();
+                        LoadLoginUi();
+                    }
+                    else
+                        GenKey();
+
+                    if (!CipherInit()) return;
+                    var cryptoObject = new FingerprintManager.CryptoObject(_cipher);
+                    var helper = new FingerprintHandler(this);
+
+                    helper.StartAuthentication(fingerprintManager, cryptoObject);
+                    helper.FingerprintAuth += delegate(object sender,
+                        FingerprintHandler.FingerprintAuthEventArgs args)
+                    {
+                        if (args.Status)
+                        {
+                            StartActivity(typeof(MainActivity));
+                            Finish();
+                        }
+                        else
+                        {
+                            var filterError =
+                                new SimpleColorFilter(
+                                    ContextCompat.GetColor(this, Resource.Color.accent));
+                            animationView.AddValueCallback(new KeyPath("**"),
+                                LottieProperty.ColorFilter,
+                                new LottieValueCallback(filterError));
+                            var vibrator = (Vibrator) GetSystemService(VibratorService);
+                            vibrator?.Vibrate(VibrationEffect.CreateOneShot(100,
+                                VibrationEffect.DefaultAmplitude));
+                            if (args.ErrorsCount != 5) return;
+                            Toast.MakeText(this, "5 incercari gresite de verificare a amprentelor!",
+                                ToastLength.Long).Show();
+                        }
+                    };
+                }
+            }
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            IntitLogin();
+            InitLogin();
         }
 
-        private void IntitLogin()
+
+        private void InitLogin()
         {
             var fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint", this)) &&
                               Convert.ToBoolean(Utils.GetDefaults("fingerprint", this));
 
             var checkHardware = FingerprintManagerCompat.From(this);
-            var keyguardManager1 = (KeyguardManager)GetSystemService(KeyguardService);
+            var keyguardManager1 = (KeyguardManager) GetSystemService(KeyguardService);
 
             if (fingerprint && checkHardware.IsHardwareDetected &&
                 keyguardManager1.IsKeyguardSecure)
@@ -83,11 +162,11 @@ namespace FamiliaXamarin.Login_System
                 animationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter,
                     new LottieValueCallback(filter));
                 //Using the Android Support Library v4
-                var keyguardManager = (KeyguardManager)GetSystemService(KeyguardService);
-                var fingerprintManager = (FingerprintManager)GetSystemService(FingerprintService);
+                var keyguardManager = (KeyguardManager) GetSystemService(KeyguardService);
+                var fingerprintManager = (FingerprintManager) GetSystemService(FingerprintService);
 
                 if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.UseFingerprint) !=
-                    (int)Permission.Granted)
+                    (int) Permission.Granted)
                     return;
                 if (!fingerprintManager.IsHardwareDetected)
                 {
@@ -122,7 +201,8 @@ namespace FamiliaXamarin.Login_System
                         var helper = new FingerprintHandler(this);
 
                         helper.StartAuthentication(fingerprintManager, cryptoObject);
-                        helper.FingerprintAuth += delegate (object sender, FingerprintHandler.FingerprintAuthEventArgs args)
+                        helper.FingerprintAuth += delegate(object sender,
+                            FingerprintHandler.FingerprintAuthEventArgs args)
                         {
                             if (args.Status)
                             {
@@ -132,14 +212,18 @@ namespace FamiliaXamarin.Login_System
                             else
                             {
                                 var filterError =
-                                    new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
-                                animationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter,
+                                    new SimpleColorFilter(
+                                        ContextCompat.GetColor(this, Resource.Color.accent));
+                                animationView.AddValueCallback(new KeyPath("**"),
+                                    LottieProperty.ColorFilter,
                                     new LottieValueCallback(filterError));
-                                Vibrator vibrator = (Vibrator)GetSystemService(VibratorService);
-                                vibrator?.Vibrate(VibrationEffect.CreateOneShot(100, VibrationEffect.DefaultAmplitude));
+                                Vibrator vibrator = (Vibrator) GetSystemService(VibratorService);
+                                vibrator?.Vibrate(VibrationEffect.CreateOneShot(100,
+                                    VibrationEffect.DefaultAmplitude));
                                 if (args.ErrorsCount != 5) return;
-                                Toast.MakeText(this, "5 incercari gresite de verificare a amprentelor!", ToastLength.Long).Show();
-
+                                Toast.MakeText(this,
+                                    "5 incercari gresite de verificare a amprentelor!",
+                                    ToastLength.Long).Show();
                             }
                         };
                     }
@@ -164,6 +248,7 @@ namespace FamiliaXamarin.Login_System
                 LoadLoginUi();
             }
         }
+
         private void LoadLoginUi()
         {
             SetContentView(Resource.Layout.activity_login); //
@@ -174,7 +259,7 @@ namespace FamiliaXamarin.Login_System
             const string permission = Manifest.Permission.ReadPhoneState;
             if (CheckSelfPermission(permission) != (int) Permission.Granted)
             {
-                RequestPermissions(_permissionsLocation, 0);
+                RequestPermissions(_permissionsArray, 0);
             }
 
 
