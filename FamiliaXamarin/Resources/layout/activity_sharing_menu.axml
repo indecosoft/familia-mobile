@@ -75,7 +75,7 @@ android:fitsSystemWindows="true">
                 android:padding="16dp"
                 android:background="@drawable/main_button_style"
                 android:textAllCaps="false"
-                android:text="Inregistrare" />
+                android:text="Vizualizare" />
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 
@@ -126,7 +126,7 @@ android:fitsSystemWindows="true">
                 android:padding="16dp"
                 android:background="@drawable/main_button_style"
                 android:textAllCaps="false"
-                android:text="Inregistrare"/>
+                android:text="Vizualizare"/>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 
