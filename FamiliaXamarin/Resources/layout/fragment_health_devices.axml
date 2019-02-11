@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="16dp">
-
-    <!-- TODO: Update blank fragment layout -->
-
-    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <android.support.v7.widget.CardView 
         android:id="@+id/card_view"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:padding="16dp"
-        card_view:cardCornerRadius="4dp"
-        card_view:cardBackgroundColor="@color/colorPrimaryDark"
-        card_view:layout_constraintLeft_toLeftOf="parent"
-        card_view:layout_constraintRight_toRightOf="parent"
-        card_view:layout_constraintTop_toTopOf="parent">
+        
+        app:cardCornerRadius="4dp"
+        app:cardBackgroundColor="@color/colorPrimaryDark">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
             <ImageView
                 android:id="@+id/image"
@@ -28,6 +25,7 @@
                 android:layout_height="60dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
+                android:tint="@color/accent"
                 android:src="@drawable/heart" />
 
             <TextView
@@ -37,6 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/image"
                 android:text="Tensiune arteriala"
+                android:textSize="18sp"
                 android:textAlignment="center" />
 
             <android.support.v7.widget.AppCompatButton
@@ -53,23 +52,20 @@
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 
-    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <android.support.v7.widget.CardView
         android:id="@+id/card_view1"
 
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:padding="16dp"
-        card_view:cardBackgroundColor="@color/colorPrimaryDark"
-        card_view:cardCornerRadius="4dp"
-        card_view:layout_constraintLeft_toLeftOf="parent"
-        card_view:layout_constraintRight_toRightOf="parent"
-        card_view:layout_constraintTop_toBottomOf="@+id/card_view">
+        app:cardBackgroundColor="@color/colorPrimaryDark"
+        app:cardCornerRadius="4dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
             <ImageView
                 android:id="@+id/imageGlucose"
@@ -77,6 +73,7 @@
                 android:layout_height="60dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
+                android:tint="@color/accent"
                 android:src="@drawable/water" />
 
             <TextView
@@ -86,6 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/imageGlucose"
                 android:text="Glicemie"
+                android:textSize="18sp"
                 android:textAlignment="center" />
 
             <android.support.v7.widget.AppCompatButton
@@ -105,23 +103,19 @@
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 
-    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <android.support.v7.widget.CardView
         android:id="@+id/card_view2"
-
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:padding="16dp"
-        card_view:cardCornerRadius="4dp"
-        card_view:cardBackgroundColor="@color/colorPrimaryDark"
-        card_view:layout_constraintLeft_toLeftOf="parent"
-        card_view:layout_constraintRight_toRightOf="parent"
-        card_view:layout_constraintTop_toBottomOf="@+id/card_view1">
+        app:cardCornerRadius="4dp"
+        app:cardBackgroundColor="@color/colorPrimaryDark">
 
         <RelativeLayout  
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
             <ImageView
                 android:id="@+id/imageWatch"
@@ -129,6 +123,7 @@
                 android:layout_height="60dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
+                android:tint="@color/accent"
                 android:src="@drawable/watch" />
 
             <TextView
@@ -137,10 +132,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/imageWatch"
-                android:text="SmartBand"
+                android:text="Bratara Fittness"
+                android:textSize="18sp"
                 android:textAlignment="center" />
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/SmartbandButton"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
@@ -155,4 +151,4 @@
                 android:text="Vizualizare" />
         </RelativeLayout>
     </android.support.v7.widget.CardView>
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

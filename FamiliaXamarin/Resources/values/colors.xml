@@ -6,11 +6,12 @@
   <color name="colorPrimaryDark">#122836</color>
   <color name="colorAccent">#1AB188</color>
   <color name="colorDanger">#FE3267</color>
-
+  <color name="accent">#FF783F</color>
+  
   <color name="primary">#9F0E20</color>
   <color name="primary_dark">#E12929</color>
   <color name="primary_darker">#CC1D1D</color>
-  <color name="accent">#9F0E20</color>
+
   <color name="customBG">#F5F7FA</color>
   <color name="customDark">#3c3c3c</color>
   <color name="black">#000000</color>
