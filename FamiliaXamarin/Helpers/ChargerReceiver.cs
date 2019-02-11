@@ -21,15 +21,14 @@ namespace FamiliaXamarin.Helpers
         private SQLiteAsyncConnection _db;
         public override async void OnReceive(Context context, Intent intent)
         {
-           // Toast.MakeText(context, "IT IS WORKING", ToastLength.Long).Show();
             var action = intent.Action;
-            if (action == null || !action.Equals(Intent.ActionPowerConnected)) return;
+            if (action == null || !action.Equals(Intent.ActionHeadsetPlug)) return;
             var path =
                 System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var numeDB = "devices_data.db";
             _db = new SQLiteAsyncConnection(Path.Combine(path, numeDB));
             await _db.CreateTableAsync<DeviceConfigRecords>();
-            Log.Error("PPP", "Received action headset plug");
+           // Log.Error("PPPAAAAAAAAAAAAAAAAAA", "Received action headset plug");
 
             await Task.Run(async () =>
             {
@@ -39,8 +38,8 @@ namespace FamiliaXamarin.Helpers
                 var intervalBloodPressure = bloodPressure.GetString("interval");
                 var bloodGlucose = obj.GetJSONObject("bloodGlucose");
                 var intervalGlucose = bloodGlucose.GetString("interval");
-                Log.Error("INTERVAL_BLOOD_PRESSURE", intervalBloodPressure);
-                Log.Error("INTERVAL_GLUCOSE", intervalGlucose);
+               // Log.Error("INTERVAL_BLOOD_PRESSURE", intervalBloodPressure);
+               // Log.Error("INTERVAL_GLUCOSE", intervalGlucose);
 
                 AddDeviceConfig(_db, intervalBloodPressure, intervalGlucose);
 
@@ -52,23 +51,35 @@ namespace FamiliaXamarin.Helpers
         private static void LaunchAlarm(Context context, string interval, string content)
         {
             //=int.Parse(interval) * 60000
+            
             if (int.TryParse(interval,  out var intervalMilisec))
                 intervalMilisec *= 60000;
             else
                 intervalMilisec = 60000;
+            
+           //for test
+           //intervalMilisec = 60000;
+           
+            
             var am = (AlarmManager) context.GetSystemService(Context.AlarmService);
             var i = new Intent(context, typeof(AlarmDeviceReceiver));
             i.PutExtra(AlarmDeviceReceiver.INTERVAL_CONTENT, content);
             i.PutExtra("IntervalMilis", interval);
-            var random = new Random();
-            var id = (DateTime.UtcNow).Millisecond * random.Next();
-            var pi = PendingIntent.GetBroadcast(context, id, i, PendingIntentFlags.OneShot);
+            PendingIntent pi;
+            if (content.Equals("INTERVAL_GLUCOSE"))
+            {
+                pi = PendingIntent.GetBroadcast(context, Constants.GlucoseNotifId, i, PendingIntentFlags.UpdateCurrent);
+            }
+            else
+            {
+                pi = PendingIntent.GetBroadcast(context, Constants.BloodPressureNotifId, i, PendingIntentFlags.UpdateCurrent);
+            }
+
+
 
             am?.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup,
                 SystemClock.ElapsedRealtime() + intervalMilisec, intervalMilisec , pi);
-          //  Toast.MakeText(context, intervalMilisec, ToastLength.Short);
-
-
+         
         }
 
 
