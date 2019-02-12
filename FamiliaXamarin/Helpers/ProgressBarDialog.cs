@@ -59,8 +59,6 @@ namespace FamiliaXamarin.Helpers
             builder.SetCancelable(cancelable);
             _dialog = builder.Create();
             Window = _dialog.Window;
-            
-
         }
         
         

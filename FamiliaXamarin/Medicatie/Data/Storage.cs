@@ -97,13 +97,20 @@ namespace FamiliaXamarin.Medicatie.Data
 
         public void SaveCurrentData(Context context)
         {
+            File file = new File(context.FilesDir, Constants.MedicationFile);
             JSONArray data = new JSONArray();
+
+            if (DiseaseList.Count == 0)
+            {
+                file.Delete();
+                file = new File(context.FilesDir, Constants.MedicationFile);
+            }
+            
             for (int i = 0; i < DiseaseList.Count; i++)
             {
                 data.Put(CreateJsonObject(DiseaseList[i]));
             }
-
-            File file = new File(context.FilesDir, Constants.MedicationFile);
+          
             try
             {
                 FileWriter fileWriter = new FileWriter(file);

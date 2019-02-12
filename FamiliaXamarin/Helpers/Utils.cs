@@ -31,7 +31,6 @@ namespace FamiliaXamarin.Helpers
     public static class Utils
     {
         public static bool util = false;
-        static NotificationManager _notificationManager;
         public static bool IsActivityRunning(Class activityClass)
         {
             ActivityManager activityManager = (ActivityManager)Application.Context.GetSystemService(Context.ActivityService);
@@ -45,6 +44,19 @@ namespace FamiliaXamarin.Helpers
             }
 
             return false;
+        }
+        
+        public static void CloseRunningActivity(Type activityType)
+        {
+            ActivityManager activityManager = (ActivityManager)Application.Context.GetSystemService(Context.ActivityService);
+            //var tasks = activityManager.GetRunningTasks(Integer.MaxValue);
+            var tasks = activityManager.AppTasks;
+
+            foreach (var task in tasks)
+            {
+                if (Class.FromType(activityType).CanonicalName.Equals(task.TaskInfo.BaseActivity.ClassName))
+                    task.FinishAndRemoveTask();
+            }
         }
 
         public static void SetDefaults(string key, string value, Context context)
@@ -145,7 +157,7 @@ namespace FamiliaXamarin.Helpers
                 string email = GetDefaults("Email", ctx);
 
 
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
                 string genDateTime = sdf.Format(new Date());
                 Date d1 = sdf.Parse(genDateTime);
@@ -232,8 +244,7 @@ namespace FamiliaXamarin.Helpers
 
         public static NotificationManager GetManager()
         {
-            return _notificationManager ??
-                   (_notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService));
+            return (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
         }
         /// <summary>
         /// Create Android Channel Notification for chat service
@@ -249,7 +260,7 @@ namespace FamiliaXamarin.Helpers
             string room, Context ctx, int type = 0, string buttonTitle = "Converseaza")
         {
             var chatActivityAcceptedIntent = new Intent(Application.Context, typeof(ChatActivity));
-            var chatActivityRejectedIntent = new Intent(Application.Context, typeof(ChatActivity));
+            var chatActivityRejectedIntent = new Intent(Application.Context, typeof(RejectChatBroadcastReceiver));
 
             chatActivityAcceptedIntent.AddFlags(ActivityFlags.ClearTop);
             chatActivityRejectedIntent.AddFlags(ActivityFlags.ClearTop);
@@ -269,13 +280,15 @@ namespace FamiliaXamarin.Helpers
                     //Notificare daca vrea sa vorbeasca cu celalat user
                     chatActivityAcceptedIntent.PutExtra("AcceptClick", true);
                     chatActivityRejectedIntent.PutExtra("RejectClick", true);
-                    var stackBuilderAccept = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
+                    var stackBuilderAccept = Android.Support.V4.App.TaskStackBuilder.Create(Application.Context);
+                   
                     stackBuilderAccept.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
+                   
                     // Get the PendingIntent containing the entire back stack
-                    var acceptIntent = stackBuilderAccept.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
+                    var acceptIntent = stackBuilderAccept.GetPendingIntent(DateTime.Now.Millisecond, (int)PendingIntentFlags.OneShot);
 
-                    // var acceptIntent = PendingIntent.GetActivity(Application.Context, 1, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
-                    var rejectIntent = PendingIntent.GetActivity(Application.Context, 2, chatActivityRejectedIntent, PendingIntentFlags.OneShot);
+                     var rejectIntent = PendingIntent.GetBroadcast(Application.Context, DateTime.Now.Millisecond, chatActivityRejectedIntent, PendingIntentFlags.OneShot);
+                    //var rejectIntent = stackBuilderReject.Get(2, (int)PendingIntentFlags.OneShot);
 
 //                    var stackBuilderReject = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
 //                    stackBuilderReject.AddNextIntentWithParentStack(chatActivityRejectedIntent);
@@ -309,7 +322,7 @@ namespace FamiliaXamarin.Helpers
                     stackBuilder.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
 
                    // var acceptIntent1 = PendingIntent.GetActivity(Application.Context, 3, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
-                    var acceptIntent1 = stackBuilder.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
+                    var acceptIntent1 = stackBuilder.GetPendingIntent(DateTime.Now.Millisecond, (int)PendingIntentFlags.OneShot);
 
 
                     return new NotificationCompat.Builder(Application.Context, email)
@@ -326,13 +339,13 @@ namespace FamiliaXamarin.Helpers
                             .Build();
                 case 3:
                     //Notificare pentru mesaj
-                    chatActivityAcceptedIntent.PutExtra("NewMessage", body);
-
+                    //chatActivityAcceptedIntent.PutExtra("NewMessage", body);
+                    ChatActivity.Messages.Add(new MessagesModel(){Room = room, Message = body});
                     var stackBuilderIntent2 = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
                     stackBuilderIntent2.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
 
                    // var acceptIntent2 = PendingIntent.GetActivity(Application.Context, 4, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
-                    var acceptIntent2 = stackBuilderIntent2.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
+                    var acceptIntent2 = stackBuilderIntent2.GetPendingIntent(DateTime.Now.Millisecond, (int)PendingIntentFlags.OneShot);
 
                     return new NotificationCompat.Builder(Application.Context, title)
                             .SetContentTitle(title)
@@ -350,102 +363,6 @@ namespace FamiliaXamarin.Helpers
             }
 
             return null;
-        }
-        public static NotificationCompat.Builder GetAndroidChannelNotification(string title, string body, string buttonTitle, int type, Context context, string room)
-        {
-            var intent = new Intent(context, typeof(ChatActivity));
-            var rejectintent = new Intent(context, typeof(ChatActivity));
-
-            switch (type)
-            {
-                //1 => request
-                //2 => accept
-                //3 => message
-                case 1:
-
-                    intent.PutExtra("AcceptClick", true);
-                    intent.PutExtra("EmailFrom", body.Replace(" doreste sa ia legatura cu tine!", ""));
-                    intent.PutExtra("Room", room);
-                    intent.AddFlags(ActivityFlags.ClearTop);
-                    rejectintent.PutExtra("RejectClick", true);
-                    var acceptIntent = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
-                    var rejectIntent = PendingIntent.GetActivity(context, 1, rejectintent, PendingIntentFlags.OneShot);
-
-                        
-
-                    break;
-
-                case 2:
-                    intent.AddFlags(ActivityFlags.ClearTop);
-                    intent.PutExtra("Room", room);
-                    intent.PutExtra("EmailFrom", body.Replace(" ti-a acceptat cererea de chat!", ""));
-
-                    var acceptIntent1 = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
-
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                    {
-
-                        return new NotificationCompat.Builder(context, body.Replace(" ti-a acceptat cererea de chat!", ""))
-                            .SetContentTitle(title)
-                            .SetContentText(body)
-                            .SetSmallIcon(Resource.Drawable.logo)
-                            .SetStyle(new NotificationCompat.BigTextStyle()
-                                .BigText(body))
-                            .SetPriority(NotificationCompat.PriorityDefault)
-                            .SetContentIntent(acceptIntent1)
-                            .SetOngoing(false)
-                            .SetAutoCancel(true)
-                            .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent1);
-                    }
-
-
-                    break;
-                case 3:
-                    intent.AddFlags(ActivityFlags.ClearTop);
-                    intent.PutExtra("Room", room);
-                    intent.PutExtra("NewMessage", body);
-                    intent.PutExtra("EmailFrom", title);
-
-                    var acceptIntent2 = PendingIntent.GetActivity(context, 1, intent, PendingIntentFlags.OneShot);
-
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                    {
-
-                        return new NotificationCompat.Builder(context, title)
-                            .SetContentTitle(title)
-                            .SetContentText(body)
-                            .SetSmallIcon(Resource.Drawable.logo)
-                            .SetStyle(new NotificationCompat.BigTextStyle()
-                            .BigText(body))
-                            .SetOngoing(false)
-                            .SetPriority(NotificationCompat.PriorityDefault)
-                            .SetContentIntent(acceptIntent2)
-                            .SetAutoCancel(true)
-                            .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent2);
-                    }
-                    break;
-
-            }
-
-            return null;
-        }
-
-        public static void CreateNotificationChannel()
-        {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
-                return;
-            string name = Constants.ChannelId;
-            string description = "my channel desc";
-            using (var channel = new NotificationChannel(Constants.ChannelId, name, NotificationImportance.Default)
-            {
-                Description = description
-            })
-            {
-                // Register the channel with the system; you can't change the importance
-                // or other notification behaviors after this
-                var notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
-                notificationManager.CreateNotificationChannel(channel);
-            }
         }
 
         public static bool CheckNetworkAvailability()

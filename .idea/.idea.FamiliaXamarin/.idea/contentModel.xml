@@ -58,6 +58,7 @@
           <e p="DatePickerFragment.cs" t="Include" />
           <e p="FingerprintHandler.cs" t="Include" />
           <e p="ProgressBarDialog.cs" t="Include" />
+          <e p="RejectChatBroadcastReceiver.cs" t="Include" />
           <e p="SharingDatePickerFragment.cs" t="Include" />
           <e p="Utils.cs" t="Include" />
         </e>
@@ -127,6 +128,7 @@
             <e p="calendar.xml" t="Include" />
             <e p="calendar_date.xml" t="Include" />
             <e p="calendar_multiselect.xml" t="Include" />
+            <e p="card.png" t="Include" />
             <e p="chevron_left.xml" t="Include" />
             <e p="chevron_right.xml" t="Include" />
             <e p="close.xml" t="Include" />
@@ -333,6 +335,7 @@
           </e>
           <e p="xml" t="Include">
             <e p="file_paths.xml" t="Include" />
+            <e p="network_security_config.xml" t="Include" />
           </e>
         </e>
         <e p="Services" t="Include">

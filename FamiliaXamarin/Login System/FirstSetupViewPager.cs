@@ -14,7 +14,9 @@ namespace FamiliaXamarin.Login_System
     public class FirstSetupViewPager : ViewPager, View.IOnTouchListener
     {
         bool _enabled;
-        protected FirstSetupViewPager(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
+
+        protected FirstSetupViewPager(IntPtr javaReference, JniHandleOwnership transfer) : base(
+            javaReference, transfer)
         {
         }
 
@@ -28,7 +30,7 @@ namespace FamiliaXamarin.Login_System
             SetMyScroller();
         }
 
-       
+
         public override bool OnInterceptTouchEvent(MotionEvent ev)
         {
             // Never allow swiping to switch between pages
@@ -44,12 +46,12 @@ namespace FamiliaXamarin.Login_System
         {
             _enabled = enabled;
         }
+
         void SetMyScroller()
         {
             try
             {
                 var viewpager = Class.FromType(typeof(ViewPager));
-
 
 
                 var scroller = viewpager.GetDeclaredField("mScroller");
@@ -67,7 +69,6 @@ namespace FamiliaXamarin.Login_System
         {
             public MyScroller(Context context) : base(context, new DecelerateInterpolator())
             {
-
             }
 
             public override void StartScroll(int startX, int startY, int dx, int dy, int duration)
@@ -75,8 +76,5 @@ namespace FamiliaXamarin.Login_System
                 base.StartScroll(startX, startY, dx, dy, 350 /*1 secs*/);
             }
         }
-
-
     }
-
 }
