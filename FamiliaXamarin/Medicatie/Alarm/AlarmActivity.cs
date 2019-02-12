@@ -55,12 +55,12 @@ namespace FamiliaXamarin.Medicatie.Alarm
                                  WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn, WindowManagerFlags.Fullscreen | WindowManagerFlags.DismissKeyguard |
                                                                                                       WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn);
 
-            if (Utils.util)
-            {
-                Utils.util = false;
-                Finish();
-                
-            }
+//            if (Utils.util)
+//            {
+//                Utils.util = false;
+//                Finish();
+//                
+//            }
             
             SetContentView(Resource.Layout.activity_alarm);
             
@@ -111,27 +111,26 @@ namespace FamiliaXamarin.Medicatie.Alarm
         private void LaunchSnoozeAlarm()
         {
             int snoozeInMinutes;
-            bool a = int.TryParse(Utils.GetDefaults("snooze", this), out snoozeInMinutes);
-            if (a)
+           // bool a = int.TryParse(Utils.GetDefaults("snooze", this), out snoozeInMinutes);
+            if (int.TryParse(Utils.GetDefaults("snooze", this), out snoozeInMinutes))
                 snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze", this));
             else
                 snoozeInMinutes = 5;
 
-//            var snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze", this));
-//            if (snoozeInMinutes == null)
-//            {
-//                snoozeInMinutes = 5;
-//            }
             var snoozeInMilisec = snoozeInMinutes * 60000;
+            
             Toast.MakeText(this, "Alarma amanata pentru " + snoozeInMinutes + " minute.", ToastLength.Short).Show();
-            //btnOk.Visibility = ViewStates.Gone;
+            
             var am = (AlarmManager) GetSystemService(AlarmService);
+            
             var i = new Intent(this, typeof(AlarmBroadcastReceiver));
+            i.AddFlags(ActivityFlags.ClearTop);
             i.PutExtra(DiseaseActivity.BOALA_ID, mBoala.Id);
             i.PutExtra(DiseaseActivity.MED_ID, mMed.IdMed);
             i.PutExtra(DiseaseActivity.ALARM_ID, mIdAlarm);
             i.SetFlags(ActivityFlags.NewTask);
-            SendBroadcast(i);
+            
+            //SendBroadcast(i);
             var pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
            
 
@@ -141,7 +140,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     AlarmManager.IntervalDay, pi);
             }
 
-            Utils.util = true;
+           // Utils.util = true;
         }
     }
 }

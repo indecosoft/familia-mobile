@@ -36,14 +36,17 @@ namespace FamiliaXamarin.Medicatie
             setupRecycleView(view);
 
             GetData();
-
+            
             var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var numeDB = "devices_data.db";
             _db = new SQLiteConnection(Path.Combine(path, numeDB));
             _db.CreateTable<MedicineRecords>();
+            
+          
 
             return view;
         }
+
 
         private async void GetData()
         {

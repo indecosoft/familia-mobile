@@ -4202,8 +4202,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0e013f
 			public const int btn_nu_delete_medicament = 2131624255;
 			
-			// aapt resource value: 0x7f0e00c0
-			public const int btn_ok_alarm = 2131624128;
+			// aapt resource value: 0x7f0e00c1
+			public const int btn_ok_alarm = 2131624129;
 			
 			// aapt resource value: 0x7f0e00e2
 			public const int btn_register = 2131624162;
@@ -4217,8 +4217,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0e017c
 			public const int btn_scanQR = 2131624316;
 			
-			// aapt resource value: 0x7f0e00c1
-			public const int btn_snooze_alarm = 2131624129;
+			// aapt resource value: 0x7f0e00c0
+			public const int btn_snooze_alarm = 2131624128;
 			
 			// aapt resource value: 0x7f0e00d3
 			public const int btn_update = 2131624147;
