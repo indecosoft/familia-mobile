@@ -7,24 +7,24 @@
     android:fitsSystemWindows="true">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:fitsSystemWindows="false">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#E6E6E6"
             android:theme="@style/AppTheme.AppBarOverlay">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                style="@style/HeaderBar"
+                style="@style/SharingBar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/ActionBarPopupThemeOverlay"
-                app:theme="@style/ActionBarThemeOverlay" />
-
+                app:popupTheme="@style/ActionBarThemeOverlayDark"
+                app:theme="@style/ActionBarThemeOverlayDark" />
         </android.support.design.widget.AppBarLayout>
     </android.support.constraint.ConstraintLayout>
 

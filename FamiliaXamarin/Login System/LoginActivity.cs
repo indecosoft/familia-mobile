@@ -141,6 +141,7 @@ namespace FamiliaXamarin.Login_System
         {
             base.OnCreate(savedInstanceState);
             InitLogin();
+            
         }
 
 

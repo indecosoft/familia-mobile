@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:keepScreenOn="true"
-    android:background="#ffffff">
+    android:keepScreenOn="true">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animation_view"
@@ -22,7 +21,7 @@
         android:id="@+id/rl_alarm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -34,14 +33,10 @@
             android:id="@+id/tv_label_med_alarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
             android:text="Trebuie sa-ti iei medicamentul:"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black" />
-
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/tv_med_name_alarm"
@@ -53,31 +48,38 @@
             android:text="sdgdf"
             android:textAlignment="center"
             android:layout_marginTop="30dp"
-            android:textColor="@android:color/black" />
-        <Button
-            android:id="@+id/btn_ok_alarm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_med_name_alarm"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/button_style"
-            android:text="Am luat"
-            android:padding="15dp"
-            android:textColor="@android:color/white" />
+            android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btn_snooze_alarm"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_med_name_alarm"
-            android:layout_marginEnd="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/snooze_button"
-            android:text="Mai tarziu"
-            android:padding="15dp"
-            android:textColor="@color/customDark" />
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp">
+
+            <Button
+                android:id="@+id/btn_snooze_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_med_name_alarm"
+                android:layout_marginEnd="5dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/secondary_button_style"
+                android:text="Mai tarziu"
+                android:padding="16dp" />
+
+            <Button
+                android:id="@+id/btn_ok_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/main_button_style"
+                android:text="Am luat"
+                android:padding="16dp" />
+
+
+        </LinearLayout>
+        
 
     </RelativeLayout>
 
