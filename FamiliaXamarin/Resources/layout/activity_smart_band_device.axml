@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
-    android:background="#E6E6E6"
+    
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -24,17 +23,15 @@
             <android.support.design.widget.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#E6E6E6"
                 android:theme="@style/AppTheme.AppBarOverlay">
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
-                    style="@style/DevicesBar"
+                    style="@style/SharingBar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    app:popupTheme="@style/ActionBarPopupThemeOverlay"
-                    app:theme="@style/ActionBarThemeOverlay" />
-
+                    app:popupTheme="@style/ActionBarThemeOverlayDark"
+                    app:theme="@style/ActionBarThemeOverlayDark" />
             </android.support.design.widget.AppBarLayout>
         </android.support.constraint.ConstraintLayout>
 
@@ -42,7 +39,6 @@
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:padding="10dp"
-            android:background="#E6E6E6"
 
             android:layout_height="wrap_content">
 
@@ -64,8 +60,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="10dp"
                 android:text="--"
-
-                android:textColor="@color/customDark"
+                
                 app:layout_constraintLeft_toRightOf="@+id/FitBitprofileImage"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/FitBitprofileImage"
@@ -79,8 +74,6 @@
                 android:layout_marginTop="2dp"
 
                 android:text="---"
-
-                android:textColor="#90A4AE"
                 app:layout_constraintLeft_toRightOf="@+id/FitBitprofileImage"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/FitBitprofileImage"
@@ -96,8 +89,6 @@
                 android:padding="3dp"
                 android:text="-- min"
                 android:textAlignment="center"
-
-                android:textColor="#fff"
                 app:layout_constraintLeft_toRightOf="@+id/FitBitprofileImage"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/FitBitprofileImage"
@@ -108,14 +99,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="20dp"
-            android:background="#E6E6E6"
             app:layout_constraintTop_toBottomOf="@+id/header">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                <android.support.v7.widget.CardView 
                     android:id="@+id/card_view"
 
                     android:layout_width="0dp"
@@ -124,12 +114,13 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="10dp"
-                    card_view:cardCornerRadius="4dp"
+                    app:cardCornerRadius="4dp"
+                    app:cardBackgroundColor="@color/colorPrimaryDark"
 
-                    card_view:layout_constrainedWidth="true"
-                    card_view:layout_constraintLeft_toLeftOf="parent"
-                    card_view:layout_constraintRight_toRightOf="parent"
-                    card_view:layout_constraintTop_toTopOf="parent">
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -164,7 +155,6 @@
                             android:text="--"
                             android:padding="3dp"
                             android:background="@drawable/fitbit_activity_badge"
-                            android:textColor="#FFF"
                             android:textSize="16sp"
                             android:textAlignment="center" />
 
@@ -179,21 +169,21 @@
 
                 </android.support.v7.widget.CardView>
 
-                <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                <android.support.v7.widget.CardView
                     android:id="@+id/card_view2"
-                    android:background="#FAFAFA"
                     android:layout_width="0dp"
                     android:layout_height="160dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="10dp"
-                    card_view:cardCornerRadius="4dp"
+                    app:cardCornerRadius="4dp"
+                    app:cardBackgroundColor="@color/colorPrimaryDark"
 
-                    card_view:layout_constrainedWidth="true"
-                    card_view:layout_constraintLeft_toLeftOf="parent"
-                    card_view:layout_constraintRight_toRightOf="parent"
-                    card_view:layout_constraintTop_toBottomOf="@+id/card_view">
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/card_view">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -228,7 +218,6 @@
                             android:padding="3dp"
                             android:text="-- hr -- min"
                             android:background="@drawable/fitbit_sleep_badge"
-                            android:textColor="#FFF"
                             android:textSize="16sp"
                             android:textAlignment="center" />
 
@@ -243,20 +232,20 @@
 
                 </android.support.v7.widget.CardView>
 
-                <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                <android.support.v7.widget.CardView
                     android:id="@+id/card_view3"
-                    android:background="#FAFAFA"
                     android:layout_width="0dp"
                     android:layout_height="160dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="10dp"
-                    card_view:cardCornerRadius="4dp"
+                    app:cardCornerRadius="4dp"
+                    app:cardBackgroundColor="@color/colorPrimaryDark"
 
-                    card_view:layout_constraintLeft_toLeftOf="parent"
-                    card_view:layout_constraintRight_toRightOf="parent"
-                    card_view:layout_constraintTop_toBottomOf="@+id/card_view2">
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/card_view2">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -291,7 +280,6 @@
                             android:text="-- bpm"
                             android:padding="3dp"
                             android:background="@drawable/fitbit_bpm_badge"
-                            android:textColor="#FFF"
                             android:textSize="16sp"
                             android:textAlignment="center" />
 
@@ -308,29 +296,7 @@
 
             </android.support.constraint.ConstraintLayout>
         </ScrollView>
-        <!--<TextView-->
-        <!--android:id="@+id/textView"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content" />-->
 
-        <!--<TextView-->
-        <!--android:id="@+id/textView2"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/textView"-->
-        <!--app:layout_constraintBottom_toBottomOf="@+id/getPulseBtn"/>-->
-
-
-        <!--<Button-->
-        <!--android:id="@+id/getPulseBtn"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:text="Get Data"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintLeft_toLeftOf="parent"-->
-        <!--app:layout_constraintRight_toRightOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent"-->
-        <!--app:layout_constraintVertical_bias="1.0" />-->
 
     </LinearLayout>
 
@@ -338,13 +304,12 @@
         android:id="@+id/loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FAFAFA">
+        android:background="@color/colorPrimary">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animation_view"
             android:layout_width="240dp"
             android:layout_height="140dp"
-
             app:layout_constraintBottom_toBottomOf="parent"
 
             app:layout_constraintHorizontal_bias="0.5"
@@ -360,7 +325,6 @@
             android:id="@+id/lbMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/customDark"
             android:text="Va rugam asteptati"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
