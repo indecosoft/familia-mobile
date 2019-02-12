@@ -47,9 +47,15 @@ namespace FamiliaXamarin.Chat
                               {
                                   Console.WriteLine(e.Message);
                               }
-
+                          if (_cardStackView.TopIndex == _people.Count) return;
+                          _rightButton.Enabled = false;
+                          _leftButton.Enabled = false;
+                          _cardStackView.Enabled = false;
+                          _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                          _cardStackView.SetAdapter(_adapter);
+                          _animationView.PlayAnimation();
                           }
-                          else if (_people.Count == 0)
+                          else if (_cardStackView.TopIndex == _people.Count)
                           {
                               _rightButton.Enabled = false;
                               _leftButton.Enabled = false;
@@ -58,14 +64,6 @@ namespace FamiliaXamarin.Chat
                               _cardStackView.SetAdapter(_adapter);
                               _animationView.PlayAnimation();
                           }
-
-                          if (_cardStackView.TopIndex != _people.Count) return;
-                          _rightButton.Enabled = false;
-                          _leftButton.Enabled = false;
-                          _cardStackView.Enabled = false;
-                          _lbNobody.Text = "Nimeni nu se afla in jurul tau";
-                          _cardStackView.SetAdapter(_adapter);
-                          _animationView.PlayAnimation();
 
                       };
 
@@ -95,61 +93,10 @@ namespace FamiliaXamarin.Chat
                         {
                             for (var i = 0; i < nearMe.Length(); i++)
                             {
-                                var imageId = r.Next(1, 10);
-                                var nearMeObj = (JSONObject)(nearMe.Get(i));
-                                switch (imageId)
-                                {
-                                    case 1:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            string.Empty, nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_1));
-                                        break;
-                                    case 2:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            string.Empty, nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_2));
-                                        break;
-                                    case 3:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            string.Empty, nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_3));
-                                        break;
-                                    case 4:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            string.Empty, nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_4));
-                                        break;
-                                    case 5:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            string.Empty, nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_5));
-                                        break;
-                                    case 6:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            string.Empty, nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_6));
-                                        break;
-                                    case 7:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            string.Empty, nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_7));
-                                        break;
-                                    case 8:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            string.Empty, nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_8));
-                                        break;
-                                    case 9:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            string.Empty, nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_9));
-                                        break;
-                                    case 10:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            string.Empty, nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_10));
-                                        break;
-                                }
+                                var nearMeObj = (JSONObject)nearMe.Get(i);
+                                _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
+                                    string.Empty, nearMeObj.GetString("avatar"),
+                                    Resource.Drawable.card));
                             }
                         }
 

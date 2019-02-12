@@ -83,6 +83,12 @@ namespace FamiliaXamarin.Services
                 await _fusedLocationProviderClient.RemoveLocationUpdatesAsync(_locationCallback);
             }
         }
+
+        public override void OnDestroy()
+        {
+            StopRequestionLocationUpdates();
+        }
+
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
 
