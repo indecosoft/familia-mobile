@@ -51,7 +51,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            this.Window.SetFlags(WindowManagerFlags.Fullscreen | WindowManagerFlags.DismissKeyguard |
+            Window.SetFlags(WindowManagerFlags.Fullscreen | WindowManagerFlags.DismissKeyguard |
                                  WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn, WindowManagerFlags.Fullscreen | WindowManagerFlags.DismissKeyguard |
                                                                                                       WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn);
 
@@ -61,7 +61,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 Finish();
                 
             }
+            
             SetContentView(Resource.Layout.activity_alarm);
+            
             tvMedName = FindViewById<TextView>(Resource.Id.tv_med_name_alarm);
             btnOk = FindViewById<Button>(Resource.Id.btn_ok_alarm);
             btnOk.SetOnClickListener(this);
@@ -69,6 +71,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
             btnSnooze.SetOnClickListener(this);
             btnSnooze.Visibility = ViewStates.Visible;
             btnOk.Visibility = ViewStates.Visible;
+            
             Intent intent = Intent;
             boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
             medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
@@ -94,6 +97,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     //btnSnooze.Visibility = ViewStates.Gone;
                     //OnBackPressed();
                     Finish();
+                    
                     break;
                 case Resource.Id.btn_snooze_alarm:
                     LaunchSnoozeAlarm();

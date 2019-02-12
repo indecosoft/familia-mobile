@@ -12,6 +12,7 @@ using Java.Lang;
 using Java.Util;
 using Calendar = Java.Util.Calendar;
 using Exception = Java.Lang.Exception;
+using Process = Android.OS.Process;
 
 namespace FamiliaXamarin.Medicatie.Alarm
 {
@@ -39,72 +40,24 @@ namespace FamiliaXamarin.Medicatie.Alarm
             _mHour = _mMed.FindHourById(hourId);
             Log.Error("MEDICAMENT_RECEIVER",_mMed.Name);
             
-            LaunchAlarm(context, intent, medId, boalaId);
-            
-//            if (_mMed.NumberOfDays != 0)
-//            {
-//                try
-//                {
-//                    var hourString = _mHour.HourName;
-//                    var parts = hourString.Split(':');
-//                    var timeHour = Convert.ToInt32(parts[0]);
-//                    var timeMinute = Convert.ToInt32(parts[1]);
-//                    /*var calendar = Calendar.Instance;
-//                    var setCalendar = Calendar.Instance;*/
-//                    
-//                    /*setCalendar.Set(CalendarField.HourOfDay, timeHour);
-//                    setCalendar.Set(CalendarField.Minute, timeMinute);
-//                    setCalendar.Set(CalendarField.Second, 0);
-//                    */
-//
-//                    var date = DateTime.Parse(_mMed.Date);
-////                    parts = dateString.Split('.');
-////                    var day = Convert.ToInt32(parts[0]);
-////                    var month = Convert.ToInt32(parts[1]) - 1;
-////                    var year = Convert.ToInt32(parts[2]);
-//
-//
-//                    /*setCalendar.Set(CalendarField.Year, year);
-//                    setCalendar.Set(CalendarField.Month, month);
-//                    setCalendar.Set(CalendarField.DayOfMonth, day);
-//
-//
-//                    setCalendar.Add(CalendarField.Date, _mMed.NumberOfDays);*/
-//
-//                    var setDt = new DateTime(date.Year, date.Month, date.Day,timeHour,timeMinute,0).AddDays(_mMed.NumberOfDays);
-//                    //if( DateTime.Compare(setDt,DateTime.Now) == 0)
-//                        LaunchAlarm(context, intent, medId, boalaId);
-//
-//                    /*if (setCalendar.After(calendar))
-//                    {
-//
-//                        LaunchAlarm(context, intent, medId, boalaId);
-//                    }*/
-//                }
-//                catch (Exception e)
-//                {
-//                    Log.Error("ERROOOOR", e.ToString());
-//
-//                }
-//            }
-           // else
-           // {
-            //    LaunchAlarm(context, intent, medId, boalaId);
-           // }
+            LaunchAlarm(context, medId, boalaId);
+
         }
 
        
 
-        private void LaunchAlarm(Context context, Intent intent, string medId, string boalaId)
+        private void LaunchAlarm(Context context, string medId, string boalaId)
         {
-           
+                Process.KillProcess(Process.MyPid());
                 var i = new Intent(context, typeof(AlarmActivity));
                // var intentNotification = new Intent(context, typeof(MedicineFragment));
                 //context.startActivity(new Intent(context, AlarmActivity.class));
                 i.PutExtra(DiseaseActivity.MED_ID, medId);
                 i.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
                 i.SetFlags(ActivityFlags.NewTask);
+                //i.AddCategory(Intent.CategoryHome);
                 context.StartActivity(i);
+                
         }
     }
 }
