@@ -46,7 +46,7 @@ namespace FamiliaXamarin.Services
                     StartForeground(ServiceRunningNotificationId, notification);
                 }
                 var charger = new ChargerReceiver();
-                RegisterReceiver(charger, new IntentFilter(Intent.ActionPowerConnected));
+                RegisterReceiver(charger, new IntentFilter(Intent.ActionHeadsetPlug));
 
                 _socketClient.Connect(Constants.WebSocketAddress, Constants.WebSocketPort, this);
             }
