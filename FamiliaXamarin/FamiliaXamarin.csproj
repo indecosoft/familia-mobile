@@ -68,6 +68,7 @@
     <Compile Include="Helpers\ChargerReceiver.cs" />
     <Compile Include="Helpers\FingerprintHandler.cs" />
     <Compile Include="Helpers\ProgressBarDialog.cs" />
+    <Compile Include="Helpers\RejectChatBroadcastReceiver.cs" />
     <Compile Include="Helpers\SharingDatePickerFragment.cs" />
     <Compile Include="JsonModels\ConverstionsModel.cs" />
     <Compile Include="JsonModels\DiseaseModel.cs" />
@@ -228,20 +229,11 @@
     <PackageReference Include="Refractored.Controls.CircleImageView">
       <Version>1.0.1</Version>
     </PackageReference>
-    <PackageReference Include="SkiaSharp">
-      <Version>1.68.0</Version>
-    </PackageReference>
     <PackageReference Include="Socket.IO.Client">
       <Version>1.0.0</Version>
     </PackageReference>
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.5.231</Version>
-    </PackageReference>
-    <PackageReference Include="Square.Picasso">
-      <Version>2.5.2.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xam.Plugin.Media">
-      <Version>4.0.1.5</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Constraint.Layout">
       <Version>1.1.2</Version>
@@ -588,13 +580,13 @@
     <AndroidResource Include="Resources\layout\item_boala.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\custom_dialog_delete_boala.xml" />
+    <AndroidResource Include="Resources\layout\custom_dialog_delete_boala.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\custom_dialog.xml" />
+    <AndroidResource Include="Resources\layout\custom_dialog.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\custom_dialog_delete_medicament.xml" />
+    <AndroidResource Include="Resources\layout\custom_dialog_delete_medicament.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\fragment_medicine.axml">
@@ -607,10 +599,10 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\item_hour.xml" />
+    <AndroidResource Include="Resources\layout\item_hour.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\item_med.xml" />
+    <AndroidResource Include="Resources\layout\item_med.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_alarm.axml">
@@ -787,6 +779,21 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\trash.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\plus.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\medical_bag.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\calendar_multiselect.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\network_security_config.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\card.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

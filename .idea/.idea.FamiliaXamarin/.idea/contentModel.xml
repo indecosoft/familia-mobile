@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Familia" t="IncludeFlat">
+      <e p="FamiliaXamarin" t="IncludeRecursive">
+        <e p="Active Conversations" t="Include">
+          <e p="ConvAdapter.cs" t="Include" />
+          <e p="ConversationsFragment.cs" t="Include" />
+        </e>
+        <e p="Asistenta sociala" t="Include">
+          <e p="AsistentForm.cs" t="Include" />
+          <e p="BenefitAdapter.cs" t="Include" />
+          <e p="BenefitSpinnerState.cs" t="Include" />
+          <e p="QrCodeGenerator.cs" t="Include" />
+        </e>
+        <e p="Assets" t="Include">
+          <e p="AboutAssets.txt" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Chat" t="Include">
+          <e p="ChatActivity.cs" t="Include" />
+          <e p="ChatAdapter.cs" t="Include" />
+          <e p="ChatModel.cs" t="Include" />
+          <e p="FindUsersFragment.cs" t="Include" />
+          <e p="UserCard.cs" t="Include" />
+          <e p="UserCardAdapter.cs" t="Include" />
+        </e>
+        <e p="Constants.cs" t="Include" />
+        <e p="DataModels" t="Include">
+          <e p="DeviceConfigRecords.cs" t="Include" />
+          <e p="DevicesRecords.cs" t="Include" />
+          <e p="MedicineRecords.cs" t="Include" />
+        </e>
+        <e p="Devices" t="Include">
+          <e p="DevicesRecyclerViewAdapter.cs" t="Include" />
+          <e p="GlucoseDevice" t="Include">
+            <e p="AddNewGucoseDeviceActivity.cs" t="Include" />
+            <e p="GlucoseDeviceActivity.cs" t="Include" />
+            <e p="GlucoseDeviceData.cs" t="Include" />
+          </e>
+          <e p="HealthDevicesFragment.cs" t="Include" />
+          <e p="PressureDevice" t="Include">
+            <e p="AddNewBloodPressureDeviceActivity.cs" t="Include" />
+            <e p="BloodPressureData.cs" t="Include" />
+            <e p="BloodPressureDeviceActivity.cs" t="Include" />
+          </e>
+          <e p="SmartBand" t="Include">
+            <e p="SmartBandDeviceActivity.cs" t="Include" />
+          </e>
+        </e>
+        <e p="FamiliaXamarin.csproj" t="IncludeRecursive" />
+        <e p="Helpers" t="Include">
+          <e p="AlarmDeviceReceiver.cs" t="Include" />
+          <e p="BiometricUtils.cs" t="Include" />
+          <e p="ChargerReceiver.cs" t="Include" />
+          <e p="DatePickerFragment.cs" t="Include" />
+          <e p="FingerprintHandler.cs" t="Include" />
+          <e p="ProgressBarDialog.cs" t="Include" />
+          <e p="RejectChatBroadcastReceiver.cs" t="Include" />
+          <e p="SharingDatePickerFragment.cs" t="Include" />
+          <e p="Utils.cs" t="Include" />
+        </e>
+        <e p="JsonModels" t="Include">
+          <e p="ConverstionsModel.cs" t="Include" />
+          <e p="DiseaseModel.cs" t="Include" />
+          <e p="FirstSetupModel.cs" t="Include" />
+          <e p="SharingModel.cs" t="Include" />
+        </e>
+        <e p="Location" t="Include">
+          <e p="FusedLocationProviderCallback.cs" t="Include" />
+          <e p="MedicalAsistanceFusedLocationProviderCallback.cs" t="Include" />
+        </e>
+        <e p="Login System" t="Include">
+          <e p="FirstSetup.cs" t="Include" />
+          <e p="FirstSetupViewPager.cs" t="Include" />
+          <e p="LoginActivity.cs" t="Include" />
+          <e p="PwdResetActivity.cs" t="Include" />
+          <e p="RegisterActivity.cs" t="Include" />
+        </e>
+        <e p="MainActivity.cs" t="Include" />
+        <e p="Medicatie" t="Include">
+          <e p="Alarm" t="Include">
+            <e p="AlarmActivity.cs" t="Include" />
+            <e p="AlarmBroadcastReceiver.cs" t="Include" />
+            <e p="AlarmBroadcastReceiverServer.cs" t="Include" />
+            <e p="App.cs" t="Include" />
+          </e>
+          <e p="CustomDialogDeleteDisease.cs" t="Include" />
+          <e p="CustomDialogDeleteMedicament.cs" t="Include" />
+          <e p="CustomDialogMedicamentDetails.cs" t="Include" />
+          <e p="Data" t="Include">
+            <e p="Storage.cs" t="Include" />
+          </e>
+          <e p="DatePickerMedicine.cs" t="Include" />
+          <e p="DiseaseActivity.cs" t="Include" />
+          <e p="DiseaseAdapter.cs" t="Include" />
+          <e p="Entities" t="Include">
+            <e p="Disease.cs" t="Include" />
+            <e p="Hour.cs" t="Include" />
+            <e p="MedicationSchedule.cs" t="Include" />
+            <e p="Medicine.cs" t="Include" />
+          </e>
+          <e p="HourAdapter.cs" t="Include" />
+          <e p="MedicineAdapter.cs" t="Include" />
+          <e p="MedicineFragment.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="Properties" t="Include">
+          <e p="AndroidManifest.xml" t="Include" />
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Resources" t="Include">
+          <e p="AboutResources.txt" t="Include" />
+          <e p="drawable" t="Include">
+            <e p="account.xml" t="Include" />
+            <e p="account_group.xml" t="Include" />
+            <e p="account_heart.xml" t="Include" />
+            <e p="account_heart_outline.xml" t="Include" />
+            <e p="account_link.xml" t="Include" />
+            <e p="account_search.xml" t="Include" />
+            <e p="alert.xml" t="Include" />
+            <e p="at.xml" t="Include" />
+            <e p="background_black_gradation.xml" t="Include" />
+            <e p="button_style.xml" t="Include" />
+            <e p="buttonshape.xml" t="Include" />
+            <e p="calendar.xml" t="Include" />
+            <e p="calendar_date.xml" t="Include" />
+            <e p="calendar_multiselect.xml" t="Include" />
+            <e p="card.png" t="Include" />
+            <e p="chevron_left.xml" t="Include" />
+            <e p="chevron_right.xml" t="Include" />
+            <e p="close.xml" t="Include" />
+            <e p="delete_circle.xml" t="Include" />
+            <e p="delete_circle_white.xml" t="Include" />
+            <e p="delete_empty.xml" t="Include" />
+            <e p="disease_spinner.xml" t="Include" />
+            <e p="dislike.xml" t="Include" />
+            <e p="drawable_tint_selector.xml" t="Include" />
+            <e p="drawer_item_background.xml" t="Include" />
+            <e p="drawer_item_tint.axml" t="Include" />
+            <e p="edit_text_layout.xml" t="Include" />
+            <e p="email.xml" t="Include" />
+            <e p="fitbit_activity_badge.xml" t="Include" />
+            <e p="fitbit_bpm_badge.xml" t="Include" />
+            <e p="fitbit_sleep_badge.xml" t="Include" />
+            <e p="gender.xml" t="Include" />
+            <e p="gender_spinner.xml" t="Include" />
+            <e p="health_button.xml" t="Include" />
+            <e p="heart.xml" t="Include" />
+            <e p="heart_pulse.xml" t="Include" />
+            <e p="ic_menu_manage.xml" t="Include" />
+            <e p="image_1.png" t="Include" />
+            <e p="image_10.png" t="Include" />
+            <e p="image_2.png" t="Include" />
+            <e p="image_3.png" t="Include" />
+            <e p="image_4.png" t="Include" />
+            <e p="image_5.png" t="Include" />
+            <e p="image_6.png" t="Include" />
+            <e p="image_7.png" t="Include" />
+            <e p="image_8.png" t="Include" />
+            <e p="image_9.png" t="Include" />
+            <e p="lock.xml" t="Include" />
+            <e p="lock_outline.xml" t="Include" />
+            <e p="logo.png" t="Include" />
+            <e p="logout.xml" t="Include" />
+            <e p="main_button_style.xml" t="Include" />
+            <e p="medical_bag.xml" t="Include" />
+            <e p="message.xml" t="Include" />
+            <e p="message_off.xml" t="Include" />
+            <e p="message_style.xml" t="Include" />
+            <e p="message_text.xml" t="Include" />
+            <e p="my_message_style.xml" t="Include" />
+            <e p="nav_item_colors.xml" t="Include" />
+            <e p="nav_sharing_item_color.xml" t="Include" />
+            <e p="nimic.jpg" t="Include" />
+            <e p="pill.xml" t="Include" />
+            <e p="plus.xml" t="Include" />
+            <e p="power_sleep.xml" t="Include" />
+            <e p="profile.png" t="Include" />
+            <e p="pulse.xml" t="Include" />
+            <e p="qrcode.xml" t="Include" />
+            <e p="qrcode_scan.xml" t="Include" />
+            <e p="round_button.xml" t="Include" />
+            <e p="search_person.xml" t="Include" />
+            <e p="secondary_button_style.xml" t="Include" />
+            <e p="send.xml" t="Include" />
+            <e p="setup_button.xml" t="Include" />
+            <e p="share_layout_bg.axml" t="Include" />
+            <e p="share_variant.xml" t="Include" />
+            <e p="sharing_date_button_style.axml" t="Include" />
+            <e p="sharing_day_button_color_state_list.axml" t="Include" />
+            <e p="sharing_day_button_color_state_list_checked.axml" t="Include" />
+            <e p="sharing_round_button_activ.axml" t="Include" />
+            <e p="sharing_round_button_inactiv.axml" t="Include" />
+            <e p="side_nav_bar.xml" t="Include" />
+            <e p="snooze_button.xml" t="Include" />
+            <e p="swipe_left_button.xml" t="Include" />
+            <e p="swipe_message.xml" t="Include" />
+            <e p="text_button_style.xml" t="Include" />
+            <e p="trash.xml" t="Include" />
+            <e p="tv_tint_selector.xml" t="Include" />
+            <e p="view_list.xml" t="Include" />
+            <e p="walk.xml" t="Include" />
+            <e p="watch.xml" t="Include" />
+            <e p="water.xml" t="Include" />
+            <e p="wheelchair.xml" t="Include" />
+          </e>
+          <e p="drawable-v21" t="Include">
+            <e p="ic_menu_camera.xml" t="Include" />
+            <e p="ic_menu_gallery.xml" t="Include" />
+            <e p="ic_menu_manage.xml" t="Include" />
+            <e p="ic_menu_send.xml" t="Include" />
+            <e p="ic_menu_share.xml" t="Include" />
+            <e p="ic_menu_slideshow.xml" t="Include" />
+          </e>
+          <e p="layout" t="Include">
+            <e p="activity_add_new_blood_pressure_device.axml" t="Include" />
+            <e p="activity_alarm.axml" t="Include" />
+            <e p="activity_blood_pressure_device.axml" t="Include" />
+            <e p="activity_boala.axml" t="Include" />
+            <e p="activity_chat.axml" t="Include" />
+            <e p="activity_finger.axml" t="Include" />
+            <e p="activity_first_setup.axml" t="Include" />
+            <e p="activity_login.axml" t="Include" />
+            <e p="activity_main.axml" t="Include" />
+            <e p="activity_pressure_and_glucose.axml" t="Include" />
+            <e p="activity_pwdreset.axml" t="Include" />
+            <e p="activity_register.axml" t="Include" />
+            <e p="activity_sharing_menu.axml" t="Include" />
+            <e p="activity_smart_band_device.axml" t="Include" />
+            <e p="add_new_blood_glucose_device.axml" t="Include" />
+            <e p="app_bar_main.axml" t="Include" />
+            <e p="blood_glucose_device.axml" t="Include" />
+            <e p="content_main.axml" t="Include" />
+            <e p="custom_dialog.axml" t="Include" />
+            <e p="custom_dialog_delete_boala.axml" t="Include" />
+            <e p="custom_dialog_delete_medicament.axml" t="Include" />
+            <e p="find_users_fragment.axml" t="Include" />
+            <e p="fragment_asistent_form.axml" t="Include" />
+            <e p="fragment_conversations.axml" t="Include" />
+            <e p="fragment_health_devices.axml" t="Include" />
+            <e p="fragment_medicine.axml" t="Include" />
+            <e p="fragment_monitoring.axml" t="Include" />
+            <e p="fragment_qr_code_generator.axml" t="Include" />
+            <e p="fragment_settings.axml" t="Include" />
+            <e p="fragment_setup1.axml" t="Include" />
+            <e p="fragment_setup2.axml" t="Include" />
+            <e p="fragment_setup3.axml" t="Include" />
+            <e p="fragment_sharing_data.axml" t="Include" />
+            <e p="item_action.xml" t="Include" />
+            <e p="item_benefit.axml" t="Include" />
+            <e p="item_boala.axml" t="Include" />
+            <e p="item_conversation.axml" t="Include" />
+            <e p="item_conversations.xml" t="Include" />
+            <e p="item_hour.axml" t="Include" />
+            <e p="item_log.xml" t="Include" />
+            <e p="item_med.axml" t="Include" />
+            <e p="item_message.xml" t="Include" />
+            <e p="item_my_message.xml" t="Include" />
+            <e p="item_sharing.axml" t="Include" />
+            <e p="item_tourist_spot_card.xml" t="Include" />
+            <e p="layout_tab1.axml" t="Include" />
+            <e p="layout_tab2.axml" t="Include" />
+            <e p="nav_header_main.axml" t="Include" />
+            <e p="overlay_left.xml" t="Include" />
+            <e p="overlay_right.xml" t="Include" />
+            <e p="overlay_top.xml" t="Include" />
+            <e p="profile_sharing_data.xml" t="Include" />
+            <e p="progress_dialog_layout.axml" t="Include" />
+            <e p="rowlayout.xml" t="Include" />
+            <e p="spinner_item.axml" t="Include" />
+            <e p="test_Sharing.axml" t="Include" />
+          </e>
+          <e p="menu" t="Include">
+            <e p="activity_main_drawer.xml" t="Include" />
+            <e p="menu_first_setup.axml" t="Include" />
+            <e p="menu_main.xml" t="Include" />
+            <e p="menu_navigation.xml" t="Include" />
+            <e p="menu_sharing_navigation.xml" t="Include" />
+          </e>
+          <e p="mipmap-anydpi-v26" t="Include">
+            <e p="ic_launcher.xml" t="Include" />
+            <e p="ic_launcher_round.xml" t="Include" />
+          </e>
+          <e p="mipmap-hdpi" t="Include">
+            <e p="ic_launcher.png" t="Include" />
+            <e p="ic_launcher_foreground.png" t="Include" />
+            <e p="ic_launcher_round.png" t="Include" />
+          </e>
+          <e p="mipmap-mdpi" t="Include">
+            <e p="ic_launcher.png" t="Include" />
+            <e p="ic_launcher_foreground.png" t="Include" />
+            <e p="ic_launcher_round.png" t="Include" />
+          </e>
+          <e p="mipmap-xhdpi" t="Include">
+            <e p="ic_launcher.png" t="Include" />
+            <e p="ic_launcher_foreground.png" t="Include" />
+            <e p="ic_launcher_round.png" t="Include" />
+          </e>
+          <e p="mipmap-xxhdpi" t="Include">
+            <e p="ic_launcher.png" t="Include" />
+            <e p="ic_launcher_foreground.png" t="Include" />
+            <e p="ic_launcher_round.png" t="Include" />
+          </e>
+          <e p="mipmap-xxxhdpi" t="Include">
+            <e p="ic_launcher.png" t="Include" />
+            <e p="ic_launcher_foreground.png" t="Include" />
+            <e p="ic_launcher_round.png" t="Include" />
+          </e>
+          <e p="raw" t="Include">
+            <e p="bell.json" t="Include" />
+            <e p="devices_data.db" t="Include" />
+            <e p="drop.json" t="Include" />
+            <e p="fingerprint.json" t="Include" />
+            <e p="heart.json" t="Include" />
+            <e p="loading.json" t="Include" />
+            <e p="location.json" t="Include" />
+            <e p="map_loading.json" t="Include" />
+            <e p="new_notification.json" t="Include" />
+            <e p="notification.json" t="Include" />
+          </e>
+          <e p="Resource.Designer.cs" t="Include" />
+          <e p="values" t="Include">
+            <e p="colors.xml" t="Include" />
+            <e p="dimens.xml" t="Include" />
+            <e p="drawables.xml" t="Include" />
+            <e p="ic_launcher_background.xml" t="Include" />
+            <e p="strings.xml" t="Include" />
+            <e p="styles.xml" t="Include" />
+          </e>
+          <e p="values-v21" t="Include">
+            <e p="styles.xml" t="Include" />
+          </e>
+          <e p="xml" t="Include">
+            <e p="file_paths.xml" t="Include" />
+            <e p="network_security_config.xml" t="Include" />
+          </e>
+        </e>
+        <e p="Services" t="Include">
+          <e p="DistanceCalculator.cs" t="Include" />
+          <e p="LocationService.cs" t="Include" />
+          <e p="MedicalAsistanceService.cs" t="Include" />
+          <e p="MedicationService.cs" t="Include" />
+          <e p="SmartBandService.cs" t="Include" />
+          <e p="WebSocketService.cs" t="Include" />
+        </e>
+        <e p="Settings" t="Include">
+          <e p="SettingsFragment.cs" t="Include" />
+        </e>
+        <e p="Sharing" t="Include">
+          <e p="CustomDialogProfileSharingData.cs" t="Include" />
+          <e p="MonitoringFragment.cs" t="Include" />
+          <e p="PressureAndGlucoseActivity.cs" t="Include" />
+          <e p="SharingAdapter.cs" t="Include" />
+          <e p="SharingDataActivity.cs" t="Include" />
+          <e p="SharingMenuActivity.cs" t="Include" />
+          <e p="Tab1Fragment.cs" t="Include" />
+          <e p="Tab2Fragment.cs" t="Include" />
+        </e>
+        <e p="WebServices" t="Include">
+          <e p="WebServices.cs" t="Include" />
+        </e>
+        <e p="WebSocket" t="Include">
+          <e p="IWebSocketClient.cs" t="Include" />
+          <e p="WebSocketClient.cs" t="Include" />
+        </e>
+      </e>
+      <e p="FamiliaXamarin.sln" t="IncludeFlat" />
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+    <e p="C:\Program Files (x86)\Android\android-sdk\platforms\android-28\Data\res" t="IncludeRecursive" />
+    <e p="C:\Users\patricia.mic\.Rider2018.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\patricia.mic\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_FamiliaXamarin.1180245397.00" t="ExcludeRecursive" />
+  </component>
+</project>

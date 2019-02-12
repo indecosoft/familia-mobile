@@ -17,7 +17,6 @@ using Android.App;
 using Com.Bumptech.Glide;
 using FamiliaXamarin.Helpers;
 using Org.Json;
-using Square.Picasso;
 
 namespace FamiliaXamarin.Sharing
 {

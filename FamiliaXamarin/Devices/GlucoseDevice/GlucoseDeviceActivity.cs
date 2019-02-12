@@ -13,11 +13,14 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Constraints;
+using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Airbnb.Lottie;
+using Com.Airbnb.Lottie.Model;
+using Com.Airbnb.Lottie.Value;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
 using Java.IO;
@@ -91,25 +94,24 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
 
             _animationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
             _animationView.AddAnimatorListener(this);
+            var filter =
+                new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
+            _animationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter,
+                new LottieValueCallback(filter));
             _animationView.PlayAnimation();
 
 
             _scanButton.Click += delegate
             {
-                if (_bluetoothManager != null)
-                {
-                    if (_bluetoothAdapter != null)
-                    {
-                        _bluetoothScanner.StartScan(_scanCallback);
-                        _scanButton.Enabled =false;
-                        _send = false;
+                if (_bluetoothManager == null) return;
+                _bluetoothScanner.StartScan(_scanCallback);
+                _scanButton.Enabled =false;
+                _send = false;
 
-                        _lbStatus.Text = "Se efectueaza masuratoarea...";
-                        _animationView.PlayAnimation();
-                        //                        progressDialog.setMessage(getString(R.string.conectare_info));
-                        //                        progressDialog.show();
-                    }
-                }
+                _lbStatus.Text = "Se efectueaza masuratoarea...";
+                _animationView.PlayAnimation();
+                //                        progressDialog.setMessage(getString(R.string.conectare_info));
+                //                        progressDialog.show();
             }; 
 
         // Create your application here
@@ -136,24 +138,20 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
         {
             _handler = new Handler();
             _lbStatus.Text = "Se efectueaza masuratoarea...";
-            if (_bluetoothManager != null)
+//            if (_bluetoothManager == null) return;
+            _bluetoothAdapter = _bluetoothManager?.Adapter;
+            if (_bluetoothAdapter == null) return;
+            if (!_bluetoothAdapter.IsEnabled)
             {
-                _bluetoothAdapter = _bluetoothManager.Adapter;
-                if (_bluetoothAdapter != null)
-                {
-                    if (!_bluetoothAdapter.IsEnabled)
-                    {
-                        StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), 11);
-                    }
-                    else
-                    {
-                        _bluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
-                        _bluetoothScanner.StartScan(_scanCallback);
-                        _scanButton.Enabled = false;
-                        _dataContainer.Visibility = ViewStates.Gone;
-                        //progressDialog.show();
-                    }
-                }
+                StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), 11);
+            }
+            else
+            {
+                _bluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
+                _bluetoothScanner.StartScan(_scanCallback);
+                _scanButton.Enabled = false;
+                _dataContainer.Visibility = ViewStates.Gone;
+                //progressDialog.show();
             }
 
         }
@@ -204,13 +202,18 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
                 base.OnScanResult(callbackType, result);
                 if (result.Device.Address == null ||
                     !result.Device.Address.Equals(
-                        Utils.GetDefaults(Context.GetString(Resource.String.blood_glucose_device), Context))) return;
-                result.Device.ConnectGatt(Context, false, ((GlucoseDeviceActivity)Context)._gattCallback);
-                ((GlucoseDeviceActivity)Context)._bluetoothScanner.StopScan(((GlucoseDeviceActivity)Context)._scanCallback);
-                ((GlucoseDeviceActivity)Context)._lbStatus.Text = Context.GetString(Resource.String.conectare_info);
+                        Utils.GetDefaults(Context.GetString(Resource.String.blood_glucose_device),
+                            Context))) return;
+                result.Device.ConnectGatt(Context, false,
+                    ((GlucoseDeviceActivity) Context)._gattCallback);
+                ((GlucoseDeviceActivity) Context)._bluetoothScanner.StopScan(
+                    ((GlucoseDeviceActivity) Context)._scanCallback);
+                ((GlucoseDeviceActivity) Context)._lbStatus.Text =
+                    Context.GetString(Resource.String.conectare_info);
             }
         }
-        class GattCallBack : BluetoothGattCallback
+
+        private class GattCallBack : BluetoothGattCallback
         {
             Context Context;
             public GattCallBack(Context context)
@@ -231,7 +234,8 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
             {
                 if (status == 0)
                 {
-                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt, Constants.UuidGlucServ, Constants.UuidGlucMeasurementChar);
+                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt,
+                        Constants.UuidGlucServ, Constants.UuidGlucMeasurementChar);
                 }
             }
 
@@ -241,12 +245,14 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
                 if (status != 0) return;
                 if (descriptor.Characteristic.Uuid.Equals(Constants.UuidGlucMeasurementContextChar))
                 {
-                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt, Constants.UuidGlucServ, Constants.UuidGlucRecordAccessControlPointChar);
+                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt,
+                        Constants.UuidGlucServ, Constants.UuidGlucRecordAccessControlPointChar);
                     Log.Error("Aici", "1");
                 }
                 if (descriptor.Characteristic.Uuid.Equals(Constants.UuidGlucMeasurementChar))
                 {
-                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt, Constants.UuidGlucServ, Constants.UuidGlucRecordAccessControlPointChar);
+                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt,
+                        Constants.UuidGlucServ, Constants.UuidGlucRecordAccessControlPointChar);
                     //setCharacteristicNotification(gatt, Constants.UUID_GLUC_SERV, Constants.UUID_GLUC_MEASUREMENT_CONTEXT_CHAR);
                     Log.Error("Aici", "2");
                 }
@@ -295,14 +301,17 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
 
                 if (typeAndLocationPresent)
                 {
-                    record.GlucoseConcentration = characteristic.GetFloatValue(GattFormat.Sfloat, offset).FloatValue();
-                    var typeAndLocation = characteristic.GetIntValue(GattFormat.Uint8, offset + 2).IntValue();
+                    record.GlucoseConcentration = characteristic
+                        .GetFloatValue(GattFormat.Sfloat, offset).FloatValue();
+                    var typeAndLocation = characteristic.GetIntValue(GattFormat.Uint8, offset + 2)
+                        .IntValue();
                     offset += 3;
 
                     (Context as GlucoseDeviceActivity)?.RunOnUiThread(() =>
                     {
                         (Context as GlucoseDeviceActivity)?._animationView.CancelAnimation();
-                        (Context as GlucoseDeviceActivity)?.UpdateUi(record.GlucoseConcentration * 100000);
+                        (Context as GlucoseDeviceActivity)?.UpdateUi(
+                            record.GlucoseConcentration * 100000);
                     });
                 }
 
@@ -336,7 +345,9 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
                             jsonObject
                                 .Put("imei", el.Imei)
                                 .Put("dateTimeISO", el.DateTime)
-                                .Put("geolocation",new JSONObject().Put("latitude", $"{el.Latitude}").Put("longitude", $"{el.Longitude}"))
+                                .Put("geolocation",new JSONObject()
+                                .Put("latitude", $"{el.Latitude}")
+                                .Put("longitude", $"{el.Longitude}"))
                                 .Put("lastLocation", el.LastLocation)
                                 .Put("sendPanicAlerts", el.SendPanicAlerts)
                                 .Put("stepCounter", el.StepCounter)
@@ -464,18 +475,21 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
             _scanButton.Enabled = true;
         }
 
-        protected void SetCharacteristicNotification(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
+        private void SetCharacteristicNotification(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
         {
             SetCharacteristicNotificationWithDelay(gatt, serviceUuid, characteristicUuid);
         }
 
-        protected void SetCharacteristicNotificationWithDelay(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
+        private void SetCharacteristicNotificationWithDelay(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
         {
             _handler.PostDelayed(
-                () => { SetCharacteristicNotification_private(gatt, serviceUuid, characteristicUuid); }, 300);
+                () =>
+                {
+                    SetCharacteristicNotification_private(gatt, serviceUuid, characteristicUuid);
+                }, 300);
         }
 
-        void SetCharacteristicNotification_private(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
+        private static void SetCharacteristicNotification_private(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
         {
             try
             {

@@ -2,8 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:padding="8dp">
+    android:layout_height="wrap_content"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
 
     <ImageView
         android:id="@+id/iv_img"
@@ -12,35 +13,28 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
         android:src="@drawable/pill" />
 
     <TextView
         android:id="@+id/tv_title"
-        android:layout_width="200dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginStart="50dp"
-        android:textColor="@android:color/black" />
 
-
-    <TextView
-        android:id="@+id/tv_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tv_title"
-        android:layout_alignStart="@+id/tv_title"
-        android:layout_below="@+id/tv_title" />
-
+        android:paddingHorizontal="10dp"
+        android:layout_toRightOf="@+id/iv_img"
+        android:layout_toLeftOf="@+id/btn_delete" />
 
     <Button
         android:id="@+id/btn_delete"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:background="@drawable/delete_empty" />
-
+        android:drawableTop="@drawable/trash"
+        android:padding="8dp"
+        android:drawableTint="#fff"
+        android:backgroundTint="@color/colorDanger"
+        android:background="@drawable/round_button" />
 
 </RelativeLayout>
