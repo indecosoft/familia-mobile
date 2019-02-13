@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Familia" t="IncludeFlat">
+    <e p="C:\Program Files (x86)\Android\android-sdk\platforms\android-28\Data\res" t="IncludeRecursive" />
+    <e p="C:\Users\voicu\.Rider2018.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\voicu\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_FamiliaXamarin.-976477053.00" t="ExcludeRecursive" />
+    <e p="C:\Users\voicu\Desktop\Familia" t="IncludeFlat">
       <e p="FamiliaXamarin" t="IncludeRecursive">
         <e p="Active Conversations" t="Include">
           <e p="ConvAdapter.cs" t="Include" />
@@ -144,7 +147,11 @@
             <e p="fitbit_bpm_badge.xml" t="Include" />
             <e p="fitbit_sleep_badge.xml" t="Include" />
             <e p="gender.xml" t="Include" />
+            <e p="gender_female.xml" t="Include" />
+            <e p="gender_male.xml" t="Include" />
             <e p="gender_spinner.xml" t="Include" />
+            <e p="gender_tint.xml" t="Include" />
+            <e p="gender_toggle.xml" t="Include" />
             <e p="health_button.xml" t="Include" />
             <e p="heart.xml" t="Include" />
             <e p="heart_pulse.xml" t="Include" />
@@ -368,8 +375,5 @@
       <e p="FamiliaXamarin.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />
     </e>
-    <e p="C:\Program Files (x86)\Android\android-sdk\platforms\android-28\Data\res" t="IncludeRecursive" />
-    <e p="C:\Users\patricia.mic\.Rider2018.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\patricia.mic\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_FamiliaXamarin.1180245397.00" t="ExcludeRecursive" />
   </component>
 </project>

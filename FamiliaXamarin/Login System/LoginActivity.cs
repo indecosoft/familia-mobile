@@ -354,7 +354,7 @@ namespace FamiliaXamarin.Login_System
             _progressBarDialog =
                 new ProgressBarDialog(
                     "Va rugam asteptati", "Autentificare...", this, false);
-            _progressBarDialog.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimary);
+            _progressBarDialog.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimaryDark);
         }
 
         private void InitListeners()
