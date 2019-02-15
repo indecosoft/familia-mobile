@@ -35,9 +35,7 @@ namespace FamiliaXamarin.Devices
         // Replace the contents of a view (invoked by the layout manager)
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            var viewholder = holder as DevicesRecyclerViewAdapterViewHolder;
-            var currentCrewMember = mData[position];
-            if (viewholder != null) viewholder.TextViewName.Text = currentCrewMember;
+            if (holder is DevicesRecyclerViewAdapterViewHolder viewholder) viewholder.TextViewName.Text = mData[position];
 
             // Replace the contents of the view with that element
             //var holder = viewHolder as DevicesRecyclerViewAdapterViewHolder;
@@ -66,7 +64,7 @@ namespace FamiliaXamarin.Devices
 
     }
 
-    public class DevicesRecyclerViewAdapterClickEventArgs : EventArgs
+    public abstract class DevicesRecyclerViewAdapterClickEventArgs : EventArgs
     {
         public View View { get; set; }
         public int Position { get; set; }

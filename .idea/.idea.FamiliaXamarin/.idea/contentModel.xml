@@ -30,11 +30,15 @@
         </e>
         <e p="Constants.cs" t="Include" />
         <e p="DataModels" t="Include">
+          <e p="BluetoothDeviceRecords.cs" t="Include" />
           <e p="DeviceConfigRecords.cs" t="Include" />
           <e p="DevicesRecords.cs" t="Include" />
           <e p="MedicineRecords.cs" t="Include" />
         </e>
         <e p="Devices" t="Include">
+          <e p="DevicesManagementActivity.cs" t="Include" />
+          <e p="DevicesManagementModel.cs" t="Include" />
+          <e p="DevicesManagementRecyclerViewAdapter.cs" t="Include" />
           <e p="DevicesRecyclerViewAdapter.cs" t="Include" />
           <e p="GlucoseDevice" t="Include">
             <e p="AddNewGucoseDeviceActivity.cs" t="Include" />
@@ -61,6 +65,7 @@
           <e p="ProgressBarDialog.cs" t="Include" />
           <e p="RejectChatBroadcastReceiver.cs" t="Include" />
           <e p="SharingDatePickerFragment.cs" t="Include" />
+          <e p="SqlHelper.cs" t="Include" />
           <e p="Utils.cs" t="Include" />
         </e>
         <e p="JsonModels" t="Include">
@@ -124,6 +129,7 @@
             <e p="alert.xml" t="Include" />
             <e p="at.xml" t="Include" />
             <e p="background_black_gradation.xml" t="Include" />
+            <e p="bluetooth.xml" t="Include" />
             <e p="button_style.xml" t="Include" />
             <e p="buttonshape.xml" t="Include" />
             <e p="calendar.xml" t="Include" />
@@ -226,6 +232,7 @@
             <e p="activity_blood_pressure_device.axml" t="Include" />
             <e p="activity_boala.axml" t="Include" />
             <e p="activity_chat.axml" t="Include" />
+            <e p="activity_devices_management.axml" t="Include" />
             <e p="activity_finger.axml" t="Include" />
             <e p="activity_first_setup.axml" t="Include" />
             <e p="activity_login.axml" t="Include" />
@@ -259,6 +266,7 @@
             <e p="item_boala.axml" t="Include" />
             <e p="item_conversation.axml" t="Include" />
             <e p="item_conversations.xml" t="Include" />
+            <e p="item_device_type.xml" t="Include" />
             <e p="item_hour.axml" t="Include" />
             <e p="item_log.xml" t="Include" />
             <e p="item_med.axml" t="Include" />

@@ -1,14 +1,18 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using Android.App;
 using Android.OS;
 using Android.Support.CustomTabs;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Devices.GlucoseDevice;
 using FamiliaXamarin.Devices.PressureDevice;
 using FamiliaXamarin.Devices.SmartBand;
 using FamiliaXamarin.Helpers;
+using SQLite;
 
 namespace FamiliaXamarin.Devices
 {
@@ -21,10 +25,18 @@ namespace FamiliaXamarin.Devices
 
             // Create your fragment here
         }
-        private void StartNewActivity(Type newActivity, string button, View v)
+        private SqlHelper<BluetoothDeviceRecords> _bleDevicesRecords;
+        private async void StartNewActivity(Type newActivity, string button, View v)
         {
-
-            if (Utils.GetDefaults(button, Activity) != null)
+//            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+//            var numeDb = "devices_data.db";
+//            var db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
+//            await db.CreateTableAsync<BluetoothDeviceRecords>();
+            _bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+            var list = await _bleDevicesRecords.QueryValuations(
+                "select * from BluetoothDeviceRecords");
+            if((from c in list where c.DeviceType == button 
+                select new {c.Name, c.Address, c.DeviceType}).Any()) 
             {
                 Activity.StartActivity(newActivity);
                 //Activity.StartActivity(typeof(AddNewGucoseDeviceActivity));

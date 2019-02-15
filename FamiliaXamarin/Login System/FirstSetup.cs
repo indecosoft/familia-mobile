@@ -100,7 +100,7 @@ namespace FamiliaXamarin.Login_System
             private ToggleButton _maleToggleButton;
             private ToggleButton _femaleToggleButton;
             private CircleImageView _profileImage;
-            private bool _imageValidator, _secondScreen;
+            private bool _imageValidator;
             private Android.Net.Uri _photoUri;
             private FileInfo _fileInformations;
             private string _imageExtension, _imagePath;
