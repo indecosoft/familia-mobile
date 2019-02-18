@@ -62,7 +62,6 @@
                 android:id="@+id/btn_snooze_alarm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_med_name_alarm"
                 android:layout_marginEnd="5dp"
                 android:layout_alignParentEnd="true"
                 android:background="@drawable/secondary_button_style"

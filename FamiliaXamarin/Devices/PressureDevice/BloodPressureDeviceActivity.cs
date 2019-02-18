@@ -12,11 +12,14 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Constraints;
+using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Airbnb.Lottie;
+using Com.Airbnb.Lottie.Model;
+using Com.Airbnb.Lottie.Value;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
 using Java.Lang;
@@ -53,9 +56,9 @@ namespace FamiliaXamarin.Devices.PressureDevice
 
         private BluetoothScanCallback _scanCallback;
         private GattCallBack _gattCallback;
-        private SQLiteAsyncConnection _db;
+        private SqlHelper<DevicesRecords> _bleDevicesDataRecords;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_blood_pressure_device);
@@ -69,9 +72,10 @@ namespace FamiliaXamarin.Devices.PressureDevice
             {
                 Finish();
             };
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            var numeDb = "devices_data.db";
-            _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
+//            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+//            var numeDb = "devices_data.db";
+//            _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
+            _bleDevicesDataRecords = await SqlHelper<DevicesRecords>.CreateAsync();
             _lbStatus = FindViewById<TextView>(Resource.Id.status);
             _dataContainer = FindViewById<ConstraintLayout>(Resource.Id.dataContainer);
             _bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
@@ -86,6 +90,10 @@ namespace FamiliaXamarin.Devices.PressureDevice
 
             _animationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
             _animationView.AddAnimatorListener(this);
+            var filter =
+                new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
+            _animationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter,
+                new LottieValueCallback(filter));
             _scanButton.Click += delegate
             {
                 if (_bluetoothManager == null || _bluetoothAdapter == null) return;
@@ -130,7 +138,6 @@ namespace FamiliaXamarin.Devices.PressureDevice
                 _bluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
                 _bluetoothScanner.StartScan(_scanCallback);
                 _scanButton.Enabled = false;
-                //progressDialog.show();
                 _animationView.PlayAnimation();
             }
             else
@@ -156,42 +163,48 @@ namespace FamiliaXamarin.Devices.PressureDevice
 
             _lbStatus.Text = "Se efectueaza masuratoarea...";
 
-            if (_bluetoothManager == null) return;
-            _bluetoothAdapter = _bluetoothManager.Adapter;
-            if (_bluetoothAdapter != null)
+            //if (_bluetoothManager == null) return;
+            _bluetoothAdapter = _bluetoothManager?.Adapter;
+            if (_bluetoothAdapter == null) return;
+            if (!_bluetoothAdapter.IsEnabled)
             {
-                if (!_bluetoothAdapter.IsEnabled)
-                {
-                    StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), 11);
-                }
-                else
-                {
-                    _bluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
-                    _bluetoothScanner.StartScan(_scanCallback);
-                    _scanButton.Enabled = false;
-                    _dataContainer.Visibility = ViewStates.Gone;
+                StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), 11);
+            }
+            else
+            {
+                _bluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
+                _bluetoothScanner.StartScan(_scanCallback);
+                _scanButton.Enabled = false;
+                _dataContainer.Visibility = ViewStates.Gone;
 
-                }
             }
         }
 
         private class BluetoothScanCallback : ScanCallback
         {
             private readonly Context _context;
+            private SqlHelper<BluetoothDeviceRecords> _bleDevicesRecords;
             public BluetoothScanCallback(Context context)
             {
                 _context = context;
             }
 
-            public override void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result)
+            public override async void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result)
             {
                 base.OnScanResult(callbackType, result);
-                if (result.Device.Address == null || !result.Device.Address.Equals(
-                        Utils.GetDefaults(_context.GetString(Resource.String.blood_pressure_device), _context))) return;
-                result.Device.ConnectGatt(_context, false, (_context as BloodPressureDeviceActivity)?._gattCallback);
-                (_context as BloodPressureDeviceActivity)?._bluetoothScanner.StopScan(((BloodPressureDeviceActivity) _context)?._scanCallback);
+                _bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                var list = await _bleDevicesRecords.QueryValuations( "select * from BluetoothDeviceRecords");
+                
+                if(!(from c in list where c.Address == result.Device.Address 
+                    select new {c.Name, c.Address, c.DeviceType}).Any()) 
+                    return;
+                result.Device.ConnectGatt(_context, false,
+                    (_context as BloodPressureDeviceActivity)?._gattCallback);
+                (_context as BloodPressureDeviceActivity)?._bluetoothScanner.StopScan(
+                    ((BloodPressureDeviceActivity) _context)?._scanCallback);
                 // progressDialog.setMessage(GetString(R.string.conectare_info));
-                ((BloodPressureDeviceActivity) _context)._lbStatus.Text = _context.GetString(Resource.String.conectare_info);
+                ((BloodPressureDeviceActivity) _context)._lbStatus.Text =
+                    _context.GetString(Resource.String.conectare_info);
             }
         }
 
@@ -207,45 +220,51 @@ namespace FamiliaXamarin.Devices.PressureDevice
             public override void OnConnectionStateChange(BluetoothGatt gatt, GattStatus status, ProfileState newState)
             {
                 base.OnConnectionStateChange(gatt, status, newState);
-                if (newState == ProfileState.Connected)
+                switch (newState)
                 {
-                    Log.Error("Gatt", "connected");
-                    gatt.DiscoverServices();
-                }
-
-                if (newState == ProfileState.Disconnected)
-                {
-                    Log.Error("Gatt", "Disconnected");
-                    (_context as BloodPressureDeviceActivity)?.RunOnUiThread(() =>
+                    case ProfileState.Connected:
+                        Log.Error("Gatt", "connected");
+                        gatt.DiscoverServices();
+                        break;
+                    case ProfileState.Disconnected:
                     {
-                        ((BloodPressureDeviceActivity) _context)._lbStatus.Text = _context.GetString(Resource.String.afisare_date_info);
-                    });
+                        Log.Error("Gatt", "Disconnected");
+                        (_context as BloodPressureDeviceActivity)?.RunOnUiThread(() =>
+                            {
+                                ((BloodPressureDeviceActivity) _context)._lbStatus.Text =
+                                    _context.GetString(Resource.String.afisare_date_info);
+                            });
 
 
-                    gatt.Disconnect();
-                    gatt.Close();
+                        gatt.Disconnect();
+                        gatt.Close();
 
-                    for (var i = 0; i < (_context as BloodPressureDeviceActivity)?._data.Count; i++)
-                    {
-                        if (((BloodPressureDeviceActivity) _context)?._data[i] == null)
+                        for (var i = 0; i < (_context as BloodPressureDeviceActivity)?._data.Count; i++)
                         {
-                            ((BloodPressureDeviceActivity) _context)?._data.RemoveAt(i);
+                            if (((BloodPressureDeviceActivity) _context)?._data[i] == null)
+                            {
+                                ((BloodPressureDeviceActivity) _context)?._data.RemoveAt(i);
+                            }
                         }
+
+                        var result = (_context as BloodPressureDeviceActivity)?._data
+                            .Where(e => e != null).ToList();
+
+                        result?.Sort((p, q) => q.Data.CompareTo(p.Data));
+
+
+                        (_context as BloodPressureDeviceActivity)?.RunOnUiThread(() =>
+                        {
+                            (_context as BloodPressureDeviceActivity)?._animationView
+                                .CancelAnimation();
+                            //}
+                            if ((_context as BloodPressureDeviceActivity)?._data.Count > 0)
+                            {
+                                ((BloodPressureDeviceActivity) _context)?.UpdateUi(result[0]);
+                            }
+                        });
+                        break;
                     }
-                    var result = (_context as BloodPressureDeviceActivity)?._data.Where(e => e != null).ToList();
-
-                    result?.Sort((p, q) => q.Data.CompareTo(p.Data));
-
-
-                    (_context as BloodPressureDeviceActivity)?.RunOnUiThread(() =>
-                    {
-                        (_context as BloodPressureDeviceActivity)?._animationView.CancelAnimation();
-                        //}
-                        if ((_context as BloodPressureDeviceActivity)?._data.Count > 0)
-                        {
-                            ((BloodPressureDeviceActivity) _context)?.UpdateUi(result[0]);
-                        }
-                    });
                 }
             }
 
@@ -254,14 +273,18 @@ namespace FamiliaXamarin.Devices.PressureDevice
                 //base.OnServicesDiscovered(gatt, status);
                 if (status != 0) return;
                 (_context as BloodPressureDeviceActivity)?.RunOnUiThread(() =>
-                {
-                    ((BloodPressureDeviceActivity) _context)._lbStatus.Text = _context.GetString(Resource.String.primire_date_info);
-                });
+                    {
+                        ((BloodPressureDeviceActivity) _context)._lbStatus.Text =
+                            _context.GetString(Resource.String.primire_date_info);
+                    });
 
-                if (((BloodPressureDeviceActivity) _context).HasCurrentTimeService(gatt))
+                if (HasCurrentTimeService(gatt))
                 {
                     Log.Error("TimkeCaract", "ghjk");
-                    BluetoothGattCharacteristic timeCharacteristic = gatt.GetService(UUID.FromString("00001805-0000-1000-8000-00805f9b34fb")).GetCharacteristic(UUID.FromString("00002A2B-0000-1000-8000-00805f9b34fb"));
+                    var timeCharacteristic =
+                        gatt.GetService(UUID.FromString("00001805-0000-1000-8000-00805f9b34fb"))
+                            .GetCharacteristic(
+                                UUID.FromString("00002A2B-0000-1000-8000-00805f9b34fb"));
                     timeCharacteristic.SetValue(GetCurrentTimeLocal());
                     gatt.WriteCharacteristic(timeCharacteristic);
                 }
@@ -283,15 +306,16 @@ namespace FamiliaXamarin.Devices.PressureDevice
             public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
             {
                 base.OnCharacteristicChanged(gatt, characteristic);
-                int offset = 0;
-                Integer flags = characteristic.GetIntValue(GattFormat.Uint8, offset++);
+                var offset = 0;
+                var flags = characteristic.GetIntValue(GattFormat.Uint8, offset++);
                 // See BPMManagerCallbacks.UNIT_* for unit options
-                bool timestampPresent = ((int)flags & 0x02) > 0;
-                bool pulseRatePresent = ((int)flags & 0x04) > 0;
+                var timestampPresent = ((int)flags & 0x02) > 0;
+                var pulseRatePresent = ((int)flags & 0x04) > 0;
 
                 // following bytes - systolic, diastolic and mean arterial pressure
                 var systolic = characteristic.GetFloatValue(GattFormat.Sfloat, offset).FloatValue();
-                var diastolic = characteristic.GetFloatValue(GattFormat.Sfloat, offset + 2).FloatValue();
+                var diastolic = characteristic.GetFloatValue(GattFormat.Sfloat, offset + 2)
+                    .FloatValue();
                 offset += 6;
 
                 // parse timestamp if present
@@ -299,12 +323,18 @@ namespace FamiliaXamarin.Devices.PressureDevice
                 if (timestampPresent)
                 {
                     calendar = Calendar.Instance;
-                    calendar.Set(CalendarField.Year, characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue());
-                    calendar.Set(CalendarField.Month, characteristic.GetIntValue(GattFormat.Uint8, offset + 2).IntValue());
-                    calendar.Set(CalendarField.DayOfMonth, characteristic.GetIntValue(GattFormat.Uint8, offset + 3).IntValue());
-                    calendar.Set(CalendarField.HourOfDay, characteristic.GetIntValue(GattFormat.Uint8, offset + 4).IntValue());
-                    calendar.Set(CalendarField.Minute, characteristic.GetIntValue(GattFormat.Uint8, offset + 5).IntValue());
-                    calendar.Set(CalendarField.Second, characteristic.GetIntValue(GattFormat.Uint8, offset + 6).IntValue());
+                    calendar.Set(CalendarField.Year,
+                        characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue());
+                    calendar.Set(CalendarField.Month,
+                        characteristic.GetIntValue(GattFormat.Uint8, offset + 2).IntValue());
+                    calendar.Set(CalendarField.DayOfMonth,
+                        characteristic.GetIntValue(GattFormat.Uint8, offset + 3).IntValue());
+                    calendar.Set(CalendarField.HourOfDay,
+                        characteristic.GetIntValue(GattFormat.Uint8, offset + 4).IntValue());
+                    calendar.Set(CalendarField.Minute,
+                        characteristic.GetIntValue(GattFormat.Uint8, offset + 5).IntValue());
+                    calendar.Set(CalendarField.Second,
+                        characteristic.GetIntValue(GattFormat.Uint8, offset + 6).IntValue());
                     offset += 7;
                 }
 
@@ -317,11 +347,18 @@ namespace FamiliaXamarin.Devices.PressureDevice
 
                 if (calendar != null)
                 {
-                    Log.Error("Data", "Sistola: " + systolic + ", Diastola: " + diastolic + ", Puls: " + pulseRate +
-                            ", Year: " + calendar.Get(CalendarField.Year) + ", Month: " + calendar.Get(CalendarField.Month) + ", Day: " + calendar.Get(CalendarField.DayOfMonth) +
-                            ", Hour: " + calendar.Get(CalendarField.HourOfDay) + ", Minute: " + calendar.Get(CalendarField.Minute) + ", Second: " + calendar.Get(CalendarField.Second));
+                    Log.Error("Data", "Sistola: " + systolic + ", Diastola: " + diastolic +
+                                      ", Puls: " + pulseRate +
+                                      ", Year: " + calendar.Get(CalendarField.Year) + ", Month: " +
+                                      calendar.Get(CalendarField.Month) + ", Day: " +
+                                      calendar.Get(CalendarField.DayOfMonth) +
+                                      ", Hour: " + calendar.Get(CalendarField.HourOfDay) +
+                                      ", Minute: " + calendar.Get(CalendarField.Minute) +
+                                      ", Second: " + calendar.Get(CalendarField.Second));
                 }
-                (_context as BloodPressureDeviceActivity)?._data.Add(new BloodPressureData(systolic, diastolic, pulseRate, calendar));
+
+                (_context as BloodPressureDeviceActivity)?._data.Add(
+                    new BloodPressureData(systolic, diastolic, pulseRate, calendar));
             }
         }
 
@@ -332,14 +369,24 @@ namespace FamiliaXamarin.Devices.PressureDevice
             {
                 var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
 
-                await _db.CreateTableAsync<DevicesRecords>();
+                //await _db.CreateTableAsync<DevicesRecords>();
                 if (!Utils.CheckNetworkAvailability())
-                    AddBloodPressureRecord(_db, data.Sys, data.Dia,data.Pul);
+                {
+                    await _bleDevicesDataRecords.Insert(new DevicesRecords()
+                    {
+                        Imei = Utils.GetImei(this),
+                        DateTime = ft.Format(new Date()),
+                        BloodPresureSystolic = data.Sys,
+                        BloodPresureDiastolic = data.Dia,
+                        BloodPresurePulsRate = data.Pul
+                    });
+                }
+                    //AddBloodPressureRecord(_db, data.Sys, data.Dia,data.Pul);
                 else
                 {
                     JSONObject jsonObject;
                     var jsonArray = new JSONArray();
-                    var list = await QueryValuations(_db, "select * from DevicesRecords");
+                    var list = await _bleDevicesDataRecords.QueryValuations("select * from DevicesRecords");
 
                     foreach (var el in list)
                     {
@@ -349,7 +396,9 @@ namespace FamiliaXamarin.Devices.PressureDevice
                             jsonObject
                                 .Put("imei", el.Imei)
                                 .Put("dateTimeISO", el.DateTime)
-                                .Put("geolocation", new JSONObject().Put("latitude", $"{el.Latitude}").Put("longitude", $"{el.Longitude}"))
+                                .Put("geolocation", new JSONObject()
+                                    .Put("latitude", $"{el.Latitude}")
+                                    .Put("longitude", $"{el.Longitude}"))
                                 .Put("lastLocation", el.LastLocation)
                                 .Put("sendPanicAlerts", el.SendPanicAlerts)
                                 .Put("stepCounter", el.StepCounter)
@@ -385,7 +434,7 @@ namespace FamiliaXamarin.Devices.PressureDevice
                     if (result == "Succes!")
                     {
                         Toast.MakeText(this, "Succes", ToastLength.Long).Show();
-                        await _db.DropTableAsync<DevicesRecords>();
+                        await _bleDevicesDataRecords.DropTable();
                     }
                     else
                     {
@@ -406,31 +455,29 @@ namespace FamiliaXamarin.Devices.PressureDevice
             ActivateScanButton();
         }
 
-        private async Task<IEnumerable<DevicesRecords>> QueryValuations(SQLiteAsyncConnection db, string query)
-        {
-            return await db.QueryAsync<DevicesRecords>(query);
-        }
-        private async void AddBloodPressureRecord(SQLiteAsyncConnection db, float systolic, float diastolic, float pulsRate)
-        {
-            var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
-            await db.InsertAsync(new DevicesRecords()
-            {
-                Imei = Utils.GetImei(this),
-                DateTime = ft.Format(new Date()),
-                BloodPresureSystolic = systolic,
-                BloodPresureDiastolic = diastolic,
-                BloodPresurePulsRate = pulsRate
-            });
-        }
+        
+//        private async void AddBloodPressureRecord(SQLiteAsyncConnection db, float systolic, float diastolic, float pulsRate)
+//        {
+//            var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
+//            await db.InsertAsync(new DevicesRecords()
+//            {
+//                Imei = Utils.GetImei(this),
+//                DateTime = ft.Format(new Date()),
+//                BloodPresureSystolic = systolic,
+//                BloodPresureDiastolic = diastolic,
+//                BloodPresurePulsRate = pulsRate
+//            });
+//        }
 
         private void ActivateScanButton()
         {
             _scanButton.Enabled = true;
         }
 
-        private bool HasCurrentTimeService(BluetoothGatt gatt)
+        private static bool HasCurrentTimeService(BluetoothGatt gatt)
         {
-            return gatt.Services.Any(service => service.Uuid.Equals(UUID.FromString("00001805-0000-1000-8000-00805f9b34fb")));
+            return gatt.Services.Any(service =>
+                service.Uuid.Equals(UUID.FromString("00001805-0000-1000-8000-00805f9b34fb")));
         }
 
         private static byte[] GetCurrentTimeLocal()
@@ -440,10 +487,10 @@ namespace FamiliaXamarin.Devices.PressureDevice
 
         private static byte[] GetCurrentTimeWithOffset()
         {
-            Calendar now = Calendar.Instance;
+            var now = Calendar.Instance;
             now.Time = new Date();
             now.Add(CalendarField.HourOfDay, 0);
-            byte[] time = new byte[10];
+            var time = new byte[10];
             time[0] = (byte)((now.Get(CalendarField.Year) >> 8) & 255);
             time[1] = (byte)(now.Get(CalendarField.Year) & 255);
             time[2] = (byte)(now.Get(CalendarField.Month) + 1);
@@ -451,7 +498,7 @@ namespace FamiliaXamarin.Devices.PressureDevice
             time[4] = (byte)now.Get(CalendarField.HourOfDay);
             time[5] = (byte)now.Get(CalendarField.Minute);
             time[6] = (byte)now.Get(CalendarField.Second);
-            int dayOfWeek = now.Get(CalendarField.DayOfWeek);
+            var dayOfWeek = now.Get(CalendarField.DayOfWeek);
             if (dayOfWeek == 1)
             {
                 dayOfWeek = 7;
@@ -468,7 +515,8 @@ namespace FamiliaXamarin.Devices.PressureDevice
         }
         private void ListenToMeasurements(BluetoothGatt gatt)
         {
-            SetCharacteristicNotification(gatt, Constants.UuidBloodPressureService, Constants.UuidBloodPressureMeasurementChar);
+            SetCharacteristicNotification(gatt, Constants.UuidBloodPressureService,
+                Constants.UuidBloodPressureMeasurementChar);
         }
 
         private void SetCharacteristicNotification(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
@@ -487,9 +535,9 @@ namespace FamiliaXamarin.Devices.PressureDevice
         {
             try
             {
-                BluetoothGattCharacteristic characteristic = gatt.GetService(serviceUuid).GetCharacteristic(characteristicUuid);
+                var characteristic = gatt.GetService(serviceUuid).GetCharacteristic(characteristicUuid);
                 gatt.SetCharacteristicNotification(characteristic, true);
-                BluetoothGattDescriptor descriptor = characteristic.GetDescriptor(Constants.ClientCharacteristicConfig);
+                var descriptor = characteristic.GetDescriptor(Constants.ClientCharacteristicConfig);
                 var indication = (Convert.ToInt32(characteristic.Properties) & 32) != 0;
                 descriptor.SetValue(indication
                     ? BluetoothGattDescriptor.EnableIndicationValue.ToArray()

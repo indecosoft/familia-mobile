@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -8,108 +8,123 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F5F7FA"
+        android:background="@color/colorPrimary"
         android:enabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1" />
     <!-- Email Label -->
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/tbDate_layout"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/gender_selector"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="80dp"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/btnDate"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread">
-
-        <EditText
-            android:id="@+id/tbDate"
-            android:textColor="@color/customDark"
-            android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_centerInParent="true">
+        <ToggleButton
+            android:id="@+id/male_toggle"
+            android:layout_width="90dp"
             android:layout_height="wrap_content"
-            android:inputType="none"
-            android:drawablePadding="5dp"
-            android:hint="@string/data_nasterii"
-            android:editable="false" />
-    </android.support.design.widget.TextInputLayout>
+            android:drawableTop="@drawable/gender_male"
+            android:drawableTint="@drawable/gender_tint"
+            android:background="@drawable/gender_toggle"
+            android:padding="16dp"
+            android:drawablePadding="6dp"
+            android:text="Barbat"
+            android:textOff="Barbat"
+            android:textOn="Barbat"
+            android:textColor="@drawable/gender_tint"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:gravity="bottom"
+            android:textAlignment="center"
+            android:layout_marginEnd="5dp"/>
+        <ToggleButton
+            android:id="@+id/female_toggle"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/gender_female"
+            android:drawableTint="@drawable/gender_tint"
+            android:background="@drawable/gender_toggle"
+            android:padding="16dp"
+            android:drawablePadding="6dp"
+            android:text="Femeie"
+            android:textOff="Femeie"
+            android:textOn="Femeie"
+            android:textColor="@drawable/gender_tint"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:gravity="bottom"
+            android:textAlignment="center"
+            android:layout_marginStart="5dp"/>
+    </LinearLayout>
 
-    <android.support.v7.widget.AppCompatButton
+    <Button
         android:id="@+id/btnDate"
-        android:layout_width="47dp"
-        android:layout_height="47dp"
-        android:textAlignment="textStart"
-        android:background="@drawable/round_button"
-        android:textColor="@color/white"
-        android:drawableStart="@drawable/calendar"
-        android:layout_marginEnd="80dp"
-        android:padding="11dp"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-
-        app:layout_constraintLeft_toRightOf="@+id/tbDate_layout"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread" />
-
-    <Spinner
-        android:id="@+id/gender_spinner"
-        style="@style/GenderSpinnerTheme"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginEnd="80dp"
-        android:spinnerMode="dialog"
-
-
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnDate"
-        app:layout_constraintVertical_bias="0.5" />
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btnBack"
-        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:textColor="@color/white"
-        android:background="@drawable/setup_button"
-        android:textAllCaps="false"
-        android:text="@string/inapoi"
+        android:textColor="@color/colorAccent"
+        android:text="Data nasterii"
         android:textAlignment="textStart"
-        android:drawableStart="@drawable/chevron_left"
+        android:inputType="date"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="10dp"
+        android:drawableStart="@drawable/calendar_date"
+        android:drawableTint="@color/colorAccent"
+        android:drawablePadding="5dp"
+        android:paddingStart="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="7dp"
+        android:paddingEnd="10dp"
+        android:background="@drawable/secondary_button_style"
+        android:layout_below="@+id/gender_selector"/>
+    
 
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_weight="0.5"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/btnNext"
-        app:layout_constraintVertical_chainStyle="spread" />
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btnNext"
-        android:layout_width="0dp"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:textColor="@color/white"
-        android:background="@drawable/setup_button"
-        android:textAllCaps="false"
-        android:text="@string/urmatorul"
-        android:textAlignment="textEnd"
-        android:drawableEnd="@drawable/chevron_right"
+        android:layout_alignParentBottom="true">
 
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_weight="0.5"
-        app:layout_constraintLeft_toRightOf="@+id/btnBack"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintVertical_chainStyle="spread" />
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:background="@drawable/setup_button"
+            android:textAllCaps="false"
+            android:text="@string/inapoi"
+            android:textAlignment="textStart"
+            android:drawableStart="@drawable/chevron_left"
+            android:drawableTint="@color/colorAccent"
+            
 
-</android.support.constraint.ConstraintLayout>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="0.5"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/btnNext"
+            app:layout_constraintVertical_chainStyle="spread" />
+
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/setup_button"
+            android:textAllCaps="false"
+            android:text="@string/urmatorul"
+            android:textAlignment="textEnd"
+            android:drawableEnd="@drawable/chevron_right"
+            android:drawableTint="@color/colorAccent"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_weight="0.5"
+            app:layout_constraintLeft_toRightOf="@+id/btnBack"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintVertical_chainStyle="spread" />
+    </android.support.constraint.ConstraintLayout>
+    
+
+</RelativeLayout>

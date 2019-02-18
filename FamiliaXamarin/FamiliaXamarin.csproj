@@ -60,9 +60,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="DataModels\BluetoothDeviceRecords.cs" />
     <Compile Include="DataModels\DeviceConfigRecords.cs" />
     <Compile Include="DataModels\DevicesRecords.cs" />
     <Compile Include="DataModels\MedicineRecords.cs" />
+    <Compile Include="Devices\DevicesManagementActivity.cs" />
+    <Compile Include="Devices\DevicesManagementModel.cs" />
+    <Compile Include="Devices\DevicesManagementRecyclerViewAdapter.cs" />
     <Compile Include="Helpers\AlarmDeviceReceiver.cs" />
     <Compile Include="Helpers\BiometricUtils.cs" />
     <Compile Include="Helpers\ChargerReceiver.cs" />
@@ -70,6 +74,7 @@
     <Compile Include="Helpers\ProgressBarDialog.cs" />
     <Compile Include="Helpers\RejectChatBroadcastReceiver.cs" />
     <Compile Include="Helpers\SharingDatePickerFragment.cs" />
+    <Compile Include="Helpers\SqlHelper.cs" />
     <Compile Include="JsonModels\ConverstionsModel.cs" />
     <Compile Include="JsonModels\DiseaseModel.cs" />
     <Compile Include="JsonModels\FirstSetupModel.cs" />
@@ -794,6 +799,28 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\card.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\gender_female.xml" />
+    <AndroidResource Include="Resources\drawable\gender_male.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\gender_toggle.xml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\gender_tint.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\bluetooth.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_devices_management.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_device_type.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

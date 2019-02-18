@@ -17,6 +17,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
+using Com.Bumptech.Glide.Util;
 using FamiliaXamarin.Asistenta_sociala;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
@@ -71,6 +72,7 @@ namespace FamiliaXamarin.Login_System
                     "Va rugam asteptati",
                     "Se trimit datele",
                     this, false);
+            _progressBarDialog.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimaryDark);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -85,16 +87,18 @@ namespace FamiliaXamarin.Login_System
             return base.OnOptionsItemSelected(item);
         }
 
-        public class PlaceholderFragment : Android.Support.V4.App.Fragment
+        public class PlaceholderFragment : Android.Support.V4.App.Fragment, View.IOnTouchListener
         {
             private const string ArgSectionNumber = "section_number";
             private Button _btnNext;
             private Button _btnBack;
             private Button _btnUpload;
+            //private Button _btnDate;
             private Button _btnDate;
-            private EditText _tbDate;
-            private Spinner _genderSpinner;
+//            private Spinner _genderSpinner;
             private Spinner _diseaseSpinner;
+            private ToggleButton _maleToggleButton;
+            private ToggleButton _femaleToggleButton;
             private CircleImageView _profileImage;
             private bool _imageValidator;
             private Android.Net.Uri _photoUri;
@@ -115,7 +119,7 @@ namespace FamiliaXamarin.Login_System
 
             private void ShowPictureDialog()
             {
-                var pictureDialog = new AlertDialog.Builder(FragmentContext);
+                var pictureDialog = new AlertDialog.Builder(FragmentContext, Resource.Style.AppTheme_Dialog);
                 pictureDialog.SetTitle("Incarcati o imagine");
                 string[] pictureDialogItems =
                 {
@@ -217,7 +221,7 @@ namespace FamiliaXamarin.Login_System
                 string path;
 
                 // The projection contains the columns we want to return in our query.
-                var selection = MediaStore.Images.Media.InterfaceConsts.Id + " =? ";
+                const string selection = MediaStore.Images.Media.InterfaceConsts.Id + " =? ";
                 using (var cursor = FragmentContext.ContentResolver.Query(
                     MediaStore.Images.Media.ExternalContentUri, null, selection, new[] {docId},
                     null))
@@ -332,21 +336,24 @@ namespace FamiliaXamarin.Login_System
 
             private void InitSecondViewUi(View v)
             {
-                _genderSpinner = v.FindViewById<Spinner>(Resource.Id.gender_spinner);
-                _tbDate = v.FindViewById<EditText>(Resource.Id.tbDate);
-
+                //_genderSpinner = v.FindViewById<Spinner>(Resource.Id.gender_spinner);
                 _btnDate = v.FindViewById<Button>(Resource.Id.btnDate);
+
+                //_btnDate = v.FindViewById<Button>(Resource.Id.btnDate);
             }
 
             private void IniThirdViewUi(View v)
             {
                 _diseaseSpinner = v.FindViewById<Spinner>(Resource.Id.Disease_spinner);
+                _diseaseSpinner.Prompt = "Selectati Afectiuni";
             }
 
             private void InitDefaultUi(View v)
             {
                 _btnBack = v.FindViewById<Button>(Resource.Id.btnBack);
                 _btnNext = v.FindViewById<Button>(Resource.Id.btnNext);
+                _maleToggleButton = v.FindViewById<ToggleButton>(Resource.Id.male_toggle);
+                _femaleToggleButton = v.FindViewById<ToggleButton>(Resource.Id.female_toggle);
             }
 
             public override View OnCreateView(LayoutInflater inflater, ViewGroup container,
@@ -369,56 +376,32 @@ namespace FamiliaXamarin.Login_System
                             false);
                         InitDefaultUi(rootView);
                         InitSecondViewUi(rootView);
-                        // Create an ArrayAdapter using the string array and a default spinner layout
-                        string[] genderArray = {"Masculin", "Feminin"};
-                        var genderAdapter = new ArrayAdapter<string>(Context,
-                            Resource.Layout.spinner_item, genderArray);
-                        // Specify the layout to use when the list of choices appears
-                        genderAdapter.SetDropDownViewResource(Android.Resource.Layout
-                            .SimpleSpinnerDropDownItem);
-                        // Apply the adapter to the spinner
-                        _genderSpinner.Adapter = genderAdapter;
-                        _genderSpinner.ItemSelected += delegate
+                        
+                        _maleToggleButton.CheckedChange += delegate
                         {
-                            FragmentContext._firstSetupModel.Gender =
-                                _genderSpinner.SelectedItem.ToString();
+                            if (!_maleToggleButton.Checked) return;
+                            _femaleToggleButton.Checked = false;
+                            FragmentContext._firstSetupModel.Gender = "Masculin";
                         };
+                        _femaleToggleButton.CheckedChange += delegate
+                        {
+                            if (!_femaleToggleButton.Checked) return;
+                            _maleToggleButton.Checked = false;
+                            FragmentContext._firstSetupModel.Gender = "Feminin";
+                        };
+
                         _btnDate.Click += delegate
                         {
+                            
                             var frag = DatePickerFragment.NewInstance(delegate(DateTime time)
                             {
-                                _tbDate.Text = time.ToShortDateString();
-
+                                _btnDate.Text = time.ToShortDateString();
                                 FragmentContext._firstSetupModel.DateOfBirth =
                                     time.ToString("yyyy-MM-dd");
                             });
                             frag.Show(FragmentContext.SupportFragmentManager,
                                 DatePickerFragment.TAG);
                         };
-                        _tbDate.FocusChange += delegate
-                        {
-                            if (!_tbDate.IsFocused) return;
-                            var frag = DatePickerFragment.NewInstance(delegate(DateTime time)
-                            {
-                                _tbDate.Text = time.ToShortDateString();
-                                FragmentContext._firstSetupModel.DateOfBirth =
-                                    time.ToString("yyyy-MM-dd");
-                            });
-                            frag.Show(FragmentContext.SupportFragmentManager,
-                                DatePickerFragment.TAG);
-                        };
-                        _tbDate.Click += delegate
-                        {
-                            var frag = DatePickerFragment.NewInstance(delegate(DateTime time)
-                            {
-                                _tbDate.Text = time.ToShortDateString();
-                                FragmentContext._firstSetupModel.DateOfBirth =
-                                    time.ToString("yyyy-MM-dd");
-                            });
-                            frag.Show(FragmentContext.SupportFragmentManager,
-                                DatePickerFragment.TAG);
-                        };
-
 
                         break;
                     case 3:
@@ -508,11 +491,15 @@ namespace FamiliaXamarin.Login_System
                             FragmentContext._viewPager.CurrentItem =
                                 Arguments.GetInt(ArgSectionNumber);
                         else
-                            Toast.MakeText(FragmentContext, "Alege o imagine!", ToastLength.Short)
+                            Toast.MakeText(FragmentContext, "Alegeti o imagine!", ToastLength.Short)
                                 .Show();
                         break;
                     case 2:
-                        FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber);
+                        if(!string.IsNullOrEmpty(FragmentContext._firstSetupModel.Gender) && !string.IsNullOrEmpty(FragmentContext._firstSetupModel.DateOfBirth))
+                            FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber);
+                        else
+                            Toast.MakeText(FragmentContext, "Va rugam sa completati formularul", ToastLength.Short)
+                                .Show();
                         break;
                     case 3:
                         FragmentContext._progressBarDialog.Show();
@@ -574,6 +561,11 @@ namespace FamiliaXamarin.Login_System
 
                         break;
                 }
+            }
+
+            public bool OnTouch(View v, MotionEvent e)
+            {
+                return true;
             }
         }
 

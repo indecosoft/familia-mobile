@@ -1,19 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Support.Constraints;
+using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Com.Airbnb.Lottie;
+using Com.Airbnb.Lottie.Model;
+using Com.Airbnb.Lottie.Value;
 using Com.Bumptech.Glide;
+using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
 using Java.Util.Concurrent;
 using Org.Json;
 using Refractored.Controls;
+using SQLite;
 using Task = System.Threading.Tasks.Task;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
@@ -36,7 +43,6 @@ namespace FamiliaXamarin.Devices.SmartBand
         private TextView _lbActivity;
         private CircleImageView _avatarImage;
         private ConstraintLayout _loadingScreen;
-
 
         private void RefreshToken()
         {
@@ -90,7 +96,11 @@ namespace FamiliaXamarin.Devices.SmartBand
 
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
-
+            var animationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
+            var filter =
+                new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.colorAccent));
+            animationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter,
+                new LottieValueCallback(filter));
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
             toolbar.NavigationClick += delegate
@@ -120,6 +130,14 @@ namespace FamiliaXamarin.Devices.SmartBand
                         _token = obj.GetString("access_token");
                         var refreshToken = obj.GetString("refresh_token");
                         var userId = obj.GetString("user_id");
+                        var bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                        await bleDevicesRecords.Insert(
+                            new BluetoothDeviceRecords
+                            {
+                                Name = "SmartBand", 
+                                Address = _token,
+                                DeviceType = GetString(Resource.String.smartband_device)
+                            });
                         Utils.SetDefaults(GetString(Resource.String.smartband_device), _token, this);
                         Utils.SetDefaults("FitbitToken", _token, this);
                         Utils.SetDefaults("FitbitRefreshToken", refreshToken, this);
@@ -136,7 +154,7 @@ namespace FamiliaXamarin.Devices.SmartBand
                 Log.Error("TokenFromShared", _token);
             }
             _loadingScreen.Visibility = ViewStates.Visible;
-            await Task.Run(function: async () => await PopulateFields());
+            await Task.Run(async () => await PopulateFields());
             _loadingScreen.Visibility = ViewStates.Gone;
         }
 
