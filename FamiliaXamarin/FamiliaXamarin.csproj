@@ -114,6 +114,7 @@
     <Compile Include="Services\SmartBandService.cs" />
     <Compile Include="Settings\SettingsFragment.cs" />
     <Compile Include="Sharing\SharingMenuActivity.cs" />
+    <Compile Include="Sharing\SharingPagerAdapter.cs" />
     <Compile Include="Sharing\Tab1Fragment.cs" />
     <Compile Include="Sharing\Tab2Fragment.cs" />
     <Compile Include="WebSocket\WebSocketClient.cs" />

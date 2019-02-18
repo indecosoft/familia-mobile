@@ -28,11 +28,14 @@
         </android.support.design.widget.AppBarLayout>
     </android.support.constraint.ConstraintLayout>
 
-    <FrameLayout
-        android:id="@+id/content_frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_navigation" />
+
+    <!-- Note: background color is required to get elevation -->
+
+    <!--<FrameLayout-->
+        <!--android:id="@+id/content_frame"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_above="@+id/tablayout" />-->
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -45,5 +48,25 @@
         app:itemIconTint="@drawable/nav_item_colors"
         app:itemTextColor="@drawable/nav_item_colors"
         app:menu="@menu/menu_navigation" />
-    <!-- Note: background color is required to get elevation -->
+    
+    <!--<android.support.design.widget.TabLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/tablayout"-->
+        <!--android:background="@color/colorPrimary"-->
+        <!--android:minHeight="?attr/actionBarSize"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!---->
+        <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
+
+    <!--</android.support.design.widget.TabLayout>-->
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/pager">
+
+    </android.support.v4.view.ViewPager>
+    
+    
 </RelativeLayout>

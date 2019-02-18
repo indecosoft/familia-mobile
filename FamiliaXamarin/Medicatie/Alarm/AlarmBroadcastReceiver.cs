@@ -37,7 +37,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
         {
                
                 var i = new Intent(context, typeof(AlarmActivity));
-               
                 i.AddFlags(ActivityFlags.ClearTop);
                 i.PutExtra(DiseaseActivity.MED_ID, medId);
                 i.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
