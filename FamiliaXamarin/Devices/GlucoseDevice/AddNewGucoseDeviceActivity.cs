@@ -81,7 +81,10 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
                         DeviceType = GetString(Resource.String.blood_glucose_device)
                     });
 
-                StartActivity(typeof(GlucoseDeviceActivity));
+                if (!Intent.GetBooleanExtra("RegisterOnly", false))
+                {
+                    StartActivity(typeof(GlucoseDeviceActivity));
+                }
                 Finish();
             };
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.addNewDeviceRecyclerView);

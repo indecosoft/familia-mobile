@@ -76,9 +76,12 @@ namespace FamiliaXamarin.Devices.PressureDevice
                         Name = _devices[i], Address = _devicesAddress[i],
                         DeviceType = GetString(Resource.String.blood_pressure_device)
                     });
-                
-                StartActivity(typeof(BloodPressureDeviceActivity));
+                if (!Intent.GetBooleanExtra("RegisterOnly", false))
+                {
+                    StartActivity(typeof(BloodPressureDeviceActivity));
+                }
                 Finish();
+
             };
 
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.addNewDeviceRecyclerView);

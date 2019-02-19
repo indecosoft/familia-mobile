@@ -33,7 +33,10 @@
           <e p="MedicineRecords.cs" t="Include" />
         </e>
         <e p="Devices" t="Include">
+          <e p="AddNewDeviceDialog.cs" t="Include" />
+          <e p="DeviceManagementDialog.cs" t="Include" />
           <e p="DevicesManagementActivity.cs" t="Include" />
+          <e p="DevicesManagementAdapter.cs" t="Include" />
           <e p="DevicesManagementModel.cs" t="Include" />
           <e p="DevicesManagementRecyclerViewAdapter.cs" t="Include" />
           <e p="DevicesRecyclerViewAdapter.cs" t="Include" />
@@ -247,6 +250,8 @@
             <e p="custom_dialog.axml" t="Include" />
             <e p="custom_dialog_delete_boala.axml" t="Include" />
             <e p="custom_dialog_delete_medicament.axml" t="Include" />
+            <e p="dialog_add_new_device.xml" t="Include" />
+            <e p="dialog_devices_management.axml" t="Include" />
             <e p="find_users_fragment.axml" t="Include" />
             <e p="fragment_asistent_form.axml" t="Include" />
             <e p="fragment_conversations.axml" t="Include" />

@@ -64,7 +64,11 @@
     <Compile Include="DataModels\DeviceConfigRecords.cs" />
     <Compile Include="DataModels\DevicesRecords.cs" />
     <Compile Include="DataModels\MedicineRecords.cs" />
+    <Compile Include="Devices\AddNewDeviceDialog.cs" />
+    <Compile Include="Devices\DeleteDeviceDialog.cs" />
+    <Compile Include="Devices\DeviceManagementDialog.cs" />
     <Compile Include="Devices\DevicesManagementActivity.cs" />
+    <Compile Include="Devices\DevicesManagementAdapter.cs" />
     <Compile Include="Devices\DevicesManagementModel.cs" />
     <Compile Include="Devices\DevicesManagementRecyclerViewAdapter.cs" />
     <Compile Include="Helpers\AlarmDeviceReceiver.cs" />
@@ -825,6 +829,17 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\logo_familia.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dialog_devices_management.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dialog_add_new_device.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dialog_delete_device.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
