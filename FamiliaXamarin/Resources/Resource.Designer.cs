@@ -4142,8 +4142,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0e0025
 			public const int bottom = 2131623973;
 			
-			// aapt resource value: 0x7f0e016a
-			public const int bottom_navigation = 2131624298;
+			// aapt resource value: 0x7f0e016b
+			public const int bottom_navigation = 2131624299;
 			
 			// aapt resource value: 0x7f0e0194
 			public const int box = 2131624340;
@@ -4751,8 +4751,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0e007a
 			public const int packed = 2131624058;
 			
-			// aapt resource value: 0x7f0e016b
-			public const int pager = 2131624299;
+			// aapt resource value: 0x7f0e016a
+			public const int pager = 2131624298;
 			
 			// aapt resource value: 0x7f0e0066
 			public const int parallax = 2131624038;

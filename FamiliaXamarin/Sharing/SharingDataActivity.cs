@@ -60,9 +60,10 @@ namespace FamiliaXamarin.Services
             SupportActionBar.SetDisplayShowHomeEnabled(true);
             toolbar.NavigationClick += delegate
             {
-                var intent = new Intent(this, typeof(MainActivity));
-                intent.AddFlags(ActivityFlags.ClearTop);
-                StartActivity(intent);
+//                var intent = new Intent(this, typeof(MainActivity));
+//                intent.AddFlags(ActivityFlags.ClearTop);
+//                StartActivity(intent);
+                OnBackPressed();
             };
             Title = "Partajare date";
         }
