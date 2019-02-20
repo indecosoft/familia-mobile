@@ -23,10 +23,10 @@ namespace FamiliaXamarin.Helpers
         public static readonly string INTERVAL_CONTENT = "INTERVAL_CONTENT";
         public static readonly string CHANNEL_NAME_ALARM_DEVICE= "Channel for alarm device";
         public static readonly string CHANNEL_NAME_BLOODPRESSURE = "Channel bloodpressure";
-        public static readonly string TITLE_BLOODPRESSURE = "Tensiunea";
+        public static readonly string TITLE_BLOODPRESSURE = "Tensiune";
         public static readonly string TITLE_GLUCOSE = "Glicemie";
-        public static readonly string CONTENT_GLUCOSE = "Va rugam sa va masurati glicemia.";
-        public static readonly string CONTENT_BLOODPRESSURE = "Va rugam sa va masurati tensiunea.";
+        public static readonly string CONTENT_GLUCOSE = "Vă rugăm să vă măsurați glicemia.";
+        public static readonly string CONTENT_BLOODPRESSURE = "Vă rugăm să vă măsurați tensiunea.";
 
 
         public override void OnReceive(Context context, Intent intent)
@@ -51,7 +51,7 @@ namespace FamiliaXamarin.Helpers
             {
                 if (!content.Equals(Constants.IntervalBloodPressure)) return;
                 var intentBloodPressure = new Intent(context, typeof(MainActivity));
-                intentBloodPressure.PutExtra("extra", "HealthDevicesFragment");
+                intentBloodPressure.PutExtra("extra_health_device", "HealthDevicesFragment");
                
                 BuildNotification(context, Constants.BloodPressureNotifId, CHANNEL_NAME_ALARM_DEVICE,
                     TITLE_BLOODPRESSURE, CONTENT_BLOODPRESSURE, intentBloodPressure);
