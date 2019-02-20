@@ -197,8 +197,11 @@ namespace FamiliaXamarin.Medicatie
             Storage.GetInstance().AddDisease(this, disease);
 
             SetupAlarm();
-
+            
             Finish();
+            
+            
+        
         }
 
         private void SetupAlarm()

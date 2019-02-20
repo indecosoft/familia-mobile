@@ -109,6 +109,12 @@ namespace FamiliaXamarin
             _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);
             // Utils.CreateNotificationChannel();
             GetLastLocationButtonOnClick();
+
+            if (Intent.HasExtra("HealthDevicesFragment"))
+            {
+                OpenHealthDeviceFragment();
+            }
+
         }
 
         private async void GetLastLocationButtonOnClick()
@@ -188,9 +194,7 @@ namespace FamiliaXamarin
                         .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.nav_devices:
-                    SupportFragmentManager.BeginTransaction()
-                        .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
-                        .AddToBackStack(null).Commit();
+                    OpenHealthDeviceFragment();
                     break;
                 case Resource.Id.medicatie:
                     SupportFragmentManager.BeginTransaction()
@@ -247,6 +251,13 @@ namespace FamiliaXamarin
             var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
             return true;
+        }
+
+        private void OpenHealthDeviceFragment()
+        {
+            SupportFragmentManager.BeginTransaction()
+                .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
+                .AddToBackStack(null).Commit();
         }
     }
 }
