@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Android;
 using Android.App;
 using Android.Content;
 using Android.Gms.Location;
@@ -45,12 +46,7 @@ namespace FamiliaXamarin.Medicatie
 
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
-            toolbar.NavigationClick += delegate
-            {
-                var intent = new Intent(this, typeof(MainActivity));
-                intent.AddFlags(ActivityFlags.ClearTop);
-                StartActivity(intent);
-            };
+            toolbar.NavigationClick += delegate { OnBackPressed(); };
 
             Title = "Tratament";
 
@@ -91,7 +87,11 @@ namespace FamiliaXamarin.Medicatie
             }
             else
             {
-                base.OnBackPressed();
+                //base.OnBackPressed();
+                var intent = new Intent(this, typeof(MainActivity));
+                intent.AddFlags(ActivityFlags.ClearTop);
+                intent.PutExtra("FromMedicine", true);
+                StartActivity(intent);
             }
             
         }

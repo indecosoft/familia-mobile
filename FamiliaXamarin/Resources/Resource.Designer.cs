@@ -9,9 +9,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::Android.Runtime.ResourceDesignerAttribute("FamiliaXamarin.Resource", IsApplication=true)]
+[assembly: global::Android.Runtime.ResourceDesignerAttribute("Familia.Resource", IsApplication=true)]
 
-namespace FamiliaXamarin
+namespace Familia
 {
 	
 	
@@ -26,9 +26,9 @@ namespace FamiliaXamarin
 		
 		public static void UpdateIdValues()
 		{
-			global::ZXing.Mobile.Resource.Id.contentFrame = global::FamiliaXamarin.Resource.Id.contentFrame;
-			global::ZXing.Mobile.Resource.Layout.zxingscanneractivitylayout = global::FamiliaXamarin.Resource.Layout.zxingscanneractivitylayout;
-			global::ZXing.Mobile.Resource.Layout.zxingscannerfragmentlayout = global::FamiliaXamarin.Resource.Layout.zxingscannerfragmentlayout;
+			global::ZXing.Mobile.Resource.Id.contentFrame = global::Familia.Resource.Id.contentFrame;
+			global::ZXing.Mobile.Resource.Layout.zxingscanneractivitylayout = global::Familia.Resource.Layout.zxingscanneractivitylayout;
+			global::ZXing.Mobile.Resource.Layout.zxingscannerfragmentlayout = global::Familia.Resource.Layout.zxingscannerfragmentlayout;
 		}
 		
 		public partial class Animation
@@ -4328,16 +4328,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0e0092
 			public const int contentPanel = 2131624082;
 			
-<<<<<<< refs/remotes/origin/patricia-17-10-18
-			// aapt resource value: 0x7f0e0155
-			public const int conversations = 2131624277;
-=======
-			// aapt resource value: 0x7f0e016f
-			public const int content_frame = 2131624303;
-			
 			// aapt resource value: 0x7f0e015a
 			public const int conversations = 2131624282;
->>>>>>> am terminat cu dispozitivele
 			
 			// aapt resource value: 0x7f0e0144
 			public const int coordinator = 2131624260;
@@ -4771,8 +4763,8 @@ namespace FamiliaXamarin
 			// aapt resource value: 0x7f0e007a
 			public const int packed = 2131624058;
 			
-			// aapt resource value: 0x7f0e016a
-			public const int pager = 2131624298;
+			// aapt resource value: 0x7f0e016f
+			public const int pager = 2131624303;
 			
 			// aapt resource value: 0x7f0e0066
 			public const int parallax = 2131624038;

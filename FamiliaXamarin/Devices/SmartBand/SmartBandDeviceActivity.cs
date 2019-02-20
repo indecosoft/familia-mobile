@@ -103,12 +103,7 @@ namespace FamiliaXamarin.Devices.SmartBand
                 new LottieValueCallback(filter));
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
-            toolbar.NavigationClick += delegate
-            {
-                var intent = new Intent(this, typeof(MainActivity));
-                intent.AddFlags(ActivityFlags.ClearTop);
-                StartActivity(intent);
-            };
+            toolbar.NavigationClick += delegate { OnBackPressed(); };
             Title = "Profil de sanatate";
 
             OnNewIntent(Intent);
@@ -284,6 +279,7 @@ namespace FamiliaXamarin.Devices.SmartBand
             base.OnBackPressed();
             var intent = new Intent(this, typeof(MainActivity));
             intent.AddFlags(ActivityFlags.ClearTop);
+            intent.PutExtra("FromSmartband", true);
             StartActivity(intent);
         }
     }

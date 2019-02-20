@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Android;
 using Android.App;
 using Android.Content;
 using Android.Graphics.Drawables;
@@ -28,9 +28,6 @@ namespace FamiliaXamarin.Sharing
         {
             _activity = (Activity)context;
         }
-
-       
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -46,13 +43,6 @@ namespace FamiliaXamarin.Sharing
             {
                 Dismiss();
             };
-
-
-            // setupViews();
-
         }
-
-
-       
     }
 }
