@@ -22,7 +22,7 @@ namespace FamiliaXamarin.Sharing
         public CircleImageView Image;
         public Button ButtonConfirm;
         public Button ButtonCancel;
-
+        private string conflict = "aaa";
        
         public CustomDialogProfileSharingData(Context context) : base(context)
         {
