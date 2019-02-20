@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Android.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using Familia;
 using FamiliaXamarin.JsonModels;
 
 namespace FamiliaXamarin.Active_Conversations
@@ -40,7 +42,8 @@ namespace FamiliaXamarin.Active_Conversations
  
             var item = _listOfActiveConversations[position];
 
-            if (holder is ConvAdapterViewHolder viewHolder) viewHolder.NameTextView.Text = item.Username;
+            if (holder is ConvAdapterViewHolder viewHolder)
+                viewHolder.NameTextView.Text = item.Username;
         }
 
         public override int ItemCount => _listOfActiveConversations.Count;
@@ -62,8 +65,10 @@ namespace FamiliaXamarin.Active_Conversations
                             Action<ConvAdapterClickEventArgs> longClickListener) : base(itemView)
         {
             NameTextView = itemView.FindViewById<TextView>(Resource.Id.contact_name);
-            itemView.Click += (sender, e) => clickListener(new ConvAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
-            itemView.LongClick += (sender, e) => longClickListener(new ConvAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
+            itemView.Click += (sender, e) => clickListener(new ConvAdapterClickEventArgs
+                {View = itemView, Position = AdapterPosition});
+            itemView.LongClick += (sender, e) => longClickListener(new ConvAdapterClickEventArgs
+                {View = itemView, Position = AdapterPosition});
         }
     }
 

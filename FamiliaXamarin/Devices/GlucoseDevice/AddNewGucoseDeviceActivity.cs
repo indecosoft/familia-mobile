@@ -11,6 +11,7 @@ using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Widget;
+using Familia;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
 using Org.Json;
@@ -81,7 +82,10 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
                         DeviceType = GetString(Resource.String.blood_glucose_device)
                     });
 
-                StartActivity(typeof(GlucoseDeviceActivity));
+                if (!Intent.GetBooleanExtra("RegisterOnly", false))
+                {
+                    StartActivity(typeof(GlucoseDeviceActivity));
+                }
                 Finish();
             };
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.addNewDeviceRecyclerView);

@@ -15,6 +15,7 @@ using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
 using Com.Bumptech.Glide;
+using Familia;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
 using Java.Util.Concurrent;
@@ -103,12 +104,7 @@ namespace FamiliaXamarin.Devices.SmartBand
                 new LottieValueCallback(filter));
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
-            toolbar.NavigationClick += delegate
-            {
-                var intent = new Intent(this, typeof(MainActivity));
-                intent.AddFlags(ActivityFlags.ClearTop);
-                StartActivity(intent);
-            };
+            toolbar.NavigationClick += delegate { OnBackPressed(); };
             Title = "Profil de sanatate";
 
             OnNewIntent(Intent);
@@ -284,6 +280,7 @@ namespace FamiliaXamarin.Devices.SmartBand
             base.OnBackPressed();
             var intent = new Intent(this, typeof(MainActivity));
             intent.AddFlags(ActivityFlags.ClearTop);
+            intent.PutExtra("FromSmartband", true);
             StartActivity(intent);
         }
     }

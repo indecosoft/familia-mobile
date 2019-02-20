@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Familia" t="IncludeFlat">
+    <e p="C:\Program Files (x86)\Android\android-sdk\platforms\android-28\Data\res" t="IncludeRecursive" />
+    <e p="C:\Users\voicu\.Rider2018.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\voicu\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_FamiliaXamarin.-976477053.00" t="ExcludeRecursive" />
+    <e p="C:\Users\voicu\Desktop\Familia" t="IncludeFlat">
       <e p="FamiliaXamarin" t="IncludeRecursive">
         <e p="Active Conversations" t="Include">
           <e p="ConvAdapter.cs" t="Include" />
@@ -33,7 +36,11 @@
           <e p="MedicineRecords.cs" t="Include" />
         </e>
         <e p="Devices" t="Include">
+          <e p="AddNewDeviceDialog.cs" t="Include" />
+          <e p="DeleteDeviceDialog.cs" t="Include" />
+          <e p="DeviceManagementDialog.cs" t="Include" />
           <e p="DevicesManagementActivity.cs" t="Include" />
+          <e p="DevicesManagementAdapter.cs" t="Include" />
           <e p="DevicesManagementModel.cs" t="Include" />
           <e p="DevicesManagementRecyclerViewAdapter.cs" t="Include" />
           <e p="DevicesRecyclerViewAdapter.cs" t="Include" />
@@ -247,6 +254,9 @@
             <e p="custom_dialog.axml" t="Include" />
             <e p="custom_dialog_delete_boala.axml" t="Include" />
             <e p="custom_dialog_delete_medicament.axml" t="Include" />
+            <e p="dialog_add_new_device.axml" t="Include" />
+            <e p="dialog_delete_device.axml" t="Include" />
+            <e p="dialog_devices_management.axml" t="Include" />
             <e p="find_users_fragment.axml" t="Include" />
             <e p="fragment_asistent_form.axml" t="Include" />
             <e p="fragment_conversations.axml" t="Include" />
@@ -278,7 +288,7 @@
             <e p="overlay_left.xml" t="Include" />
             <e p="overlay_right.xml" t="Include" />
             <e p="overlay_top.xml" t="Include" />
-            <e p="profile_sharing_data.xml" t="Include" />
+            <e p="profile_sharing_data.axml" t="Include" />
             <e p="progress_dialog_layout.axml" t="Include" />
             <e p="rowlayout.xml" t="Include" />
             <e p="spinner_item.axml" t="Include" />
@@ -382,8 +392,5 @@
       <e p="FamiliaXamarin.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />
     </e>
-    <e p="C:\Program Files (x86)\Android\android-sdk\platforms\android-28\Data\res" t="IncludeRecursive" />
-    <e p="C:\Users\patricia.mic\.Rider2018.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\patricia.mic\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_FamiliaXamarin.1180245397.00" t="ExcludeRecursive" />
   </component>
 </project>

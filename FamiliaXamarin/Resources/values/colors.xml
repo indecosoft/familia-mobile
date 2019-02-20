@@ -4,6 +4,7 @@
 
   <color name="colorSecondary">#42535F</color>
   <color name="colorPrimaryDark">#122836</color>
+  <!--<color name="colorAccent">#FBC02D</color>-->
   <color name="colorAccent">#1AB188</color>
   <color name="colorDanger">#FE3267</color>
   <color name="accent">#FF783F</color>

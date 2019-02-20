@@ -28,6 +28,7 @@ using Com.Bumptech.Glide;
 using FamiliaXamarin.Location;
 using FamiliaXamarin.Sharing;
 using Org.Json;
+using Resource = Familia.Resource;
 
 namespace FamiliaXamarin
 {
@@ -97,6 +98,20 @@ namespace FamiliaXamarin
                      .Replace(Resource.Id.fragment_container, new ConversationsFragment())
                      .AddToBackStack(null).Commit();
                  Title = "Conversatii active";
+             }
+             if (Intent.GetBooleanExtra("FromMedicine", false))
+             {
+                 SupportFragmentManager.BeginTransaction()
+                     .Replace(Resource.Id.fragment_container, new MedicineFragment())
+                     .AddToBackStack(null).Commit();
+                 Title = "Medicatie";
+             }
+             if (Intent.GetBooleanExtra("FromSmartband", false))
+             {
+                 SupportFragmentManager.BeginTransaction()
+                     .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
+                     .AddToBackStack(null).Commit();
+                 Title = "Dispozitive de masurare";
              }
             //_isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
             if (!Utils.IsGooglePlayServicesInstalled(this)) return;

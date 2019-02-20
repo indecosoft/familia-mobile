@@ -10,7 +10,7 @@
     <TemplateGuid>{d0238942-4dcf-4d08-b23a-81159ca3b345}</TemplateGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FamiliaXamarin</RootNamespace>
+    <RootNamespace>Familia</RootNamespace>
     <AssemblyName>FamiliaXamarin</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AndroidApplication>True</AndroidApplication>
@@ -33,10 +33,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AndroidLinkMode>Full</AndroidLinkMode>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
+    <EnableProguard>false</EnableProguard>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -64,7 +65,11 @@
     <Compile Include="DataModels\DeviceConfigRecords.cs" />
     <Compile Include="DataModels\DevicesRecords.cs" />
     <Compile Include="DataModels\MedicineRecords.cs" />
+    <Compile Include="Devices\AddNewDeviceDialog.cs" />
+    <Compile Include="Devices\DeleteDeviceDialog.cs" />
+    <Compile Include="Devices\DeviceManagementDialog.cs" />
     <Compile Include="Devices\DevicesManagementActivity.cs" />
+    <Compile Include="Devices\DevicesManagementAdapter.cs" />
     <Compile Include="Devices\DevicesManagementModel.cs" />
     <Compile Include="Devices\DevicesManagementRecyclerViewAdapter.cs" />
     <Compile Include="Helpers\AlarmDeviceReceiver.cs" />
@@ -630,7 +635,7 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\progress_dialog_layout.axml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
@@ -664,7 +669,7 @@
     <AndroidResource Include="Resources\drawable\view_list.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\profile_sharing_data.xml" />
+    <AndroidResource Include="Resources\layout\profile_sharing_data.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\test_Sharing.axml">
@@ -825,6 +830,17 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\logo_familia.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dialog_devices_management.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dialog_add_new_device.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dialog_delete_device.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

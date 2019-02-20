@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Familia;
 using Android.Animation;
 using Android.OS;
 using Android.Support.V4.Content;
@@ -47,13 +48,15 @@ namespace FamiliaXamarin.Chat
                               {
                                   Console.WriteLine(e.Message);
                               }
-                          if (_cardStackView.TopIndex == _people.Count) return;
-                          _rightButton.Enabled = false;
-                          _leftButton.Enabled = false;
-                          _cardStackView.Enabled = false;
-                          _lbNobody.Text = "Nimeni nu se afla in jurul tau";
-                          _cardStackView.SetAdapter(_adapter);
-                          _animationView.PlayAnimation();
+                              if (_cardStackView.TopIndex == _people.Count)
+                              {
+                                  _rightButton.Enabled = false;
+                                  _leftButton.Enabled = false;
+                                  _cardStackView.Enabled = false;
+                                  _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                                  _cardStackView.SetAdapter(_adapter);
+                                  _animationView.PlayAnimation();
+                              }
                           }
                           else if (_cardStackView.TopIndex == _people.Count)
                           {
@@ -74,7 +77,7 @@ namespace FamiliaXamarin.Chat
             _cardStackView.Visibility = ViewStates.Visible;
         }
 
-        private async void SearchPeople()
+        private async Task SearchPeople()
         {
             await Task.Run(async () =>
             {
@@ -88,7 +91,6 @@ namespace FamiliaXamarin.Chat
 
                         var nearMe = new JSONArray(response);
                         _people = new List<UserCard>();
-                        var r = new Random();
                         if (nearMe.Length() != 0)
                         {
                             for (var i = 0; i < nearMe.Length(); i++)
@@ -103,16 +105,13 @@ namespace FamiliaXamarin.Chat
                         Activity.RunOnUiThread(Reload);
                         if (_people.Count == 0)
                         {
-                            
+
                             Activity.RunOnUiThread(() =>
                             {
                                 _animationView.PlayAnimation();
                                 _lbNobody.Text = "Nimeni nu se afla in jurul tau";
                             });
-
-                            
                         }
-
                     }
                     else
                     {
@@ -153,10 +152,7 @@ namespace FamiliaXamarin.Chat
             Setup();
             _animationView.AddAnimatorListener(this);
             //start annimation
-            SimpleColorFilter filter = new SimpleColorFilter(ContextCompat.GetColor(Activity, Resource.Color.colorAccent));
-            _animationView.AddValueCallback(new KeyPath("bocht", "Path 1", "Fill"), LottieProperty.ColorFilter, new LottieValueCallback(filter));
             _animationView.PlayAnimation();
-
 
             _leftButton.Click += delegate { SwipeLeft(); };
             _rightButton.Click += delegate { SwipeRight(); };
@@ -179,14 +175,14 @@ namespace FamiliaXamarin.Chat
             //throw new NotImplementedException();
         }
 
-        public void OnAnimationStart(Animator animation)
-        {  
-                _rightButton.Enabled = true;
-                _leftButton.Enabled = true;
-                _cardStackView.Enabled = true;
-                _lbNobody.Text = string.Empty;
-   
-            SearchPeople();
+        public async void OnAnimationStart(Animator animation)
+        {
+            _rightButton.Enabled = true;
+            _leftButton.Enabled = true;
+            _cardStackView.Enabled = true;
+            _lbNobody.Text = string.Empty;
+
+            await SearchPeople();
 
         }
         private void SwipeLeft()

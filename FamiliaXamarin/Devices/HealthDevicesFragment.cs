@@ -7,6 +7,7 @@ using Android.Support.CustomTabs;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
+using Familia;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Devices.GlucoseDevice;
 using FamiliaXamarin.Devices.PressureDevice;
@@ -45,10 +46,10 @@ namespace FamiliaXamarin.Devices
             {
                 
                 // Do something for Oreo and above versions
-                var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
-                alertDialog.SetTitle(Html.FromHtml("<p style = 'text-align: center; color: #F47445;'>Avertisment</p>", FromHtmlOptions.ModeLegacy));
+                var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dialog).Create();
+                alertDialog.SetTitle("Avertisment");
 
-                alertDialog.SetMessage(Html.FromHtml("<br/><p style = 'text-align: center; color: #000000;'>Nu aveti niciun dispozitiv inregistrat!</br>Doriti sa adaugati unul acum?</p>", FromHtmlOptions.ModeLegacy));
+                alertDialog.SetMessage("Nu aveti niciun dispozitiv inregistrat!");
                 alertDialog.SetButton("OK", delegate
                 {
                     switch (v.Id)

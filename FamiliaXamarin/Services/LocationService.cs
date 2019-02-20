@@ -11,6 +11,7 @@ using Android.Support.V4.Content;
 using Android.Util;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Location;
+using Resource = Familia.Resource;
 
 namespace FamiliaXamarin.Services
 {

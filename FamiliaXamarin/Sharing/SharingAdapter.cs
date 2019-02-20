@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Android.Views;
 using Android.Widget;
 using Android.Support.V7.Widget;
+using Familia;
 using FamiliaXamarin.JsonModels;
 
 namespace FamiliaXamarin.Sharing

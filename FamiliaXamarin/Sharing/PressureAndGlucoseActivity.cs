@@ -12,6 +12,7 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Familia;
 using FamiliaXamarin.Helpers;
 using MikePhil.Charting.Charts;
 using MikePhil.Charting.Components;

@@ -5,6 +5,7 @@ using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
 using Android.Widget;
+using Familia;
 using FamiliaXamarin.Helpers;
 using Java.Lang;
 using Exception = System.Exception;

@@ -24,6 +24,7 @@ using Org.Json;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Exception = System.Exception;
 using Permission = Android.Content.PM.Permission;
+using Resource = Familia.Resource;
 
 namespace FamiliaXamarin.Login_System
 {

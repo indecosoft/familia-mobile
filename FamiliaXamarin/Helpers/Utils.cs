@@ -24,6 +24,8 @@ using ZXing.Common;
 using ZXing.Mobile;
 using Exception = System.Exception;
 using Math = System.Math;
+using Familia;
+using Resource = Familia.Resource;
 
 
 namespace FamiliaXamarin.Helpers
