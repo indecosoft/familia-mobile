@@ -17,6 +17,7 @@ using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Location;
+using Resource = Familia.Resource;
 
 namespace FamiliaXamarin.Services
 {

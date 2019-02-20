@@ -13,6 +13,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
+using Familia;
 using FamiliaXamarin.Active_Conversations;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;

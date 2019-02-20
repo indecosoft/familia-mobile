@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using Familia;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.Sharing

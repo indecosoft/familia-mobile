@@ -4,6 +4,7 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
+using Familia;
 using FamiliaXamarin.Helpers;
 
 namespace FamiliaXamarin.Services

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Familia;
 using Android.Support.V4.App;
 using Android.Content;
 using Android.OS;
@@ -17,6 +17,7 @@ using Android.App;
 using Com.Bumptech.Glide;
 using FamiliaXamarin.Helpers;
 using Org.Json;
+using Resource = Familia.Resource;
 
 namespace FamiliaXamarin.Sharing
 {

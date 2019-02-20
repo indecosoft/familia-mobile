@@ -28,6 +28,7 @@ using Com.Bumptech.Glide;
 using FamiliaXamarin.Location;
 using FamiliaXamarin.Sharing;
 using Org.Json;
+using Resource = Familia.Resource;
 
 namespace FamiliaXamarin
 {

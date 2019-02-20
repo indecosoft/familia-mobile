@@ -13,6 +13,7 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Familia;
 using FamiliaXamarin.Medicatie.Entities;
 using Java.Util;
 

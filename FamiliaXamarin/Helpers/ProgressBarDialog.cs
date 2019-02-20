@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.Views;
 using Android.Widget;
+using Familia;
 using AlertDialog = Android.Support.V7.App.AlertDialog.Builder;
 
 namespace FamiliaXamarin.Helpers

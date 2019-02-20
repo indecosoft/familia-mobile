@@ -7,6 +7,7 @@ using FamiliaXamarin.Sharing;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Android.Content.PM;
 using Android.Support.V4.View;
+using Familia;
 using String = Java.Lang.String;
 
 

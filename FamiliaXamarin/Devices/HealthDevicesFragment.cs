@@ -7,6 +7,7 @@ using Android.Support.CustomTabs;
 using Android.Text;
 using Android.Views;
 using Android.Widget;
+using Familia;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Devices.GlucoseDevice;
 using FamiliaXamarin.Devices.PressureDevice;

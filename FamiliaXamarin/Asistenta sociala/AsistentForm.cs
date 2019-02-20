@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Android;
+using Familia;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -22,6 +23,7 @@ using Java.Text;
 using Java.Util;
 using Org.Json;
 using ZXing.Mobile;
+using Resource = Familia.Resource;
 
 namespace FamiliaXamarin.Asistenta_sociala
 {

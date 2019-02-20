@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Threading.Tasks;
+using Familia;
 using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
