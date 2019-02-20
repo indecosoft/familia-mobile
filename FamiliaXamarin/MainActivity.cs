@@ -110,7 +110,7 @@ namespace FamiliaXamarin
             // Utils.CreateNotificationChannel();
             GetLastLocationButtonOnClick();
 
-            if (Intent.HasExtra("HealthDevicesFragment"))
+            if (Intent.HasExtra("extra_health_device"))
             {
                 OpenHealthDeviceFragment();
             }
