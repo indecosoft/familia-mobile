@@ -172,6 +172,7 @@
             <e p="lock.xml" t="Include" />
             <e p="lock_outline.xml" t="Include" />
             <e p="logo.png" t="Include" />
+            <e p="logo_fAMILIA.png" t="Include" />
             <e p="logout.xml" t="Include" />
             <e p="main_button_style.xml" t="Include" />
             <e p="medical_bag.xml" t="Include" />
