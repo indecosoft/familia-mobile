@@ -39,6 +39,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 NotificationManagerCompat.From(context);
             if (ActionReceive.Equals(action))
             {
+                if (string.IsNullOrEmpty(Utils.GetDefaults("Token", context))) return;
+                
                 var path =
                     System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
                 var nameDb = "devices_data.db";

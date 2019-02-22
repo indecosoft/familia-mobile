@@ -46,6 +46,12 @@ namespace FamiliaXamarin
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
+
+            if (string.IsNullOrEmpty(Utils.GetDefaults("Token", this)))
+            {    var intent = new Intent(this, typeof(LoginActivity));
+                StartActivity(intent);
+                
+            }
             var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
