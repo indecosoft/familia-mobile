@@ -1,4 +1,6 @@
-﻿using Android.Content;
+﻿using System;
+using Android.Content;
+using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
 
@@ -26,6 +28,12 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
             if (_mMed == null) return;
             _mHour = _mMed.FindHourById(hourId);
+
+
+           // if (Utils.GetDefaults("Token", context) == null) return;
+
+
+            if (string.IsNullOrEmpty(Utils.GetDefaults("Token", context))) return;
             
             LaunchAlarm(context, medId, boalaId);
 

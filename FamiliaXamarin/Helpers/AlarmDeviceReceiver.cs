@@ -37,6 +37,8 @@ namespace FamiliaXamarin.Helpers
             
             //Log.Error("PPPAAAAAAAAAAAAAAAAAA", "receiver " + content);
             
+            if (string.IsNullOrEmpty(Utils.GetDefaults("Token", context))) return;
+            
             CreateNotificationChannel(CHANNEL_NAME_ALARM_DEVICE, TITLE_GLUCOSE, CONTENT_GLUCOSE);
             
             
@@ -86,12 +88,21 @@ namespace FamiliaXamarin.Helpers
             var piNotification = PendingIntent.GetActivity(context, notifyId, intent, PendingIntentFlags.UpdateCurrent);
             var mBuilder =
                 new NotificationCompat.Builder(context, channel)
-                    .SetSmallIcon(Resource.Drawable.logo)
+                    .SetSmallIcon(Resource.Drawable.water)
                     .SetContentText(content)
                     .SetContentTitle(title)
                     .SetAutoCancel(true)
                     .SetContentIntent(piNotification)
                     .SetPriority(NotificationCompat.PriorityHigh);
+
+            if (title.Equals(TITLE_BLOODPRESSURE))
+            {
+                mBuilder.SetSmallIcon(Resource.Drawable.heart);
+            }
+            else
+            {
+                mBuilder.SetSmallIcon(Resource.Drawable.water);
+            }
 
             var notificationManager = NotificationManagerCompat.From(context);
 
