@@ -29,7 +29,10 @@ android:fitsSystemWindows="true">
         </android.support.design.widget.AppBarLayout>
     </android.support.constraint.ConstraintLayout>
 
-<LinearLayout
+  <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
@@ -181,5 +184,7 @@ android:fitsSystemWindows="true">
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>
+  </ScrollView>
+
 
 </LinearLayout>

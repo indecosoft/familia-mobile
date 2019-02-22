@@ -37,7 +37,8 @@
                 android:layout_marginVertical="50dp"
                 android:text="Podina Ovidiu"
                 android:textSize="20sp"
-                android:textColor="#333" />
+                android:textColor="@color/white" 
+            android:textStyle="bold"/>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -47,25 +48,24 @@
                 android:layout_below="@id/tv_person_name">
 
                 <Button
-                    android:id="@+id/btn_confirm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/button_style"
-                    android:text="Conecteaza"
-                    android:textColor="#fff"
-                    android:textSize="10dp" />
-
-                <Button
                     android:id="@+id/btn_cancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_toRightOf="@+id/btn_confirm"
-                    android:background="@drawable/button_style"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/secondary_button_style"
                     android:text="Renunta"
-                    android:textColor="#fff"
                     android:textSize="10dp" />
+                <Button
+                    android:id="@+id/btn_confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_toRightOf="@+id/btn_cancel"
+                    android:background="@drawable/main_button_style"
+                    android:text="Conecteaza"
+                    android:textSize="10dp" />
+
+                
 
 
             </RelativeLayout>
@@ -80,7 +80,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:src="@drawable/profile"
-            app:civ_border_color="@color/white"
+            app:civ_border_color="@color/colorAccent"
             app:civ_border_width="3dp"
 
             app:layout_constrainedHeight="true"

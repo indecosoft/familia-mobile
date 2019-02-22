@@ -79,6 +79,7 @@ namespace FamiliaXamarin.Chat
 
         private async Task SearchPeople()
         {
+            int status = 2;
             await Task.Run(async () =>
             {
                 var dataToSent = new JSONObject().Put("id", Utils.GetDefaults("IdClient", Activity)).Put("distance", 3000);
@@ -102,31 +103,48 @@ namespace FamiliaXamarin.Chat
                             }
                         }
 
-                        Activity.RunOnUiThread(Reload);
-                        if (_people.Count == 0)
-                        {
+                        status = 1;
 
-                            Activity.RunOnUiThread(() =>
-                            {
-                                _animationView.PlayAnimation();
-                                _lbNobody.Text = "Nimeni nu se afla in jurul tau";
-                            });
-                        }
                     }
                     else
                     {
-                        Activity.RunOnUiThread(() => { _lbNobody.Text = "A fost intampinata o eroare in timpul conectarii la server!"; });
-
-                        //Utils.DisplayNotification(Activity, "Eroare", "A fost intampinata o eroare in timpul conectarii la server!");
+                        status = 2;
                     }
 
 
                 }
                 catch (JSONException e)
                 {
+                    status = 2;
                     e.PrintStackTrace();
                 }
             });
+            try
+            {
+                if (status == 1)
+                {
+                    Reload();
+                    if (_people.Count == 0)
+                    {
+
+                            _animationView.PlayAnimation();
+                            _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                       
+                    }
+                }
+                else
+                {
+                    _lbNobody.Text = "A fost intampinata o eroare in timpul conectarii la server!";
+
+                    //Utils.DisplayNotification(Activity, "Eroare", "A fost intampinata o eroare in timpul conectarii la server!");
+
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
             _animationView.Progress = 1f;
 
 

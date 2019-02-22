@@ -25,6 +25,8 @@ using Android.Gms.Location;
 using Android.Support.V4.Content;
 using Android.Util;
 using Com.Bumptech.Glide;
+using Familia.Active_Conversations;
+using Familia.Services;
 using FamiliaXamarin.Location;
 using FamiliaXamarin.Sharing;
 using Org.Json;
@@ -62,24 +64,11 @@ namespace FamiliaXamarin
             _loacationServiceIntent = new Intent(this, typeof(LocationService));
             _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
             _smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
-            //_medicationServiceIntent = new Intent(this, typeof(MedicationService));
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-            {
-                Context ctx = ApplicationContext;
                 StartForegroundService(_loacationServiceIntent);
                 StartForegroundService(_webSocketServiceIntent);
-               // StartForegroundService(_smartBandServiceIntent);
+                StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);
-                
-            }
-            else
-            {
-                    StartService(_loacationServiceIntent);
-                    StartService(_webSocketServiceIntent);
-                    //StartService(_smartBandServiceIntent);
-                   // StartService(_medicationServiceIntent);
 
-            }
 
             Glide.With(this).Load(avatar).Into(profileImageView);
 

@@ -43,7 +43,7 @@ namespace FamiliaXamarin.Helpers
             if (content.Equals(Constants.IntervalGlucose))
             {
                 var intentGlucose = new Intent(context, typeof(MainActivity));
-                intentGlucose.PutExtra("extra", "HealthDevicesFragment");
+                intentGlucose.PutExtra("extra_health_device", "HealthDevicesFragment");
                 //CreateNotificationChannel(CHANNEL_NAME_GLUCOSE, TITLE_GLUCOSE, CONTENT_GLUCOSE);
                 BuildNotification(context, Constants.GlucoseNotifId, CHANNEL_NAME_ALARM_DEVICE,
                     TITLE_GLUCOSE, CONTENT_GLUCOSE, intentGlucose);
