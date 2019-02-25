@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Android.Util;
+using FamiliaXamarin.DataModels;
 using Java.Lang;
 using SQLite;
+using Exception = Java.Lang.Exception;
 
 namespace FamiliaXamarin.Helpers
 {
@@ -65,6 +68,21 @@ namespace FamiliaXamarin.Helpers
                 Log.Error("IDropTableError", e.Message);
             }
             
+        }
+        public async void DropTables(params Type[] tables)
+        {
+            try
+            {
+                foreach (var table in tables)
+                {
+                    await Db.ExecuteAsync($"DELETE FROM {table.Name}");
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log.Error("IDropTableError", e.Message);
+            }
         }
     }
 }

@@ -17,6 +17,7 @@ using Org.Json;
 using SQLite;
 using Environment = System.Environment;
 using Exception = System.Exception;
+using Object = System.Object;
 
 namespace Familia.Services
 {
@@ -252,6 +253,7 @@ namespace Familia.Services
             catch (JSONException e)
             {
                 e.PrintStackTrace();
+                
             }
 
             return null;
@@ -359,6 +361,8 @@ namespace Familia.Services
                 {
                     //Toast.MakeText(this, "Succes", ToastLength.Long).Show();
                     await sqlHelper.DropTable();
+ 
+                  
                 }
             }
         }

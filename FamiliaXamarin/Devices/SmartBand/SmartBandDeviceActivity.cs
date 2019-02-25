@@ -147,7 +147,7 @@ namespace FamiliaXamarin.Devices.SmartBand
             {
                 RefreshToken();
                 _token = Utils.GetDefaults(GetString(Resource.String.smartband_device), this);
-                Log.Error("TokenFromShared", _token);
+               // Log.Error("TokenFromShared", _token);
             }
             _loadingScreen.Visibility = ViewStates.Visible;
             await Task.Run(async () => await PopulateFields());

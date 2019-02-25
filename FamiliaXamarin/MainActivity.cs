@@ -27,6 +27,7 @@ using Android.Util;
 using Com.Bumptech.Glide;
 using Familia.Active_Conversations;
 using Familia.Services;
+using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Location;
 using FamiliaXamarin.Sharing;
 using Org.Json;
@@ -249,7 +250,7 @@ namespace FamiliaXamarin
                         StopService(_loacationServiceIntent);
                         StopService(_webSocketServiceIntent);
                        // StopService(_medicationServiceIntent);
-   
+                    ClearDatabase();
                     StartActivity(typeof(LoginActivity));
                     Finish();
                     break;
@@ -263,6 +264,11 @@ namespace FamiliaXamarin
             return true;
         }
 
+        private async void ClearDatabase()
+        {
+            var sqlHelper = await  SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+            sqlHelper.DropTables(typeof(BluetoothDeviceRecords));
+        }
         private void OpenHealthDeviceFragment()
         {
             SupportFragmentManager.BeginTransaction()
