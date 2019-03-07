@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.App;
-using Android.Views;
 using Android.Widget;
-using Familia;
+using FamiliaXamarin;
+using FamiliaXamarin.Sharing;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
-namespace FamiliaXamarin.Sharing
+namespace Familia.Sharing
 {
-    [Activity(Label = "SharingMenuActivity")]
+    [Activity(Label = "SharingMenuActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class SharingMenuActivity : AppCompatActivity
     {
         private Button btnBloodPressure;

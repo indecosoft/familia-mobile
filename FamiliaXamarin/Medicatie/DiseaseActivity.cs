@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Familia;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.Gms.Location;
 using Android.OS;
 using Android.Support.Design.Widget;
@@ -19,7 +20,7 @@ using Calendar = Java.Util.Calendar;
 
 namespace FamiliaXamarin.Medicatie
 {
-    [Activity(Label = "BoalaActivity", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "BoalaActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class DiseaseActivity : AppCompatActivity, View.IOnClickListener, CustomDialogMedicamentDetails.IMedSaveListener, OnMedicamentClickListener, CustomDialogDeleteMedicament.ICustomDialogDeleteMedicamentListener
     {
         public static readonly string MED_ID = "medId";

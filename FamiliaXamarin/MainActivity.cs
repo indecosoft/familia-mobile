@@ -26,7 +26,9 @@ using Android.Support.V4.Content;
 using Android.Util;
 using Com.Bumptech.Glide;
 using Familia.Active_Conversations;
+using Familia.Login_System;
 using Familia.Services;
+using Familia.Sharing;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Location;
 using FamiliaXamarin.Sharing;
@@ -70,10 +72,10 @@ namespace FamiliaXamarin
 
             _loacationServiceIntent = new Intent(this, typeof(LocationService));
             _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
-            _smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
+            //_smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
                 StartForegroundService(_loacationServiceIntent);
                 StartForegroundService(_webSocketServiceIntent);
-                StartForegroundService(_smartBandServiceIntent);
+               // StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);
 
 

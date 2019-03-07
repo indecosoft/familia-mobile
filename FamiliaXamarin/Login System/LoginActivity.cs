@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Android;
 using Android.App;
-using Android.Content;
 using Android.Content.PM;
 using Android.Hardware.Fingerprints;
 using Android.OS;
@@ -17,16 +16,17 @@ using Android.Widget;
 using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
+using FamiliaXamarin;
 using FamiliaXamarin.Helpers;
+using FamiliaXamarin.Login_System;
 using Java.Security;
 using Javax.Crypto;
 using Org.Json;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Exception = System.Exception;
 using Permission = Android.Content.PM.Permission;
-using Resource = Familia.Resource;
 
-namespace FamiliaXamarin.Login_System
+namespace Familia.Login_System
 {
     [Activity(Label = "Familia", Theme = "@style/AppTheme.Dark", MainLauncher = true,
         ScreenOrientation = ScreenOrientation.Portrait)]

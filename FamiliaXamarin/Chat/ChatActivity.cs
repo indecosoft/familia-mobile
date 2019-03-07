@@ -23,8 +23,7 @@ namespace FamiliaXamarin.Chat
         public string Message { get; set; }
     }
     
-    [Activity(Label = "ChatActivity", Theme = "@style/AppTheme.Dark",
-        ScreenOrientation = ScreenOrientation.Portrait)]
+    [Activity(Label = "ChatActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class ChatActivity : AppCompatActivity
     {
         private Button send;

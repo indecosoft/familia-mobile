@@ -309,7 +309,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             }
         }
 
-        static async Task<ZXing.Result> StartScan()
+        private async Task<ZXing.Result> StartScan()
         {
             var options = new MobileBarcodeScanningOptions
             {
@@ -317,33 +317,36 @@ namespace FamiliaXamarin.Asistenta_sociala
                 {
                     ZXing.BarcodeFormat.QR_CODE
                 },
+                CameraResolutionSelector = availableResolutions => availableResolutions[0],
                 UseNativeScanning = true,
-                AutoRotate = true,
                 TryHarder = true
 
             };
-
-            ZXing.Result result = null;
             var scanner = new MobileBarcodeScanner();
+            WindowManagerFlags flags = WindowManagerFlags.Fullscreen;
+            Activity.Window.SetFlags(flags,
+                flags);
             //var result = await scanner.scan(options);
             // Start thread to adjust focus at 1-sec intervals
-            new Thread(new ThreadStart(delegate
-            {
-                while (result == null)
-                {
-                    try
-                    {
-                        scanner.AutoFocus();
-                        Thread.Sleep(3000);
-                    }
-                    catch
-                    {
-                        //Ignored
-                    }
-                    
-                }
-            })).Start();
-            result = await scanner.Scan(options);
+            var result = await scanner.Scan(options);
+//            new Thread(new ThreadStart(delegate
+//            {
+//                while (result == null)
+//                {
+//                    try
+//                    {
+//                        scanner.AutoFocus();
+//                        Thread.Sleep(3000);
+//                    }
+//                    catch
+//                    {
+//                        //Ignored
+//                    }
+//                    
+//                }
+//            })).Start();
+            
+            Activity.Window.ClearFlags(flags);
             return result;
 
 

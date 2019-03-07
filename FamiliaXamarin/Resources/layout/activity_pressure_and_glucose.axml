@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:background="#182E3D"
         android:layout_marginTop="-30dp"
         android:layout_below="@+id/top_bar"
         app:elevation="0dp"
@@ -52,7 +51,6 @@
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart"
             android:layout_width="match_parent"
-            android:background="#19303F"
             android:layout_height="match_parent" />
 
     </LinearLayout>
@@ -62,8 +60,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true"
-        android:layout_below="@+id/chart_content"
-        android:background="#19303F">
+        android:layout_below="@+id/chart_content">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -85,8 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/ScrollViewButtons"
         android:text="27/12/2018"
-        android:background="#19303F"
-        android:textColor="#fff"
+        android:textColor="@color/white"
         android:padding="16dp"
         android:textSize="18sp" />
 
@@ -94,8 +90,7 @@
         android:id="@+id/ScrollViewH"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvDate"
-        android:background="#19303F">
+        android:layout_below="@+id/tvDate">
 
         <LinearLayout
             android:id="@+id/linearLayout2"
@@ -112,8 +107,7 @@
         android:id="@+id/ScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/ScrollViewH"
-        android:background="#19303F">
+        android:layout_below="@+id/ScrollViewH">
 
         <LinearLayout
             android:id="@+id/LinearLayout"

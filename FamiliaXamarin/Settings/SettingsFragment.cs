@@ -14,6 +14,7 @@ using System.Diagnostics.Contracts;
 using Android.Preferences;
 using Android.Support.V4.Hardware.Fingerprint;
 using Familia;
+using Familia.Devices;
 using FamiliaXamarin.Devices;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Medicatie;

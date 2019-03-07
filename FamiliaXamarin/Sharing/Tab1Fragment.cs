@@ -51,7 +51,7 @@ namespace FamiliaXamarin.Sharing
                     ZXing.BarcodeFormat.QR_CODE
                 },
                 UseNativeScanning = true,
-                AutoRotate = true,
+                AutoRotate = false,
                 TryHarder = true
 
             };

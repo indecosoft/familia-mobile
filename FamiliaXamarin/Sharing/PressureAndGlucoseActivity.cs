@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Android.App;
+using Android.Content.PM;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Familia;
+using FamiliaXamarin;
 using FamiliaXamarin.Helpers;
 using MikePhil.Charting.Charts;
 using MikePhil.Charting.Components;
@@ -23,9 +25,9 @@ using Newtonsoft.Json;
 using Org.Json;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
-namespace FamiliaXamarin.Sharing
+namespace Familia.Sharing
 {
-    [Activity(Label = "PressureAndGlucoseActivity")]
+    [Activity(Label = "PressureAndGlucoseActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class PressureAndGlucoseActivity : AppCompatActivity, IOnChartValueSelectedListenerSupport
     {
         private class PressureModel
@@ -207,19 +209,19 @@ namespace FamiliaXamarin.Sharing
 
                 return;
             }
-            List<Entry> glucoseEntries = _bloodGlucoseDataList.Select((t, i) => new BarEntry(i, t.Avg)).Cast<Entry>().ToList();
+            var glucoseEntries = _bloodGlucoseDataList.Select((t, i) => new BarEntry(i, t.Avg)).Cast<Entry>().ToList();
 
-            LineDataSet glucoseDataSet = new LineDataSet(glucoseEntries, "Glucoza")
+            var glucoseDataSet = new LineDataSet(glucoseEntries, "Glucoza")
             {
                 ValueTextSize = 14f,
-                ValueTextColor = Color.ParseColor("#ffffff"),
+                ValueTextColor = Color.White,
                 LineWidth = 3f,
                 AxisDependency = YAxis.AxisDependency.Left
             };
             glucoseDataSet.SetMode(LineDataSet.Mode.HorizontalBezier);
-            glucoseDataSet.SetColors(Color.ParseColor("#FF783F"));
-            glucoseDataSet.SetCircleColor(Color.ParseColor("#FF783F"));
-            LineData barData = new LineData(glucoseDataSet);
+            glucoseDataSet.SetColors(Resource.Color.accent);
+            glucoseDataSet.SetCircleColor(Resource.Color.accent);
+            var barData = new LineData(glucoseDataSet);
             _lineChart.Data = barData;
 
             _lineChart.SetOnChartValueSelectedListener(this);
@@ -251,8 +253,8 @@ namespace FamiliaXamarin.Sharing
 
                 return;
             }
-            List<Entry> systolicEntries = new List<Entry>();
-            List<Entry> diastolicEntries = new List<Entry>();
+            var systolicEntries = new List<Entry>();
+            var diastolicEntries = new List<Entry>();
 
             for (var i = 0; i < _bloodPressureDataList.Count; i++)
             {
@@ -260,28 +262,28 @@ namespace FamiliaXamarin.Sharing
                 diastolicEntries.Add(new BarEntry(i, _bloodPressureDataList[i].Diastolic));
             }
 
-            LineDataSet systolicDataSet = new LineDataSet(systolicEntries, "Sistola")
+            var systolicDataSet = new LineDataSet(systolicEntries, "Sistola")
             {
                 ValueTextSize = 14f,
-                ValueTextColor = Color.ParseColor("#ffffff"),
+                ValueTextColor = Color.White,
                 LineWidth = 3f,
                 AxisDependency = YAxis.AxisDependency.Left
             };
             systolicDataSet.SetMode(LineDataSet.Mode.HorizontalBezier);
-            systolicDataSet.SetColors(Color.ParseColor("#FF783F"));
-            systolicDataSet.SetCircleColor(Color.ParseColor("#FF783F"));
-            LineDataSet diastolicDataSet = new LineDataSet(diastolicEntries, "Diastola")
+            systolicDataSet.SetColors(Resource.Color.accent);
+            systolicDataSet.SetCircleColor(Resource.Color.accent);
+            var diastolicDataSet = new LineDataSet(diastolicEntries, "Diastola")
             {
                 ValueTextSize = 14f,
-                ValueTextColor = Color.ParseColor("#ffffff"),
+                ValueTextColor = Color.White,
                 LineWidth = 3f,
                 AxisDependency = YAxis.AxisDependency.Left
             };
 
             diastolicDataSet.SetMode(LineDataSet.Mode.HorizontalBezier);
-            diastolicDataSet.SetColors(Color.ParseColor("#ffffff"));
-            diastolicDataSet.SetCircleColor(Color.ParseColor("#ffffff"));
-            LineData barData = new LineData(systolicDataSet, diastolicDataSet);
+            diastolicDataSet.SetColors(Color.White);
+            diastolicDataSet.SetCircleColor(Color.White);
+            var barData = new LineData(systolicDataSet, diastolicDataSet);
             _lineChart.Data = barData;
 
             _lineChart.SetOnChartValueSelectedListener(this);
@@ -305,7 +307,7 @@ namespace FamiliaXamarin.Sharing
 
         private void SetLegend()
         {
-            Legend l = _lineChart.Legend;
+            var l = _lineChart.Legend;
             l.FormSize = 10f; // set the size of the legend forms/shapes
             l.Form = Legend.LegendForm.Circle; // set what type of form/shape should be used
             l.VerticalAlignment = Legend.LegendVerticalAlignment.Bottom;
@@ -318,11 +320,11 @@ namespace FamiliaXamarin.Sharing
 
         private void LoadDataInScrollLayouts(bool pressure = true)
         {
-            Drawable bloodPressureIconDrawable = Resources.GetDrawable(Resource.Drawable.heart, Theme);
-            Drawable pulseRateIconDrawable = Resources.GetDrawable(Resource.Drawable.heart_pulse, Theme);
-            Drawable glucoseIconDrawable = Resources.GetDrawable(Resource.Drawable.water, Theme);
+            var bloodPressureIconDrawable = Resources.GetDrawable(Resource.Drawable.heart, Theme);
+            var pulseRateIconDrawable = Resources.GetDrawable(Resource.Drawable.heart_pulse, Theme);
+            var glucoseIconDrawable = Resources.GetDrawable(Resource.Drawable.water, Theme);
 
-            LinearLayoutCompat.LayoutParams verticalScrollLayoutParams = new LinearLayoutCompat.LayoutParams(
+            var verticalScrollLayoutParams = new LinearLayoutCompat.LayoutParams(
                 ViewGroup.LayoutParams.MatchParent,
                 ViewGroup.LayoutParams.WrapContent)
             {
@@ -331,7 +333,7 @@ namespace FamiliaXamarin.Sharing
                 BottomMargin = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 20, Resources.DisplayMetrics)
             };
 
-            LinearLayoutCompat.LayoutParams horizontalScrollLayoutParams = new LinearLayoutCompat.LayoutParams(
+            var horizontalScrollLayoutParams = new LinearLayoutCompat.LayoutParams(
                 ViewGroup.LayoutParams.MatchParent,
                 ViewGroup.LayoutParams.WrapContent)
             {
@@ -352,7 +354,7 @@ namespace FamiliaXamarin.Sharing
             {
                 horizontalScrollLinearLayout.Visibility = ViewStates.Gone;
                 var size = new Random().Next(5, 20);
-                for (int i = 0; i < size; i++)
+                for (var i = 0; i < size; i++)
                 {
                     verticalScrollLinearLayout.AddView(CreateCard(glucoseIconDrawable, $"{new Random().Next(100, 180)}", "mg/dL", $"{new Random().Next(10, 24)}:{new Random().Next(10, 59)}", verticalScrollLayoutParams));
                 }
@@ -362,7 +364,7 @@ namespace FamiliaXamarin.Sharing
         {
             layoutButtons = FindViewById<LinearLayout>(Resource.Id.layout_buttons);
             layoutButtons.RemoveAllViews();
-            LinearLayoutCompat.LayoutParams layoutButtonParams = new LinearLayoutCompat.LayoutParams(
+            var layoutButtonParams = new LinearLayoutCompat.LayoutParams(
                 (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 40, Resources.DisplayMetrics),
                 (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 40, Resources.DisplayMetrics))
             {
@@ -371,7 +373,7 @@ namespace FamiliaXamarin.Sharing
                 MarginEnd = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 5, Resources.DisplayMetrics)
             };
             var dayIndex = ReturnDayIndex();
-            DateTime baseDate = DateTime.Today;
+            var baseDate = DateTime.Today;
 
 //            var today = baseDate;
 //            var yesterday = baseDate.AddDays(-1);
@@ -417,7 +419,7 @@ namespace FamiliaXamarin.Sharing
                     if (i > dayIndex - 1)
                     {
                         btn.Enabled = false;
-                        btn.SetTextColor(Color.ParseColor("#42535F"));
+                        btn.SetTextColor(Resources.GetColor(Resource.Color.colorSecondary, Theme));
                     }
                     if (isActive) activeButton = btn;
 
@@ -434,9 +436,9 @@ namespace FamiliaXamarin.Sharing
             }
             else
             {
-                Drawable img = Resources.GetDrawable(Resource.Drawable.calendar_date, Theme);
+                var img = Resources.GetDrawable(Resource.Drawable.calendar_date, Theme);
                 img.SetBounds(0, 0, 50, 50);
-                AppCompatButton btn = new AppCompatButton(this)
+                var btn = new AppCompatButton(this)
                 {
                     Id = 1,
                     Text = "Data",
@@ -479,7 +481,7 @@ namespace FamiliaXamarin.Sharing
         }
         private AppCompatButton DaySelectorButton(bool active = false)
         {
-            AppCompatButton btn = new AppCompatButton(this);
+            var btn = new AppCompatButton(this);
             btn.SetTextSize(ComplexUnitType.Sp, 12f);
             btn.SetTextColor(Color.White);
             btn.Background = active ? buttonBackgroundA : buttonBackground;
@@ -487,7 +489,7 @@ namespace FamiliaXamarin.Sharing
             return btn;
         }
 
-        private int ReturnDayIndex()
+        private static int ReturnDayIndex()
         {
             switch (DateTime.Now.DayOfWeek)
             {
@@ -513,7 +515,7 @@ namespace FamiliaXamarin.Sharing
         {
             var btn = (AppCompatButton)sender;
 
-            for (int i = 0; i < layoutButtons.ChildCount; i++)
+            for (var i = 0; i < layoutButtons.ChildCount; i++)
             {
                 if ((layoutButtons.GetChildAt(i) as AppCompatButton)?.Background == buttonBackgroundA)
                     ((AppCompatButton)layoutButtons.GetChildAt(i)).Background = buttonBackground;
@@ -537,7 +539,7 @@ namespace FamiliaXamarin.Sharing
 
             var dayIndex = ReturnDayIndex();
 
-            DateTime baseDate = DateTime.Today;
+            var baseDate = DateTime.Today;
 
             var today = baseDate;
             var yesterday = baseDate.AddDays(-1);
@@ -554,18 +556,18 @@ namespace FamiliaXamarin.Sharing
         }
         private CardView CreateCard(Drawable image, string value, string measureType, string hour, LinearLayoutCompat.LayoutParams layoutParams)
         {
-            CardView cardView = new CardView(this) { LayoutParameters = layoutParams };
-            cardView.SetCardBackgroundColor(Color.ParseColor("#122836"));
+            var cardView = new CardView(this) { LayoutParameters = layoutParams };
+            cardView.SetCardBackgroundColor(Resources.GetColor(Resource.Color.colorPrimaryDark, Theme));
 
-            RelativeLayout rlContent = new RelativeLayout(this);
-            TextView tvHour = new TextView(this) { Id = 4 };
-            TextView tvBloodPressure = new TextView(this) { Id = 2 };
-            TextView tvMmHg = new TextView(this) { Id = 3 };
-            ImageView imIcon = new ImageView(this) { Id = 1 };
+            var rlContent = new RelativeLayout(this);
+            var tvHour = new TextView(this) { Id = 4 };
+            var tvBloodPressure = new TextView(this) { Id = 2 };
+            var tvMmHg = new TextView(this) { Id = 3 };
+            var imIcon = new ImageView(this) { Id = 1 };
 
-            RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent,
+            var rlParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent,
                 ViewGroup.LayoutParams.WrapContent);
-            RelativeLayout.LayoutParams tvHourParams = new RelativeLayout.LayoutParams(
+            var tvHourParams = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WrapContent,
                 ViewGroup.LayoutParams.WrapContent)
             {
@@ -573,7 +575,7 @@ namespace FamiliaXamarin.Sharing
             };
             tvHourParams.AddRule(LayoutRules.AlignParentRight);
 
-            RelativeLayout.LayoutParams tvBloodPressureParams = new RelativeLayout.LayoutParams(
+            var tvBloodPressureParams = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WrapContent,
                 ViewGroup.LayoutParams.WrapContent)
             {
@@ -582,7 +584,7 @@ namespace FamiliaXamarin.Sharing
             tvBloodPressureParams.AddRule(LayoutRules.AlignParentTop);
             tvBloodPressureParams.AddRule(LayoutRules.RightOf, imIcon.Id);
 
-            RelativeLayout.LayoutParams tvMmHgParams = new RelativeLayout.LayoutParams(
+            var tvMmHgParams = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WrapContent,
                 ViewGroup.LayoutParams.WrapContent)
             {
@@ -591,7 +593,7 @@ namespace FamiliaXamarin.Sharing
             };
             tvMmHgParams.AddRule(LayoutRules.RightOf, tvBloodPressure.Id);
 
-            RelativeLayout.LayoutParams tvIconParams = new RelativeLayout.LayoutParams(
+            var tvIconParams = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WrapContent,
                 ViewGroup.LayoutParams.WrapContent)
             {
@@ -609,18 +611,18 @@ namespace FamiliaXamarin.Sharing
             tvHour.LayoutParameters = tvHourParams;
             tvHour.Text = hour;
             tvHour.SetTextSize(ComplexUnitType.Sp, 16);
-            tvHour.SetTextColor(Color.ParseColor("#ffffff"));
+            tvHour.SetTextColor(Color.White);
 
             tvBloodPressure.LayoutParameters = tvBloodPressureParams;
             tvBloodPressure.Text = value;
             tvBloodPressure.SetTextSize(ComplexUnitType.Sp, 28);
-            tvBloodPressure.SetTextColor(Color.ParseColor("#FF783F"));
+            tvBloodPressure.SetTextColor(Resources.GetColor(Resource.Color.accent,Theme));
             tvBloodPressure.SetTypeface(tvBloodPressure.Typeface, TypefaceStyle.Bold);
 
             tvMmHg.LayoutParameters = tvMmHgParams;
             tvMmHg.Text = measureType;
             tvMmHg.SetTextSize(ComplexUnitType.Sp, 18);
-            tvMmHg.SetTextColor(Color.ParseColor("#42535F"));
+            tvMmHg.SetTextColor(Resources.GetColor(Resource.Color.colorSecondary, Theme));
 
             imIcon.LayoutParameters = tvIconParams;
 
