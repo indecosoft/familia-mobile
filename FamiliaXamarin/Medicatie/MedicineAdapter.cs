@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Familia;
 using Android.Views;
 using Android.Widget;
 using Android.Support.V7.Widget;
@@ -12,29 +13,23 @@ namespace FamiliaXamarin.Medicatie
         private List<Medicine> medicaments;
         private OnMedicamentClickListener listener;
 
-        public MedicineAdapter(List<Medicine> medicaments)
-        {
-            this.medicaments = new List<Medicine>();
-            this.medicaments = medicaments;
-        }
-
         public MedicineAdapter()
         {
-            this.medicaments = new List<Medicine>();
+            medicaments = new List<Medicine>();
         }
-        public void setMedicaments(List<Medicine> medicaments)
+        public void SetMedicaments(List<Medicine> medicamentsList)
         {
-            this.medicaments.Clear();
-            this.medicaments = medicaments;
+            medicaments.Clear();
+            medicaments = medicamentsList;
         }
-        public List<Medicine> getMedicaments()
+        public List<Medicine> GetMedicaments()
         {
             return medicaments;
         }
 
-        public void setListener(OnMedicamentClickListener listener)
+        public void SetListener(OnMedicamentClickListener listenerClick)
         {
-            this.listener = listener;
+            listener = listenerClick;
         }
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
@@ -49,13 +44,14 @@ namespace FamiliaXamarin.Medicatie
         {
             var holder = viewHolder as MedicamentAdapterViewHolder;
             Medicine medicament = medicaments[position];
-            holder.tvTitle.Text =medicament.Name;
+            if (holder == null) return;
+            holder.tvTitle.Text = medicament.Name;
             holder.Medicament = medicament;
             holder.Listener = listener;
         }
 
         public override int ItemCount => medicaments.Count;
-        public void addMedicament(Medicine medicament)
+        public void AddMedicament(Medicine medicament)
         {
             
             if (!medicaments.Contains(medicament))
@@ -64,16 +60,16 @@ namespace FamiliaXamarin.Medicatie
             }
         }
 
-        public void removeMedicament(Medicine medicament)
+        public void RemoveMedicament(Medicine medicament)
         {
             medicaments.Remove(medicament);
         }
-        public void updateMedicament(Medicine medicament, String idMed)
+        public void UpdateMedicament(Medicine medicament, string idMed)
         {
-            Medicine m = getMedicamentById(idMed);
+            Medicine m = GetMedicamentById(idMed);
             m.Name = medicament.Name;
         }
-        public Medicine getMedicamentById(string idMed)
+        public Medicine GetMedicamentById(string idMed)
         {
             foreach (Medicine item in medicaments)
             {
@@ -85,14 +81,9 @@ namespace FamiliaXamarin.Medicatie
             return null;
         }
     }
-
-
-
-
     public class MedicamentAdapterViewHolder : RecyclerView.ViewHolder
     {
         public TextView tvTitle;
-        public TextView tvTime;
         public RelativeLayout container;
         public Button btnDelete;
         public OnMedicamentClickListener Listener;
@@ -100,24 +91,16 @@ namespace FamiliaXamarin.Medicatie
         public MedicamentAdapterViewHolder(View itemView) : base(itemView)
         {
             tvTitle = itemView.FindViewById<TextView>(Resource.Id.tv_title);
-            tvTime = itemView.FindViewById<TextView>(Resource.Id.tv_time);
+            //tvTime = itemView.FindViewById<TextView>(Resource.Id.tv_time);
             container = itemView.FindViewById<RelativeLayout>(Resource.Id.container);
             btnDelete = itemView.FindViewById<Button>(Resource.Id.btn_delete);
             container.Click += delegate
             {
-                if (Listener != null)
-                {
-
-                    Listener.OnMedicamentClick(Medicament);
-
-                }
+                Listener?.OnMedicamentClick(Medicament);
             };
             btnDelete.Click += delegate
             {
-                if (Listener != null)
-                {
-                    Listener.OnMedicamentDeleteClick(Medicament);
-                }
+                Listener?.OnMedicamentDeleteClick(Medicament);
             };
         }
     }

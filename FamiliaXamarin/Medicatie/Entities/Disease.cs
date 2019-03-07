@@ -64,5 +64,10 @@ namespace FamiliaXamarin.Medicatie.Entities
 
             return DiseaseName.Equals(m?.DiseaseName);
         }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

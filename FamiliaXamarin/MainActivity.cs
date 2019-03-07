@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using System;
+using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Support.Design.Widget;
@@ -10,31 +11,54 @@ using Android.Widget;
 using FamiliaXamarin.Active_Conversations;
 using FamiliaXamarin.Asistenta_sociala;
 using FamiliaXamarin.Chat;
+using FamiliaXamarin.Devices;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Login_System;
 using FamiliaXamarin.Medicatie;
+using FamiliaXamarin.Services;
 using FamiliaXamarin.Settings;
-using FamiliaXamarin.WebSocket;
 using Refractored.Controls;
-using Square.Picasso;
+using System.Threading.Tasks;
+using Android;
+using Android.Content.PM;
+using Android.Gms.Location;
+using Android.Support.V4.Content;
+using Android.Util;
+using Com.Bumptech.Glide;
+using Familia.Active_Conversations;
+using Familia.Login_System;
+using Familia.Services;
+using Familia.Sharing;
+using FamiliaXamarin.DataModels;
+using FamiliaXamarin.Location;
+using FamiliaXamarin.Sharing;
+using Org.Json;
+using Resource = Familia.Resource;
 
 namespace FamiliaXamarin
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         Intent _loacationServiceIntent;
         Intent _webSocketServiceIntent;
-        public static bool FromBoala;
+//        Intent _medicationServiceIntent;
+        Intent _smartBandServiceIntent;
+        private FusedLocationProviderClient _fusedLocationProviderClient;
+        //public static bool FromDisease;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
+
+            if (string.IsNullOrEmpty(Utils.GetDefaults("Token", this)))
+            {    var intent = new Intent(this, typeof(LoginActivity));
+                StartActivity(intent);
+                
+            }
             var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
-
-
             var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             var toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
             drawer.AddDrawerListener(toggle);
@@ -48,48 +72,103 @@ namespace FamiliaXamarin
 
             _loacationServiceIntent = new Intent(this, typeof(LocationService));
             _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-            {
-                    StartForegroundService(_loacationServiceIntent);
-                    StartForegroundService(_webSocketServiceIntent);
-            }
-            else
-            {
-                    StartService(_loacationServiceIntent);
-                    StartService(_webSocketServiceIntent);
-            }
-          
-            Picasso.With(this)
-                .Load(avatar)
-                .Resize(100, 100)
-                .CenterCrop()
-                .Into(profileImageView);
+            //_smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
+                StartForegroundService(_loacationServiceIntent);
+                StartForegroundService(_webSocketServiceIntent);
+               // StartForegroundService(_smartBandServiceIntent);
+                   // StartForegroundService(_medicationServiceIntent);
+
+
+            Glide.With(this).Load(avatar).Into(profileImageView);
 
             var lbNume = headerView.FindViewById<TextView>(Resource.Id.lbNume);
-            var lbEmail = headerView.FindViewById<TextView>(Resource.Id.lbEmail);
-            lbNume.Text = Utils.GetDefaults("HourName", this);
-            lbEmail.Text = Utils.GetDefaults("Email", this);
+            //var lbEmail = headerView.FindViewById<TextView>(Resource.Id.lbEmail);
+            lbNume.Text = Utils.GetDefaults("Name", this);
+            //lbEmail.Text = Utils.GetDefaults("Email", this);
             profileImageView.Click += delegate
             {
                 //TODO: Implementateaza acivitaste pentru profil 
             };
 
-             if (FromBoala)
-                {
-                    var medFragment = new MedicineFragment();
-                    var medsupportFragmentManager = SupportFragmentManager;
-                    var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
-                    medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
-                    medbeginTransaction.AddToBackStack(null);
-                    medbeginTransaction.Commit();
-                    FromBoala = false;
-                }
+             if (Intent.GetBooleanExtra("FromChat", false))
+             {
+                 SupportFragmentManager.BeginTransaction()
+                     .Replace(Resource.Id.fragment_container, new ConversationsFragment())
+                     .AddToBackStack(null).Commit();
+                 Title = "Conversatii active";
+             }
+             if (Intent.GetBooleanExtra("FromMedicine", false))
+             {
+                 SupportFragmentManager.BeginTransaction()
+                     .Replace(Resource.Id.fragment_container, new MedicineFragment())
+                     .AddToBackStack(null).Commit();
+                 Title = "Medicatie";
+             }
+             if (Intent.GetBooleanExtra("FromSmartband", false))
+             {
+                 SupportFragmentManager.BeginTransaction()
+                     .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
+                     .AddToBackStack(null).Commit();
+                 Title = "Dispozitive de masurare";
+             }
+            //_isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
+            if (!Utils.IsGooglePlayServicesInstalled(this)) return;
+            new LocationRequest()
+                .SetPriority(LocationRequest.PriorityHighAccuracy)
+                .SetInterval(1000)
+                .SetFastestInterval(1000);
+            new FusedLocationProviderCallback(this);
 
-            Utils.CreateNotificationChannel();
+            _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);
+            // Utils.CreateNotificationChannel();
+            GetLastLocationButtonOnClick();
 
+            if (Intent.HasExtra("extra_health_device"))
+            {
+                OpenHealthDeviceFragment();
+            }
 
         }
 
+        private async void GetLastLocationButtonOnClick()
+        {
+            if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) == Permission.Granted)
+            {
+                await GetLastLocationFromDevice();
+            }
+        }
+
+        private async Task GetLastLocationFromDevice()
+        {
+            var location = await _fusedLocationProviderClient.GetLastLocationAsync();
+
+            if (location == null)
+            {
+                // Seldom happens, but should code that handles this scenario
+                Log.Error("Location is null", "******************");
+            }
+            else
+            {
+                Log.Debug("Sample", "The Latitude is " + location.Latitude);
+                Log.Debug("Sample", "The Longitude is " + location.Longitude);
+                JSONObject obj = new JSONObject().Put("latitude", (double) location.Latitude).Put("longitude", (double) location.Longitude);
+                JSONObject finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("IdClient", this)).Put("location", obj);
+                try
+                {
+                    await Task.Run(async () =>
+                    {
+                        string p = await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token", this));
+                        Log.Debug("Latitude ", location.Latitude.ToString());
+                        Log.Debug("Longitude", location.Longitude.ToString());
+                    });
+                }
+                catch (Exception e)
+                {
+                    Log.Error("****************************", e.Message);
+                }
+
+            }
+        }
         public override void OnBackPressed()
         {
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
@@ -123,69 +202,57 @@ namespace FamiliaXamarin
             switch (id)
             {
                 case Resource.Id.harta:
-                    var fragmentMap = new FindUsersFragment();
-                    var fragmentManagerMap = SupportFragmentManager;
-                    var fragmentTransactionMap = fragmentManagerMap.BeginTransaction();
-                    fragmentTransactionMap.Replace(Resource.Id.fragment_container, fragmentMap);
-                    fragmentTransactionMap.AddToBackStack(null);
-                    fragmentTransactionMap.Commit();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new FindUsersFragment())
+                        .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.nav_devices:
-                    var devicesFragment = new HealthDevicesFragment();
-                    var supportFragmentManager = SupportFragmentManager;
-                    var beginTransaction = supportFragmentManager.BeginTransaction();
-                    beginTransaction.Replace(Resource.Id.fragment_container, devicesFragment);
-                    beginTransaction.AddToBackStack(null);
-                    beginTransaction.Commit();
+                    OpenHealthDeviceFragment();
                     break;
                 case Resource.Id.medicatie:
-                    var medFragment = new MedicineFragment();
-                    var medsupportFragmentManager = SupportFragmentManager;
-                    var medbeginTransaction = medsupportFragmentManager.BeginTransaction();
-                    medbeginTransaction.Replace(Resource.Id.fragment_container, medFragment);
-                    medbeginTransaction.AddToBackStack(null);
-                    medbeginTransaction.Commit();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new MedicineFragment())
+                        .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.chat:
-                    var convFragment = new ConversationsFragment();
-                    var fragmentManagerConv = SupportFragmentManager;
-                    var fragmentTransactionConv = fragmentManagerConv.BeginTransaction();
-                    fragmentTransactionConv.Replace(Resource.Id.fragment_container, convFragment);
-                    fragmentTransactionConv.AddToBackStack(null);
-                    fragmentTransactionConv.Commit();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new ConversationsFragment())
+                        .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.nav_manage:
-                    var fragmentSettings = new SettingsFragment();
-                    var fragmentManagerSettings = SupportFragmentManager;
-                    var fragmentTransactionSettings = fragmentManagerSettings.BeginTransaction();
-                    fragmentTransactionSettings.Replace(Resource.Id.fragment_container, fragmentSettings);
-                    fragmentTransactionSettings.AddToBackStack(null);
-                    fragmentTransactionSettings.Commit();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new SettingsFragment())
+                        .AddToBackStack(null).Commit();
+                    break;
+                case Resource.Id.partajare_date:
+                   
+                    StartActivity(new Intent(this, typeof(SharingDataActivity)));
+
                     break;
                 case Resource.Id.nav_asistenta:
-                    var fragmentAsist = new AsistentForm();
-                    var fragmentManagerAsist = SupportFragmentManager;
-                    var fragmentTransactionAsist = fragmentManagerAsist.BeginTransaction();
-                    fragmentTransactionAsist.Replace(Resource.Id.fragment_container, fragmentAsist);
-                    fragmentTransactionAsist.AddToBackStack(null);
-                    fragmentTransactionAsist.Commit();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new AsistentForm())
+                        .AddToBackStack(null).Commit();
+                    break;
+                case Resource.Id.nav_monitorizare:
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new MonitoringFragment())
+                        .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.nav_QRCode:
-                    var fragment = new QrCodeGenerator();
-                    var fragmentManager = SupportFragmentManager;
-                    var fragmentTransaction = fragmentManager.BeginTransaction();
-                    fragmentTransaction.Replace(Resource.Id.fragment_container, fragment);
-                    fragmentTransaction.AddToBackStack(null);
-                    fragmentTransaction.Commit();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new QrCodeGenerator())
+                        .AddToBackStack(null).Commit();
                     break;
                 case Resource.Id.logout:
 
-                    Utils.SetDefaults("Token", null, this);
-                    Utils.SetDefaults("fingerprint", false.ToString(), this);
+                    Utils.RemoveDefaults();
                     WebSocketClient.Disconect();
+                    //Process.KillProcess(Process.MyPid());
                         StopService(_loacationServiceIntent);
                         StopService(_webSocketServiceIntent);
-   
+                       // StopService(_medicationServiceIntent);
+                    ClearDatabase();
                     StartActivity(typeof(LoginActivity));
                     Finish();
                     break;
@@ -198,6 +265,20 @@ namespace FamiliaXamarin
             drawer.CloseDrawer(GravityCompat.Start);
             return true;
         }
+
+        private async void ClearDatabase()
+        {
+            var sqlHelper = await  SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+            sqlHelper.DropTables(typeof(BluetoothDeviceRecords));
+        }
+        private void OpenHealthDeviceFragment()
+        {
+            SupportFragmentManager.BeginTransaction()
+                .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
+                .AddToBackStack(null).Commit();
+        }
     }
 }
+
+
 

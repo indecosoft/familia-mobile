@@ -12,6 +12,7 @@ using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Familia;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
@@ -44,23 +45,26 @@ namespace FamiliaXamarin.Medicatie.Alarm
         {
             LaunchSnoozeAlarm();
             base.OnUserLeaveHint();
+            Finish();
         }
 
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            this.Window.SetFlags(WindowManagerFlags.Fullscreen | WindowManagerFlags.DismissKeyguard |
+            Window.SetFlags(WindowManagerFlags.Fullscreen | WindowManagerFlags.DismissKeyguard |
                                  WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn, WindowManagerFlags.Fullscreen | WindowManagerFlags.DismissKeyguard |
                                                                                                       WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn);
 
-            if (Utils.Tiganie)
-            {
-                Utils.Tiganie = false;
-                Finish();
-                
-            }
+//            if (Utils.util)
+//            {
+//                Utils.util = false;
+//                Finish();
+//                
+//            }
+            
             SetContentView(Resource.Layout.activity_alarm);
+            
             tvMedName = FindViewById<TextView>(Resource.Id.tv_med_name_alarm);
             btnOk = FindViewById<Button>(Resource.Id.btn_ok_alarm);
             btnOk.SetOnClickListener(this);
@@ -68,6 +72,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
             btnSnooze.SetOnClickListener(this);
             btnSnooze.Visibility = ViewStates.Visible;
             btnOk.Visibility = ViewStates.Visible;
+            
             Intent intent = Intent;
             boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
             medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
@@ -90,9 +95,10 @@ namespace FamiliaXamarin.Medicatie.Alarm
             {
                 case Resource.Id.btn_ok_alarm:
                     Toast.MakeText(this, "Medicament luat.", ToastLength.Short).Show();
-                    btnSnooze.Visibility = ViewStates.Gone;
+                    //btnSnooze.Visibility = ViewStates.Gone;
                     //OnBackPressed();
                     Finish();
+                    
                     break;
                 case Resource.Id.btn_snooze_alarm:
                     LaunchSnoozeAlarm();
@@ -105,20 +111,27 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         private void LaunchSnoozeAlarm()
         {
-            
-            var snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze", this));
+            int snoozeInMinutes;
+           // bool a = int.TryParse(Utils.GetDefaults("snooze", this), out snoozeInMinutes);
+            if (int.TryParse(Utils.GetDefaults("snooze", this), out snoozeInMinutes))
+                snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze", this));
+            else
+                snoozeInMinutes = 5;
+
             var snoozeInMilisec = snoozeInMinutes * 60000;
+            
             Toast.MakeText(this, "Alarma amanata pentru " + snoozeInMinutes + " minute.", ToastLength.Short).Show();
-            btnOk.Visibility = ViewStates.Gone;
+            
             var am = (AlarmManager) GetSystemService(AlarmService);
-            //comment
+            
             var i = new Intent(this, typeof(AlarmBroadcastReceiver));
+            i.AddFlags(ActivityFlags.ClearTop);
             i.PutExtra(DiseaseActivity.BOALA_ID, mBoala.Id);
             i.PutExtra(DiseaseActivity.MED_ID, mMed.IdMed);
             i.PutExtra(DiseaseActivity.ALARM_ID, mIdAlarm);
             i.SetFlags(ActivityFlags.NewTask);
-            //i.SetAction("my.awesome.app.WAKE_DEVICE");
-            SendBroadcast(i);
+            
+            //SendBroadcast(i);
             var pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
            
 
@@ -128,7 +141,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     AlarmManager.IntervalDay, pi);
             }
 
-            Utils.Tiganie = true;
+           // Utils.util = true;
         }
     }
 }

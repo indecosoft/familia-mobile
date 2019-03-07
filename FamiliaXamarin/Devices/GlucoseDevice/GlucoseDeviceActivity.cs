@@ -1,61 +1,71 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Android.Animation;
 using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Constraints;
+using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Airbnb.Lottie;
+using Com.Airbnb.Lottie.Model;
+using Com.Airbnb.Lottie.Value;
+using Familia;
+using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
 using Java.IO;
 using Java.Text;
 using Java.Util;
 using Org.Json;
+using SQLite;
+using Environment = System.Environment;
 using File = Java.IO.File;
 using IOException = Java.IO.IOException;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
-namespace FamiliaXamarin.GlucoseDevice
+namespace FamiliaXamarin.Devices.GlucoseDevice
 {
-    [Activity(Label = "GlucoseDeviceActivity", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "GlucoseDeviceActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class GlucoseDeviceActivity : AppCompatActivity , Animator.IAnimatorListener
     {
+        private BluetoothAdapter _bluetoothAdapter;
+        private BluetoothLeScanner _bluetoothScanner;
+        private BluetoothManager _bluetoothManager;
+        //private SQLiteAsyncConnection _db;
 
-        BluetoothAdapter bluetoothAdapter;
-        BluetoothLeScanner bluetoothScanner;
-        BluetoothManager bluetoothManager;
+        private Handler _handler;
+        private bool _send;
 
-
-        Handler handler;
-        bool send = false;
-
-        TextView glucose;
-        Button scanButton;
+        private TextView _glucose;
+        private Button _scanButton;
 
         // private ProgressDialog progressDialog;
-        TextView lbStatus;
-        ConstraintLayout DataContainer;
+        private TextView _lbStatus;
+        private ConstraintLayout _dataContainer;
 
         //private ProgressDialog progressDialog;
-        LottieAnimationView animationView;
-        GlucoseDeviceActivity Context;
-        BluetoothScanCallback scanCallback;
-        GattCallBack gattCallback;
+        private LottieAnimationView _animationView;
+        private GlucoseDeviceActivity _context;
+        private BluetoothScanCallback _scanCallback;
+        private GattCallBack _gattCallback;
+        private SqlHelper<DevicesRecords> _bleDevicesDataRecords;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.blood_glucose_device);
-            Toolbar toolbar = (Toolbar)FindViewById(Resource.Id.toolbar);
+            var toolbar = (Toolbar)FindViewById(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             Title ="Glicemie";
 
@@ -66,40 +76,45 @@ namespace FamiliaXamarin.GlucoseDevice
                 Finish();
             };
 
-            lbStatus = FindViewById<TextView>(Resource.Id.status);
-            DataContainer = FindViewById<ConstraintLayout>(Resource.Id.dataContainer);
-            bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
-            Context = this;
+//            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+//            const string numeDb = "devices_data.db";
+//             _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
+            
+            _bleDevicesDataRecords = await SqlHelper<DevicesRecords>.CreateAsync();
+            
+            _lbStatus = FindViewById<TextView>(Resource.Id.status);
+            _dataContainer = FindViewById<ConstraintLayout>(Resource.Id.dataContainer);
+            _bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
+            _context = this;
+            
+            _scanCallback = new BluetoothScanCallback(_context);
+            _gattCallback = new GattCallBack(_context);
 
-            scanCallback = new BluetoothScanCallback(Context);
-            gattCallback = new GattCallBack(Context);
+            _dataContainer.Visibility = ViewStates.Gone;
 
-            DataContainer.Visibility = ViewStates.Gone;
+            _glucose = FindViewById<TextView>(Resource.Id.GlucoseTextView);
+            _scanButton = FindViewById<Button>(Resource.Id.ScanButton);
 
-            glucose = FindViewById<TextView>(Resource.Id.GlucoseTextView);
-            scanButton = FindViewById<Button>(Resource.Id.ScanButton);
+            _animationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
+            _animationView.AddAnimatorListener(this);
+            var filter =
+                new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
+            _animationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter,
+                new LottieValueCallback(filter));
+            _animationView.PlayAnimation();
 
-            animationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
-            animationView.AddAnimatorListener(this);
-            animationView.PlayAnimation();
 
-
-            scanButton.Click += delegate
+            _scanButton.Click += delegate
             {
-                if (bluetoothManager != null)
-                {
-                    if (bluetoothAdapter != null)
-                    {
-                        bluetoothScanner.StartScan(scanCallback);
-                        scanButton.Enabled =false;
-                        send = false;
+                if (_bluetoothManager == null) return;
+                _bluetoothScanner.StartScan(_scanCallback);
+                _scanButton.Enabled =false;
+                _send = false;
 
-                        lbStatus.Text = "Se efectueaza masuratoarea...";
-                        animationView.PlayAnimation();
-                        //                        progressDialog.setMessage(getString(R.string.conectare_info));
-                        //                        progressDialog.show();
-                    }
-                }
+                _lbStatus.Text = "Se efectueaza masuratoarea...";
+                _animationView.PlayAnimation();
+                //                        progressDialog.setMessage(getString(R.string.conectare_info));
+                //                        progressDialog.show();
             }; 
 
         // Create your application here
@@ -107,9 +122,9 @@ namespace FamiliaXamarin.GlucoseDevice
 
         public void OnAnimationCancel(Animator animation)
         {
-            DataContainer.Visibility = ViewStates.Visible;
-            lbStatus.Text = "Masuratoare efecuata cu succes";
-            animationView.Progress = 1f;
+            _dataContainer.Visibility = ViewStates.Visible;
+            _lbStatus.Text = "Masuratoare efecuata cu succes";
+            _animationView.Progress = 1f;
         }
 
         public void OnAnimationEnd(Animator animation)
@@ -124,41 +139,37 @@ namespace FamiliaXamarin.GlucoseDevice
 
         public void OnAnimationStart(Animator animation)
         {
-            handler = new Handler();
-            lbStatus.Text = "Se efectueaza masuratoarea...";
-            if (bluetoothManager != null)
+            _handler = new Handler();
+            _lbStatus.Text = "Se efectueaza masuratoarea...";
+//            if (_bluetoothManager == null) return;
+            _bluetoothAdapter = _bluetoothManager?.Adapter;
+            if (_bluetoothAdapter == null) return;
+            if (!_bluetoothAdapter.IsEnabled)
             {
-                bluetoothAdapter = bluetoothManager.Adapter;
-                if (bluetoothAdapter != null)
-                {
-                    if (!bluetoothAdapter.IsEnabled)
-                    {
-                        StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), 11);
-                    }
-                    else
-                    {
-                        bluetoothScanner = bluetoothAdapter.BluetoothLeScanner;
-                        bluetoothScanner.StartScan(scanCallback);
-                        scanButton.Enabled = false;
-                        DataContainer.Visibility = ViewStates.Gone;
-                        //progressDialog.show();
-                    }
-                }
+                StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), 11);
+            }
+            else
+            {
+                _bluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
+                _bluetoothScanner.StartScan(_scanCallback);
+                _scanButton.Enabled = false;
+                _dataContainer.Visibility = ViewStates.Gone;
+                //progressDialog.show();
             }
 
         }
         protected override void OnPostResume()
         {
             base.OnPostResume();
-            send = false;
+            _send = false;
         }
 
         protected override void OnPause()
         {
             base.OnPause();
-            if (bluetoothAdapter != null)
+            if (_bluetoothAdapter != null)
             {
-                bluetoothScanner?.StopScan(scanCallback);
+                _bluetoothScanner?.StopScan(_scanCallback);
             }
 
         }
@@ -169,10 +180,10 @@ namespace FamiliaXamarin.GlucoseDevice
             if (requestCode != 11) return;
             if (resultCode == Result.Ok)
             {
-                bluetoothScanner = bluetoothAdapter.BluetoothLeScanner;
-                bluetoothScanner.StartScan(scanCallback);
-                scanButton.Enabled = false;
-                animationView.PlayAnimation();
+                _bluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
+                _bluetoothScanner.StartScan(_scanCallback);
+                _scanButton.Enabled = false;
+                _animationView.PlayAnimation();
 
             }
             else
@@ -183,26 +194,41 @@ namespace FamiliaXamarin.GlucoseDevice
 
         class BluetoothScanCallback : ScanCallback
         {
-            Context Context;
+            private readonly Context Context;
+            private SqlHelper<BluetoothDeviceRecords> _bleDevicesRecords;
             public BluetoothScanCallback(Context context)
             {
                 Context = context;
             }
 
-            public override void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result)
+            public override async void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result)
             {
                 base.OnScanResult(callbackType, result);
-                if (result.Device.Address == null ||
-                    !result.Device.Address.Equals(
-                        Utils.GetDefaults(Context.GetString(Resource.String.blood_glucose_device), Context))) return;
-                result.Device.ConnectGatt(Context, false, ((GlucoseDeviceActivity)Context).gattCallback);
-                ((GlucoseDeviceActivity)Context).bluetoothScanner.StopScan(((GlucoseDeviceActivity)Context).scanCallback);
-                ((GlucoseDeviceActivity)Context).lbStatus.Text = Context.GetString(Resource.String.conectare_info);
+//                var jsonDevice = new JSONObject(Utils.GetDefaults(Context.GetString(Resource.String.blood_glucose_device),
+//                    Context));
+
+                _bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                var list = await _bleDevicesRecords.QueryValuations("select * from BluetoothDeviceRecords");
+                
+                if(!(from c in list where c.Address == result.Device.Address 
+                    select new {c.Name, c.Address, c.DeviceType}).Any()) 
+                    return;
+                
+//                if (result.Device.Address == null ||
+//                    !result.Device.Address.Equals(
+//                       jsonDevice.GetString("Address"))) return;
+                result.Device.ConnectGatt(Context, false,
+                    ((GlucoseDeviceActivity) Context)._gattCallback);
+                ((GlucoseDeviceActivity) Context)._bluetoothScanner.StopScan(
+                    ((GlucoseDeviceActivity) Context)._scanCallback);
+                ((GlucoseDeviceActivity) Context)._lbStatus.Text =
+                    Context.GetString(Resource.String.conectare_info);
             }
         }
-        class GattCallBack : BluetoothGattCallback
+
+        private class GattCallBack : BluetoothGattCallback
         {
-            Context Context;
+            private readonly Context Context;
             public GattCallBack(Context context)
             {
                 Context = context;
@@ -221,7 +247,8 @@ namespace FamiliaXamarin.GlucoseDevice
             {
                 if (status == 0)
                 {
-                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt, Constants.UuidGlucServ, Constants.UuidGlucMeasurementChar);
+                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt,
+                        Constants.UuidGlucServ, Constants.UuidGlucMeasurementChar);
                 }
             }
 
@@ -231,12 +258,14 @@ namespace FamiliaXamarin.GlucoseDevice
                 if (status != 0) return;
                 if (descriptor.Characteristic.Uuid.Equals(Constants.UuidGlucMeasurementContextChar))
                 {
-                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt, Constants.UuidGlucServ, Constants.UuidGlucRecordAccessControlPointChar);
+                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt,
+                        Constants.UuidGlucServ, Constants.UuidGlucRecordAccessControlPointChar);
                     Log.Error("Aici", "1");
                 }
                 if (descriptor.Characteristic.Uuid.Equals(Constants.UuidGlucMeasurementChar))
                 {
-                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt, Constants.UuidGlucServ, Constants.UuidGlucRecordAccessControlPointChar);
+                    (Context as GlucoseDeviceActivity)?.SetCharacteristicNotification(gatt,
+                        Constants.UuidGlucServ, Constants.UuidGlucRecordAccessControlPointChar);
                     //setCharacteristicNotification(gatt, Constants.UUID_GLUC_SERV, Constants.UUID_GLUC_MEASUREMENT_CONTEXT_CHAR);
                     Log.Error("Aici", "2");
                 }
@@ -276,146 +305,144 @@ namespace FamiliaXamarin.GlucoseDevice
 
                 var calendar = Calendar.Instance;
                 calendar.Set(year, month, day, hours, minutes, seconds);
-                record.Time = calendar;
 
                 if (timeOffsetPresent)
                 {
-                    record.TimeOffset = characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue();
+                    characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue();
                     offset += 2;
                 }
 
                 if (typeAndLocationPresent)
                 {
-                    record.GlucoseConcentration = characteristic.GetFloatValue(GattFormat.Sfloat, offset).FloatValue();
-                    record.Unit = concentrationUnit;
-                    var typeAndLocation = characteristic.GetIntValue(GattFormat.Uint8, offset + 2).IntValue();
-                    record.Type = (typeAndLocation & 0xF0) >> 4;
-                    record.SampleLocation = (typeAndLocation & 0x0F);
+                    record.GlucoseConcentration = characteristic
+                        .GetFloatValue(GattFormat.Sfloat, offset).FloatValue();
+                    var typeAndLocation = characteristic.GetIntValue(GattFormat.Uint8, offset + 2)
+                        .IntValue();
                     offset += 3;
 
                     (Context as GlucoseDeviceActivity)?.RunOnUiThread(() =>
                     {
-                        (Context as GlucoseDeviceActivity)?.animationView.CancelAnimation();
-                        (Context as GlucoseDeviceActivity)?.UpdateUi(record.GlucoseConcentration * 100000);
+                        (Context as GlucoseDeviceActivity)?._animationView.CancelAnimation();
+                        (Context as GlucoseDeviceActivity)?.UpdateUi(
+                            record.GlucoseConcentration * 100000);
                     });
                 }
 
                 if (sensorStatusAnnunciationPresent)
                 {
-                    record.Status = characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue();
+                    characteristic.GetIntValue(GattFormat.Uint16, offset).IntValue();
                 }
             }
 
         }
-        void UpdateUi(float g)
+        private async void UpdateUi(float g)
         {
             Log.Error("UpdateUI", "Aici");
-            if (!send)
+            if (!_send)
             {
                 var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
-                var jsonObject = new JSONObject();
-                try
+                //await _db.CreateTableAsync<DevicesRecords>();
+                if (!Utils.CheckNetworkAvailability())
                 {
-                    jsonObject
-                        .Put("imei", Utils.GetDefaults("imei", this))
-                        .Put("dateTimeISO", ft.Format(new Date()))
-                        .Put("geolocation", "")
-                        .Put("lastLocation", "")
-                        .Put("sendPanicAlerts", "")
-                        .Put("stepCounter", "")
-                        .Put("bloodPressureSystolic", "")
-                        .Put("bloodPressureDiastolic", "")
-                        .Put("bloodPressurePulseRate", "")
-                        .Put("bloodGlucose", "" + (int)g)
-                        .Put("oxygenSaturation", "")
-                        .Put("extension", "");
+                    await _bleDevicesDataRecords.Insert(new DevicesRecords()
+                    {
+                        Imei = Utils.GetImei(this),
+                        DateTime = ft.Format(new Date()),
+                        BloodGlucose = (int) g
+                    });
                 }
-                catch (JSONException e)
+                    //AddGlucoseRecord(_db, (int) g);
+                else
                 {
-                    e.PrintStackTrace();
-                }
+                    JSONObject jsonObject;
+                    var jsonArray = new JSONArray();
+                    var list = await _bleDevicesDataRecords.QueryValuations( "select * from DevicesRecords");
 
-                WriteBloodGlucoseData(jsonObject);
+                    foreach (var el in list)
+                    {
+                        try
+                        {
+                            jsonObject = new JSONObject();
+                            jsonObject
+                                .Put("imei", el.Imei)
+                                .Put("dateTimeISO", el.DateTime)
+                                .Put("geolocation",new JSONObject()
+                                .Put("latitude", $"{el.Latitude}")
+                                .Put("longitude", $"{el.Longitude}"))
+                                .Put("lastLocation", el.LastLocation)
+                                .Put("sendPanicAlerts", el.SendPanicAlerts)
+                                .Put("stepCounter", el.StepCounter)
+                                .Put("bloodPressureSystolic", el.BloodPresureSystolic)
+                                .Put("bloodPressureDiastolic", el.BloodPresureDiastolic)
+                                .Put("bloodPressurePulseRate", el.BloodPresurePulsRate)
+                                .Put("bloodGlucose", "" + el.BloodGlucose)
+                                .Put("oxygenSaturation", el.OxygenSaturation)
+                                .Put("extension", el.Extension);
+                            jsonArray.Put(jsonObject);
+                        }
+                        catch (JSONException e)
+                        {
+                            e.PrintStackTrace();
+                        }
+                    }
+                    jsonObject = new JSONObject();
+                    jsonObject
+                        .Put("imei", Utils.GetImei(this))
+                        .Put("dateTimeISO", ft.Format(new Date()))
+                        .Put("geolocation", string.Empty)
+                        .Put("lastLocation", string.Empty)
+                        .Put("sendPanicAlerts", string.Empty)
+                        .Put("stepCounter", string.Empty)
+                        .Put("bloodPressureSystolic", string.Empty)
+                        .Put("bloodPressureDiastolic", string.Empty)
+                        .Put("bloodPressurePulseRate", string.Empty)
+                        .Put("bloodGlucose", (int)g)
+                        .Put("oxygenSaturation", string.Empty)
+                        .Put("extension", string.Empty);
+                    jsonArray.Put(jsonObject);
+                    var result = await WebServices.Post(Constants.SaveDeviceDataUrl, jsonArray);
+                    if (result == "Succes!")
+                    {
+                         Toast.MakeText(this, "Succes", ToastLength.Long).Show();
+                        await _bleDevicesDataRecords.DropTable();
+                    }
+                    else
+                    {
+                        Toast.MakeText(this, ""+result, ToastLength.Long).Show();
+                    }
+
+                }
+                
+                //WriteBloodGlucoseData(jsonObject);
 
                 //new BGM().execute(Constants.DATA_URL);
             }
 
             var gl = GetString(Resource.String.glucose) + (int)g;
-            glucose.Text = gl;
+            _glucose.Text = gl;
             ActivateScanButton();
         }
-        public void WriteBloodGlucoseData(JSONObject jsonObject)
-        {
-            try
-            {
-                File file = new File(Context.FilesDir, Constants.BloodGlucoseFile);
-                FileWriter fileWriter = new FileWriter(file, true);
-                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-                bufferedWriter.Write(jsonObject + ";");
-                bufferedWriter.Close();
-            }
-            catch (IOException e)
-            {
-                e.PrintStackTrace();
-            }
-        }
 
-        public string ReadBloodGlucoseData()
-        {
-            Stream fis;
-            try
-            {
-                fis = Context.OpenFileInput(Constants.BloodGlucoseFile);
-                var isr = new InputStreamReader(fis);
-                var bufferedReader = new BufferedReader(isr);
-                var sb = new StringBuilder();
-                string line;
-                while ((line = bufferedReader.ReadLine()) != null)
-                {
-                    sb.Append(line);
-                }
-                fis.Close();
-                return sb.ToString();
-            }
-            catch (Java.Lang.Exception e)
-            {
-                e.PrintStackTrace();
-            }
-            return null;
-        }
-
-        public void ClearBloodGlucoseData()
-        {
-//            Stream fileOutputStream;
-//
-//            try
-//            {
-//                fileOutputStream = Application.Context.OpenFileOutput(Constants.BloodGlucoseFile, FileCreationMode.Private);
-//                fileOutputStream.Write("".getBytes());
-//                fileOutputStream.Close();
-//            }
-//            catch (Exception e)
-//            {
-//                e.PrintStackTrace();
-//            }
-        }
         void ActivateScanButton()
         {
-            scanButton.Enabled = true;
+            _scanButton.Enabled = true;
         }
 
-        protected void SetCharacteristicNotification(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
+        private void SetCharacteristicNotification(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
         {
             SetCharacteristicNotificationWithDelay(gatt, serviceUuid, characteristicUuid);
         }
 
-        protected void SetCharacteristicNotificationWithDelay(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
+        private void SetCharacteristicNotificationWithDelay(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
         {
-            handler.PostDelayed(
-                () => { SetCharacteristicNotification_private(gatt, serviceUuid, characteristicUuid); }, 300);
+            _handler.PostDelayed(
+                () =>
+                {
+                    SetCharacteristicNotification_private(gatt, serviceUuid, characteristicUuid);
+                }, 300);
         }
 
-        void SetCharacteristicNotification_private(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
+        private static void SetCharacteristicNotification_private(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid)
         {
             try
             {
@@ -438,5 +465,6 @@ namespace FamiliaXamarin.GlucoseDevice
                 e.PrintStackTrace();
             }
         }
+
     }
 }

@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.Views;
 using Android.Widget;
+using Familia;
 using AlertDialog = Android.Support.V7.App.AlertDialog.Builder;
 
 namespace FamiliaXamarin.Helpers
@@ -10,10 +11,14 @@ namespace FamiliaXamarin.Helpers
     internal class ProgressBarDialog
     {
         private readonly Dialog _dialog;
-
+        /// <summary>
+        /// Retrieve the current Window for the activity
+        /// </summary>
+        public Window Window { get; }
         private View InitUi(Context ctx)
         {
-            LayoutInflater inflater = (LayoutInflater)ctx.GetSystemService(Context.LayoutInflaterService);
+            LayoutInflater inflater =
+                (LayoutInflater) ctx.GetSystemService(Context.LayoutInflaterService);
             return inflater?.Inflate(Resource.Layout.progress_dialog_layout, null);
         }
 
@@ -30,7 +35,12 @@ namespace FamiliaXamarin.Helpers
         /// <param name="neutralButtonText">NeutralButton text</param>
         /// <param name="cancelButtonText">CancelButton text</param>
         /// <param name="okEventHandler">Ok event action</param>
-        public ProgressBarDialog(string title, string content, Context ctx, bool cancelable = true, string okButtonText = "Ok", EventHandler<DialogClickEventArgs> okEventHandler = null, string neutralButtonText = "Irresolute", EventHandler<DialogClickEventArgs> neutralEventHandler = null, string cancelButtonText="Cancel", EventHandler<DialogClickEventArgs> cancelEventHandler = null)
+        public ProgressBarDialog(string title, string content, Context ctx, bool cancelable = true,
+            string okButtonText = "Ok", EventHandler<DialogClickEventArgs> okEventHandler = null,
+            string neutralButtonText = "Irresolute",
+            EventHandler<DialogClickEventArgs> neutralEventHandler = null,
+            string cancelButtonText = "Cancel",
+            EventHandler<DialogClickEventArgs> cancelEventHandler = null)
         {
             View view = InitUi(ctx);
 
@@ -49,9 +59,10 @@ namespace FamiliaXamarin.Helpers
                 builder.SetNegativeButton(cancelButtonText, cancelEventHandler);
             builder.SetCancelable(cancelable);
             _dialog = builder.Create();
-
+            Window = _dialog.Window;
         }
-
+        
+        
         /// <summary>
         /// Display ProgressBar Dialog
         /// </summary>

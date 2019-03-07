@@ -6,11 +6,27 @@
     <!--
     items for a single row of RecyclerView
     -->
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:textColor="#000"
-        android:textSize="20sp" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/bluetooth"
+            android:tint="@color/colorAccent"
+            android:layout_centerVertical="true"/>
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="asdfsdfgs"
+            android:textSize="20sp"
+            android:layout_toEndOf="@+id/icon"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
+        
+   
 </LinearLayout>

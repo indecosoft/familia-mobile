@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Org.Json;
 
@@ -111,6 +114,90 @@ namespace FamiliaXamarin
                 {
                     var result = await streamReader.ReadToEndAsync();
                     return result;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        public static async Task<string> Post(string url, JSONArray obj)
+        {
+            try
+            {
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "POST";
+
+                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    string json = obj.ToString();
+
+                    streamWriter.Write(json);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                }
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
+                {
+                    var result = await streamReader.ReadToEndAsync();
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        public static async Task<string> Post(string url, JSONArray obj, string token)
+        {
+            try
+            {
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "POST";
+                //httpWebRequest.Timeout = 10;
+                httpWebRequest.Headers.Add("Authorization", "Bearer " + token);
+
+                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    string json = obj.ToString();
+
+                    streamWriter.Write(json);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                }
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
+                {
+                    var result = await streamReader.ReadToEndAsync();
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        public static async Task<string> Post(string url, Dictionary<string, string> dict)
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var byteArray = Encoding.ASCII.GetBytes($"{Constants.ClientId}:{Constants.ClientSecret}");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var response = await client.PostAsync(url, new FormUrlEncodedContent(dict));
+                    return await response.Content.ReadAsStringAsync();
+
                 }
             }
             catch (Exception e)

@@ -10,10 +10,11 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using FamiliaXamarin.Helpers;
 
 namespace FamiliaXamarin.Medicatie
 {
-    class DatePickerMedicine :DialogFragment, DatePickerDialog.IOnDateSetListener
+    class DatePickerMedicine : Android.Support.V4.App.DialogFragment, DatePickerDialog.IOnDateSetListener
     {
         public static readonly string TAG = "X:" + typeof(DatePickerFragment).Name.ToUpper();
 
@@ -21,8 +22,7 @@ namespace FamiliaXamarin.Medicatie
 
         public static DatePickerMedicine NewInstance(Action<DateTime> onDateSelected)
         {
-            DatePickerMedicine frag = new DatePickerMedicine();
-            frag._dateSelectedHandler = onDateSelected;
+            DatePickerMedicine frag = new DatePickerMedicine {_dateSelectedHandler = onDateSelected};
             return frag;
         }
 
@@ -32,7 +32,7 @@ namespace FamiliaXamarin.Medicatie
             DatePickerDialog dialog = new DatePickerDialog(Activity,
                 this,
                 currently.Year,
-                currently.Month,
+                currently.Month-1,
                 currently.Day);
 
             return dialog;
@@ -40,7 +40,7 @@ namespace FamiliaXamarin.Medicatie
 
         public void OnDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
         {
-            DateTime selectedDate = new DateTime(year, monthOfYear, dayOfMonth);
+            DateTime selectedDate = new DateTime(year, monthOfYear + 1, dayOfMonth);
             Log.Debug(TAG, selectedDate.ToLongDateString());
             _dateSelectedHandler(selectedDate);
         }

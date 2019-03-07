@@ -1,39 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"      
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    
-     <com.airbnb.lottie.LottieAnimationView
+
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animation_view"
         android:layout_width="230dp"
         android:layout_height="230dp"
-	    android:layout_marginTop="40dp"
+        android:layout_marginTop="40dp"
         android:layout_centerHorizontal="true"
-        app:lottie_rawRes="@raw/fingerprint"
+        app:lottie_autoPlay="true"
 
         app:lottie_loop="true"
-        app:lottie_autoPlay="true"/>
+        app:lottie_rawRes="@raw/fingerprint" />
 
-<TextView
-    android:layout_below="@+id/animation_view"
-    android:textColor="@color/customDark"
-    android:textSize="20sp"
-    android:gravity="center"
-    android:text="Asezati-va degetul pe senzorul de amprenta pentru a va putea verifica identitatea"
-    android:layout_centerHorizontal="true"
-    android:textAlignment="center"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" />
-	<Button
-	android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-	android:layout_centerHorizontal="true"
-	android:textAllCaps="false"
-	android:textColor="@color/customDark"
-	android:layout_alignParentBottom="true"
-	android:text="Foloseste codul PIN"
-	android:padding="14dp"
-	android:background="#F5F7FA"/>
+    <TextView
+        android:layout_below="@+id/animation_view"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:text="Asezati-va degetul pe senzorul de amprenta pentru a va putea verifica identitatea"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textAllCaps="false"
+        android:layout_alignParentBottom="true"
+        android:text="Foloseste codul PIN"
+        android:background="@drawable/secondary_button_style"
+        android:padding="14dp" />
 </RelativeLayout>

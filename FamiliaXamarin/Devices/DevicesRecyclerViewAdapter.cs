@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Android.Content;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using Android.Support.V7.Widget;
+using Familia;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Devices
 {
     class DevicesRecyclerViewAdapter : RecyclerView.Adapter
     {
@@ -35,9 +36,7 @@ namespace FamiliaXamarin
         // Replace the contents of a view (invoked by the layout manager)
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            var viewholder = holder as DevicesRecyclerViewAdapterViewHolder;
-            var currentCrewMember = mData[position];
-            viewholder.TextViewName.Text = currentCrewMember;
+            if (holder is DevicesRecyclerViewAdapterViewHolder viewholder) viewholder.TextViewName.Text = mData[position];
 
             // Replace the contents of the view with that element
             //var holder = viewHolder as DevicesRecyclerViewAdapterViewHolder;
@@ -61,12 +60,12 @@ namespace FamiliaXamarin
         public DevicesRecyclerViewAdapterViewHolder(View itemView, Action<int> listener) : base(itemView)
         {
             TextViewName = (TextView) itemView.FindViewById(Resource.Id.name);
-            itemView.Click += (sender, e) => listener(obj: base.Position);
+            itemView.Click += (sender, e) => listener?.Invoke(obj: Position);
         }
 
     }
 
-    public class DevicesRecyclerViewAdapterClickEventArgs : EventArgs
+    public abstract class DevicesRecyclerViewAdapterClickEventArgs : EventArgs
     {
         public View View { get; set; }
         public int Position { get; set; }

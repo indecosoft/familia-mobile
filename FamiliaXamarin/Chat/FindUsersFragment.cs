@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Familia;
 using Android.Animation;
 using Android.OS;
+using Android.Support.V4.Content;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Airbnb.Lottie;
+using Com.Airbnb.Lottie.Model;
+using Com.Airbnb.Lottie.Value;
 using Com.Yuyakaido.Android.CardStackView;
 using FamiliaXamarin.Helpers;
 using Org.Json;
@@ -35,7 +39,7 @@ namespace FamiliaXamarin.Chat
                           {
                               try
                               {
-                                  string emailFrom = Utils.GetDefaults("Email", Activity);
+                                  var emailFrom = Utils.GetDefaults("Email", Activity);
 
                                   var emailObject = new JSONObject().Put("dest", _people[_cardStackView.TopIndex - 1].Email).Put("from", emailFrom);
                                   WebSocketClient.Client.Emit("chat request", emailObject);
@@ -44,9 +48,17 @@ namespace FamiliaXamarin.Chat
                               {
                                   Console.WriteLine(e.Message);
                               }
-
+                              if (_cardStackView.TopIndex == _people.Count)
+                              {
+                                  _rightButton.Enabled = false;
+                                  _leftButton.Enabled = false;
+                                  _cardStackView.Enabled = false;
+                                  _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                                  _cardStackView.SetAdapter(_adapter);
+                                  _animationView.PlayAnimation();
+                              }
                           }
-                          else if (_people.Count == 0)
+                          else if (_cardStackView.TopIndex == _people.Count)
                           {
                               _rightButton.Enabled = false;
                               _leftButton.Enabled = false;
@@ -55,14 +67,6 @@ namespace FamiliaXamarin.Chat
                               _cardStackView.SetAdapter(_adapter);
                               _animationView.PlayAnimation();
                           }
-
-                          if (_cardStackView.TopIndex != _people.Count) return;
-                          _rightButton.Enabled = false;
-                          _leftButton.Enabled = false;
-                          _cardStackView.Enabled = false;
-                          _lbNobody.Text = "Nimeni nu se afla in jurul tau";
-                          _cardStackView.SetAdapter(_adapter);
-                          _animationView.PlayAnimation();
 
                       };
 
@@ -73,11 +77,12 @@ namespace FamiliaXamarin.Chat
             _cardStackView.Visibility = ViewStates.Visible;
         }
 
-        private async void SearchPeople()
+        private async Task SearchPeople()
         {
+            int status = 2;
             await Task.Run(async () =>
             {
-                var dataToSent = new JSONObject().Put("email", Utils.GetDefaults("Email", Activity));
+                var dataToSent = new JSONObject().Put("id", Utils.GetDefaults("IdClient", Activity)).Put("distance", 3000);
                 var response = await WebServices.Post(Constants.PublicServerAddress + "/api/nearMe", dataToSent, Utils.GetDefaults("Token", Activity));
                 Log.Error("Response: ", "" + response);
                 try
@@ -87,87 +92,59 @@ namespace FamiliaXamarin.Chat
 
                         var nearMe = new JSONArray(response);
                         _people = new List<UserCard>();
-                        var r = new Random();
                         if (nearMe.Length() != 0)
                         {
                             for (var i = 0; i < nearMe.Length(); i++)
                             {
-                                var imageId = r.Next(1, 10);
-                                var nearMeObj = (JSONObject)(nearMe.Get(i));
-                                switch (imageId)
-                                {
-                                    case 1:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_1));
-                                        break;
-                                    case 2:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_2));
-                                        break;
-                                    case 3:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_3));
-                                        break;
-                                    case 4:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_4));
-                                        break;
-                                    case 5:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_5));
-                                        break;
-                                    case 6:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_6));
-                                        break;
-                                    case 7:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_7));
-                                        break;
-                                    case 8:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_8));
-                                        break;
-                                    case 9:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_9));
-                                        break;
-                                    case 10:
-                                        _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                            "probleme de sanatate", nearMeObj.GetString("avatar"),
-                                            Resource.Drawable.image_10));
-                                        break;
-                                }
+                                var nearMeObj = (JSONObject)nearMe.Get(i);
+                                _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
+                                    string.Empty, nearMeObj.GetString("avatar"),
+                                    Resource.Drawable.card));
                             }
                         }
 
-                        Activity.RunOnUiThread(Reload);
-
+                        status = 1;
 
                     }
                     else
                     {
-                        Activity.RunOnUiThread(() => { _lbNobody.Text = "A fost intampinata o eroare in timpul conectarii la server!"; });
-
-                        //Utils.DisplayNotification(Activity, "Eroare", "A fost intampinata o eroare in timpul conectarii la server!");
+                        status = 2;
                     }
 
 
                 }
                 catch (JSONException e)
                 {
+                    status = 2;
                     e.PrintStackTrace();
                 }
             });
+            try
+            {
+                if (status == 1)
+                {
+                    Reload();
+                    if (_people.Count == 0)
+                    {
+
+                            _animationView.PlayAnimation();
+                            _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                       
+                    }
+                }
+                else
+                {
+                    _lbNobody.Text = "A fost intampinata o eroare in timpul conectarii la server!";
+
+                    //Utils.DisplayNotification(Activity, "Eroare", "A fost intampinata o eroare in timpul conectarii la server!");
+
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
             _animationView.Progress = 1f;
 
 
@@ -195,7 +172,6 @@ namespace FamiliaXamarin.Chat
             //start annimation
             _animationView.PlayAnimation();
 
-
             _leftButton.Click += delegate { SwipeLeft(); };
             _rightButton.Click += delegate { SwipeRight(); };
 
@@ -217,13 +193,14 @@ namespace FamiliaXamarin.Chat
             //throw new NotImplementedException();
         }
 
-        public void OnAnimationStart(Animator animation)
+        public async void OnAnimationStart(Animator animation)
         {
             _rightButton.Enabled = true;
             _leftButton.Enabled = true;
             _cardStackView.Enabled = true;
             _lbNobody.Text = string.Empty;
-            SearchPeople();
+
+            await SearchPeople();
 
         }
         private void SwipeLeft()

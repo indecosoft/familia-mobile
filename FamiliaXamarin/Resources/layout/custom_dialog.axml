@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:padding="16dp">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_dia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:text="Adaugati un medicament nou:"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_label_medicament"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_dia"
+            android:layout_marginTop="10dp"
+            android:text="Denumirea medicamentului:" />
+
+        <EditText
+            android:id="@+id/et_medicament_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Denumire medicament"
+            android:textColor="@color/white"
+            android:textColorHint="@color/colorSecondary"
+            android:layout_marginTop="5dp"
+            android:drawableStart="@drawable/pill"
+            android:drawableTint="@drawable/drawable_tint_selector"
+            android:drawablePadding="5dp"
+            android:paddingStart="10dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingEnd="10dp"
+            android:inputType="text"
+            android:background="@drawable/edit_text_layout"
+            android:layout_below="@+id/tv_label_medicament" />
+
+        <TextView
+            android:id="@+id/tv_interval"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/et_medicament_name"
+            android:layout_marginTop="10dp"
+            android:text="Administrare" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:background="@drawable/edit_text_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_interval"
+            android:paddingStart="10dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingEnd="10dp"
+            android:prompt="@string/app_name" />
+
+        <RelativeLayout
+            android:id="@+id/rl_rv_meds"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/spinner">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_hours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:scrollbars="vertical" />
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/tv_label_program"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rl_rv_meds"
+            android:layout_marginTop="20dp"
+            android:text="Program"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/tv_data_inceput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_label_program"
+            android:layout_marginTop="10dp"
+            android:text="Data de inceput:" />
+
+        <TextView
+            android:id="@+id/tv_start_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_label_program"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/tv_data_inceput"
+            android:layout_toRightOf="@+id/tv_data_inceput"
+            android:text="Today, 18 sept"
+            android:textColor="@color/colorAccent"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/tv_durata"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_data_inceput"
+            android:layout_marginTop="10dp"
+            android:text="Durata:" />
+
+        <RadioGroup
+            android:id="@+id/rg_durata"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_durata"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_continuu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/colorAccent"
+                android:text="Continuu" />
+
+            <RadioButton
+                android:id="@+id/rb_numar_zile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:buttonTint="@color/colorAccent"
+                android:text="Numar de zile" />
+
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/et_numar_zile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="false"
+            android:drawableStart="@drawable/calendar_multiselect"
+            android:drawableTint="@drawable/drawable_tint_selector"
+            android:drawablePadding="5dp"
+            android:layout_below="@+id/rg_durata"
+            android:layout_marginTop="10dp"
+            android:hint="Numar zile"
+            android:inputType="number"
+            android:textColorHint="@color/colorSecondary"
+            android:paddingStart="10dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingEnd="10dp"
+            android:textColor="@color/white"
+            android:background="@drawable/edit_text_layout"
+            android:textSize="18dp" />
+
+
+        <Button
+            android:id="@+id/btn_save_med_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/main_button_style"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:text="Salveaza datele"
+            android:layout_below="@+id/et_numar_zile"
+            android:layout_marginTop="10dp" />
+
+
+    </RelativeLayout>
+</ScrollView>

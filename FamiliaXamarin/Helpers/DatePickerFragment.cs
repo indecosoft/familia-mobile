@@ -1,13 +1,12 @@
 ﻿using System;
-
 using Android.App;
 using Android.OS;
 using Android.Util;
 using Android.Widget;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Helpers
 {
-    public class DatePickerFragment : DialogFragment,
+    public class DatePickerFragment : Android.Support.V4.App.DialogFragment,
         DatePickerDialog.IOnDateSetListener
     {
         // TAG can be any string of your choice.
@@ -31,7 +30,7 @@ namespace FamiliaXamarin
             DatePickerDialog dialog = new DatePickerDialog(Activity,
                 this,
                 currently.Year,
-                currently.Month - 1,
+                currently.Month,
                 currently.Day);
 
             DateTime origin = new DateTime(1970, 1, 1);

@@ -13,6 +13,9 @@ using Android.Widget;
 using System.Diagnostics.Contracts;
 using Android.Preferences;
 using Android.Support.V4.Hardware.Fingerprint;
+using Familia;
+using Familia.Devices;
+using FamiliaXamarin.Devices;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Medicatie;
 
@@ -22,8 +25,9 @@ namespace FamiliaXamarin.Settings
     {
         private Spinner spinner;
         private int optionOfSnooze;
-        private string key;
+//        private string key;
         private Switch enablefingerprint;
+        private TextView _tvDevicesManagement;
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -32,10 +36,13 @@ namespace FamiliaXamarin.Settings
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View v =  inflater.Inflate(Resource.Layout.fragment_settings, container, false);
+            var v =  inflater.Inflate(Resource.Layout.fragment_settings, container, false);
 
             SetupSpinner(v);
             enablefingerprint = v.FindViewById<Switch>(Resource.Id.fingerPrintSwitch);
+            _tvDevicesManagement = v.FindViewById<TextView>(Resource.Id.devices);
+            _tvDevicesManagement.Click += (sender, args) =>
+                Activity.StartActivity(typeof(DevicesManagementActivity));
             FingerprintManagerCompat checkHardware;
 
             checkHardware = FingerprintManagerCompat.From(Activity);
@@ -88,16 +95,8 @@ namespace FamiliaXamarin.Settings
         private void Enablefingerprint_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
             // this is an Activity
-            if (enablefingerprint.Checked)
-            {
-                Utils.SetDefaults("fingerprint", true.ToString(), Activity);
-
-            }
-            else
-            {
-                Utils.SetDefaults("fingerprint", false.ToString(), Activity);
-            }
-
+            Utils.SetDefaults("fingerprint",
+                enablefingerprint.Checked ? true.ToString() : false.ToString(), Activity);
         }
     }
 }

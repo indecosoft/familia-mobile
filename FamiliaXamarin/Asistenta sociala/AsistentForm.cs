@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Android;
+using Familia;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -17,10 +18,12 @@ using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Location;
+using FamiliaXamarin.Services;
 using Java.Text;
 using Java.Util;
 using Org.Json;
 using ZXing.Mobile;
+using Resource = Familia.Resource;
 
 namespace FamiliaXamarin.Asistenta_sociala
 {
@@ -39,6 +42,7 @@ namespace FamiliaXamarin.Asistenta_sociala
         private JSONArray _benefitsArray;
         private List<BenefitSpinnerState> _listVOs;
         private Intent _distanceCalculatorService;
+        private Intent _medicalAsistanceService;
 
         private void IntiUi(View v)
         {
@@ -47,13 +51,13 @@ namespace FamiliaXamarin.Asistenta_sociala
             _btnScan = v.FindViewById<Button>(Resource.Id.btnScan);
             _formContainer = v.FindViewById<ConstraintLayout>(Resource.Id.container);
 
-
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se trimit datele...", Activity, false);
+            _progressBarDialog.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimary);
         }
 
         private bool FieldsValidation()
         {
-            return _benefitsSpinner.SelectedItem != null && !_benefitsSpinner.SelectedItem.Equals("") && !_tbDetails.Text.Equals("");
+            return _benefitsSpinner.SelectedItem != null && !_benefitsSpinner.SelectedItem.Equals(string.Empty) && !_tbDetails.Text.Equals(string.Empty);
 
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -64,6 +68,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             NotificationManagerCompat.From(Activity).Cancel(Constants.NotifMedicationId--);
             IntiUi(view);
             _distanceCalculatorService = new Intent(Activity, typeof(DistanceCalculator));
+            _medicalAsistanceService = new Intent(Activity, typeof(MedicalAsistanceService));
             string[] selectQualification = {
                 "Beneficiu acordat", "Masaj", "Baie", "Perfuzie", "Pansament"};
             _listVOs = new List<BenefitSpinnerState>();
@@ -79,11 +84,13 @@ namespace FamiliaXamarin.Asistenta_sociala
             }
             var myAdapter = new BenefitAdapter(Activity, 0, _listVOs);
             _benefitsSpinner.Adapter = myAdapter;
+            var fromPreferences = Utils.GetDefaults("ActivityStart", Activity);
             _tbDetails.TextChanged += delegate
             {
+
                 _btnScan.Enabled = FieldsValidation();
             };
-            var fromPreferences = Utils.GetDefaults("ActivityStart", Activity);
+            
             if (string.IsNullOrEmpty(fromPreferences))
             {
                 _formContainer.Visibility = ViewStates.Gone;
@@ -133,17 +140,15 @@ namespace FamiliaXamarin.Asistenta_sociala
         private async void BtnScan_Click(object sender, EventArgs e)
         {
             //IntentIntegrator.forSupportFragment(this).InitiateScan();
-#if __ANDROID__
             // Initialize the scanner first so it can track the current context
             var app = new Application();
             MobileBarcodeScanner.Initialize(app);
-#endif
 
             var result = await StartScan();
             if (result == null) return;
             try
             {
-                var sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                var sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 var currentDateandTime = sdf.Format(new Date());
 
                 var dateTimeNow = sdf.Parse(currentDateandTime);
@@ -171,9 +176,14 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 _progressBarDialog.Show();
                                 _dateTimeStart = currentDateandTime;
                                 _dateTimeEnd = null;
+                                Activity.StartForegroundService(_medicalAsistanceService);
+          
 
+                        
                                 _latitude = double.Parse(Utils.GetDefaults("Latitude", Activity));
                                 _longitude = double.Parse(Utils.GetDefaults("Longitude", Activity));
+                                Log.Error("Latitude12", _latitude.ToString());
+                                Log.Error("Longitude12", _longitude.ToString());
 
                                 Utils.SetDefaults("ConsultLat", _latitude.ToString(), Activity);
                                 Utils.SetDefaults("ConsultLong", _longitude.ToString(), Activity);
@@ -217,7 +227,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 {
                                     if (t.IsSelected)
                                     {
-                                        _benefitsArray = _benefitsArray.Put(t.Title);
+                                        _benefitsArray.Put(t.Title);
                                     }
                                     //BenefitAdapter el = listVOs.get(i).isSelected();
                                 }
@@ -225,7 +235,8 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 _details = new JSONObject().Put("benefit", _benefitsArray).Put("details", _tbDetails.Text);
                                 Log.Error("Details", _details.ToString());
 
-                                Activity.StopService(new Intent(Activity, typeof(DistanceCalculator)));
+                                //Activity.StopService(_distanceCalculatorService);
+                                
                                 await Task.Run(async () =>
                                 {
                                     //GetLastLocationButtonOnClick();
@@ -245,11 +256,11 @@ namespace FamiliaXamarin.Asistenta_sociala
                                         switch (responseJson.GetInt("status"))
                                         {
                                             case 0:
-                                                snack = Snackbar.Make(_formContainer, "Nu esti la pacient!", Snackbar.LengthLong);
+                                                snack = Snackbar.Make(_formContainer, "Nu sunteti la pacient!", Snackbar.LengthLong);
                                                 snack.Show();
                                                 break;
                                             case 1:
-                                                snack = Snackbar.Make(_formContainer, "Internal Server Error", Snackbar.LengthLong);
+                                                snack = Snackbar.Make(_formContainer, "Eroare conectare la server", Snackbar.LengthLong);
                                                 snack.Show();
                                                 break;
                                             case 2:
@@ -258,10 +269,17 @@ namespace FamiliaXamarin.Asistenta_sociala
                                         _progressBarDialog.Dismiss();
                                     }
                                     else
-                                        Snackbar.Make(_formContainer, "Unable to reach the server!", Snackbar.LengthLong).Show();
+                                        Snackbar.Make(_formContainer, "Nu se poate conecta la server!", Snackbar.LengthLong).Show();
                                 });
-
+                                Activity.StopService(_medicalAsistanceService);
                                 Activity.StopService(_distanceCalculatorService);
+                                _tbDetails.Text = string.Empty;
+                                foreach (var t in _listVOs)
+                                {
+                                    t.IsSelected = false;
+                                }
+
+                                _btnScan.Enabled = true;
                             }
                             catch (JSONException ex)
                             {
@@ -271,7 +289,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                     }
                     else
                     {
-                        Snackbar.Make(_formContainer, "QRCode Expirat! Va rugam sa generati alt cod QR!", Snackbar.LengthLong).Show();
+                        Snackbar.Make(_formContainer, "QRCode expirat! Va rugam sa generati alt cod QR!", Snackbar.LengthLong).Show();
                         _progressBarDialog.Dismiss();
                     }
 
@@ -282,6 +300,8 @@ namespace FamiliaXamarin.Asistenta_sociala
                     _progressBarDialog.Dismiss();
 
                 }
+
+                
             }
             catch (Exception)
             {
@@ -289,7 +309,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             }
         }
 
-        static async Task<ZXing.Result> StartScan()
+        private async Task<ZXing.Result> StartScan()
         {
             var options = new MobileBarcodeScanningOptions
             {
@@ -297,25 +317,36 @@ namespace FamiliaXamarin.Asistenta_sociala
                 {
                     ZXing.BarcodeFormat.QR_CODE
                 },
+                CameraResolutionSelector = availableResolutions => availableResolutions[0],
                 UseNativeScanning = true,
-                AutoRotate = true,
                 TryHarder = true
 
             };
-
-            ZXing.Result result = null;
             var scanner = new MobileBarcodeScanner();
+            WindowManagerFlags flags = WindowManagerFlags.Fullscreen;
+            Activity.Window.SetFlags(flags,
+                flags);
             //var result = await scanner.scan(options);
             // Start thread to adjust focus at 1-sec intervals
-            new Thread(new ThreadStart(delegate
-            {
-                while (result == null)
-                {
-                    scanner.AutoFocus();
-                    Thread.Sleep(1000);
-                }
-            })).Start();
-            result = await scanner.Scan(options);
+            var result = await scanner.Scan(options);
+//            new Thread(new ThreadStart(delegate
+//            {
+//                while (result == null)
+//                {
+//                    try
+//                    {
+//                        scanner.AutoFocus();
+//                        Thread.Sleep(3000);
+//                    }
+//                    catch
+//                    {
+//                        //Ignored
+//                    }
+//                    
+//                }
+//            })).Start();
+            
+            Activity.Window.ClearFlags(flags);
             return result;
 
 
