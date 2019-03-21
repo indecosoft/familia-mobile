@@ -44,23 +44,8 @@ namespace FamiliaXamarin.Devices
             }
             else
             {
-                
-                // Do something for Oreo and above versions
-                var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dialog).Create();
-                alertDialog.SetTitle("Avertisment");
-
-                alertDialog.SetMessage("Nu aveti niciun dispozitiv inregistrat!");
-                alertDialog.SetButton("OK", delegate
+                if(v.Id == Resource.Id.SmartbandButton)
                 {
-                    switch (v.Id)
-                    {
-                        case Resource.Id.BloodPressureButton:
-                            Activity.StartActivity(typeof(AddNewBloodPressureDeviceActivity));
-                            break;
-                        case Resource.Id.BloodGlucoseButton:
-                            Activity.StartActivity(typeof(AddNewGucoseDeviceActivity));
-                            break;
-                        case Resource.Id.SmartbandButton:
                             const string url = "https://www.fitbit.com/oauth2/authorize?" + /*"grant_type=authorization_code"+*/
                                                "response_type=code" +
                                                "&client_id=22CZRL" +
@@ -68,14 +53,31 @@ namespace FamiliaXamarin.Devices
                                                "&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight" +
                                                "&prompt=login" +
                                                "&expires_in=31536000";
-                            var builder = new CustomTabsIntent.Builder();
-                            var customTabsIntent = builder.Build();
-                            customTabsIntent.LaunchUrl(Activity, Android.Net.Uri.Parse(url));
-                            break;
-                    }
-                });
-                alertDialog.Show();
+                    var builder = new CustomTabsIntent.Builder();
+                    var customTabsIntent = builder.Build();
+                    customTabsIntent.LaunchUrl(Activity, Android.Net.Uri.Parse(url));
+                }
+                else
+                {
+                    // Do something for Oreo and above versions
+                    var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dialog).Create();
+                    alertDialog.SetTitle("Avertisment");
 
+                    alertDialog.SetMessage("Nu aveti niciun dispozitiv inregistrat!");
+                    alertDialog.SetButton("OK", delegate
+                    {
+                        switch (v.Id)
+                        {
+                            case Resource.Id.BloodPressureButton:
+                                Activity.StartActivity(typeof(AddNewBloodPressureDeviceActivity));
+                                break;
+                            case Resource.Id.BloodGlucoseButton:
+                                Activity.StartActivity(typeof(AddNewGucoseDeviceActivity));
+                                break;
+                        }
+                    });
+                    alertDialog.Show();
+                }
             }
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

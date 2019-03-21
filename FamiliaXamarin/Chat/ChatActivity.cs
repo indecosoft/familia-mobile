@@ -89,7 +89,7 @@ namespace FamiliaXamarin.Chat
                 mUsername = Intent.GetStringExtra("EmailFrom");
                 var ids = RoomName.Split(':');
                 NotificationManagerCompat.From(this).Cancel(
-                    ids[0] == Utils.GetDefaults("IdClient", this)
+                    ids[0] == Utils.GetDefaults("IdClient")
                         ? int.Parse(ids[1])
                         : int.Parse(ids[0]));
                 //Active = Intent.GetBooleanExtra("Active", false);
@@ -103,7 +103,7 @@ namespace FamiliaXamarin.Chat
                     try
                     {
                         //adaugare la lista de prieteni
-                        var sharedRooms = Utils.GetDefaults("Rooms", this);
+                        var sharedRooms = Utils.GetDefaults("Rooms");
                         if (sharedRooms != null)
                         {
                             var model =
@@ -125,7 +125,7 @@ namespace FamiliaXamarin.Chat
                             }
 
                             var serialized = JsonConvert.SerializeObject(model);
-                            Utils.SetDefaults("Rooms", serialized, this);
+                            Utils.SetDefaults("Rooms", serialized);
                         }
                         else
                         {
@@ -136,7 +136,7 @@ namespace FamiliaXamarin.Chat
                             model.Add(currentModel);
 
                             var serialized = JsonConvert.SerializeObject(model);
-                            Utils.SetDefaults("Rooms", serialized, this);
+                            Utils.SetDefaults("Rooms", serialized);
                         }
                     }
                     catch (System.Exception e)
@@ -144,7 +144,7 @@ namespace FamiliaXamarin.Chat
                         Log.Error("Error", e.Message);
                     }
 
-                    var emailFrom = Utils.GetDefaults("Email", this);
+                    var emailFrom = Utils.GetDefaults("Email");
                     try
                     {
                         var dest = extras.GetString("EmailFrom");
@@ -186,7 +186,7 @@ namespace FamiliaXamarin.Chat
             try
             {
                 messageToSend = new JSONObject().Put("message", message)
-                    .Put("username", Utils.GetDefaults("Email", this))
+                    .Put("username", Utils.GetDefaults("Email"))
                     .Put("room", RoomName);
             }
             catch (JSONException e)

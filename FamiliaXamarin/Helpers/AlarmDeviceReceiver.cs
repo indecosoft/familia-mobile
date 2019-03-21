@@ -37,7 +37,7 @@ namespace FamiliaXamarin.Helpers
             
             //Log.Error("PPPAAAAAAAAAAAAAAAAAA", "receiver " + content);
             
-            if (string.IsNullOrEmpty(Utils.GetDefaults("Token", context))) return;
+            if (string.IsNullOrEmpty(Utils.GetDefaults("Token"))) return;
             
             CreateNotificationChannel(CHANNEL_NAME_ALARM_DEVICE, TITLE_GLUCOSE, CONTENT_GLUCOSE);
             

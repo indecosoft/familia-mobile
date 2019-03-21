@@ -52,7 +52,7 @@ namespace FamiliaXamarin
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
-            if (string.IsNullOrEmpty(Utils.GetDefaults("Token", this)))
+            if (string.IsNullOrEmpty(Utils.GetDefaults("Token")))
             {    var intent = new Intent(this, typeof(LoginActivity));
                 StartActivity(intent);
                 
@@ -68,14 +68,14 @@ namespace FamiliaXamarin
             navigationView.SetNavigationItemSelectedListener(this);
             var headerView = navigationView.GetHeaderView(0);
             var profileImageView = headerView.FindViewById<CircleImageView>(Resource.Id.menu_profile_image);
-            var avatar = Utils.GetDefaults("Avatar", this);
+            var avatar = Utils.GetDefaults("Avatar");
 
             _loacationServiceIntent = new Intent(this, typeof(LocationService));
             _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
-            //_smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
+            _smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
                 StartForegroundService(_loacationServiceIntent);
                 StartForegroundService(_webSocketServiceIntent);
-               // StartForegroundService(_smartBandServiceIntent);
+                StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);
 
 
@@ -83,7 +83,7 @@ namespace FamiliaXamarin
 
             var lbNume = headerView.FindViewById<TextView>(Resource.Id.lbNume);
             //var lbEmail = headerView.FindViewById<TextView>(Resource.Id.lbEmail);
-            lbNume.Text = Utils.GetDefaults("Name", this);
+            lbNume.Text = Utils.GetDefaults("Name");
             //lbEmail.Text = Utils.GetDefaults("Email", this);
             profileImageView.Click += delegate
             {
@@ -152,12 +152,12 @@ namespace FamiliaXamarin
                 Log.Debug("Sample", "The Latitude is " + location.Latitude);
                 Log.Debug("Sample", "The Longitude is " + location.Longitude);
                 JSONObject obj = new JSONObject().Put("latitude", (double) location.Latitude).Put("longitude", (double) location.Longitude);
-                JSONObject finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("IdClient", this)).Put("location", obj);
+                JSONObject finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("IdClient")).Put("location", obj);
                 try
                 {
                     await Task.Run(async () =>
                     {
-                        string p = await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token", this));
+                        string p = await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token"));
                         Log.Debug("Latitude ", location.Latitude.ToString());
                         Log.Debug("Longitude", location.Longitude.ToString());
                     });

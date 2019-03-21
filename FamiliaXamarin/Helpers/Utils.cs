@@ -61,9 +61,9 @@ namespace FamiliaXamarin.Helpers
             }
         }
 
-        public static void SetDefaults(string key, string value, Context context)
+        public static void SetDefaults(string key, string value)
         {
-            var preferences = PreferenceManager.GetDefaultSharedPreferences(context);
+            var preferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
             var editor = preferences.Edit();
             editor.PutString(key, value);
             editor.Apply();
@@ -73,9 +73,9 @@ namespace FamiliaXamarin.Helpers
             Application.Context.GetSharedPreferences(PreferenceManager.GetDefaultSharedPreferencesName(Application.Context), 0).Edit().Clear().Commit();
         }
 
-        public static string GetDefaults(string key, Context context)
+        public static string GetDefaults(string key)
         {
-            var preferences = PreferenceManager.GetDefaultSharedPreferences(context);
+            var preferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
             return preferences.GetString(key, null);
         }
 
@@ -155,8 +155,8 @@ namespace FamiliaXamarin.Helpers
             try
             {
 
-                string token = GetDefaults("Token", ctx);
-                string email = GetDefaults("Email", ctx);
+                string token = GetDefaults("Token");
+                string email = GetDefaults("Email");
 
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -169,7 +169,7 @@ namespace FamiliaXamarin.Helpers
                 string expDateTime = sdf.Format(cal.Time);
                 //Log.e("newTime", expDateTime);
 
-                JSONObject qrCodeData = new JSONObject().Put("clientToken", token).Put("generationDateTime", genDateTime).Put("expirationDateTime", expDateTime).Put("email", email).Put("Name", GetDefaults("Name", Application.Context)).Put("Avatar", GetDefaults("Avatar", Application.Context)).Put("Id", GetDefaults("IdClient", Application.Context));
+                JSONObject qrCodeData = new JSONObject().Put("clientToken", token).Put("generationDateTime", genDateTime).Put("expirationDateTime", expDateTime).Put("email", email).Put("Name", GetDefaults("Name")).Put("Avatar", GetDefaults("Avatar")).Put("Id", GetDefaults("IdClient"));
 
 
                 var writer = new BarcodeWriter

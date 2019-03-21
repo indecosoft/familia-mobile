@@ -34,8 +34,8 @@ namespace Familia.Sharing
                 await Task.Run(async () =>
                 {
                     var response = await WebServices.Post($"{Constants.PublicServerAddress}/api/getSharingPeople",
-                        new JSONObject().Put("email", Utils.GetDefaults("Email", Activity)),
-                            Utils.GetDefaults("Token", Activity));
+                        new JSONObject().Put("email", Utils.GetDefaults("Email")),
+                            Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(response))
                     {
 

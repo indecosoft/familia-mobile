@@ -38,6 +38,8 @@ namespace FamiliaXamarin.Helpers
                 var intervalBloodPressure = bloodPressure.GetString("interval");
                 var bloodGlucose = obj.GetJSONObject("bloodGlucose");
                 var intervalGlucose = bloodGlucose.GetString("interval");
+                var idPersoana = obj.GetInt("idPersoana");
+                Utils.SetDefaults("IdPersoana", idPersoana.ToString());
                // Log.Error("INTERVAL_BLOOD_PRESSURE", intervalBloodPressure);
                // Log.Error("INTERVAL_GLUCOSE", intervalGlucose);
 
@@ -88,7 +90,7 @@ namespace FamiliaXamarin.Helpers
             if (!Utils.CheckNetworkAvailability()) return null;
             var result =
                 await WebServices.Get(
-                    "https://gis.indecosoft.net/devices/get-device-config/864190030936193");
+                    $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetImei(Application.Context)}");
 //               var result = await WebServices.Get(
 //                   $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetImei(Application.Context)}",
 //                   Utils.GetDefaults("Token", context));

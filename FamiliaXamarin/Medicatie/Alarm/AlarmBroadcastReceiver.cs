@@ -33,7 +33,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
            // if (Utils.GetDefaults("Token", context) == null) return;
 
 
-            if (string.IsNullOrEmpty(Utils.GetDefaults("Token", context))) return;
+            if (string.IsNullOrEmpty(Utils.GetDefaults("Token"))) return;
             
             LaunchAlarm(context, medId, boalaId);
 

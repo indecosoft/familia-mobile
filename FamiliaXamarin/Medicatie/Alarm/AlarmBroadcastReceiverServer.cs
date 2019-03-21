@@ -39,7 +39,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 NotificationManagerCompat.From(context);
             if (ActionReceive.Equals(action))
             {
-                if (string.IsNullOrEmpty(Utils.GetDefaults("Token", context))) return;
+                if (string.IsNullOrEmpty(Utils.GetDefaults("Token"))) return;
                 
                 var path =
                     System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
@@ -143,7 +143,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
         {
             var result = await WebServices.Post(
                 $"{Constants.PublicServerAddress}/api/medicine", mArray,
-                Utils.GetDefaults("Token", context));
+                Utils.GetDefaults("Token"));
             if (!Utils.CheckNetworkAvailability()) return false;
             switch (result)
             {

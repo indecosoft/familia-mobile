@@ -57,8 +57,8 @@ namespace Familia.Login_System
         protected override void OnResume()
         {
             base.OnResume();
-            var fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint", this)) &&
-                              Convert.ToBoolean(Utils.GetDefaults("fingerprint", this));
+            var fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint")) &&
+                              Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
 
             var checkHardware = FingerprintManagerCompat.From(this);
             var keyguardManager1 = (KeyguardManager) GetSystemService(KeyguardService);
@@ -148,8 +148,8 @@ namespace Familia.Login_System
 
         private void InitLogin()
         {
-            var fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint", this)) &&
-                              Convert.ToBoolean(Utils.GetDefaults("fingerprint", this));
+            var fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint")) &&
+                              Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
 
             var checkHardware = FingerprintManagerCompat.From(this);
             var keyguardManager1 = (KeyguardManager) GetSystemService(KeyguardService);
@@ -267,12 +267,13 @@ namespace Familia.Login_System
 
             try
             {
-                if (!bool.Parse(Utils.GetDefaults("Logins", this)) ||
-                    Utils.GetDefaults("Token", this) == null) return;
+                if (!bool.Parse(Utils.GetDefaults("Logins")) ||
+                    Utils.GetDefaults("Token") == null) return;
                 StartActivity(typeof(MainActivity));
                 Finish();
             }
             catch
+
             {
                 // ignored
             }
@@ -408,14 +409,13 @@ namespace Familia.Login_System
                             var avatar = new JSONObject(response).GetString("avatar");
                             var id = new JSONObject(response).GetString("id");
 
-                            Utils.SetDefaults("Token", token, this);
-                            Utils.SetDefaults("Imei", Utils.GetImei(this), this);
-                            Utils.SetDefaults("Email", _usernameEditText.Text, this);
-                            Utils.SetDefaults("Logins", logins.ToString(), this);
-                            Utils.SetDefaults("Name", nume, this);
-                            Utils.SetDefaults("Avatar", $"{Constants.PublicServerAddress}/{avatar}",
-                                this);
-                            Utils.SetDefaults("IdClient", id, this);
+                            Utils.SetDefaults("Token", token);
+                            Utils.SetDefaults("Imei", Utils.GetImei(this));
+                            Utils.SetDefaults("Email", _usernameEditText.Text);
+                            Utils.SetDefaults("Logins", logins.ToString());
+                            Utils.SetDefaults("Name", nume);
+                            Utils.SetDefaults("Avatar", $"{Constants.PublicServerAddress}/{avatar}");
+                            Utils.SetDefaults("IdClient", id);
 
                             StartActivity(logins ? typeof(MainActivity) : typeof(FirstSetup));
 

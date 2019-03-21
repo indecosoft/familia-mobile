@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -6,6 +7,7 @@ using Android.Support.V4.App;
 using Android.Util;
 using Familia;
 using FamiliaXamarin.Helpers;
+using Org.Json;
 
 namespace FamiliaXamarin.Services
 {
@@ -21,7 +23,7 @@ namespace FamiliaXamarin.Services
             throw new NotImplementedException();
         }
 
-        public override void OnCreate()
+        public async override void OnCreate()
         {
             base.OnCreate();
             Log.Error("Service:", "WebSocketService STARTED");
@@ -50,6 +52,23 @@ namespace FamiliaXamarin.Services
                 RegisterReceiver(charger, new IntentFilter(Intent.ActionHeadsetPlug));
 
                 _socketClient.Connect(Constants.WebSocketAddress, Constants.WebSocketPort, this);
+
+                await Task.Run(async () =>
+                {
+                    try
+                    {
+                        var data = await GetData();
+                        var obj = new JSONObject(data);
+                        var idPersoana = obj.GetInt("idPersoana");
+                        Utils.SetDefaults("IdPersoana", idPersoana.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("Configuration Error", "Error getting the configuration file from GIS");
+                    }
+
+                });
+
             }
             catch (Exception e)
             {
@@ -58,6 +77,21 @@ namespace FamiliaXamarin.Services
             }
 
         
+        }
+
+
+        private static async Task<string> GetData()
+        {
+            if (!Utils.CheckNetworkAvailability()) return null;
+            var result =
+                await WebServices.Get(
+                    $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetImei(Application.Context)}");
+            //               var result = await WebServices.Get(
+            //                   $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetImei(Application.Context)}",
+            //                   Utils.GetDefaults("Token", context));
+            if (result == null) return null;
+            Log.Error("RESULT_FROM_GIS", result);
+            return result;
         }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)

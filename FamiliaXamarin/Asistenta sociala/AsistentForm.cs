@@ -84,7 +84,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             }
             var myAdapter = new BenefitAdapter(Activity, 0, _listVOs);
             _benefitsSpinner.Adapter = myAdapter;
-            var fromPreferences = Utils.GetDefaults("ActivityStart", Activity);
+            var fromPreferences = Utils.GetDefaults("ActivityStart");
             _tbDetails.TextChanged += delegate
             {
 
@@ -180,19 +180,19 @@ namespace FamiliaXamarin.Asistenta_sociala
           
 
                         
-                                _latitude = double.Parse(Utils.GetDefaults("Latitude", Activity));
-                                _longitude = double.Parse(Utils.GetDefaults("Longitude", Activity));
+                                _latitude = double.Parse(Utils.GetDefaults("Latitude"));
+                                _longitude = double.Parse(Utils.GetDefaults("Longitude"));
                                 Log.Error("Latitude12", _latitude.ToString());
                                 Log.Error("Longitude12", _longitude.ToString());
 
-                                Utils.SetDefaults("ConsultLat", _latitude.ToString(), Activity);
-                                Utils.SetDefaults("ConsultLong", _longitude.ToString(), Activity);
+                                Utils.SetDefaults("ConsultLat", _latitude.ToString());
+                                Utils.SetDefaults("ConsultLong", _longitude.ToString());
 
                                 _location = new JSONObject().Put("latitude", _latitude).Put("longitude", _longitude);
                                 _details = null;
                                 //started = true;
                                 var obj = new JSONObject().Put("QRData", _qrJsonData.ToString()).Put("Start", _dateTimeStart).Put("Location", _location.ToString());
-                                Utils.SetDefaults("ActivityStart", obj.ToString(), Activity);
+                                Utils.SetDefaults("ActivityStart", obj.ToString());
 
                                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                                 {
@@ -217,7 +217,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                             {
                                 _progressBarDialog.Show();
                                 //JSONObject obj = new JSONObject().put("dateTimeStop", currentDateandTime).put("QRData", QrJsonData.toString());
-                                Utils.SetDefaults("ActivityStart", "", Activity);
+                                Utils.SetDefaults("ActivityStart", "");
                                 //DateTimeStart = null;
                                 _dateTimeEnd = currentDateandTime;
                                 GetLastLocationButtonOnClick();
@@ -240,15 +240,15 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 await Task.Run(async () =>
                                 {
                                     //GetLastLocationButtonOnClick();
-                                    _latitude = double.Parse(Utils.GetDefaults("Latitude", Activity));
-                                    _longitude = double.Parse(Utils.GetDefaults("Longitude", Activity));
+                                    _latitude = double.Parse(Utils.GetDefaults("Latitude"));
+                                    _longitude = double.Parse(Utils.GetDefaults("Longitude"));
 
-                                    Utils.SetDefaults("ConsultLat", _latitude.ToString(), Activity);
-                                    Utils.SetDefaults("ConsultLong", _longitude.ToString(), Activity);
+                                    Utils.SetDefaults("ConsultLat", _latitude.ToString());
+                                    Utils.SetDefaults("ConsultLong", _longitude.ToString());
                                     var dataToSend = new JSONObject().Put("dateTimeStart", _dateTimeStart)
                                         .Put("dateTimeStop", _dateTimeEnd).Put("qrCodeData", _qrJsonData)
                                         .Put("location", _location).Put("details", _details);
-                                    var response = await WebServices.Post(Constants.PublicServerAddress + "/api/consult", dataToSend, Utils.GetDefaults("Token", Activity));
+                                    var response = await WebServices.Post(Constants.PublicServerAddress + "/api/consult", dataToSend, Utils.GetDefaults("Token"));
                                     if (response != null)
                                     {
                                         Snackbar snack;
@@ -374,8 +374,8 @@ namespace FamiliaXamarin.Asistenta_sociala
             {
                 Log.Debug("Sample", "The Latitude is " + location.Latitude);
                 Log.Debug("Sample", "The Longitude is " + location.Longitude);
-                Utils.SetDefaults("ConsultLat", location.Latitude.ToString(), Activity);
-                Utils.SetDefaults("ConsultLong", location.Longitude.ToString(), Activity);
+                Utils.SetDefaults("ConsultLat", location.Latitude.ToString());
+                Utils.SetDefaults("ConsultLong", location.Longitude.ToString());
                 _latitude = location.Latitude;
                 _longitude = location.Longitude;
 

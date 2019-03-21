@@ -145,7 +145,7 @@ namespace Familia.Sharing
                     _bloodPressureDataList.Clear();
                     var bloodPressureResult = await WebServices.Post($"{Constants.PublicServerAddress}/api/getUsersDataSharing",
                         new JSONObject().Put("dataType", "bloodPressure").Put("imei", _imei)
-                            .Put("date", startDate.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token", this));
+                            .Put("date", startDate.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(bloodPressureResult))
                     {
                         var dataArray = new JSONArray(bloodPressureResult);
@@ -164,7 +164,7 @@ namespace Familia.Sharing
                     _bloodGlucoseDataList.Clear();
                     var bloodGlucoseResult = await WebServices.Post($"{Constants.PublicServerAddress}/api/getUsersDataSharing",
                         new JSONObject().Put("dataType", "bloodGlucose").Put("imei", _imei)
-                            .Put("date", startDate.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token", this));
+                            .Put("date", startDate.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(bloodGlucoseResult))
                     {
                         var dataArray = new JSONArray(bloodGlucoseResult);

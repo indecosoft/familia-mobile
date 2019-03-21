@@ -106,7 +106,7 @@ namespace Familia.Devices
                 cdd.Show();
                 cdd.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimaryDark);
             };
-            _adapter.ItemLongClick += async delegate(object sender, DevicesManagementAdapterClickEventArgs args)
+            _adapter.ItemLongClick += delegate (object sender, DevicesManagementAdapterClickEventArgs args)
             {
                 var model = _adapter.GetItemModel(args.Position);
                 if (model == null) return;

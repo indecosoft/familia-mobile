@@ -458,7 +458,7 @@ namespace FamiliaXamarin.Login_System
             {
                 var result = await WebServices.Get(
                     Constants.PublicServerAddress + "/api/getDisease",
-                    Utils.GetDefaults("Token", Activity));
+                    Utils.GetDefaults("Token"));
                 if (result == null) return null;
                 var listOfDiseases =
                     new List<DiseaseModel>
@@ -505,7 +505,7 @@ namespace FamiliaXamarin.Login_System
                     case 3:
                         FragmentContext._progressBarDialog.Show();
                         FragmentContext._firstSetupModel.ImageName =
-                            Utils.GetDefaults("Email", Activity);
+                            Utils.GetDefaults("Email");
 
                         FragmentContext._firstSetupModel.Disease = new int[(from disease in _listVOs
                             where disease.IsSelected
@@ -526,7 +526,7 @@ namespace FamiliaXamarin.Login_System
                             Log.Error("data to send", jsonData);
                             var response = await WebServices.Post(
                                 Constants.PublicServerAddress + "/api/firstSetup",
-                                new JSONObject(jsonData), Utils.GetDefaults("Token", Activity));
+                                new JSONObject(jsonData), Utils.GetDefaults("Token"));
                             if (response != null)
                             {
                                 Snackbar snack;
@@ -545,7 +545,7 @@ namespace FamiliaXamarin.Login_System
                                         break;
                                     case 2:
 
-                                        Utils.SetDefaults("Logins", true.ToString(), Activity);
+                                        Utils.SetDefaults("Logins", true.ToString());
                                         FragmentContext.StartActivity(typeof(MainActivity));
                                         FragmentContext.Finish();
                                         break;

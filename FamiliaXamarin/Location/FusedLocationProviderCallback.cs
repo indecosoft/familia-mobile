@@ -29,17 +29,17 @@ namespace FamiliaXamarin.Location
             if (result.Locations.Any() && result.Locations != null)
             {
                 var location = result.Locations.First();
-                Utils.SetDefaults("Latitude", location.Latitude.ToString(), _activity);
-                Utils.SetDefaults("Longitude", location.Longitude.ToString(), _activity);
+                Utils.SetDefaults("Latitude", location.Latitude.ToString());
+                Utils.SetDefaults("Longitude", location.Longitude.ToString());
                 if (Utils.CheckNetworkAvailability())
                 {
                     JSONObject obj = new JSONObject().Put("latitude", location.Latitude).Put("longitude", location.Longitude);
-                    JSONObject finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("IdClient", _activity)).Put("location", obj);
+                    JSONObject finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("IdClient")).Put("location", obj);
                     try
                     {
                         await Task.Run(async () =>
                         {
-                            string p = await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token", _activity));
+                            string p = await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token"));
                             Log.Debug("Latitude ", location.Latitude.ToString());
                             Log.Debug("Longitude", location.Longitude.ToString());
                         });
