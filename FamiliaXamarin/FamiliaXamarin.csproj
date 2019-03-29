@@ -62,6 +62,7 @@
     <Compile Include="DataModels\DeviceConfigRecords.cs" />
     <Compile Include="DataModels\DevicesRecords.cs" />
     <Compile Include="DataModels\MedicineRecords.cs" />
+    <Compile Include="DataModels\SmartBandRecords.cs" />
     <Compile Include="Devices\AddNewDeviceDialog.cs" />
     <Compile Include="Devices\DeleteDeviceDialog.cs" />
     <Compile Include="Devices\DeviceManagementDialog.cs" />

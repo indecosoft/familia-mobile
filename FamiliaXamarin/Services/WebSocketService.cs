@@ -5,11 +5,11 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
-using Familia;
+using FamiliaXamarin;
 using FamiliaXamarin.Helpers;
 using Org.Json;
 
-namespace FamiliaXamarin.Services
+namespace Familia.Services
 {
     [Service]
     class WebSocketService : Service
@@ -23,7 +23,7 @@ namespace FamiliaXamarin.Services
             throw new NotImplementedException();
         }
 
-        public async override void OnCreate()
+        public override async void OnCreate()
         {
             base.OnCreate();
             Log.Error("Service:", "WebSocketService STARTED");
@@ -33,13 +33,13 @@ namespace FamiliaXamarin.Services
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
-                    string CHANNEL_ID = "my_channel_01";
-                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel human readable title",
+                    const string channelId = "my_channel_01";
+                    var channel = new NotificationChannel(channelId, "Channel human readable title",
                         NotificationImportance.Default);
 
                     ((NotificationManager)GetSystemService(Context.NotificationService)).CreateNotificationChannel(channel);
 
-                    Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    var notification = new NotificationCompat.Builder(this, channelId)
                         .SetContentTitle("Familia")
                         .SetContentText("Ruleaza in fundal")
                         .SetSmallIcon(Resource.Drawable.logo)

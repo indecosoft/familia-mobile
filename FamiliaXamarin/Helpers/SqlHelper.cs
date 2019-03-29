@@ -57,6 +57,18 @@ namespace FamiliaXamarin.Helpers
             }
             
         }
+        public async Task Delete(T dataToDelete)
+        {
+            try
+            {
+                await Db.DeleteAsync(dataToDelete);
+            }
+            catch (Exception e)
+            {
+                Log.Error("InsertionError", e.Message);
+            }
+
+        }
         public async Task DropTable()
         {
             try

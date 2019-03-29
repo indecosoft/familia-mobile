@@ -35,15 +35,15 @@ namespace FamiliaXamarin
 
         public static UUID TransferWearableSleepcontentUuid { get; } =
             UUID.FromString("0a0ae00b-0a00-1000-8000-00805f9b34fb");
-        
-        public static string IntervalGlucose { get; }= "INTERVAL_GLUCOSE";
+
+        public static string IntervalGlucose { get; } = "INTERVAL_GLUCOSE";
         public static string IntervalBloodPressure { get; } = "INTERVAL_BLOOD_PRESSURE";
 
         #region Medication Constants
         public static string ChannelId { get; } = "my chanel id";
         public static string NotificationTitle { get; } = "Este timpul sa iti iei medicamentele";
         public static string NotifContent { get; } = "";
-        
+
         public static int BloodPressureNotifId { get; } = 4000;
         public static int GlucoseNotifId { get; } = 5000;
         public static int NotifId { get; } = 3000;
@@ -59,15 +59,13 @@ namespace FamiliaXamarin
         public static string ClientId { get; } = "22CZRL";
         public static string CallbackUrl { get; } = "fittauth://finish";
         #endregion
-
-
         public static string SaveDeviceDataUrl { get; } = "https://gisdev.indecosoft.net/devices/save-device-measurements";
         //public static string SaveDeviceDataUrl { get; } = "http://192.168.0.148/devices/save-device-measurements";
         //public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/chat";
         public static string PublicServerAddress { get; } = "http://192.168.101.107:3000";
         //public static string WebSocketAddress { get; } = "https://gisdev.indecosoft.net/ws";
         public static string WebSocketAddress { get; } = "http://192.168.101.107:3000/ws";
-        public static int WebSocketPort { get; } = 3000; 
+        public static int WebSocketPort { get; } = 3000;
         public static int RequestGallery { get; } = 2;
         public static int RequestCamera { get; } = 1;
     }

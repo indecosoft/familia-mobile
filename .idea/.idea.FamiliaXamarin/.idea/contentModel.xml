@@ -31,6 +31,7 @@
           <e p="DeviceConfigRecords.cs" t="Include" />
           <e p="DevicesRecords.cs" t="Include" />
           <e p="MedicineRecords.cs" t="Include" />
+          <e p="SmartBandRecords.cs" t="Include" />
         </e>
         <e p="Devices" t="Include">
           <e p="AddNewDeviceDialog.cs" t="Include" />

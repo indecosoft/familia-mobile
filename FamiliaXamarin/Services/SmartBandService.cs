@@ -7,8 +7,10 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
+using Familia.DataModels;
 using FamiliaXamarin;
 using FamiliaXamarin.DataModels;
+using FamiliaXamarin.Devices.SmartBand;
 using FamiliaXamarin.Helpers;
 using Java.Lang;
 using Java.Text;
@@ -30,13 +32,14 @@ namespace Familia.Services
         private int _refreshTime = 1000;
         private bool _started;
         private readonly Runnable _runnable;
+        private SqlHelper<SmartBandRecords> _sqlHelper;
 
 
 
 
-        private void HandlerRunnable()
+        private async void HandlerRunnable()
         {
-            RefreshToken();
+            await RefreshToken();
             SentData();
             if (_started)
             {
@@ -60,19 +63,22 @@ namespace Familia.Services
             Log.Error("Service:", "SmartBandService STARTED");
             try
             {
-                if (Build.VERSION.SdkInt <BuildVersionCodes.O) return;
+                if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
                 const string channelId = "my_channel_01";
                 var channel = new NotificationChannel(channelId, "Channel human readable title",
                     NotificationImportance.Default);
 
-                ((NotificationManager) GetSystemService(Context.NotificationService))
-                    .CreateNotificationChannel(channel);
+                ((NotificationManager)GetSystemService(Context.NotificationService)).CreateNotificationChannel(channel);
 
                 var notification = new NotificationCompat.Builder(this, channelId)
-                    .SetContentTitle("")
-                    .SetContentText("").Build();
+                    .SetContentTitle("Familia")
+                    .SetContentText("Ruleaza in fundal")
+                    .SetSmallIcon(Resource.Drawable.logo)
+                    .SetOngoing(true)
+                    .Build();
 
-                StartForeground(1, notification);
+                 
+                StartForeground(ServiceRunningNotificationId, notification);
             }
             catch (Exception e)
             {
@@ -84,7 +90,6 @@ namespace Familia.Services
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags,
             int startId)
         {
-
             StartCommands();
             return StartCommandResult.Sticky;
         }
@@ -98,6 +103,7 @@ namespace Familia.Services
             }
             else
             {
+                _sqlHelper = await SqlHelper<SmartBandRecords>.CreateAsync();
                 await RefreshToken();
                 _token = Utils.GetDefaults(GetString(Resource.String.smartband_device));
                 _started = true;
@@ -146,14 +152,7 @@ namespace Familia.Services
                 //var a  = await GetSleepData();
             });
         }
-
-
-        private async Task<IEnumerable<DevicesRecords>> QueryValuations(SQLiteAsyncConnection db,
-            string query)
-        {
-            return await db.QueryAsync<DevicesRecords>(query);
-        }
-        private async Task<Dictionary<string, int>> GetSteps()
+        private async Task GetSteps()
         {
             try
             {
@@ -174,15 +173,77 @@ namespace Familia.Services
 
                         var steps = new JSONObject(data).GetJSONObject("summary").GetInt("steps");
 
-                        return new Dictionary<string, int>
+                        var jsonObject = new JSONObject();
+                        //jsonObject.Put("imei", Utils.GetImei(this)).Put("idClient", Utils.GetDefaults("IdClient")).Put("idPersoana", Utils.GetDefaults("IdPersoana"));
+                        var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
+                        var date = DateTime.Now.ToString("yyyy-MM-dd");
+                        jsonObject.Put("steps", steps).Put("activity", activeMinutes).Put("dateTime", date );
+                        //await Task.Run(async () =>
+                        //{
+                        //        await WebServices.Post($"{Constants.PublicServerAddress}/api/smartband/activity", jsonObject, Utils.GetDefaults("Token"));
+                        //});
+
+
+                        if (!Utils.CheckNetworkAvailability())
                         {
-                            {"Steps", steps},
-                            {"Activity", activeMinutes},
-                        };
+                            await _sqlHelper.Insert(new SmartBandRecords { DataObject = jsonObject.ToString(), Type = "Activity" });
+                        }
+                        else
+                        {
+                            await Task.Run(async () =>
+                            {
+                                var recordEnumerable =
+                                    await _sqlHelper.QueryValuations($"SELECT * FROM SmartBandRecords WHERE Type  = 'Activity'");
+                                var jsonArray = new JSONArray();
+                                foreach (var element in recordEnumerable)
+                                {
+                                    jsonArray.Put(new JSONObject(element.DataObject));
+                                    await _sqlHelper.Delete(element);
+                                }
+                                //await _sqlHelper.QueryValuations($"DELETE FROM SmartBandRecords WHERE Type = 'Activity'");
+                                jsonArray.Put(jsonObject);
+                                var obj = new JSONObject();
+                                obj.Put("imei", Utils.GetImei(this)).Put("idClient", Utils.GetDefaults("IdClient")).Put("idPersoana", Utils.GetDefaults("IdPersoana")).Put("data", jsonArray).Put("latitude", Utils.GetDefaults("Latitude").Replace(',', '.')).Put("longitude",Utils.GetDefaults("Longitude").Replace(',', '.'));
+
+                                var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/smartband/activity", obj, Utils.GetDefaults("Token"));
+
+                                if (!string.IsNullOrEmpty(result))
+                                {
+                                    try
+                                    {
+                                        var obj1 = new JSONObject(result);
+                                        if (obj1.GetString("data") != "done")
+                                        {
+                                            await _sqlHelper.Insert(new SmartBandRecords { DataObject = jsonObject.ToString(), Type = "Activity" });
+                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine(e);
+                                        //throw;
+                                    }
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        await _sqlHelper.Insert(new SmartBandRecords { DataObject = jsonObject.ToString(), Type = "Activity" });
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine(e);
+                                        //throw;
+                                    }
+                                }
+                            });
+                        }
+
+
                     }
                     catch (JSONException e)
                     {
                         e.PrintStackTrace();
+                        StopSelf();
                     }
                 }
             }
@@ -190,8 +251,6 @@ namespace Familia.Services
             {
                 Console.WriteLine(e);
             }
-
-            return null;
         }
 
         private async Task GetSleepData()
@@ -207,42 +266,59 @@ namespace Familia.Services
             {
                 var jsonObject = new JSONObject(data);
  
-                jsonObject.Put("imei", Utils.GetImei(this)).Put("idClient", Utils.GetDefaults("IdClient")).Put("idPersoana", Utils.GetDefaults("IdPersoana"));
+               
 
-                await Task.Run(async () =>
+                if (!Utils.CheckNetworkAvailability())
                 {
-                    var response =
-                        await WebServices.Post($"{Constants.PublicServerAddress}/api/smartband/sleep", jsonObject, Utils.GetDefaults("Token"));
-                });
-
-            }
-            catch (JSONException e)
-            {
-                e.PrintStackTrace();
-                
-            }
-        }
-
-        private async Task GetHeartRatePulse()
-        {
-            var data = await WebServices.Get(
-                "https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json", _token);
-            if (string.IsNullOrEmpty(data)) return;
-            Log.Error("Heartrate Result", data);
-            try
-            {
-                var bpm = ((JSONObject) new JSONObject(data).GetJSONArray("activities-heart")
-                    .Get(0)).GetJSONObject("value").GetInt("restingHeartRate");
-                var date = ((JSONObject)new JSONObject(data).GetJSONArray("activities-heart")
-                    .Get(0)).GetString("dateTime");
-                var jsonObject = new JSONObject();
-                jsonObject.Put("imei", Utils.GetImei(this)).Put("idClient", Utils.GetDefaults("IdClient")).Put("idPersoana", Utils.GetDefaults("IdPersoana"));
-                jsonObject.Put("dateTime", date).Put("pulse", bpm);
-                await Task.Run(async () =>
+                    await _sqlHelper.Insert(new SmartBandRecords {DataObject = jsonObject.ToString(), Type = "Sleep"});
+                }
+                else
                 {
-                    var response =
-                        await WebServices.Post($"{Constants.PublicServerAddress}/api/smartband/heartrate", jsonObject, Utils.GetDefaults("Token"));
-                });
+                    await Task.Run(async () =>
+                    {
+                        var recordEnumerable =
+                            await _sqlHelper.QueryValuations($"SELECT * FROM SmartBandRecords WHERE Type  = 'Sleep'");
+                        var jsonArray = new JSONArray();
+                        foreach (var element in recordEnumerable)
+                        {
+                            jsonArray.Put(new JSONObject(element.DataObject));
+                            await _sqlHelper.Delete(element);
+                        }
+                        //await _sqlHelper.QueryValuations($"DELETE FROM SmartBandRecords WHERE Type = 'Sleep'");
+                        jsonArray.Put(jsonObject);
+                        var obj = new JSONObject();
+                        obj.Put("imei", Utils.GetImei(this)).Put("idClient", Utils.GetDefaults("IdClient")).Put("idPersoana", Utils.GetDefaults("IdPersoana")).Put("data", jsonArray).Put("latitude", Utils.GetDefaults("Latitude").Replace(',', '.')).Put("longitude", Utils.GetDefaults("Longitude").Replace(',', '.'));
+                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/smartband/sleep", obj, Utils.GetDefaults("Token"));
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                            try
+                            {
+                                var obj1 = new JSONObject(result);
+                                if (obj1.GetString("data") != "done")
+                                {
+                                    await _sqlHelper.Insert(new SmartBandRecords {DataObject = jsonObject.ToString(), Type = "Sleep"});
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e);
+                                //throw;
+                            }
+                        }
+                        else
+                        {
+                            try
+                            {
+                                await _sqlHelper.Insert(new SmartBandRecords { DataObject = jsonObject.ToString(), Type = "Sleep" });
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e);
+                                //throw;
+                            }
+                        }
+                    });
+                }
 
             }
             catch (JSONException e)
@@ -254,89 +330,9 @@ namespace Familia.Services
 
         private async void SentData()
         {
-            var sqlHelper = await SqlHelper<DevicesRecords>.CreateAsync();
-
             var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
             await GetSleepData();
-            await GetHeartRatePulse();
-            //var activity = await GetSteps();
-
-           
-            //if (!Utils.CheckNetworkAvailability())
-
-            //    await sqlHelper.Insert(new DevicesRecords()
-            //    {
-            //        Imei = Utils.GetImei(this),
-            //        DateTime = ft.Format(new Date()),
-            //        SecondsOfSleep = sleep,
-            //        MinutesOfActivity = activity["Activity"].ToString(),
-            //        StepCounter = activity["Steps"]
-            //    });
-            //else
-            //{
-            //    JSONObject jsonObject;
-            //    var jsonArray = new JSONArray();
-            //    var list = await sqlHelper.QueryValuations("select * from DevicesRecords");
-
-            //    foreach (var el in list)
-            //    {
-            //        //adaugare campuri suplimentare
-            //        try
-            //        {
-            //            jsonObject = new JSONObject();
-            //            jsonObject
-            //                .Put("imei", el.Imei)
-            //                .Put("dateTimeISO", el.DateTime)
-            //                .Put("geolocation",
-            //                    new JSONObject().Put("latitude", $"{el.Latitude}")
-            //                        .Put("longitude", $"{el.Longitude}"))
-            //                .Put("lastLocation", el.LastLocation)
-            //                .Put("sendPanicAlerts", el.SendPanicAlerts)
-            //                .Put("stepCounter", el.StepCounter)
-            //                .Put("bloodPressureSystolic", el.BloodPresureSystolic)
-            //                .Put("bloodPressureDiastolic", el.BloodPresureDiastolic)
-            //                .Put("bloodPressurePulseRate", el.BloodPresurePulsRate)
-            //                .Put("bloodGlucose", "" + el.BloodGlucose)
-            //                .Put("oxygenSaturation", el.OxygenSaturation)
-            //                .Put("sleepType", el.SleepType)
-            //                .Put("sleepSeconds", el.SecondsOfSleep)
-            //                .Put("dailyActivity", el.MinutesOfActivity)
-            //                .Put("extension", el.Extension);
-            //            jsonArray.Put(jsonObject);
-            //        }
-            //        catch (JSONException e)
-            //        {
-            //            e.PrintStackTrace();
-            //        }
-            //    }
-
-            //    jsonObject = new JSONObject();
-            //    jsonObject
-            //        .Put("imei", Utils.GetImei(this))
-            //        .Put("dateTimeISO", ft.Format(new Date()))
-            //        .Put("geolocation", string.Empty)
-            //        .Put("lastLocation", string.Empty)
-            //        .Put("sendPanicAlerts", string.Empty)
-            //        .Put("stepCounter", activity["Steps"])
-            //        .Put("bloodPressureSystolic", string.Empty)
-            //        .Put("bloodPressureDiastolic", string.Empty)
-            //        .Put("bloodPressurePulseRate", string.Empty)
-            //        .Put("bloodGlucose", string.Empty)
-            //        .Put("oxygenSaturation", string.Empty)
-            //        .Put("sleepType", string.Empty)
-            //        .Put("sleepSeconds", string.Empty)
-            //        .Put("dailyActivity", activity["Activity"].ToString())
-            //        .Put("extension", string.Empty);
-            //    jsonArray.Put(jsonObject);
-            //    var result = await WebServices.Post(Constants.SaveDeviceDataUrl, jsonArray);
-            //    if (result == "Succes!")
-            //    {
-            //        //Toast.MakeText(this, "Succes", ToastLength.Long).Show();
-            //        await sqlHelper.DropTable();
- 
-                  
-            //    }
-            //}
+            await GetSteps();
         }
     }
 }

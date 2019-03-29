@@ -253,6 +253,12 @@ namespace FamiliaXamarin
                         StopService(_webSocketServiceIntent);
                        // StopService(_medicationServiceIntent);
                     ClearDatabase();
+                    Task.Run(() =>
+                    {
+                        Glide.Get(this).ClearDiskCache();
+                        //
+                    });
+                    Glide.Get(this).ClearMemory();
                     StartActivity(typeof(LoginActivity));
                     Finish();
                     break;

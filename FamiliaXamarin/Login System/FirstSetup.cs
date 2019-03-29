@@ -96,7 +96,7 @@ namespace FamiliaXamarin.Login_System
             private Button _btnUpload;
             //private Button _btnDate;
             private Button _btnDate;
-//            private Spinner _genderSpinner;
+            //            private Spinner _genderSpinner;
             private Spinner _diseaseSpinner;
             private ToggleButton _maleToggleButton;
             private ToggleButton _femaleToggleButton;
@@ -128,7 +128,7 @@ namespace FamiliaXamarin.Login_System
                     "Faceti una acum"
                 };
                 pictureDialog.SetItems(pictureDialogItems,
-                    delegate(object sender, DialogClickEventArgs args)
+                    delegate (object sender, DialogClickEventArgs args)
                     {
                         Contract.Requires(sender != null);
                         switch (args.Which)
@@ -199,8 +199,9 @@ namespace FamiliaXamarin.Login_System
 
                 var intent = new Intent(MediaStore.ActionImageCapture);
                 //App._file = new File(App._dir, "Avatar [" + DateTime.Now + "].jpg");
+                //App._file = new File(App._dir, "Avatar [" + DateTime.Now + "].jpg");
                 _photoUri = FileProvider.GetUriForFile(Activity,
-                    "FamiliaXamarin.FamiliaXamarin.fileprovider",
+                    "IndecoSoft.Familia.fileprovider",
                     CreateImageFile());
 
                 intent.PutExtra(MediaStore.ExtraOutput, _photoUri);
@@ -224,7 +225,7 @@ namespace FamiliaXamarin.Login_System
                 // The projection contains the columns we want to return in our query.
                 const string selection = MediaStore.Images.Media.InterfaceConsts.Id + " =? ";
                 using (var cursor = FragmentContext.ContentResolver.Query(
-                    MediaStore.Images.Media.ExternalContentUri, null, selection, new[] {docId},
+                    MediaStore.Images.Media.ExternalContentUri, null, selection, new[] { docId },
                     null))
                 {
                     if (cursor == null) return null;
@@ -239,7 +240,7 @@ namespace FamiliaXamarin.Login_System
 
             public override void OnActivityResult(int requestCode, int resultCode, Intent data)
             {
-                if (resultCode == (int) Result.Ok)
+                if (resultCode == (int)Result.Ok)
                 {
                     switch (requestCode)
                     {
@@ -377,7 +378,7 @@ namespace FamiliaXamarin.Login_System
                             false);
                         InitDefaultUi(rootView);
                         InitSecondViewUi(rootView);
-                        
+
                         _maleToggleButton.CheckedChange += delegate
                         {
                             if (!_maleToggleButton.Checked) return;
@@ -393,8 +394,8 @@ namespace FamiliaXamarin.Login_System
 
                         _btnDate.Click += delegate
                         {
-                            
-                            var frag = DatePickerFragment.NewInstance(delegate(DateTime time)
+
+                            var frag = DatePickerFragment.NewInstance(delegate (DateTime time)
                             {
                                 _btnDate.Text = time.ToShortDateString();
                                 FragmentContext._firstSetupModel.DateOfBirth =
@@ -474,7 +475,7 @@ namespace FamiliaXamarin.Login_System
                 {
                     var jsonModel = new JSONObject(arrayOfDiseases.Get(i).ToString());
                     var model = new DiseaseModel
-                        {Cod = jsonModel.GetInt("cod"), Name = jsonModel.GetString("denumire")};
+                    { Cod = jsonModel.GetInt("cod"), Name = jsonModel.GetString("denumire") };
                     if (!listOfDiseases.Contains(model))
                         listOfDiseases.Add(model);
                 }
@@ -496,7 +497,7 @@ namespace FamiliaXamarin.Login_System
                                 .Show();
                         break;
                     case 2:
-                        if(!string.IsNullOrEmpty(FragmentContext._firstSetupModel.Gender) && !string.IsNullOrEmpty(FragmentContext._firstSetupModel.DateOfBirth))
+                        if (!string.IsNullOrEmpty(FragmentContext._firstSetupModel.Gender) && !string.IsNullOrEmpty(FragmentContext._firstSetupModel.DateOfBirth))
                             FragmentContext._viewPager.CurrentItem = Arguments.GetInt(ArgSectionNumber);
                         else
                             Toast.MakeText(FragmentContext, "Va rugam sa completati formularul", ToastLength.Short)
@@ -506,10 +507,9 @@ namespace FamiliaXamarin.Login_System
                         FragmentContext._progressBarDialog.Show();
                         FragmentContext._firstSetupModel.ImageName =
                             Utils.GetDefaults("Email");
-
                         FragmentContext._firstSetupModel.Disease = new int[(from disease in _listVOs
-                            where disease.IsSelected
-                            select disease).Count()];
+                                                                            where disease.IsSelected
+                                                                            select disease).Count()];
 
                         var k = 0;
                         for (var i = 0; i < _listVOs.Count; i++)
@@ -546,10 +546,12 @@ namespace FamiliaXamarin.Login_System
                                     case 2:
 
                                         Utils.SetDefaults("Logins", true.ToString());
+                                        Utils.SetDefaults("Avatar", $"{Constants.PublicServerAddress}/{Utils.GetDefaults("Email")}.{FragmentContext._firstSetupModel.ImageExtension}");
                                         FragmentContext.StartActivity(typeof(MainActivity));
                                         FragmentContext.Finish();
                                         break;
                                 }
+
                             }
                             else
                             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content.PM;
 using Android.Graphics;
@@ -131,7 +132,7 @@ namespace Familia.Sharing
             }
             bottomNavigation.SelectedItemId = Resource.Id.week_tab;
             bottomNavigation.PerformClick();
-            LoadDaySelectorButtons();
+            //LoadDaySelectorButtons();
             _tvDate.Text = DateTime.Now.ToShortDateString();
         }
 
@@ -157,7 +158,9 @@ namespace Familia.Sharing
                     }
 
                     CreateBloodPresureChart();
-                    LoadDataInScrollLayouts();
+                    verticalScrollLinearLayout.RemoveAllViewsInLayout();
+                    horizontalScrollLinearLayout.RemoveAllViewsInLayout();
+                    LoadDataInScrollLayouts(DateTime.Now);
                 }
                 else
                 {
@@ -175,7 +178,9 @@ namespace Familia.Sharing
                         }
                     }
                     CreateGlucoseChart();
-                    LoadDataInScrollLayouts(false);
+                    verticalScrollLinearLayout.RemoveAllViewsInLayout();
+                    horizontalScrollLinearLayout.RemoveAllViewsInLayout();
+                    LoadDataInScrollLayouts(DateTime.Now,false);
                 }
             }
             catch (Exception e)
@@ -219,8 +224,8 @@ namespace Familia.Sharing
                 AxisDependency = YAxis.AxisDependency.Left
             };
             glucoseDataSet.SetMode(LineDataSet.Mode.HorizontalBezier);
-            glucoseDataSet.SetColors(Resource.Color.accent);
-            glucoseDataSet.SetCircleColor(Resource.Color.accent);
+            glucoseDataSet.SetColors(Resources.GetColor(Resource.Color.accent, Theme));
+            glucoseDataSet.SetCircleColor(Resources.GetColor(Resource.Color.accent, Theme));
             var barData = new LineData(glucoseDataSet);
             _lineChart.Data = barData;
 
@@ -270,8 +275,8 @@ namespace Familia.Sharing
                 AxisDependency = YAxis.AxisDependency.Left
             };
             systolicDataSet.SetMode(LineDataSet.Mode.HorizontalBezier);
-            systolicDataSet.SetColors(Resource.Color.accent);
-            systolicDataSet.SetCircleColor(Resource.Color.accent);
+            systolicDataSet.SetColors(Resources.GetColor(Resource.Color.accent, Theme));
+            systolicDataSet.SetCircleColor(Resources.GetColor(Resource.Color.accent, Theme));
             var diastolicDataSet = new LineDataSet(diastolicEntries, "Diastola")
             {
                 ValueTextSize = 14f,
@@ -318,11 +323,19 @@ namespace Familia.Sharing
             l.YEntrySpace = 5f; // set the space between the legend entries on the y-axis
         }
 
-        private void LoadDataInScrollLayouts(bool pressure = true)
+        private void LoadDataInScrollLayouts(DateTime date, bool pressure = true)
         {
             var bloodPressureIconDrawable = Resources.GetDrawable(Resource.Drawable.heart, Theme);
             var pulseRateIconDrawable = Resources.GetDrawable(Resource.Drawable.heart_pulse, Theme);
             var glucoseIconDrawable = Resources.GetDrawable(Resource.Drawable.water, Theme);
+            verticalScrollLinearLayout.RemoveAllViewsInLayout();
+            horizontalScrollLinearLayout.RemoveAllViewsInLayout();
+            horizontalScrollLinearLayout.Invalidate();
+            verticalScrollLinearLayout.Invalidate();
+            //for (int i = 0; i < horizontalScrollLinearLayout.ChildCount; i++)
+            //{
+            //    horizontalScrollLinearLayout.RemoveViewAt(i);
+            //}
 
             var verticalScrollLayoutParams = new LinearLayoutCompat.LayoutParams(
                 ViewGroup.LayoutParams.MatchParent,
@@ -343,20 +356,92 @@ namespace Familia.Sharing
             };
             if (pressure)
             {
-                var size = new Random().Next(5, 20);
-                for (int i = 0; i < size; i++)
+
+                try
                 {
-                    verticalScrollLinearLayout.AddView(CreateCard(bloodPressureIconDrawable, $"{new Random().Next(100, 180)}/{new Random().Next(20, 80)}", "mmHg", $"{new Random().Next(10, 24)}:{new Random().Next(10, 59)}", verticalScrollLayoutParams));
-                    horizontalScrollLinearLayout.AddView(CreateCard(pulseRateIconDrawable, $"{new Random().Next(45, 140)}", "bpm", $"{new Random().Next(10, 24)}:{new Random().Next(10, 59)}", horizontalScrollLayoutParams));
+                    Task.Run(async () =>
+                    {
+                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/getDayRec", new JSONObject().Put("imei", _imei).Put("dataType", "bloodPressure").Put("date", date.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
+
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                            try
+                            {
+                                var array = new JSONArray(result);
+                                for (int i = 0; i < array.Length(); i++)
+                                {
+                                    var obj = new JSONObject(array.Get(i).ToString());
+                                    DateTime time = Convert.ToDateTime(obj.GetString("date"));
+                                    RunOnUiThread(() =>
+                                    {
+                                        verticalScrollLinearLayout.AddView(CreateCard(bloodPressureIconDrawable, $"{obj.GetString("systolic")}/{obj.GetString("diastolic")}", "mmHg", time.ToShortTimeString(), verticalScrollLayoutParams));
+                                        horizontalScrollLinearLayout.AddView(CreateCard(pulseRateIconDrawable, $"{obj.GetString("pulseRate")}", "bpm", time.ToShortTimeString(), horizontalScrollLayoutParams));
+                                    });
+
+
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error("result error", ex.Message);
+                            }
+                        }
+                    });
+
                 }
+                catch (Exception ex)
+                {
+                    Log.Error("Task error", ex.Message);
+                }
+                //var size = new Random().Next(5, 20);
+                //for (int i = 0; i < size; i++)
+                //{
+                //    verticalScrollLinearLayout.AddView(CreateCard(bloodPressureIconDrawable, $"{new Random().Next(100, 180)}/{new Random().Next(20, 80)}", "mmHg", $"{new Random().Next(10, 24)}:{new Random().Next(10, 59)}", verticalScrollLayoutParams));
+                //    horizontalScrollLinearLayout.AddView(CreateCard(pulseRateIconDrawable, $"{new Random().Next(45, 140)}", "bpm", $"{new Random().Next(10, 24)}:{new Random().Next(10, 59)}", horizontalScrollLayoutParams));
+                //}
             }
             else
             {
                 horizontalScrollLinearLayout.Visibility = ViewStates.Gone;
-                var size = new Random().Next(5, 20);
-                for (var i = 0; i < size; i++)
+                //var size = new Random().Next(5, 20);
+                //for (var i = 0; i < size; i++)
+                //{
+                //    verticalScrollLinearLayout.AddView(CreateCard(glucoseIconDrawable, $"{new Random().Next(100, 180)}", "mg/dL", $"{new Random().Next(10, 24)}:{new Random().Next(10, 59)}", verticalScrollLayoutParams));
+                //}
+                try
                 {
-                    verticalScrollLinearLayout.AddView(CreateCard(glucoseIconDrawable, $"{new Random().Next(100, 180)}", "mg/dL", $"{new Random().Next(10, 24)}:{new Random().Next(10, 59)}", verticalScrollLayoutParams));
+                    Task.Run(async () =>
+                    {
+                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/getDayRec", new JSONObject().Put("imei", _imei).Put("dataType", "bloodGlucose").Put("date", date.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
+
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                            try
+                            {
+                                var array = new JSONArray(result);
+                                for (int i = 0; i < array.Length(); i++)
+                                {
+                                    var obj = new JSONObject(array.Get(i).ToString());
+                                    DateTime time = Convert.ToDateTime(obj.GetString("date"));
+                                    RunOnUiThread(() =>
+                                    {
+                                        verticalScrollLinearLayout.AddView(CreateCard(glucoseIconDrawable, $"{obj.GetInt("bloodGlucose")}", "mg/dL", time.ToShortTimeString(), verticalScrollLayoutParams));
+                                    });
+
+
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error("result error", ex.Message);
+                            }
+                        }
+                    });
+
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Task error", ex.Message);
                 }
             }
         }
@@ -406,25 +491,29 @@ namespace Familia.Sharing
                 string[] days = { "L", "M", "M", "J", "V", "S", "D" };
                 var dayOfMonth = DateTime.Now.Day;
                 int numberOfDaysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-                int size = type == 1 && type != 3 ? (days.Length) : numberOfDaysInMonth;
+                int size = type == 1 && type != 3 ? days.Length : numberOfDaysInMonth;
 
                 var activeButton = new AppCompatButton(this);
                 for (int i = 0; i < size; i++)
                 {
-                    bool isActive = type == 1 && type != 3 ? i == dayIndex-1 : i == dayOfMonth - 1;
+                    bool isActive = type == 1 && type != 3 ? i == dayIndex : i+1 == dayOfMonth;
                     var btn = DaySelectorButton(isActive);
                     btn.Id = i + 1;
                     btn.Text = type == 1 && type != 3 ? i < days.Length ? days[i] : i.ToString() : (i + 1).ToString();
                     btn.LayoutParameters = layoutButtonParams;
-                    if (i > dayIndex - 1)
+                    if(type == 1 && type != 3 && i > dayIndex)
+                    {
+                        btn.Enabled = false;
+                        btn.SetTextColor(Resources.GetColor(Resource.Color.colorSecondary, Theme));
+                    }
+                    else 
+                    if (i+1 > dayOfMonth)
                     {
                         btn.Enabled = false;
                         btn.SetTextColor(Resources.GetColor(Resource.Color.colorSecondary, Theme));
                     }
                     if (isActive) activeButton = btn;
-
-                    //if (i < size - 1)
-                        layoutButtons.AddView(btn);
+                    layoutButtons.AddView(btn);
                 }
 
                 if (type == 2)
@@ -465,11 +554,11 @@ namespace Familia.Sharing
                             case "BloodPressure":
                                 verticalScrollLinearLayout.RemoveAllViewsInLayout();
                                 horizontalScrollLinearLayout.RemoveAllViewsInLayout();
-                                LoadDataInScrollLayouts();
+                                LoadDataInScrollLayouts(time);
                                 break;
                             case "BloodGlucose":
                                 verticalScrollLinearLayout.RemoveAllViewsInLayout();
-                                LoadDataInScrollLayouts(false);
+                                LoadDataInScrollLayouts(time,false);
                                 break;
                         }
                     });
@@ -524,34 +613,56 @@ namespace Familia.Sharing
             if (btn.Background == buttonBackground)
                 btn.Background = buttonBackgroundA;
 
+
+            DateTime selectionDate = DateTime.Now;
+            if(bottomNavigation.SelectedItemId == Resource.Id.week_tab)
+            {
+                var dayIndex = ReturnDayIndex();
+
+                var baseDate = DateTime.Today;
+
+                var today = baseDate;
+                var yesterday = baseDate.AddDays(-1);
+                var thisWeekStart = baseDate.AddDays(-dayIndex);
+
+                var customWeekStart = baseDate.AddDays(-(dayIndex - (btn.Id - 1)));
+
+                var thisWeekEnd = thisWeekStart.AddDays(7).AddSeconds(-1);
+                var lastWeekStart = thisWeekStart.AddDays(-7);
+                var lastWeekEnd = thisWeekStart.AddSeconds(-1);
+                var thisMonthStart = baseDate.AddDays(1 - baseDate.Day);
+                var thisMonthEnd = thisMonthStart.AddMonths(1).AddSeconds(-1);
+                var lastMonthStart = thisMonthStart.AddMonths(-1);
+                var lastMonthEnd = thisMonthStart.AddSeconds(-1);
+                _tvDate.Text = customWeekStart.ToString("dd.MM.yyyy");
+                selectionDate = customWeekStart;
+            }
+            else if(bottomNavigation.SelectedItemId == Resource.Id.month_tab)
+            {
+                var baseDate = DateTime.Today;
+
+                var month = baseDate.Month.ToString();
+                if (baseDate.Month < 10) month = $"0{month}";
+
+                var day = btn.Id.ToString();
+                if (btn.Id < 10) day = $"0{day}";
+
+                var date = $"{baseDate.Year}-{month}-{day}";
+                _tvDate.Text = $"{day}.{month}.{baseDate.Year}";
+                selectionDate = Convert.ToDateTime(date);
+            }
             switch (_dataType)
             {
                 case "BloodPressure":
                     verticalScrollLinearLayout.RemoveAllViewsInLayout();
                     horizontalScrollLinearLayout.RemoveAllViewsInLayout();
-                    LoadDataInScrollLayouts();
+                    LoadDataInScrollLayouts(selectionDate);
                     break;
                 case "BloodGlucose":
                     verticalScrollLinearLayout.RemoveAllViewsInLayout();
-                    LoadDataInScrollLayouts(false);
+                    LoadDataInScrollLayouts(selectionDate,false);
                     break;
             }
-
-            var dayIndex = ReturnDayIndex();
-
-            var baseDate = DateTime.Today;
-
-            var today = baseDate;
-            var yesterday = baseDate.AddDays(-1);
-            var thisWeekStart = baseDate.AddDays(-dayIndex);
-            var customWeekStart = baseDate.AddDays(-(dayIndex - (btn.Id - 1)));
-            var thisWeekEnd = thisWeekStart.AddDays(7).AddSeconds(-1);
-            var lastWeekStart = thisWeekStart.AddDays(-7);
-            var lastWeekEnd = thisWeekStart.AddSeconds(-1);
-            var thisMonthStart = baseDate.AddDays(1 - baseDate.Day);
-            var thisMonthEnd = thisMonthStart.AddMonths(1).AddSeconds(-1);
-            var lastMonthStart = thisMonthStart.AddMonths(-1);
-            var lastMonthEnd = thisMonthStart.AddSeconds(-1);
 
         }
         private CardView CreateCard(Drawable image, string value, string measureType, string hour, LinearLayoutCompat.LayoutParams layoutParams)
