@@ -54,15 +54,15 @@ namespace FamiliaXamarin.Medicatie.Alarm
             base.OnCreate(savedInstanceState);
             Window.SetFlags(WindowManagerFlags.Fullscreen | WindowManagerFlags.DismissKeyguard |
                                  WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn, WindowManagerFlags.Fullscreen | WindowManagerFlags.DismissKeyguard |
-                                                                                                      WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn);
+                                                                                                          WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn);
 
-//            if (Utils.util)
-//            {
-//                Utils.util = false;
-//                Finish();
-//                
-//            }
-            
+            //            if (Utils.util)
+            //            {
+            //                Utils.util = false;
+            //                Finish();
+            //                
+            //            }
+            Log.Error("AAAAAAAAAAAA", "alarm activity");
             SetContentView(Resource.Layout.activity_alarm);
             
             tvMedName = FindViewById<TextView>(Resource.Id.tv_med_name_alarm);
