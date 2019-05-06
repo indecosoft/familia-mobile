@@ -113,8 +113,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
         {
             int snoozeInMinutes;
            // bool a = int.TryParse(Utils.GetDefaults("snooze", this), out snoozeInMinutes);
-            if (int.TryParse(Utils.GetDefaults("snooze", this), out snoozeInMinutes))
-                snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze", this));
+            if (int.TryParse(Utils.GetDefaults("snooze"), out snoozeInMinutes))
+                snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze"));
             else
                 snoozeInMinutes = 5;
 

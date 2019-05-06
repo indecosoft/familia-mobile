@@ -39,7 +39,7 @@ namespace FamiliaXamarin.Chat
                           {
                               try
                               {
-                                  var emailFrom = Utils.GetDefaults("Email", Activity);
+                                  var emailFrom = Utils.GetDefaults("Email");
 
                                   var emailObject = new JSONObject().Put("dest", _people[_cardStackView.TopIndex - 1].Email).Put("from", emailFrom);
                                   WebSocketClient.Client.Emit("chat request", emailObject);
@@ -82,8 +82,8 @@ namespace FamiliaXamarin.Chat
             int status = 2;
             await Task.Run(async () =>
             {
-                var dataToSent = new JSONObject().Put("id", Utils.GetDefaults("IdClient", Activity)).Put("distance", 3000);
-                var response = await WebServices.Post(Constants.PublicServerAddress + "/api/nearMe", dataToSent, Utils.GetDefaults("Token", Activity));
+                var dataToSent = new JSONObject().Put("id", Utils.GetDefaults("IdClient")).Put("distance", 3000);
+                var response = await WebServices.Post(Constants.PublicServerAddress + "/api/nearMe", dataToSent, Utils.GetDefaults("Token"));
                 Log.Error("Response: ", "" + response);
                 try
                 {

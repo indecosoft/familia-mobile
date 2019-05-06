@@ -36,8 +36,8 @@ namespace FamiliaXamarin.Location
             if (result.Locations.Any())
             {
                 var location = result.Locations.First();
-                Utils.SetDefaults("Latitude", location.Latitude.ToString(), _activity);
-                Utils.SetDefaults("Longitude", location.Longitude.ToString(), _activity);
+                Utils.SetDefaults("Latitude", location.Latitude.ToString());
+                Utils.SetDefaults("Longitude", location.Longitude.ToString());
                 Log.Debug("Latitude ", location.Latitude.ToString());
                 Log.Debug("Longitude", location.Longitude.ToString());
                 //                if (Utils.CheckNetworkAvailability())
@@ -54,8 +54,8 @@ namespace FamiliaXamarin.Location
             }
             else
             {
-                Utils.SetDefaults("Latitude", null, _activity);
-                Utils.SetDefaults("Longitude", null, _activity);
+                Utils.SetDefaults("Latitude", null);
+                Utils.SetDefaults("Longitude", null);
                 //                JSONObject obj = new JSONObject().Put("latitude", null).Put("longitude", null);
                 //                JSONObject finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("IdClient", _activity)).Put("location", obj);
                 //                string p = await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj,

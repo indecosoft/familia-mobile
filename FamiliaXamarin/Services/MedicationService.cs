@@ -103,7 +103,7 @@ namespace FamiliaXamarin.Services
 
             if (Utils.CheckNetworkAvailability())
             {
-                string result = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", jsonList, Utils.GetDefaults("Token", context));
+                string result = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", jsonList, Utils.GetDefaults("Token"));
                 switch (result)
                 {
                     case "Done":

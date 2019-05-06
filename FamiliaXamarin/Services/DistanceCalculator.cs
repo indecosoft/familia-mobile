@@ -34,8 +34,8 @@ namespace FamiliaXamarin.Services
         public override void OnCreate()
         {
             CreateChannels();
-            _longitude = double.Parse(Utils.GetDefaults("ConsultLong", this));
-            _latitude = double.Parse(Utils.GetDefaults("ConsultLat", this));
+            _longitude = double.Parse(Utils.GetDefaults("ConsultLong"));
+            _latitude = double.Parse(Utils.GetDefaults("ConsultLat"));
             _started = true;
             _handler.PostDelayed(_runnable, 0);
             _ctx = this;
@@ -112,10 +112,10 @@ namespace FamiliaXamarin.Services
 
         private readonly Runnable _runnable = new Runnable(() =>
         {
-            if (!Utils.GetDefaults("ActivityStart", _ctx).Equals(""))
+            if (!Utils.GetDefaults("ActivityStart").Equals(""))
             {
-                _ctx._currentLongitude = double.Parse(Utils.GetDefaults("Longitude", _ctx));
-                _ctx._currentLatitude = double.Parse(Utils.GetDefaults("Latitude", _ctx));
+                _ctx._currentLongitude = double.Parse(Utils.GetDefaults("Longitude"));
+                _ctx._currentLatitude = double.Parse(Utils.GetDefaults("Latitude"));
 
 
                 double distance = Utils.HaversineFormula(_ctx._latitude, _ctx._longitude, _ctx._currentLatitude, _ctx._currentLongitude);
@@ -143,7 +143,7 @@ namespace FamiliaXamarin.Services
                         _ctx._verifications = 0;
 
                         //trimitere date la server
-                        Utils.SetDefaults("ActivityStart", "", _ctx);
+                        Utils.SetDefaults("ActivityStart", "");
                         _ctx.StopService(new Intent(_ctx, typeof(MedicalAsistanceService)));
                         _ctx.StopSelf();
 

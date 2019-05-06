@@ -14,6 +14,7 @@ using System.Diagnostics.Contracts;
 using Android.Preferences;
 using Android.Support.V4.Hardware.Fingerprint;
 using Familia;
+using Familia.Devices;
 using FamiliaXamarin.Devices;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Medicatie;
@@ -47,7 +48,7 @@ namespace FamiliaXamarin.Settings
             checkHardware = FingerprintManagerCompat.From(Activity);
 
 
-            bool fingerprint = Convert.ToBoolean(Utils.GetDefaults("fingerprint", Activity));
+            bool fingerprint = Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
 
             if (!checkHardware.IsHardwareDetected)
                 enablefingerprint.Enabled = false;
@@ -70,16 +71,16 @@ namespace FamiliaXamarin.Settings
                     switch (optionOfSnooze)
                     {
                         case 0:
-                            Utils.SetDefaults("snooze", "5", Activity);
+                            Utils.SetDefaults("snooze", "5");
                             break;
                         case 1:
-                            Utils.SetDefaults("snooze", "10", Activity);
+                            Utils.SetDefaults("snooze", "10");
                             break;
                         case 2:
-                            Utils.SetDefaults("snooze", "15", Activity);
+                            Utils.SetDefaults("snooze", "15");
                             break;
                         case 3:
-                            Utils.SetDefaults("snooze", "30", Activity);
+                            Utils.SetDefaults("snooze", "30");
                             break;
                     }
                 };
@@ -95,7 +96,7 @@ namespace FamiliaXamarin.Settings
         {
             // this is an Activity
             Utils.SetDefaults("fingerprint",
-                enablefingerprint.Checked ? true.ToString() : false.ToString(), Activity);
+                enablefingerprint.Checked ? true.ToString() : false.ToString());
         }
     }
 }

@@ -45,8 +45,8 @@ namespace FamiliaXamarin.Sharing
                 await Task.Run(async () =>
                 {
                     var response = await WebServices.Post($"{Constants.PublicServerAddress}/api/getSharedPeople",
-                        new JSONObject().Put("id", Utils.GetDefaults("IdClient", Activity)),
-                            Utils.GetDefaults("Token", Activity));
+                        new JSONObject().Put("id", Utils.GetDefaults("IdClient")),
+                            Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(response))
                     {
 

@@ -16,7 +16,7 @@ using Resource = Familia.Resource;
 namespace FamiliaXamarin.Services
 {
     [Service]
-    internal class LocationService : Service 
+    internal class LocationService : Service
     {
         private FusedLocationProviderClient _fusedLocationProviderClient;
         private LocationCallback _locationCallback;
@@ -49,7 +49,7 @@ namespace FamiliaXamarin.Services
                     NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel human readable title",
                         NotificationImportance.Default);
 
-                    ((NotificationManager)GetSystemService(Context.NotificationService)).CreateNotificationChannel(channel);
+                    ((NotificationManager)GetSystemService(NotificationService)).CreateNotificationChannel(channel);
 
                     Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                         .SetContentTitle("Familia")
@@ -78,19 +78,6 @@ namespace FamiliaXamarin.Services
                 Console.WriteLine(e);
                 //throw;
             }
-            //
-            //
-            //            var notification = new NotificationCompat.Builder(ApplicationContext)
-            //                .SetContentTitle("Familia")
-            //                .SetContentText("Ruleaza in fundal")
-            //                .SetSmallIcon(Resource.Drawable.logo)
-            //                .SetOngoing(true)
-            //                .Build();
-            //
-            //            // Enlist this instance of the service as a foreground service
-            //            StartForeground(ServiceRunningNotificationId, notification);
-
-
         }
 
         private async void RequestLocationUpdatesButtonOnClick()

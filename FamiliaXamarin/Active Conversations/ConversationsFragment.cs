@@ -25,7 +25,7 @@ namespace Familia.Active_Conversations
             try
             {
                 // Initialize contacts
-                var conv = Utils.GetDefaults("Rooms", Activity);
+                var conv = Utils.GetDefaults("Rooms");
                 if (conv != null)
                 {
                     var contacts = JsonConvert.DeserializeObject<List<ConverstionsModel>>(conv);
@@ -57,7 +57,7 @@ namespace Familia.Active_Conversations
                             adapter.DeleteConversation(args.Position);
                             adapter.NotifyDataSetChanged();
                             var serialized = JsonConvert.SerializeObject(contacts);
-                            Utils.SetDefaults("Rooms", serialized, Activity);
+                            Utils.SetDefaults("Rooms", serialized);
                         });
                         alertDialog.SetButton2("Nu", delegate { });
                         alertDialog.Show();

@@ -47,12 +47,12 @@ namespace FamiliaXamarin.Devices.SmartBand
 
         private void RefreshToken()
         {
-            var refreshToken = Utils.GetDefaults("FitbitRefreshToken", this);
+            var refreshToken = Utils.GetDefaults("FitbitRefreshToken");
             Task.Run(async () =>
             {
                 try
                 {
-                    string storedToken = Utils.GetDefaults("FitbitToken", this);
+                    string storedToken = Utils.GetDefaults("FitbitToken");
                     if (!string.IsNullOrEmpty(storedToken))
                     {
                         _token = storedToken;
@@ -67,16 +67,35 @@ namespace FamiliaXamarin.Devices.SmartBand
                             _token = obj.GetString("access_token");
                             var newRefreshToken = obj.GetString("refresh_token");
                             var userId = obj.GetString("user_id");
-                            Utils.SetDefaults(GetString(Resource.String.smartband_device), _token, this);
-                            Utils.SetDefaults("FitbitToken", _token, this);
-                            Utils.SetDefaults("RitbitRefreshToken", newRefreshToken, this);
-                            Utils.SetDefaults("FitbitUserId", userId, this);
+                            Utils.SetDefaults(GetString(Resource.String.smartband_device), _token);
+                            Utils.SetDefaults("FitbitToken", _token);
+                            Utils.SetDefaults("RitbitRefreshToken", newRefreshToken);
+                            Utils.SetDefaults("FitbitUserId", userId);
                         }
+                    }
+                    else
+                    {
+                        Utils.SetDefaults(GetString(Resource.String.smartband_device), null);
+                        Utils.SetDefaults("FitbitToken", null);
+                        Utils.SetDefaults("RitbitRefreshToken", null);
+                        Utils.SetDefaults("FitbitUserId", null);
+                        var sqlHelper =
+                       await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                        await sqlHelper.QueryValuations($"DELETE FROM BluetoothDeviceRecords WHERE DeviceType ='{GetString(Resource.String.smartband_device)}'");
+                        Finish();
                     }
                 }
                 catch (Exception e)
                 {
                     Log.Error("FitbitServiceError", e.Message);
+                    Utils.SetDefaults(GetString(Resource.String.smartband_device), null);
+                    Utils.SetDefaults("FitbitToken", null);
+                    Utils.SetDefaults("RitbitRefreshToken", null);
+                    Utils.SetDefaults("FitbitUserId", null);
+                    var sqlHelper =
+                   await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                    await sqlHelper.QueryValuations($"DELETE FROM BluetoothDeviceRecords WHERE DeviceType ='{GetString(Resource.String.smartband_device)}'");
+                    Finish();
                 }
 
             });
@@ -134,11 +153,11 @@ namespace FamiliaXamarin.Devices.SmartBand
                                 Address = _token,
                                 DeviceType = GetString(Resource.String.smartband_device)
                             });
-                        Utils.SetDefaults(GetString(Resource.String.smartband_device), _token, this);
-                        Utils.SetDefaults("FitbitToken", _token, this);
-                        Utils.SetDefaults("FitbitRefreshToken", refreshToken, this);
-                        Utils.SetDefaults("FitbitUserId", userId, this);
-                        Utils.SetDefaults("FitbitAuthCode", code, this);
+                        Utils.SetDefaults(GetString(Resource.String.smartband_device), _token);
+                        Utils.SetDefaults("FitbitToken", _token);
+                        Utils.SetDefaults("FitbitRefreshToken", refreshToken);
+                        Utils.SetDefaults("FitbitUserId", userId);
+                        Utils.SetDefaults("FitbitAuthCode", code);
                     }
 
                 });
@@ -146,7 +165,7 @@ namespace FamiliaXamarin.Devices.SmartBand
             else
             {
                 RefreshToken();
-                _token = Utils.GetDefaults(GetString(Resource.String.smartband_device), this);
+                _token = Utils.GetDefaults(GetString(Resource.String.smartband_device));
                // Log.Error("TokenFromShared", _token);
             }
             _loadingScreen.Visibility = ViewStates.Visible;
@@ -184,7 +203,15 @@ namespace FamiliaXamarin.Devices.SmartBand
                     {
                         _lbDisplayName.Text = displayName;
                         _lbFullName.Text = fullName;
-                        Glide.With(this).Load(avatarUrl).Into(_avatarImage);
+                        try
+                        {
+                            Glide.With(this).Load(avatarUrl).Into(_avatarImage);
+                        }
+                        catch
+                        {
+                            //ignored
+                        }
+
                     });
 
                 }

@@ -51,7 +51,7 @@ namespace FamiliaXamarin.Sharing
                     ZXing.BarcodeFormat.QR_CODE
                 },
                 UseNativeScanning = true,
-                AutoRotate = true,
+                AutoRotate = false,
                 TryHarder = true
 
             };
@@ -105,7 +105,7 @@ namespace FamiliaXamarin.Sharing
                     Task.Run(async () =>
                     {
                         var response = await WebServices.Post($"{Constants.PublicServerAddress}/api/newSharingPeople",
-                            new JSONObject().Put("from", qrJsonData.GetString("Id")).Put("dest", Utils.GetDefaults("IdClient", Application.Context)), Utils.GetDefaults("Token", Activity));
+                            new JSONObject().Put("from", qrJsonData.GetString("Id")).Put("dest", Utils.GetDefaults("IdClient")), Utils.GetDefaults("Token"));
                         if (!string.IsNullOrEmpty(response))
                         {
                             Activity.RunOnUiThread(() => Toast.MakeText(Activity, response, ToastLength.Long).Show());

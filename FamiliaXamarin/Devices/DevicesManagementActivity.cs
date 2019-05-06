@@ -1,21 +1,18 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Familia;
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
-using Android.Util;
 using Android.Widget;
 using FamiliaXamarin.DataModels;
+using FamiliaXamarin.Devices;
 using FamiliaXamarin.Helpers;
-using SQLite;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
-namespace FamiliaXamarin.Devices
+namespace Familia.Devices
 {
     [Activity(Label = "Familia", Theme = "@style/AppTheme.Dark",
         ScreenOrientation = ScreenOrientation.Portrait)]
@@ -31,9 +28,7 @@ namespace FamiliaXamarin.Devices
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            InitUi();
-            
-            
+            InitUi(); 
         }
 
         private async void InitUi()
@@ -79,7 +74,6 @@ namespace FamiliaXamarin.Devices
        
                 cdd.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimaryDark);
             };
-            
         }
 
         private void ClearRecyclerView()
@@ -112,7 +106,7 @@ namespace FamiliaXamarin.Devices
                 cdd.Show();
                 cdd.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimaryDark);
             };
-            _adapter.ItemLongClick += async delegate(object sender, DevicesManagementAdapterClickEventArgs args)
+            _adapter.ItemLongClick += delegate (object sender, DevicesManagementAdapterClickEventArgs args)
             {
                 var model = _adapter.GetItemModel(args.Position);
                 if (model == null) return;

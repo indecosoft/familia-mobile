@@ -93,10 +93,7 @@
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/BloodGlucoseButton"
                 android:layout_marginTop="10dp"
-                
                 android:layout_width="match_parent"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/titleGlucose"
                 android:layout_centerHorizontal="true"
@@ -144,8 +141,6 @@
                 android:id="@+id/SmartbandButton"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/titleWatch"
                 android:layout_centerHorizontal="true"
