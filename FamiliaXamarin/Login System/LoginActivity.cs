@@ -26,6 +26,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Exception = System.Exception;
 using Permission = Android.Content.PM.Permission;
 using Android.Util;
+using Familia.LoginSystem;
 
 namespace Familia.Login_System
 {
@@ -74,6 +75,12 @@ namespace Familia.Login_System
             //Using the Android Support Library v4
             var keyguardManager = (KeyguardManager)GetSystemService(KeyguardService);
             var fingerprintManager = (FingerprintManager)GetSystemService(FingerprintService);
+            var btn = FindViewById<Button>(Resource.Id.btn_pin);
+            btn.Click += (sender, e) =>
+            {
+                StartActivity(typeof(PinActivity));
+            };
+
 
             if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.UseFingerprint) !=
                 (int)Permission.Granted)
@@ -167,6 +174,11 @@ namespace Familia.Login_System
                 //Using the Android Support Library v4
                 var keyguardManager = (KeyguardManager)GetSystemService(KeyguardService);
                 var fingerprintManager = (FingerprintManager)GetSystemService(FingerprintService);
+                var btn = FindViewById<Button>(Resource.Id.btn_pin);
+                btn.Click += (sender, e) =>
+                {
+                    StartActivity(typeof(PinActivity));
+                };
 
                 if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.UseFingerprint) !=
                     (int)Permission.Granted)
