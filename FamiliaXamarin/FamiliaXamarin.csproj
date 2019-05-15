@@ -153,6 +153,7 @@
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="WebServices\WebServices.cs" />
     <Compile Include="Login System\PinActivity.cs" />
+    <Compile Include="Settings\ActivitySetPin.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

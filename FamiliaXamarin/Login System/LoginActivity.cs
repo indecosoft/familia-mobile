@@ -59,9 +59,15 @@ namespace Familia.Login_System
         protected override void OnResume()
         {
             base.OnResume();
+
             var fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint")) &&
                               Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
 
+            if (!fingerprint && !string.IsNullOrEmpty(Utils.GetDefaults("UserPin")))
+            {
+                StartActivity(typeof(PinActivity));
+                return;
+            }
             var checkHardware = FingerprintManagerCompat.From(this);
             var keyguardManager1 = (KeyguardManager)GetSystemService(KeyguardService);
             if (!fingerprint || !checkHardware.IsHardwareDetected ||
@@ -159,6 +165,11 @@ namespace Familia.Login_System
             var fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint")) &&
                               Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
 
+            if (!fingerprint && !string.IsNullOrEmpty(Utils.GetDefaults("UserPin")))
+            {
+                StartActivity(typeof(PinActivity));
+                return;
+            }
             var checkHardware = FingerprintManagerCompat.From(this);
             var keyguardManager1 = (KeyguardManager)GetSystemService(KeyguardService);
 
