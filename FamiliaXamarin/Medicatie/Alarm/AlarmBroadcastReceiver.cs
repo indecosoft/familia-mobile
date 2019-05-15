@@ -1,5 +1,6 @@
 ﻿using System;
 using Android.Content;
+using Android.Util;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
@@ -19,18 +20,16 @@ namespace FamiliaXamarin.Medicatie.Alarm
             var medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
             var boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
             var hourId = intent.GetStringExtra(DiseaseActivity.HOUR_ID);
-
             Storage.GetInstance().GetListOfDiseasesFromFile(context);
             _mDisease = Storage.GetInstance().GetDisease(boalaId);
 
             if (_mDisease == null) return;
             _mMed = _mDisease.GetMedicineById(medId);
-
             if (_mMed == null) return;
             _mHour = _mMed.FindHourById(hourId);
 
 
-           // if (Utils.GetDefaults("Token", context) == null) return;
+            // if (Utils.GetDefaults("Token", context) == null) return;
 
 
             if (string.IsNullOrEmpty(Utils.GetDefaults("Token"))) return;

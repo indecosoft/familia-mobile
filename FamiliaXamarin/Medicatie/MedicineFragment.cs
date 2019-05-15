@@ -160,7 +160,7 @@ namespace FamiliaXamarin.Medicatie
                     var content = obj.GetString("content");
                     var postpone = Convert.ToInt32(obj.GetString("postpone"));
                     medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone));
-                    //Log.Error("MEDICATIONSTRING", timestampString);
+                    Log.Error("MEDICATIONSTRING", timestampString);
                 }
 
                 return medicationScheduleList;

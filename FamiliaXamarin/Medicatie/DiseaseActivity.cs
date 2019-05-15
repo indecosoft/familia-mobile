@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Medicatie.Alarm;
@@ -48,7 +49,7 @@ namespace FamiliaXamarin.Medicatie
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
             toolbar.NavigationClick += delegate { OnBackPressed(); };
-
+            Log.Error("AAAAAAAAAAAA","DISEASE ACTIVITY CREATED");
             Title = "Tratament";
 
             SetupViews();
@@ -215,10 +216,11 @@ namespace FamiliaXamarin.Medicatie
                 for (int i = 0; i < hours.Count; i++)
                 {
                     SetAlarm(hours[i], med, disease, ref alarms, i);
+                    Log.Error("AAAAAAAAAAAA", "setupd alarm " + med.Name + " hour: " +  hours[i].HourName);
                 }
 
                 med.Alarms = alarms;
-
+             
             }
         }
         private readonly DateTime Jan1st1970 = new DateTime
@@ -246,7 +248,6 @@ namespace FamiliaXamarin.Medicatie
             i.PutExtra(ALARM_ID, id);
            // Log.Error("MEDICAMENT", med.Name);
             var pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
-
             if (am == null) return;
 
             var hourString = hour.HourName;
@@ -255,7 +256,7 @@ namespace FamiliaXamarin.Medicatie
             var timeMinute = Convert.ToInt32(parts[1]);
 
             var date = DateTime.Parse(med.Date);
-            var setDt = new DateTime(date.Year, date.Month, date.Day,timeHour,timeMinute,0);
+            var setDt = new DateTime(date.Year, date.Day, date.Month,timeHour,timeMinute,0);
 
             var calendar = Calendar.Instance;
             var setCalendar = Calendar.Instance;
@@ -287,6 +288,7 @@ namespace FamiliaXamarin.Medicatie
                         .TotalMilliseconds;
                     
                         am.SetInexactRepeating(AlarmType.RtcWakeup, mili, 0, pi);
+                       
                 }
             }
             else
@@ -295,6 +297,8 @@ namespace FamiliaXamarin.Medicatie
                     .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
                     .TotalMilliseconds;
                 am.SetInexactRepeating(AlarmType.RtcWakeup, mili, AlarmManager.IntervalDay, pi);
+               
+
             }
         }
 
