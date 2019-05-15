@@ -152,6 +152,7 @@
     <Compile Include="Helpers\DatePickerFragment.cs" />
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="WebServices\WebServices.cs" />
+    <Compile Include="Login System\PinActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -171,6 +172,8 @@
     <AndroidResource Include="Resources\raw\bell.json" />
     <AndroidResource Include="Resources\raw\fingerprint.json" />
     <AndroidResource Include="Resources\raw\devices_data.db" />
+    <AndroidResource Include="Resources\layout\activity_pin_lockscreen.axml" />
+    <AndroidResource Include="Resources\drawable\pin_background.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -274,6 +277,9 @@
     </PackageReference>
     <PackageReference Include="ZXing.Net.Mobile">
       <Version>2.4.1</Version>
+    </PackageReference>
+    <PackageReference Include="Pinview">
+      <Version>1.0.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
