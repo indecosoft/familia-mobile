@@ -86,17 +86,18 @@ namespace FamiliaXamarin.Medicatie
 
         private void SetCurrentDate()
         {
-            string dateSaved = getCurrentDate();
-            tvStartDate.Text = dateSaved;
+            DateTime dateSaved = getCurrentDate();
+            tvStartDate.Text = dateSaved.ToString("dd/MM/yyyy");
         }
 
-        private string getCurrentDate()
+        private DateTime getCurrentDate()
         {
             Calendar cal = Calendar.Instance;
             int year = cal.Get(CalendarField.Year);
             int month = cal.Get(CalendarField.Month);
             int day = cal.Get(CalendarField.DayOfMonth);
-            return $"{day}.{(month + 1)}.{year}";
+            return DateTime.Now;
+//            return $"{day}.{(month + 1)}.{year}";
         }
 
 
@@ -165,7 +166,7 @@ namespace FamiliaXamarin.Medicatie
                 rbContinuu.Checked = true;
             }
 
-            tvStartDate.Text = medicament.Date;
+            tvStartDate.Text = medicament.Date.ToString("dd/MM/yyy");
         }
 
         private void SetIntervalOfHours(int i)
@@ -294,9 +295,9 @@ namespace FamiliaXamarin.Medicatie
         private void OnDateClick()
         {
             var frag = DatePickerMedicine.NewInstance(delegate(DateTime time)
-            {
-                tvStartDate.Text = time.ToShortDateString();
-            });
+                {
+                    tvStartDate.Text = time.ToString("dd/MM/yyyy");
+                });
             frag.Show(activity.SupportFragmentManager, DatePickerMedicine.TAG);
         }
 
@@ -331,7 +332,9 @@ namespace FamiliaXamarin.Medicatie
                     medicament.Name = name;
                     medicament.Hours = hourAdapter.GetList();
                     medicament.IntervalOfDay = intervalZi;
-                    medicament.Date = tvStartDate.Text;
+                    
+                    medicament.Date = DateTime.ParseExact(tvStartDate.Text, "dd/MM/yyyy", null);
+                    Log.Error("medicios", medicament.Date.ToString());
                     string zile = etNumarZile.Text;
                     if (!zile.Equals(string.Empty))
                     {
@@ -428,10 +431,11 @@ namespace FamiliaXamarin.Medicatie
 
         public void OnDateSet(DatePicker view, int year, int month, int dayOfMonth)
         {
-            string dateSaved = $"{dayOfMonth}.{month + 1}.{year}";
+            string dateSaved = $"{dayOfMonth}/{month + 1}/{year}";
             Log.Error("DATE SAVED", dateSaved);
             tvStartDate.Text = dateSaved;
-            medicament.Date = dateSaved;
+            medicament.Date = DateTime.ParseExact(tvStartDate.Text, "dd/MM/yyyy", null);
+            Log.Error("medicios1", medicament.Date.ToString());
         }
 
         public void onHourClicked(Hour hour)

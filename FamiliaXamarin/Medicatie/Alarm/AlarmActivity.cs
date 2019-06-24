@@ -18,6 +18,17 @@ using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
 using FamiliaXamarin.Settings;
 
+using Org.Json;
+using SQLite;
+using System.IO;
+using System.Threading.Tasks;
+using System.Linq;
+
+
+using FamiliaXamarin.DataModels;
+using FamiliaXamarin.Services;
+
+
 namespace FamiliaXamarin.Medicatie.Alarm
 {
     [Activity(Label = "AlarmActivity")]
@@ -34,11 +45,19 @@ namespace FamiliaXamarin.Medicatie.Alarm
         private Medicine mMed;
         private int mIdAlarm;
         private Ringtone r;
- 
+        private string extraMessage;
+
+        private string uuid;
+        private int postpone;
+        private string title;
+        private int NotifyId;
+        private SQLiteAsyncConnection _db;
+        private Intent _medicationServiceIntent;
+
         protected override void OnDestroy()
         {
-            if(r!=null)
-            r.Stop();
+            if (r != null)
+                r.Stop();
             base.OnDestroy();
         }
         protected override void OnUserLeaveHint()
@@ -49,7 +68,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
         }
 
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             Window.SetFlags(WindowManagerFlags.Fullscreen | WindowManagerFlags.DismissKeyguard |
@@ -62,9 +81,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
             //                Finish();
             //                
             //            }
-            Log.Error("AAAAAAAAAAAA", "alarm activity");
             SetContentView(Resource.Layout.activity_alarm);
-            
+            Log.Error("alarm activity", " started");
             tvMedName = FindViewById<TextView>(Resource.Id.tv_med_name_alarm);
             btnOk = FindViewById<Button>(Resource.Id.btn_ok_alarm);
             btnOk.SetOnClickListener(this);
@@ -72,68 +90,165 @@ namespace FamiliaXamarin.Medicatie.Alarm
             btnSnooze.SetOnClickListener(this);
             btnSnooze.Visibility = ViewStates.Visible;
             btnOk.Visibility = ViewStates.Visible;
-            
+
             Intent intent = Intent;
-            boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
-            medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
-            boli = Storage.GetInstance().GetListOfDiseasesFromFile(this);
-            mBoala = Storage.GetInstance().GetDisease(boalaId);
-            if (mBoala != null)
+            extraMessage = intent.GetStringExtra("message");
+            if (extraMessage == AlarmBroadcastReceiver.FROM_APP)
             {
-                mMed = mBoala.GetMedicineById(medId);
-                mIdAlarm = intent.GetIntExtra(DiseaseActivity.ALARM_ID, -1);
-                tvMedName.Text = mMed.Name;
+                boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
+                medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
+                boli = Storage.GetInstance().GetListOfDiseasesFromFile(this);
+                mBoala = Storage.GetInstance().GetDisease(boalaId);
+                if (mBoala != null)
+                {
+                    mMed = mBoala.GetMedicineById(medId);
+                    mIdAlarm = intent.GetIntExtra(DiseaseActivity.ALARM_ID, -1);
+                    tvMedName.Text = mMed.Name;
+                }
             }
-            Android.Net.Uri notification = RingtoneManager.GetDefaultUri(RingtoneType.Alarm);
-            r = RingtoneManager.GetRingtone(this, notification);
-            r.Play();
+            else
+            {
+                if (extraMessage == AlarmBroadcastReceiverServer.FROM_SERVER)
+                {   
+                    title = intent.GetStringExtra(AlarmBroadcastReceiverServer.MEDICATION_NAME);
+                    uuid = intent.GetStringExtra(AlarmBroadcastReceiverServer.Uuid);
+                    postpone =intent.GetIntExtra(AlarmBroadcastReceiverServer.Postpone, 5);
+                    NotifyId = intent.GetIntExtra("notifyId", 5);
+                    tvMedName.Text = title;
+
+                    Log.Error("alarm activity", postpone + " ");
+                    var path =
+                        System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+                    var nameDb = "devices_data.db";
+                    _db = new SQLiteAsyncConnection(Path.Combine(path, nameDb));
+                    await _db.CreateTableAsync<MedicineRecords>();
+
+                }
+
+            }
+
+
+            //            Android.Net.Uri notification = RingtoneManager.GetDefaultUri(RingtoneType.Alarm);
+            //            r = RingtoneManager.GetRingtone(this, notification);
+            //            r.Play();
         }
 
-        public void OnClick(View v)
+        public async void OnClick(View v)
         {
             switch (v.Id)
             {
                 case Resource.Id.btn_ok_alarm:
-                    Toast.MakeText(this, "Medicament luat.", ToastLength.Short).Show();
+                    Log.Error("AAAAAA", "click on LUAT");
                     //btnSnooze.Visibility = ViewStates.Gone;
                     //OnBackPressed();
+
+                    if (extraMessage == AlarmBroadcastReceiverServer.FROM_SERVER)
+                    {   
+                        var now = DateTime.Now;
+
+                        var mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid)
+                            .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
+
+
+                        await Task.Run(async () =>
+                        {
+                            if (await SendData(this, mArray))
+                            {
+                                var running = IsServiceRunning(typeof(MedicationService), this);
+                                if (running)
+                                {
+                                    Log.Error("SERVICE", "Medication service is running");
+                                    this.StopService(_medicationServiceIntent);
+                                }
+                            }
+                            else
+                             {
+                                AddMedicine(_db, uuid, now);
+                                Log.Error("SERVICE", "Medication service started");
+                                _medicationServiceIntent =
+                                new Intent(this, typeof(MedicationService));
+                                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                                {
+                                    this.StartForegroundService(_medicationServiceIntent);
+                                }
+                                else
+                                {
+                                    this.StartService(_medicationServiceIntent);
+                                }
+                               }
+                        });
+
+                    }
+
+
+
+
+                    Toast.MakeText(this, "Medicament luat.", ToastLength.Short).Show();
                     Finish();
-                    
+
                     break;
                 case Resource.Id.btn_snooze_alarm:
-                    LaunchSnoozeAlarm();
+                        LaunchSnoozeAlarm();
                     Finish();
                     //OnBackPressed();
                     break;
             }
-            r.Stop();
+            //            r.Stop();
         }
 
         private void LaunchSnoozeAlarm()
         {
-            int snoozeInMinutes;
-           // bool a = int.TryParse(Utils.GetDefaults("snooze", this), out snoozeInMinutes);
-            if (int.TryParse(Utils.GetDefaults("snooze"), out snoozeInMinutes))
-                snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze"));
-            else
-                snoozeInMinutes = 5;
+            Intent i;
+            var snoozeInMilisec = postpone * 60000;
+            PendingIntent pi;
+            if (extraMessage == AlarmBroadcastReceiver.FROM_APP)
+            {
+                int snoozeInMinutes;
+                // bool a = int.TryParse(Utils.GetDefaults("snooze", this), out snoozeInMinutes);
+                if (int.TryParse(Utils.GetDefaults("snooze"), out snoozeInMinutes))
+                    snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze"));
+                else
+                    snoozeInMinutes = 5;
 
-            var snoozeInMilisec = snoozeInMinutes * 60000;
-            
-            Toast.MakeText(this, "Alarma amanata pentru " + snoozeInMinutes + " minute.", ToastLength.Short).Show();
-            
-            var am = (AlarmManager) GetSystemService(AlarmService);
-            
-            var i = new Intent(this, typeof(AlarmBroadcastReceiver));
-            i.AddFlags(ActivityFlags.ClearTop);
-            i.PutExtra(DiseaseActivity.BOALA_ID, mBoala.Id);
-            i.PutExtra(DiseaseActivity.MED_ID, mMed.IdMed);
-            i.PutExtra(DiseaseActivity.ALARM_ID, mIdAlarm);
-            i.SetFlags(ActivityFlags.NewTask);
-            
+                 snoozeInMilisec = snoozeInMinutes * 60000;
+
+                Toast.MakeText(this, "Alarma amanata pentru " + snoozeInMinutes + " minute.", ToastLength.Short).Show();
+
+
+                i = new Intent(this, typeof(AlarmBroadcastReceiver));
+               
+                i.AddFlags(ActivityFlags.ClearTop);
+                i.PutExtra(DiseaseActivity.BOALA_ID, mBoala.Id);
+                i.PutExtra(DiseaseActivity.MED_ID, mMed.IdMed);
+                i.PutExtra(DiseaseActivity.ALARM_ID, mIdAlarm);
+                i.SetFlags(ActivityFlags.NewTask);
+
+
+                 pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
+
+            }
+            else
+            {
+                Toast.MakeText(this, "Alarma amanata pentru " + postpone + " minute.", ToastLength.Short).Show();
+
+                i = new Intent(this, typeof(AlarmBroadcastReceiverServer));
+                i.AddFlags(ActivityFlags.ClearTop);
+                i.PutExtra(AlarmBroadcastReceiverServer.Uuid, uuid);
+                i.PutExtra("notifyId", NotifyId);
+                i.PutExtra("message", AlarmBroadcastReceiverServer.FROM_SERVER);
+                i.PutExtra(AlarmBroadcastReceiverServer.MEDICATION_NAME, title);
+                i.PutExtra(AlarmBroadcastReceiverServer.Postpone, postpone);
+                i.SetFlags(ActivityFlags.NewTask);
+
+                 pi = PendingIntent.GetBroadcast(this, NotifyId, i, PendingIntentFlags.OneShot);
+
+            }
+
+
+            var am = (AlarmManager)GetSystemService(AlarmService);
+
             //SendBroadcast(i);
-            var pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
-           
+
 
             if (am != null)
             {
@@ -141,7 +256,41 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     AlarmManager.IntervalDay, pi);
             }
 
-           // Utils.util = true;
+            // Utils.util = true;
         }
+
+        private static bool IsServiceRunning(Type classTypeof, Context context)
+        {
+            var manager = (ActivityManager)context.GetSystemService(Context.ActivityService);
+#pragma warning disable 618
+            return manager.GetRunningServices(int.MaxValue).Any(service =>
+                service.Service.ShortClassName == classTypeof.ToString());
+        }
+
+        private static async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now)
+        {
+            await db.InsertAsync(new MedicineRecords()
+            {
+                Uuid = uuid,
+                DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
+            });
+        }
+
+        private static async Task<bool> SendData(Context context, JSONArray mArray)
+        {
+            var result = await WebServices.Post(
+                $"{Constants.PublicServerAddress}/api/medicine", mArray,
+                Utils.GetDefaults("Token"));
+            if (!Utils.CheckNetworkAvailability()) return false;
+            switch (result)
+            {
+                case "Done":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
     }
+
 }

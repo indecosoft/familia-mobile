@@ -23,6 +23,7 @@ namespace FamiliaXamarin.Medicatie
         public static DatePickerMedicine NewInstance(Action<DateTime> onDateSelected)
         {
             DatePickerMedicine frag = new DatePickerMedicine {_dateSelectedHandler = onDateSelected};
+            Log.Error("FRAGUL", frag.ToString());
             return frag;
         }
 
