@@ -189,13 +189,18 @@ namespace FamiliaXamarin.Medicatie
         private void AddNewBoala()
         {
             string numeBoala = etNumeBoala.Text;
+            Log.Error("AAAA", "ADD NEW BOALA");
             if (numeBoala.Equals(string.Empty))
             {
                 Toast.MakeText(this, "Introduceti denumirea afectiunii!", ToastLength.Long).Show();
+                Log.Error("AAAA", "if");
+
                 return;
             }
             disease.ListOfMedicines = medicamentAdapter.GetMedicaments();
             disease.DiseaseName = numeBoala;
+            Log.Error("AAAA", "if");
+
             Storage.GetInstance().AddDisease(this, disease);
 
             SetupAlarm();
@@ -215,12 +220,13 @@ namespace FamiliaXamarin.Medicatie
                 List<int> alarms = new List<int>();
                 for (int i = 0; i < hours.Count; i++)
                 {
+                    Log.Error("AAAAA", "inainte de setupt alarm");
                     SetAlarm(hours[i], med, disease, ref alarms, i);
                     Log.Error("AAAAAAAAAAAA", "setupd alarm " + med.Name + " hour: " +  hours[i].HourName);
                 }
 
                 med.Alarms = alarms;
-             
+                Log.Error("AAAA", "dupa alarms");
             }
         }
         private readonly DateTime Jan1st1970 = new DateTime
@@ -246,7 +252,7 @@ namespace FamiliaXamarin.Medicatie
             }
             alarms.Add(id);
             i.PutExtra(ALARM_ID, id);
-           // Log.Error("MEDICAMENT", med.Name);
+           Log.Error("AAAAAaA", med.Name);
             var pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
             if (am == null) return;
 
@@ -254,10 +260,10 @@ namespace FamiliaXamarin.Medicatie
             var parts = hourString.Split(':');
             var timeHour = Convert.ToInt32(parts[0]);
             var timeMinute = Convert.ToInt32(parts[1]);
-
-            var date = DateTime.Parse(med.Date);
-            var setDt = new DateTime(date.Year, date.Day, date.Month,timeHour,timeMinute,0);
-
+            Log.Error("inainte de date", med.Date.ToString());
+    
+            var setDt = new DateTime(med.Date.Year, med.Date.Month, med.Date.Day ,timeHour,timeMinute,0);
+            Log.Error("AAAA", setDt.ToString());
             var calendar = Calendar.Instance;
             var setCalendar = Calendar.Instance;
 //            setCalendar.Set(CalendarField.Year, setDt.Year);

@@ -1,6 +1,9 @@
 ﻿using System;
+using Android.App;
 using Android.Content;
+using Android.Support.V4.App;
 using Android.Util;
+using Familia;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
@@ -14,6 +17,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
         private Hour _mHour;
         private Disease _mDisease;
         private Medicine _mMed;
+        public static readonly string FROM_APP = "from_app";
+        private static int NotifyId = Constants.NotifId;
+
 
         public override void OnReceive(Context context, Intent intent)
         {   
@@ -28,9 +34,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
             if (_mMed == null) return;
             _mHour = _mMed.FindHourById(hourId);
 
-
             // if (Utils.GetDefaults("Token", context) == null) return;
-
 
             if (string.IsNullOrEmpty(Utils.GetDefaults("Token"))) return;
             
@@ -42,14 +46,87 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         private void LaunchAlarm(Context context, string medId, string boalaId)
         {
-               
-                var i = new Intent(context, typeof(AlarmActivity));
-                i.AddFlags(ActivityFlags.ClearTop);
-                i.PutExtra(DiseaseActivity.MED_ID, medId);
-                i.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
-                i.SetFlags(ActivityFlags.NewTask);
-                context.StartActivity(i);
-                
+            const string channel = "channelabsolut";
+            var now = DateTime.Now;
+
+
+            CreateNotificationChannel(channel, "title from app", "content from app");
+
+            var notificationManager =
+                NotificationManagerCompat.From(context);
+
+//            var i = new Intent(context, typeof(AlarmActivity));
+//                i.AddFlags(ActivityFlags.ClearTop);
+//                i.PutExtra(DiseaseActivity.MED_ID, medId);
+//                i.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
+//                i.PutExtra("message", FROM_APP);
+//                i.SetFlags(ActivityFlags.NewTask);
+//                context.StartActivity(i);
+
+
+            var okIntent = new Intent(context, typeof(AlarmActivity));
+            okIntent.AddFlags(ActivityFlags.ClearTop);
+            okIntent.PutExtra(DiseaseActivity.MED_ID, medId);
+            okIntent.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
+            okIntent.PutExtra("message", FROM_APP);
+            okIntent.SetFlags(ActivityFlags.NewTask);
+
+            
+
+//            boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
+//            medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
+           var boli = Storage.GetInstance().GetListOfDiseasesFromFile(context);
+            var mBoala = Storage.GetInstance().GetDisease(boalaId);
+            if (mBoala != null)
+            {
+               var mMed = mBoala.GetMedicineById(medId);
+//               var mIdAlarm = intent.GetIntExtra(DiseaseActivity.ALARM_ID, -1);
+//                tvMedName.Text = mMed.Name;
+            }
+
+
+            NotifyId += 1;
+            BuildNotification(context, NotifyId, channel, _mMed.Name, "medicament", okIntent);
+        }
+
+
+
+        private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent)
+        {
+            var description = mContent;
+
+            var channel =
+                new NotificationChannel(mChannel, mTitle, NotificationImportance.Default)
+                {
+                    Description = description
+                };
+
+            var notificationManager =
+                (NotificationManager)Application.Context.GetSystemService(
+                    Context.NotificationService);
+            notificationManager.CreateNotificationChannel(channel);
+        }
+
+        private static void BuildNotification(Context context, int notifyId, string channel, string title, string content, Intent intent)
+        {
+
+            //Log.Error("PPPAAAAAAAAAAAAAAAAAA", "build notification for " + title + " with id: " + notifyId);
+
+            var piNotification = PendingIntent.GetActivity(context, notifyId, intent, PendingIntentFlags.UpdateCurrent);
+            var mBuilder =
+                new NotificationCompat.Builder(context, channel)
+                    .SetSmallIcon(Resource.Drawable.logo)
+                    .SetContentText(content)
+                    .SetContentTitle(title)
+                    .SetAutoCancel(true)
+                    .SetContentIntent(piNotification)
+                    .SetPriority(NotificationCompat.PriorityHigh);
+
+          
+
+            var notificationManager = NotificationManagerCompat.From(context);
+
+            notificationManager.Notify(notifyId, mBuilder.Build());
         }
     }
 }

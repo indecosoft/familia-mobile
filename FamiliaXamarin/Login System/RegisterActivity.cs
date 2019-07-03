@@ -218,9 +218,11 @@ namespace FamiliaXamarin
                             snack.Show();
                             break;
                         case 2:
-                            snack = Snackbar.Make(_layout, "Account created", Snackbar.LengthLong);
+                            snack = Snackbar.Make(_layout, "Account created", Snackbar.LengthIndefinite).SetAction("Ok", (v) =>
+                            {
+                                Finish();
+                            });
                             snack.Show();
-                            Finish();
                             break;
                     }
                 }

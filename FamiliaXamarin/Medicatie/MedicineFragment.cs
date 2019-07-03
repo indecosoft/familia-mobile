@@ -70,6 +70,8 @@ namespace FamiliaXamarin.Medicatie
                             i.PutExtra(AlarmBroadcastReceiverServer.Uuid, _medications[ms].Uuid);
                             i.PutExtra(AlarmBroadcastReceiverServer.Title, _medications[ms].Title);
                             i.PutExtra(AlarmBroadcastReceiverServer.Content, _medications[ms].Content);
+                            i.PutExtra(AlarmBroadcastReceiverServer.Postpone, _medications[ms].Postpone);
+
                             i.SetAction(AlarmBroadcastReceiverServer.ActionReceive);
                             var random = new System.Random();
                             var id = CurrentTimeMillis() * random.Next();
@@ -83,7 +85,7 @@ namespace FamiliaXamarin.Medicatie
                             Calendar setcalendar = Calendar.Instance;
 
                             setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
-                            Log.Error("DATE YEAR:", date.Year.ToString());
+                            Log.Error("DATE YEAR:", date.Year.ToString(), date.Month.ToString(), date.Day.ToString());
                             if (setcalendar.Before(calendar)) continue;
 
                             am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);

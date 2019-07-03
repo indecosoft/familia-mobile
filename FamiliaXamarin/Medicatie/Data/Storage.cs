@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -9,6 +10,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using FamiliaXamarin.Medicatie.Entities;
@@ -139,7 +141,7 @@ namespace FamiliaXamarin.Medicatie.Data
                     JSONObject medicament = new JSONObject();
                     medicament.Put("idMedicament", disease.ListOfMedicines[i].IdMed);
                     medicament.Put("numeMedicament", disease.ListOfMedicines[i].Name);
-                    medicament.Put("dataMedicament", disease.ListOfMedicines[i].Date);
+                    medicament.Put("dataMedicament", disease.ListOfMedicines[i].Date.ToString());
                     medicament.Put("nrZileMedicament", disease.ListOfMedicines[i].NumberOfDays);
                     medicament.Put("intervalZi", disease.ListOfMedicines[i].IntervalOfDay);
 
@@ -253,7 +255,10 @@ namespace FamiliaXamarin.Medicatie.Data
                         Medicine m = new Medicine();
                         m.IdMed= (string)((JSONObject)arrayOfMedicines.Get(j)).Get("idMedicament");
                         m.Name = (string)((JSONObject)arrayOfMedicines.Get(j)).Get("numeMedicament");
-                        m.Date = (string)((JSONObject)arrayOfMedicines.Get(j)).Get("dataMedicament");
+                        Log.Error("Aici se verifica daca minunata data se converteste frumos",
+                            (string) ((JSONObject) arrayOfMedicines.Get(j)).Get("dataMedicament"));
+                        m.Date = DateTime.Parse((string)((JSONObject)arrayOfMedicines.Get(j)).Get("dataMedicament"));
+                        Log.Error("dupa conversie is Storage", m.Date.ToString());
                         m.NumberOfDays = (int)((JSONObject)arrayOfMedicines.Get(j)).Get("nrZileMedicament");
                         m.IntervalOfDay = (int)((JSONObject)arrayOfMedicines.Get(j)).Get("intervalZi");
 
