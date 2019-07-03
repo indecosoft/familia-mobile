@@ -1,40 +1,43 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using Com.Goodiebag.Pinview;
-using FamiliaXamarin;
 using FamiliaXamarin.Helpers;
 
-namespace Familia.LoginSystem
+namespace Familia.Settings
 {
-    [Activity(Label = "PinActivity")]
-    public class PinActivity : AppCompatActivity, Pinview.IPinViewEventListener
+    [Activity(Label = "ActivitySetPin")]
+    public class ActivitySetPin : AppCompatActivity, Pinview.IPinViewEventListener
     {
         Pinview pin;
+        private string _newPin;
         private TextView _textViewError;
+
         public void OnDataEntered(Pinview p0, bool p1)
         {
-
-            if(p0.Value == Utils.GetDefaults("UserPin"))
+            if (string.IsNullOrEmpty(_newPin))
             {
-                StartActivity(typeof(MainActivity));
-                Utils.HideKeyboard(this);
-                Finish();
+                _newPin = p0.Value;
+                ClearPin();
             }
+
             else
             {
-                _textViewError.Text = "Pin incorect";
-                ClearPin();
+                if (_newPin == p0.Value)
+                {
+                    Utils.SetDefaults("UserPin", p0.Value);
+                    ClearPin();
+                    Utils.HideKeyboard(this);
+                    Finish();
+                }
+                else
+                {
+                    _textViewError.Text = "Pin incorect";
+                    ClearPin();
+                }
             }
         }
 
@@ -48,6 +51,8 @@ namespace Familia.LoginSystem
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            // Create your application here
             SetContentView(Resource.Layout.activity_pin_lockscreen);
             pin = new Pinview(this);
             pin = FindViewById<Pinview>(Resource.Id.pinview);

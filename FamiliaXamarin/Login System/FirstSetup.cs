@@ -361,78 +361,94 @@ namespace FamiliaXamarin.Login_System
             public override View OnCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState)
             {
-                View rootView;
-
-                switch (Arguments.GetInt(ArgSectionNumber))
+                View rootView = null;
+                try
                 {
-                    case 1:
-                        rootView = inflater.Inflate(Resource.Layout.fragment_setup1, container,
-                            false);
-                        InitDefaultUi(rootView);
-                        InitFirstViewUi(rootView);
-                        _btnUpload.Click += delegate { ShowPictureDialog(); };
-
-                        break;
-                    case 2:
-                        rootView = inflater.Inflate(Resource.Layout.fragment_setup2, container,
-                            false);
-                        InitDefaultUi(rootView);
-                        InitSecondViewUi(rootView);
-
-                        _maleToggleButton.CheckedChange += delegate
-                        {
-                            if (!_maleToggleButton.Checked) return;
-                            _femaleToggleButton.Checked = false;
-                            FragmentContext._firstSetupModel.Gender = "Masculin";
-                        };
-                        _femaleToggleButton.CheckedChange += delegate
-                        {
-                            if (!_femaleToggleButton.Checked) return;
-                            _maleToggleButton.Checked = false;
-                            FragmentContext._firstSetupModel.Gender = "Feminin";
-                        };
-
-                        _btnDate.Click += delegate
-                        {
-
-                            var frag = DatePickerFragment.NewInstance(delegate (DateTime time)
-                            {
-                                _btnDate.Text = time.ToShortDateString();
-                                FragmentContext._firstSetupModel.DateOfBirth =
-                                    time.ToString("yyyy-MM-dd");
-                            });
-                            frag.Show(FragmentContext.SupportFragmentManager,
-                                DatePickerFragment.TAG);
-                        };
-
-                        break;
-                    case 3:
-                        rootView = inflater.Inflate(Resource.Layout.fragment_setup3, container,
-                            false);
-                        InitDefaultUi(rootView);
-                        IniThirdViewUi(rootView);
-                        // Create an ArrayAdapter using the string array and a default spinner layout
-                        //FragmentContext._firstSetupModel.Disease = new JSONArray();
-                        DiseaseSelectorView();
-                        break;
-                    default:
-                        rootView = inflater.Inflate(Resource.Layout.fragment_setup1, container,
-                            false);
-                        InitDefaultUi(rootView);
-                        break;
-                }
-
-                _btnNext.Click += _btnNext_Click;
-                if (Arguments.GetInt(ArgSectionNumber) != 1)
-                {
-                    _btnBack.Click += delegate
+                    var index = Arguments.GetInt(ArgSectionNumber) - 1;
+                    switch (index)
                     {
-                        FragmentContext._viewPager.CurrentItem =
-                            Arguments.GetInt(ArgSectionNumber) - 2;
-                    };
+                        case 0:
+                            rootView = inflater.Inflate(Resource.Layout.fragment_setup1, container,
+                                false);
+                            InitDefaultUi(rootView);
+                            InitFirstViewUi(rootView);
+                            _btnUpload.Click += delegate { 
+                            ShowPictureDialog();
+ };
+
+                            break;
+                        case 1:
+                            rootView = inflater.Inflate(Resource.Layout.fragment_setup2, container,
+                                false);
+                            InitDefaultUi(rootView);
+                            InitSecondViewUi(rootView);
+
+                            _maleToggleButton.CheckedChange += delegate
+                            {
+                                if (!_maleToggleButton.Checked) return;
+                                _femaleToggleButton.Checked = false;
+                                FragmentContext._firstSetupModel.Gender = "Masculin";
+                            };
+                            _femaleToggleButton.CheckedChange += delegate
+                            {
+                                if (!_femaleToggleButton.Checked) return;
+                                _maleToggleButton.Checked = false;
+                                FragmentContext._firstSetupModel.Gender = "Feminin";
+                            };
+
+                            _btnDate.Click += delegate
+                            {
+
+                                var frag = DatePickerFragment.NewInstance(delegate (DateTime time)
+                                {
+                                    _btnDate.Text = time.ToShortDateString();
+                                    FragmentContext._firstSetupModel.DateOfBirth =
+                                        time.ToString("yyyy-MM-dd");
+                                });
+                                frag.Show(FragmentContext.SupportFragmentManager,
+                                    DatePickerFragment.TAG);
+                            };
+
+                            break;
+                        case 2:
+                            rootView = inflater.Inflate(Resource.Layout.fragment_setup3, container,
+                                false);
+                            InitDefaultUi(rootView);
+                            IniThirdViewUi(rootView);
+                            // Create an ArrayAdapter using the string array and a default spinner layout
+                            //FragmentContext._firstSetupModel.Disease = new JSONArray();
+                            DiseaseSelectorView();
+                            break;
+                        //default:
+                            //rootView = inflater.Inflate(Resource.Layout.fragment_setup1, container,
+                            //    false);
+                            //InitDefaultUi(rootView);
+                            //InitFirstViewUi(rootView);
+                            //_btnUpload.Click += delegate {
+                            //    ShowPictureDialog();
+                            //};
+                            //break;
+                    }
+
+                    _btnNext.Click += _btnNext_Click;
+                    if (Arguments.GetInt(ArgSectionNumber) != 1)
+                    {
+                        _btnBack.Click += delegate
+                        {
+                            FragmentContext._viewPager.CurrentItem =
+                                Arguments.GetInt(ArgSectionNumber) - 2;
+                        };
+                    }
+                    if (Arguments.GetInt(ArgSectionNumber) == 3)
+                        _btnNext.Text = "Gata";
                 }
-                if (Arguments.GetInt(ArgSectionNumber) == 3)
-                    _btnNext.Text = "Gata";
+                catch (Exception ex)
+                {
+
+                }
+               
+
+
                 return rootView;
             }
 

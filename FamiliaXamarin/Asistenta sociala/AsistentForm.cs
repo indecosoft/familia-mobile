@@ -43,6 +43,7 @@ namespace FamiliaXamarin.Asistenta_sociala
         private List<BenefitSpinnerState> _listVOs;
         private Intent _distanceCalculatorService;
         private Intent _medicalAsistanceService;
+        private List<string> _benefitsList = new List<string>();
 
         private void IntiUi(View v)
         {
@@ -60,6 +61,29 @@ namespace FamiliaXamarin.Asistenta_sociala
             return _benefitsSpinner.SelectedItem != null && !_benefitsSpinner.SelectedItem.Equals(string.Empty) && !_tbDetails.Text.Equals(string.Empty);
 
         }
+        private async void GetBenefits()
+        {
+            await Task.Run(async () => {
+                try
+                {
+                    var response = await WebServices.Get($"{Constants.PublicServerAddress}/api/getBenefits", Utils.GetDefaults("Token"));
+                    var jsonResponse = new JSONObject(response);
+                    if (jsonResponse.GetInt("status") == 2)
+                    {
+                        var dataArray = jsonResponse.GetJSONArray("data");
+                        for (int i = 0; i < dataArray.Length(); i++)
+                        {
+                            _benefitsList.Add(dataArray.GetJSONObject(i).GetString("benefit"));
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("error la beneficii", ex.Message);
+                }
+               
+            });
+        }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             // Use this to return your custom view for this Fragment
@@ -69,11 +93,12 @@ namespace FamiliaXamarin.Asistenta_sociala
             IntiUi(view);
             _distanceCalculatorService = new Intent(Activity, typeof(DistanceCalculator));
             _medicalAsistanceService = new Intent(Activity, typeof(MedicalAsistanceService));
-            string[] selectQualification = {
-                "Beneficiu acordat", "Masaj", "Baie", "Perfuzie", "Pansament"};
+            GetBenefits();
+            //string[] selectQualification = {
+                //"Beneficiu acordat", "Masaj", "Baie", "Perfuzie", "Pansament"};
             _listVOs = new List<BenefitSpinnerState>();
 
-            foreach (var t in selectQualification)
+            foreach (var t in _benefitsList)
             {
                 var stateVo = new BenefitSpinnerState
                 {
@@ -129,7 +154,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                 .SetPriority(LocationRequest.PriorityHighAccuracy)
                 .SetInterval(1000)
                 .SetFastestInterval(1000);
-            new FusedLocationProviderCallback(Activity);
+            _= new FusedLocationProviderCallback(Activity);
 
             _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Activity);
 

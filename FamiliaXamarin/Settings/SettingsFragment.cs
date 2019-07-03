@@ -18,6 +18,7 @@ using Familia.Devices;
 using FamiliaXamarin.Devices;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Medicatie;
+using Familia.Settings;
 
 namespace FamiliaXamarin.Settings
 {
@@ -27,6 +28,7 @@ namespace FamiliaXamarin.Settings
         private int optionOfSnooze;
 //        private string key;
         private Switch enablefingerprint;
+        private Switch enablePin;
         private TextView _tvDevicesManagement;
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -40,6 +42,7 @@ namespace FamiliaXamarin.Settings
 
             SetupSpinner(v);
             enablefingerprint = v.FindViewById<Switch>(Resource.Id.fingerPrintSwitch);
+            enablePin = v.FindViewById<Switch>(Resource.Id.pin_switch);
             _tvDevicesManagement = v.FindViewById<TextView>(Resource.Id.devices);
             _tvDevicesManagement.Click += (sender, args) =>
                 Activity.StartActivity(typeof(DevicesManagementActivity));
@@ -53,11 +56,21 @@ namespace FamiliaXamarin.Settings
             if (!checkHardware.IsHardwareDetected)
                 enablefingerprint.Enabled = false;
 
-            enablefingerprint.Checked = fingerprint ? true : false;
-
+            enablefingerprint.Checked = fingerprint;
+            enablePin.Checked = !string.IsNullOrEmpty(Utils.GetDefaults("UserPin"));
             enablefingerprint.CheckedChange += Enablefingerprint_CheckedChange;
+            enablePin.CheckedChange += EnablePin_CheckedChange;
             return v;
         }
+
+        void EnablePin_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            if (enablePin.Checked)
+                Activity.StartActivity(typeof(ActivitySetPin));
+            else
+                Utils.SetDefaults("UserPin", string.Empty);
+        }
+
 
         private void SetupSpinner(View v)
         {
@@ -97,6 +110,10 @@ namespace FamiliaXamarin.Settings
             // this is an Activity
             Utils.SetDefaults("fingerprint",
                 enablefingerprint.Checked ? true.ToString() : false.ToString());
+            if(enablefingerprint.Checked && !enablePin.Checked)
+            {
+                enablePin.Checked = true;
+            }
         }
     }
 }

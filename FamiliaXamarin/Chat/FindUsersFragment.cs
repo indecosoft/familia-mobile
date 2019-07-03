@@ -26,12 +26,18 @@ namespace FamiliaXamarin.Chat
         private Button _leftButton;
         private Button _rightButton;
         private List<UserCard> _people;
+        private bool _doRefresh = true;
 
         UserCardAdapter CreateUserCardAdapter()
         {
             var userCardAdapter = new UserCardAdapter(Activity);
             userCardAdapter.AddAll(_people);
             return userCardAdapter;
+        }
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            _doRefresh = false;
         }
         private void Setup() => _cardStackView.CardSwiped += delegate (object sender, CardStackView.CardSwipedEventArgs args)
                       {
@@ -124,7 +130,7 @@ namespace FamiliaXamarin.Chat
                 if (status == 1)
                 {
                     Reload();
-                    if (_people.Count == 0)
+                    if (_people.Count == 0 && _doRefresh)
                     {
 
                             _animationView.PlayAnimation();
@@ -143,7 +149,7 @@ namespace FamiliaXamarin.Chat
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
+                //throw;
             }
             _animationView.Progress = 1f;
 
