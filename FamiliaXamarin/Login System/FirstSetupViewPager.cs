@@ -22,12 +22,12 @@ namespace FamiliaXamarin.Login_System
 
         public FirstSetupViewPager(Context context) : base(context)
         {
-            SetMyScroller();
+           // SetMyScroller();
         }
 
         public FirstSetupViewPager(Context context, IAttributeSet attrs) : base(context, attrs)
         {
-            SetMyScroller();
+            //SetMyScroller();
         }
 
 
