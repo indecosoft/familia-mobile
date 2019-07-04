@@ -9,5 +9,6 @@ namespace FamiliaXamarin.DataModels
         public string Uuid { get; set; }
         public string DateTime { get; set; }
 
+       
     }
 }

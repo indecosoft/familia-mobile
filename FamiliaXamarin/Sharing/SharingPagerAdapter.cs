@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Android.Support.V4.App;
+using Android.Util;
 using Java.Lang;
 
 
@@ -24,6 +25,7 @@ namespace FamiliaXamarin.Sharing
     
         public void AddFragment(Fragment fragment, String title) {
             mFragmentList.Add(fragment);
+            Log.Error("TITLE", title +"");
             mTitleList.Add(title);
         }
 

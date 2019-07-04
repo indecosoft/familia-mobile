@@ -5,17 +5,21 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.Gms.Tasks;
 using Android.OS;
 using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Familia.DataModels;
+using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Medicatie.Entities;
 using Java.IO;
 using Org.Json;
+using SQLite;
 using File = Java.IO.File;
 using IOException = Java.IO.IOException;
 
@@ -27,10 +31,18 @@ namespace FamiliaXamarin.Medicatie.Data
         private static Storage Instance;
         private List<Disease> DiseaseList;
         private static readonly object padlock = new object();
+        private SqlHelper<MedicineServerRecords> _db;
 
+        private List<MedicationSchedule> _medicationSchedules;
         private Storage()
         {
             this.DiseaseList = new List<Disease>();
+
+            _medicationSchedules = new List<MedicationSchedule>();
+            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            var numeDB = "devices_data.db";
+          
+       
         }
 
         public static Storage GetInstance()
@@ -41,10 +53,48 @@ namespace FamiliaXamarin.Medicatie.Data
                 {
                     Instance = new Storage();
                 }
-
             }
 
             return Instance;
+        }
+
+        public async void saveMedSer(List<MedicationSchedule> list)
+        {
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+            _medicationSchedules = list;
+            foreach (var element in _medicationSchedules)
+            {
+                await _db.Insert(new MedicineServerRecords()
+                {
+                    Title = element.Title,
+                    Content = element.Content,
+                    DateTime = element.Timestampstring,
+                    Uuid = element.Uuid,
+                    Postpone = element.Postpone + ""
+                   
+                });
+            }
+        }
+
+        public async Task<List<MedicationSchedule>> readMedSer()
+        {
+            var list =  await _db.QueryValuations("select * from MedicineServerRecords");
+            var listMedSch = new List<MedicationSchedule>();
+            foreach (var elem in list)
+            {
+                try
+                {
+                    listMedSch.Add(new MedicationSchedule(elem.Uuid, elem.DateTime, elem.Title, elem.Content,
+                        int.Parse(elem.Postpone)));
+                }
+                catch (Exception e)
+                {
+                    Log.Error("ERR", e.ToString());
+                }
+            }
+
+            return listMedSch;
+
         }
 
         public List<Disease> GetDiseases()
