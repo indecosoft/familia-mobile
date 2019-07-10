@@ -141,9 +141,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
             switch (v.Id)
             {
                 case Resource.Id.btn_ok_alarm:
-                    Log.Error("AAAAAA", "click on LUAT");
-                    //btnSnooze.Visibility = ViewStates.Gone;
-                    //OnBackPressed();
 
                     if (extraMessage == AlarmBroadcastReceiverServer.FROM_SERVER)
                     {   
@@ -152,10 +149,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
                         var mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid)
                             .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
 
-
                         NotificationManager notificationManager = (NotificationManager)ApplicationContext.GetSystemService(Context.NotificationService);
                         notificationManager.Cancel(NotifyId);
-
 
                         await Task.Run(async () =>
                         {
@@ -187,9 +182,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
                     }
 
-
-
-
                     Toast.MakeText(this, "Medicament luat.", ToastLength.Short).Show();
                     Finish();
 
@@ -197,7 +189,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 case Resource.Id.btn_snooze_alarm:
                         LaunchSnoozeAlarm();
                     Finish();
-                    //OnBackPressed();
                     break;
             }
             //            r.Stop();
@@ -213,7 +204,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 Log.Error("Alarm activity", "3");
 
                 int snoozeInMinutes;
-                // bool a = int.TryParse(Utils.GetDefaults("snooze", this), out snoozeInMinutes);
+
                 if (int.TryParse(Utils.GetDefaults("snooze"), out snoozeInMinutes))
                     snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze"));
                 else
@@ -223,14 +214,13 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
                 Toast.MakeText(this, "Alarma amanata pentru " + snoozeInMinutes + " minute.", ToastLength.Short).Show();
 
-
                 i = new Intent(this, typeof(AlarmBroadcastReceiver));
                
                 i.AddFlags(ActivityFlags.ClearTop);
                 i.PutExtra(DiseaseActivity.BOALA_ID, mBoala.Id);
                 i.PutExtra(DiseaseActivity.MED_ID, mMed.IdMed);
                 i.PutExtra(DiseaseActivity.ALARM_ID, mIdAlarm);
-                i.SetFlags(ActivityFlags.NewTask);
+//                i.SetFlags(ActivityFlags.NewTask);
 
 
                  pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
@@ -249,8 +239,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 i.PutExtra("notifyId", NotifyId);
                 i.PutExtra("message", AlarmBroadcastReceiverServer.FROM_SERVER);
                 i.PutExtra(AlarmBroadcastReceiverServer.Title, title);
+                i.PutExtra(AlarmBroadcastReceiverServer.Content, content);
                 i.PutExtra(AlarmBroadcastReceiverServer.Postpone, postpone);
-                i.SetFlags(ActivityFlags.NewTask);
+//                i.SetFlags(ActivityFlags.NewTask);
                 Log.Error("Alarm activity", "6");
 
 
@@ -305,6 +296,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
             switch (result)
             {
                 case "Done":
+                case "done":
                     return true;
                 default:
                     return false;
