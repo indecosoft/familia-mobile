@@ -44,6 +44,15 @@ namespace Familia.Medicatie
             return list;
         }
 
+        public void removeItem(MedicationSchedule med)
+        {
+            if (med != null)
+            {
+                list.Remove(med);
+            }
+        }
+
+
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
 
@@ -74,14 +83,7 @@ namespace Familia.Medicatie
 
         public override int ItemCount => list.Count;
 
-//        void OnClick(MedicineServerAdapterClickEventArgs args)
-//        {
-//            ItemClick?.Invoke(this, args);
-//            Log.Error("ARGS ",args.ToString());
-//        }
-//
-//        
-//        void OnLongClick(MedicineServerAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
+
 
     }
 
@@ -105,21 +107,20 @@ namespace Familia.Medicatie
             rlContainer.Click += delegate {
                 if (listener != null)
                 {
-                    listener.OnMedSerClick(medication);
+                     listener.OnMedSerClick(medication);
                 }
             };
         }
     }
 
-    public class MedicineServerAdapterClickEventArgs : EventArgs
-    {
-        public View View { get; set; }
-        public int Position { get; set; }
-    }
+//    public class MedicineServerAdapterClickEventArgs : EventArgs
+//    {
+//        public View View { get; set; }
+//        public int Position { get; set; }
+//    }
 
     public interface IOnMedSerListener
     {
-        void OnMedSerClick(MedicationSchedule med);
-//        void OnBoalaDelete(Disease boala);
+          void OnMedSerClick(MedicationSchedule med);
     }
 }

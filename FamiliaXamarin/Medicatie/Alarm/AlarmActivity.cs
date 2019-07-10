@@ -276,6 +276,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
             // Utils.util = true;
         }
 
+
+        
+
         private static bool IsServiceRunning(Type classTypeof, Context context)
         {
             var manager = (ActivityManager)context.GetSystemService(Context.ActivityService);
