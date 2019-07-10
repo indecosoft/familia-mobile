@@ -12,11 +12,13 @@ using FamiliaXamarin;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Devices.SmartBand;
 using FamiliaXamarin.Helpers;
+using Java.IO;
 using Java.Lang;
 using Java.Text;
 using Java.Util;
 using Org.Json;
 using SQLite;
+using Console = System.Console;
 using Environment = System.Environment;
 using Exception = System.Exception;
 using Object = System.Object;
@@ -39,12 +41,21 @@ namespace Familia.Services
 
         private async void HandlerRunnable()
         {
-            await RefreshToken();
-            SentData();
-            if (_started)
-            {
+            if (Utils.CheckIfLocationIsEnabled())
+            { 
+        
+                await RefreshToken();
+                SentData();
                 _handler.PostDelayed(_runnable, _refreshTime * 5);
+                
             }
+            else
+            {
+
+                Log.Error("SmartBand Service", "Operation Aborted because Location is disabled");
+                _handler.PostDelayed(_runnable, _refreshTime * 10);
+            }
+            
         }
 
         public SmartBandService()
@@ -68,7 +79,7 @@ namespace Familia.Services
                 var channel = new NotificationChannel(channelId, "Channel human readable title",
                     NotificationImportance.Default);
 
-                ((NotificationManager)GetSystemService(Context.NotificationService)).CreateNotificationChannel(channel);
+                ((NotificationManager)GetSystemService(NotificationService)).CreateNotificationChannel(channel);
 
                 var notification = new NotificationCompat.Builder(this, channelId)
                     .SetContentTitle("Familia")
@@ -104,18 +115,21 @@ namespace Familia.Services
             else
             {
                 _sqlHelper = await SqlHelper<SmartBandRecords>.CreateAsync();
+                Log.Error("Before Token Refresh","aici");
                 await RefreshToken();
                 _token = Utils.GetDefaults(GetString(Resource.String.smartband_device));
+                Log.Error("After + token", _token);
+
                 _started = true;
-                SentData();
-                //_handler.PostDelayed(_runnable, _refreshTime * 10);
+                //SentData();
+                _handler.PostDelayed(_runnable, _refreshTime * 5);
             }
         }
         private async Task RefreshToken()
         {
             var refreshToken = Utils.GetDefaults("FitbitRefreshToken");
-            await Task.Run(async () =>
-            {
+//            await Task.Run(async () =>
+//            {
                 try
                 {
                     var storedToken = Utils.GetDefaults(GetString(Resource.String.smartband_device));
@@ -150,7 +164,7 @@ namespace Familia.Services
 
                 //SentData();
                 //var a  = await GetSleepData();
-            });
+            //});
         }
         private async Task GetSteps()
         {
@@ -274,8 +288,9 @@ namespace Familia.Services
                 }
                 else
                 {
-                    await Task.Run(async () =>
-                    {
+                    Log.Error("Avem date de la fitbit", "aici");
+//                    await Task.Run(async () =>
+//                    {
                         var recordEnumerable =
                             await _sqlHelper.QueryValuations($"SELECT * FROM SmartBandRecords WHERE Type  = 'Sleep'");
                         var jsonArray = new JSONArray();
@@ -284,11 +299,21 @@ namespace Familia.Services
                             jsonArray.Put(new JSONObject(element.DataObject));
                             await _sqlHelper.Delete(element);
                         }
-                        //await _sqlHelper.QueryValuations($"DELETE FROM SmartBandRecords WHERE Type = 'Sleep'");
-                        jsonArray.Put(jsonObject);
-                        var obj = new JSONObject();
-                        obj.Put("imei", Utils.GetImei(this)).Put("idClient", Utils.GetDefaults("IdClient")).Put("idPersoana", Utils.GetDefaults("IdPersoana")).Put("data", jsonArray).Put("latitude", Utils.GetDefaults("Latitude").Replace(',', '.')).Put("longitude", Utils.GetDefaults("Longitude").Replace(',', '.'));
-                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/smartband/sleep", obj, Utils.GetDefaults("Token"));
+                    Log.Error("Din local storage", recordEnumerable.ToString());
+
+                    //await _sqlHelper.QueryValuations($"DELETE FROM SmartBandRecords WHERE Type = 'Sleep'");
+                    Log.Error("Array JSON before put", jsonArray.ToString());
+                    jsonArray.Put(jsonObject);
+                    Log.Error("Array JSON after put", jsonArray.ToString());
+                    var obj = new JSONObject();
+                    Log.Error("idClient", Utils.GetDefaults("IdClient"));
+                    Log.Error("IdPersoana", Utils.GetDefaults("IdPersoana"));
+                    Log.Error("Data", jsonArray.ToString());
+                    Log.Error("Latitude", Utils.GetDefaults("Latitude")?.Replace(',', '.'));
+                    Log.Error("Longitude", Utils.GetDefaults("Longitude")?.Replace(',', '.'));
+                    obj.Put("imei", Utils.GetImei(this)).Put("idClient", Utils.GetDefaults("IdClient")).Put("idPersoana", Utils.GetDefaults("IdPersoana")).Put("data", jsonArray).Put("latitude", Utils.GetDefaults("Latitude").Replace(',', '.')).Put("longitude", Utils.GetDefaults("Longitude").Replace(',', '.'));
+                    Log.Error("se trimite la server", obj.ToString());
+                    var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/smartband/sleep", obj, Utils.GetDefaults("Token"));
                         if (!string.IsNullOrEmpty(result))
                         {
                             try
@@ -317,7 +342,7 @@ namespace Familia.Services
                                 //throw;
                             }
                         }
-                    });
+                    //});
                 }
 
             }
@@ -330,9 +355,12 @@ namespace Familia.Services
 
         private async void SentData()
         {
-            var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
+            //var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
+            Log.Error("sleepData", "aici");
             await GetSleepData();
+            Log.Error("stepsData", "aici");
             await GetSteps();
+            Log.Error("Finish", "aici");
         }
     }
 }

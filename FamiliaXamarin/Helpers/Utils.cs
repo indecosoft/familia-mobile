@@ -5,6 +5,7 @@ using Android.App;
 using Android.Content;
 using Android.Gms.Common;
 using Android.Graphics;
+using Android.Locations;
 using Android.Media;
 using Android.Net;
 using Android.OS;
@@ -14,6 +15,7 @@ using Android.Telephony;
 using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
+using Android.Widget;
 using FamiliaXamarin.Chat;
 using Java.Lang;
 using Java.Text;
@@ -25,6 +27,8 @@ using ZXing.Mobile;
 using Exception = System.Exception;
 using Math = System.Math;
 using Familia;
+using FamiliaXamarin.Services;
+using Orientation = Android.Media.Orientation;
 using Resource = Familia.Resource;
 
 
@@ -367,6 +371,33 @@ namespace FamiliaXamarin.Helpers
             return null;
         }
 
+        public static bool CheckIfLocationIsEnabled()
+        {
+            LocationManager lm = (LocationManager)(Application.Context.GetSystemService(Context.LocationService));
+            bool gpsEnabled = false;
+            bool networkEnabled = false;
+
+            try
+            {
+                gpsEnabled = lm.IsProviderEnabled(LocationManager.GpsProvider);
+            }
+            catch
+            {
+                // ignored
+            }
+
+            try
+            {
+                networkEnabled = lm.IsProviderEnabled(LocationManager.NetworkProvider);
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return gpsEnabled && networkEnabled;
+
+        }
         public static bool CheckNetworkAvailability()
         {
             ConnectivityManager cm = (ConnectivityManager)Application.Context.GetSystemService(Context.ConnectivityService);

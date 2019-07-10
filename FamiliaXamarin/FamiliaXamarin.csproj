@@ -229,7 +229,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Com.Airbnb.Android.Lottie">
-      <Version>2.7.0</Version>
+      <Version>3.0.3</Version>
     </PackageReference>
     <PackageReference Include="Glide.Xamarin">
       <Version>4.1.1</Version>
@@ -241,7 +241,7 @@
       <Version>3.0.3</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.1</Version>
+      <Version>12.0.2</Version>
     </PackageReference>
     <PackageReference Include="Refractored.Controls.CircleImageView">
       <Version>1.0.1</Version>
@@ -256,20 +256,20 @@
       <Version>1.1.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.CustomTabs">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0" />
+    <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.1" />
     <PackageReference Include="Xamarin.Android.Support.v4">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.CardView">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.RecyclerView">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.GooglePlayServices.Location">
       <Version>60.1142.1</Version>

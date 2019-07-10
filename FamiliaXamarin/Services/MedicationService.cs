@@ -26,7 +26,7 @@ namespace FamiliaXamarin.Services
     class MedicationService : Service
     {
         private SQLiteAsyncConnection _db;
-        private const int ServiceRunningNotificationId = 1000;
+        private const int ServiceRunningNotificationId = 10000;
         Timer aTimer = new Timer(1000);
         private int interval = 1000, counter = 0;
 
