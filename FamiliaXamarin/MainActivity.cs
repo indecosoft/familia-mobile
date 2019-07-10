@@ -27,6 +27,7 @@ using Android.Util;
 using Com.Bumptech.Glide;
 using Familia.Active_Conversations;
 using Familia.Login_System;
+using Familia.Medicatie;
 using Familia.Services;
 using Familia.Sharing;
 using FamiliaXamarin.DataModels;
@@ -99,10 +100,12 @@ namespace FamiliaXamarin
              }
              if (Intent.GetBooleanExtra("FromMedicine", false))
              {
-                 SupportFragmentManager.BeginTransaction()
-                     .Replace(Resource.Id.fragment_container, new MedicineFragment())
-                     .AddToBackStack(null).Commit();
-                 Title = "Medicatie";
+//                 SupportFragmentManager.BeginTransaction()
+//                     .Replace(Resource.Id.fragment_container, new MedicineFragment())
+//                     .AddToBackStack(null).Commit();
+                 StartActivity(new Intent(this, typeof(MedicineBaseActivity)));
+
+                Title = "Medicatie";
              }
              if (Intent.GetBooleanExtra("FromSmartband", false))
              {
@@ -210,9 +213,11 @@ namespace FamiliaXamarin
                     OpenHealthDeviceFragment();
                     break;
                 case Resource.Id.medicatie:
+                    /*
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new MedicineFragment())
-                        .AddToBackStack(null).Commit();
+                        .AddToBackStack(null).Commit();*/
+                    StartActivity(new Intent(this, typeof(MedicineBaseActivity)));
                     break;
                 case Resource.Id.chat:
                     SupportFragmentManager.BeginTransaction()
