@@ -47,12 +47,17 @@ namespace FamiliaXamarin.Medicatie.Alarm
             var content = intent.GetStringExtra(Content);
             var postpone = intent.GetIntExtra(Postpone, 5);
 
+            
+
             const string channel = "channelabsolut";
-            Log.Error("RECEIVER", title);
+            Log.Error("RECEIVER",  title + ", "+ content +", " + postpone);
 
             CreateNotificationChannel(channel, title, content);
 
-            NotifyId += 1;
+            Random random = new Random();
+            int randomNumber = random.Next(0, 5000);
+
+            NotifyId += randomNumber;
 
             var alarmIntent = new Intent(context, typeof(AlarmActivity));
             alarmIntent.AddFlags(ActivityFlags.ClearTop);
@@ -61,10 +66,11 @@ namespace FamiliaXamarin.Medicatie.Alarm
             alarmIntent.PutExtra("message", FROM_SERVER);
             alarmIntent.PutExtra(MEDICATION_NAME, title);
             alarmIntent.PutExtra(Postpone, postpone);
+            alarmIntent.PutExtra(Content, content);
             alarmIntent.SetFlags(ActivityFlags.NewTask);
 
 
-            BuildNotification(context, NotifyId, channel, title, "medicament", alarmIntent);
+            BuildNotification(context, NotifyId, channel, title, content, alarmIntent);
 
 
 
@@ -232,9 +238,10 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     .SetSmallIcon(Resource.Drawable.logo)
                     .SetContentText(content)
                     .SetContentTitle(title)
-                    .SetAutoCancel(true)
+                    .SetAutoCancel(false)
                     .SetContentIntent(piNotification)
-                    .SetPriority(NotificationCompat.PriorityHigh);
+                    .SetPriority(NotificationCompat.PriorityHigh)
+                    .SetOngoing(true);
 
 
 

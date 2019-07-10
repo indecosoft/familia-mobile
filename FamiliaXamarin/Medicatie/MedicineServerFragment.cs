@@ -26,7 +26,7 @@ using SQLite;
 
 namespace Familia.Medicatie
 {
-    public class MedicineServerFragment : Android.Support.V4.App.Fragment
+    public class MedicineServerFragment : Android.Support.V4.App.Fragment, IOnMedSerListener
     {
 
         private MedicineServerAdapter _medicineServerAdapter;
@@ -41,6 +41,7 @@ namespace Familia.Medicatie
             rvMedSer.SetLayoutManager(layoutManager);
             _medicineServerAdapter = new MedicineServerAdapter();
             rvMedSer.SetAdapter(_medicineServerAdapter);
+            _medicineServerAdapter.SetListener(this);
             _medicineServerAdapter.setMedsList(_medications);
             _medicineServerAdapter.NotifyDataSetChanged();
         }
@@ -217,6 +218,11 @@ namespace Familia.Medicatie
             }
 
             return null;
+        }
+
+        public void OnMedSerClick(MedicationSchedule med)
+        {
+            Log.Error("MED", med.ToString());
         }
     }
 }

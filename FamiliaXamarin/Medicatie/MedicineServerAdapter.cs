@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using Android.Views;
 using Android.Widget;
 using Android.Support.V7.Widget;
+using Android.Util;
 using FamiliaXamarin.Medicatie.Entities;
+using RelativeLayout = Android.Widget.RelativeLayout;
 
 namespace Familia.Medicatie
 {
     class MedicineServerAdapter : RecyclerView.Adapter
     {
-        public event EventHandler<MedicineServerAdapterClickEventArgs> ItemClick;
-        public event EventHandler<MedicineServerAdapterClickEventArgs> ItemLongClick;
-//        string[] items;
+//        public event EventHandler<MedicineServerAdapterClickEventArgs> ItemClick;
+//        public event EventHandler<MedicineServerAdapterClickEventArgs> ItemLongClick;
+        public IOnMedSerListener listener;
 
         private List<MedicationSchedule> list;
 
@@ -24,6 +26,11 @@ namespace Familia.Medicatie
         public MedicineServerAdapter(List<MedicationSchedule> data)
         {
             list = data;
+        }
+
+        public void SetListener(IOnMedSerListener listener)
+        {
+            this.listener = listener;
         }
 
         public void setMedsList(List<MedicationSchedule> data)
@@ -51,18 +58,30 @@ namespace Familia.Medicatie
             MedicationSchedule medication = list[position];
             holder.tvMedSer.Text = medication.Title;
             holder.tvContent.Text = medication.Content;
-            holder.tvDateTime.Text = medication.Timestampstring.Substring(0, medication.Timestampstring.Length - 6);
-//            var date = medication.Timestampstring.Substring(0, 10);
-//            var time = medication.Timestampstring.Substring(11, 5);
-//            holder.tvDate.Text = date;
-//            holder.tvTime.Text = time;
+            holder.medication = medication;
+            holder.listener = listener;
+
+
+            string hourPrefix = Convert.ToDateTime(medication.Timestampstring).Hour < 10 ? "0" : "";
+            string minutePrefix = Convert.ToDateTime(medication.Timestampstring).Minute < 10 ? "0" : "";
+            holder.tvDateTime.Text =
+                $"{Convert.ToDateTime(medication.Timestampstring).Day}/{Convert.ToDateTime(medication.Timestampstring).Month}/{Convert.ToDateTime(medication.Timestampstring).Year} {hourPrefix}{Convert.ToDateTime(medication.Timestampstring).Hour.ToString()}:{minutePrefix}{Convert.ToDateTime(medication.Timestampstring).Minute.ToString()}";//medication.Timestampstring.Substring(0, medication.Timestampstring.Length - 6);
+
+            Log.Error("Date time in Adapter:", holder.tvDateTime.Text);
+            Log.Error("Date time inainte:", medication.Timestampstring);
 
         }
 
         public override int ItemCount => list.Count;
 
-        void OnClick(MedicineServerAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
-        void OnLongClick(MedicineServerAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
+//        void OnClick(MedicineServerAdapterClickEventArgs args)
+//        {
+//            ItemClick?.Invoke(this, args);
+//            Log.Error("ARGS ",args.ToString());
+//        }
+//
+//        
+//        void OnLongClick(MedicineServerAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
 
     }
 
@@ -70,10 +89,11 @@ namespace Familia.Medicatie
     {
         public TextView tvMedSer;
         public TextView tvContent;
-        public TextView tvDate;
-        public TextView tvTime;
-
         public TextView tvDateTime;
+        public CardView rlContainer;
+        public MedicationSchedule medication;
+
+        public IOnMedSerListener listener;
 
 
         public MedicineServerAdapterViewHolder(View itemView) : base(itemView)
@@ -81,9 +101,13 @@ namespace Familia.Medicatie
             tvMedSer = itemView.FindViewById<TextView>(Resource.Id.tv_medser);
             tvContent = itemView.FindViewById<TextView>(Resource.Id.info_content);
             tvDateTime = itemView.FindViewById<TextView>(Resource.Id.info_date_time);
-//            tvDate = itemView.FindViewById<TextView>(Resource.Id.info_date);
-//            tvTime = itemView.FindViewById<TextView>(Resource.Id.info_hour);
-//            
+            rlContainer = itemView.FindViewById<CardView>(Resource.Id.card_view);
+            rlContainer.Click += delegate {
+                if (listener != null)
+                {
+                    listener.OnMedSerClick(medication);
+                }
+            };
         }
     }
 
@@ -91,5 +115,11 @@ namespace Familia.Medicatie
     {
         public View View { get; set; }
         public int Position { get; set; }
+    }
+
+    public interface IOnMedSerListener
+    {
+        void OnMedSerClick(MedicationSchedule med);
+//        void OnBoalaDelete(Disease boala);
     }
 }

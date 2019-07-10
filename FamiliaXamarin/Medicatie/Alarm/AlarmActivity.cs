@@ -50,6 +50,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
         private string uuid;
         private int postpone;
         private string title;
+        private string content;
         private int NotifyId;
         private SQLiteAsyncConnection _db;
         private Intent _medicationServiceIntent;
@@ -112,16 +113,18 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 {   
                     title = intent.GetStringExtra(AlarmBroadcastReceiverServer.MEDICATION_NAME);
                     uuid = intent.GetStringExtra(AlarmBroadcastReceiverServer.Uuid);
+                    content = intent.GetStringExtra(AlarmBroadcastReceiverServer.Content);
                     postpone =intent.GetIntExtra(AlarmBroadcastReceiverServer.Postpone, 5);
                     NotifyId = intent.GetIntExtra("notifyId", 5);
-                    tvMedName.Text = title;
-
+                    tvMedName.Text = title + " " + content;
+                    Log.Error("Alarm activity", "1");
                     Log.Error("alarm activity", postpone + " ");
                     var path =
                         System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
                     var nameDb = "devices_data.db";
                     _db = new SQLiteAsyncConnection(Path.Combine(path, nameDb));
                     await _db.CreateTableAsync<MedicineRecords>();
+                    Log.Error("Alarm activity", "2");
 
                 }
 
@@ -148,6 +151,10 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
                         var mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid)
                             .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
+
+
+                        NotificationManager notificationManager = (NotificationManager)ApplicationContext.GetSystemService(Context.NotificationService);
+                        notificationManager.Cancel(NotifyId);
 
 
                         await Task.Run(async () =>
@@ -203,6 +210,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
             PendingIntent pi;
             if (extraMessage == AlarmBroadcastReceiver.FROM_APP)
             {
+                Log.Error("Alarm activity", "3");
+
                 int snoozeInMinutes;
                 // bool a = int.TryParse(Utils.GetDefaults("snooze", this), out snoozeInMinutes);
                 if (int.TryParse(Utils.GetDefaults("snooze"), out snoozeInMinutes))
@@ -229,18 +238,26 @@ namespace FamiliaXamarin.Medicatie.Alarm
             }
             else
             {
+                Log.Error("Alarm activity", "4");
+
                 Toast.MakeText(this, "Alarma amanata pentru " + postpone + " minute.", ToastLength.Short).Show();
+                Log.Error("Alarm activity", "5");
 
                 i = new Intent(this, typeof(AlarmBroadcastReceiverServer));
                 i.AddFlags(ActivityFlags.ClearTop);
                 i.PutExtra(AlarmBroadcastReceiverServer.Uuid, uuid);
                 i.PutExtra("notifyId", NotifyId);
                 i.PutExtra("message", AlarmBroadcastReceiverServer.FROM_SERVER);
-                i.PutExtra(AlarmBroadcastReceiverServer.MEDICATION_NAME, title);
+                i.PutExtra(AlarmBroadcastReceiverServer.Title, title);
                 i.PutExtra(AlarmBroadcastReceiverServer.Postpone, postpone);
                 i.SetFlags(ActivityFlags.NewTask);
+                Log.Error("Alarm activity", "6");
 
-                 pi = PendingIntent.GetBroadcast(this, NotifyId, i, PendingIntentFlags.OneShot);
+
+                pi = PendingIntent.GetBroadcast(this, NotifyId, i, PendingIntentFlags.OneShot);
+
+                NotificationManager notificationManager = (NotificationManager)ApplicationContext.GetSystemService(Context.NotificationService);
+                notificationManager.Cancel(NotifyId);
 
             }
 

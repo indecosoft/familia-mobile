@@ -1,6 +1,6 @@
 ﻿namespace FamiliaXamarin.Medicatie.Entities
 {
-    class MedicationSchedule
+    public class MedicationSchedule
     {
         public string Uuid { get;}
         public string Timestampstring { get; set; }
@@ -15,6 +15,12 @@
             Title = title;
             Content = content;
             Postpone = postpone;
+        }
+
+        public string ToString()
+        {
+            return "Uuid: " + Uuid + " Timestampstring: " + Timestampstring + " Title: " + Title + " Content: " +
+                   Content + " Postpone" + Postpone;
         }
     }
 }
