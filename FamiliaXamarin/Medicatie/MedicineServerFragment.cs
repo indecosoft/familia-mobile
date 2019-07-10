@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.Opengl;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Util;
@@ -19,6 +21,7 @@ using FamiliaXamarin.Medicatie;
 using FamiliaXamarin.Medicatie.Alarm;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
+using FamiliaXamarin.Services;
 using Java.Text;
 using Java.Util;
 using Org.Json;
@@ -31,12 +34,17 @@ namespace Familia.Medicatie
 
         private MedicineServerAdapter _medicineServerAdapter;
         private List<MedicationSchedule> _medications;
-        private SQLiteConnection _db;
-       
+        private SQLiteAsyncConnection _db;
+        private Intent _medicationServiceIntent;
+        private CardView cwEmpty;
+
+
 
         private void setupRecycleView(View view)
         {   _medications = new List<MedicationSchedule>();
             RecyclerView rvMedSer = view.FindViewById<RecyclerView>(Resource.Id.rv_medser);
+            cwEmpty = view.FindViewById<CardView>(Resource.Id.cw_empty);
+            cwEmpty.Visibility = ViewStates.Gone;
             LinearLayoutManager layoutManager = new LinearLayoutManager(Activity);
             rvMedSer.SetLayoutManager(layoutManager);
             _medicineServerAdapter = new MedicineServerAdapter();
@@ -54,6 +62,7 @@ namespace Familia.Medicatie
             setupRecycleView(view);
 
            GetData();
+
 
             Log.Error("GATA GET DATA", "..");
 
@@ -158,6 +167,16 @@ namespace Familia.Medicatie
             _medicineServerAdapter.NotifyDataSetChanged();
             Storage.GetInstance().saveMedSer(_medications);
 
+
+            if (_medications.Count == 0)
+            {
+                cwEmpty.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                cwEmpty.Visibility = ViewStates.Gone;
+            }
+
         }
 
 
@@ -223,6 +242,138 @@ namespace Familia.Medicatie
         public void OnMedSerClick(MedicationSchedule med)
         {
             Log.Error("MED", med.ToString());
+            var alert = new Android.Support.V7.App.AlertDialog.Builder(Activity);
+            var medDate = Convert.ToDateTime(med.Timestampstring);
+            var currentDate = DateTime.Now;
+
+            if (medDate < currentDate)
+            {
+                alert.SetTitle("Doriti sa marcati medicamentul ca fiind administrat?");
+                alert.SetMessage(med.Title + ", " + med.Content);
+                alert.SetPositiveButton("Da", async (senderAlert, args) => {
+
+                    var now = DateTime.Now;
+                    var mArray = new JSONArray().Put(new JSONObject().Put("uuid", med.Uuid)
+                        .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
+
+                    bool isSent = await SendMedicationTask(mArray, med, now);
+                    if (isSent)
+                    {
+                        Toast.MakeText(Context, "Medicament administrat.", ToastLength.Long).Show();
+                        _medications.Remove(med);
+                        _medicineServerAdapter.removeItem(med);
+                        _medicineServerAdapter.NotifyDataSetChanged();
+                    }
+                    //                Toast.MakeText(Context, "....", ToastLength.Long).Show();
+                    if (_medications.Count == 0)
+                    {
+                        cwEmpty.Visibility = ViewStates.Visible;
+                    }
+                    else
+                    {
+                        cwEmpty.Visibility = ViewStates.Gone;
+                    }
+
+                });
+
+                alert.SetNegativeButton("Nu", (senderAlert, args) => {
+                });
+            }
+            else
+            {
+                alert.SetTitle("Acest medicament nu se poate marca ca fiind administrat!");
+                alert.SetMessage(med.Title + ", " + med.Content);
+                alert.SetPositiveButton("Ok", async (senderAlert, args) => {
+
+                });
+
+//                alert.SetNegativeButton("Nu", (senderAlert, args) => {
+//                });
+            }
+
+
+
+
+
+            Dialog dialog = alert.Create();
+            dialog.Show();
+        }
+
+
+        public async Task<bool> SendMedicationTask(JSONArray mArray, MedicationSchedule med, DateTime now)
+        {
+            bool isOk = false;
+            await  Task.Run(async () =>
+            {
+                bool isSent = await SendData(Context, mArray);
+                Log.Error("RESULT", isSent + " !");
+                if (isSent)
+                {
+                    var running = IsServiceRunning(typeof(MedicationService), Context);
+                    if (running)
+                    {
+                        Log.Error("SERVICE", "Medication service is running");
+                        Context.StopService(_medicationServiceIntent);
+                    }
+
+                    isOk = true;
+                }
+                else
+                {
+                    AddMedicine(_db, med.Uuid, now);
+                    Log.Error("SERVICE", "Medication service started");
+                    _medicationServiceIntent =
+                        new Intent(Context, typeof(MedicationService));
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    {
+                        Context.StartForegroundService(_medicationServiceIntent);
+                    }
+                    else
+                    {
+                        Context.StartService(_medicationServiceIntent);
+                    }
+
+                    isOk = false;
+                }
+            });
+
+            return isOk;
+        }
+
+        private static async Task<bool> SendData(Context context, JSONArray mArray)
+        {
+            var result = await WebServices.Post(
+                $"{Constants.PublicServerAddress}/api/medicine", mArray,
+                Utils.GetDefaults("Token"));
+            Log.Error("RESULT POST: ", result);
+            if (!Utils.CheckNetworkAvailability()) return false;
+
+            Log.Error("RESULT POST: ", "a trcut de network");
+
+            switch (result)
+            {
+                case "done":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private static bool IsServiceRunning(Type classTypeof, Context context)
+        {
+            var manager = (ActivityManager)context.GetSystemService(Context.ActivityService);
+#pragma warning disable 618
+            return manager.GetRunningServices(int.MaxValue).Any(service =>
+                service.Service.ShortClassName == classTypeof.ToString());
+        }
+
+        private static async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now)
+        {
+            await db.InsertAsync(new MedicineRecords()
+            {
+                Uuid = uuid,
+                DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
+            });
         }
     }
 }
