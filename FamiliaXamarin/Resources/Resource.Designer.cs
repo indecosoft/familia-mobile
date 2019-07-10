@@ -5911,34 +5911,37 @@ namespace Familia
 		{
 			
 			// aapt resource value: 0x7f090000
-			public const int bell = 2131296256;
+			public const int alarm = 2131296256;
 			
 			// aapt resource value: 0x7f090001
-			public const int devices_data = 2131296257;
+			public const int bell = 2131296257;
 			
 			// aapt resource value: 0x7f090002
-			public const int drop = 2131296258;
+			public const int devices_data = 2131296258;
 			
 			// aapt resource value: 0x7f090003
-			public const int fingerprint = 2131296259;
+			public const int drop = 2131296259;
 			
 			// aapt resource value: 0x7f090004
-			public const int heart = 2131296260;
+			public const int fingerprint = 2131296260;
 			
 			// aapt resource value: 0x7f090005
-			public const int loading = 2131296261;
+			public const int heart = 2131296261;
 			
 			// aapt resource value: 0x7f090006
-			public const int location = 2131296262;
+			public const int loading = 2131296262;
 			
 			// aapt resource value: 0x7f090007
-			public const int map_loading = 2131296263;
+			public const int location = 2131296263;
 			
 			// aapt resource value: 0x7f090008
-			public const int new_notification = 2131296264;
+			public const int map_loading = 2131296264;
 			
 			// aapt resource value: 0x7f090009
-			public const int notification = 2131296265;
+			public const int new_notification = 2131296265;
+			
+			// aapt resource value: 0x7f09000a
+			public const int notification = 2131296266;
 			
 			static Raw()
 			{
