@@ -1,6 +1,7 @@
 ﻿using System;
 using Android.App;
 using Android.Content;
+using Android.Media;
 using Android.Support.V4.App;
 using Android.Util;
 using Familia;
@@ -93,14 +94,20 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent)
         {
-            var description = mContent;
+            var description = mContent;    
+            
+            Android.Net.Uri sound = Android.Net.Uri.Parse(ContentResolver.SchemeAndroidResource + "://" + Application.Context.PackageName + "/" + Resource.Raw.alarm);  //Here is FILE_NAME is the name of file that you want to play
+            AudioAttributes attributes = new AudioAttributes.Builder()                                                
+                .SetUsage(AudioUsageKind.Notification)
+                .Build();
 
             var channel =
                 new NotificationChannel(mChannel, mTitle, NotificationImportance.Default)
                 {
                     Description = description
+                    
                 };
-
+                channel.SetSound(sound, attributes);
             var notificationManager =
                 (NotificationManager)Application.Context.GetSystemService(
                     Context.NotificationService);
