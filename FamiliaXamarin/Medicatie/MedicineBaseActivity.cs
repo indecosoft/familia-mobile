@@ -85,9 +85,9 @@ namespace Familia.Medicatie
         public override void OnBackPressed()
         {
             base.OnBackPressed();
-            var intent = new Intent(this, typeof(MainActivity));
+            //var intent = new Intent(this, typeof(MainActivity));
             //intent.AddFlags(ActivityFlags.ClearTop);
-            StartActivity(intent);
+            //StartActivity(intent);
         }
 
         private void BottomNavigation_NavigationItemSelected(object sender,

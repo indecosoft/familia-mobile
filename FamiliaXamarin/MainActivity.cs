@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using Android;
 using Android.Content.PM;
 using Android.Gms.Location;
+using Android.Locations;
 using Android.Support.V4.Content;
 using Android.Util;
 using Com.Bumptech.Glide;
@@ -34,12 +35,13 @@ using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Location;
 using FamiliaXamarin.Sharing;
 using Org.Json;
+using AlertDialog = Android.App.AlertDialog;
 using Resource = Familia.Resource;
 
 namespace FamiliaXamarin
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
-    public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
+    public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener 
     {
         Intent _loacationServiceIntent;
         Intent _webSocketServiceIntent;
@@ -47,6 +49,26 @@ namespace FamiliaXamarin
         Intent _smartBandServiceIntent;
         private FusedLocationProviderClient _fusedLocationProviderClient;
         //public static bool FromDisease;
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            Log.Error("InResult", "Inainte de if");
+            if (requestCode == 215)
+            {
+                if (Utils.CheckIfLocationIsEnabled())
+                {
+                    StartForegroundService(_loacationServiceIntent);
+                    StartForegroundService(_smartBandServiceIntent);
+                }
+                else
+                {
+                    Toast.MakeText(Application.Context, "Locatie dezactivata", ToastLength.Long).Show();
+                }
+                
+            }
+        }
+            
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -74,9 +96,28 @@ namespace FamiliaXamarin
             _loacationServiceIntent = new Intent(this, typeof(LocationService));
             _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
             _smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
+
+            if (!Utils.CheckIfLocationIsEnabled())
+            {
+                new AlertDialog.Builder(this)
+                    .SetMessage("Locatia nu este activata")
+                    .SetPositiveButton("Activare", (sender, args) =>
+                    {
+                        StartActivityForResult(new Intent(Android.Provider.Settings.ActionLocationSourceSettings), 215);
+                    })
+                    .SetNegativeButton("Anulare", (sender, args) => { })
+                    .Show();
+            }
+            else
+            {
                 StartForegroundService(_loacationServiceIntent);
-                StartForegroundService(_webSocketServiceIntent);
                 StartForegroundService(_smartBandServiceIntent);
+            }
+            
+
+            //StartForegroundService(_loacationServiceIntent);
+            StartForegroundService(_webSocketServiceIntent);
+                //StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);
 
 
@@ -115,20 +156,22 @@ namespace FamiliaXamarin
                  Title = "Dispozitive de masurare";
              }
             //_isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
-            if (!Utils.IsGooglePlayServicesInstalled(this)) return;
-            new LocationRequest()
-                .SetPriority(LocationRequest.PriorityHighAccuracy)
-                .SetInterval(1000)
-                .SetFastestInterval(1000);
-            new FusedLocationProviderCallback(this);
-
-            _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);
+//            if (!Utils.IsGooglePlayServicesInstalled(this)) return;
+//            new LocationRequest()
+//                .SetPriority(LocationRequest.PriorityHighAccuracy)
+//                .SetInterval(1000)
+//                .SetFastestInterval(1000);
+//            new FusedLocationProviderCallback(this);
+//
+//            _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);
             // Utils.CreateNotificationChannel();
-            GetLastLocationButtonOnClick();
+            //GetLastLocationButtonOnClick();
 
             if (Intent.HasExtra("extra_health_device"))
             {
-                OpenHealthDeviceFragment();
+                SupportFragmentManager.BeginTransaction()
+                    .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
+                    .AddToBackStack(null).Commit();
             }
 
         }
@@ -160,7 +203,7 @@ namespace FamiliaXamarin
                 {
                     await Task.Run(async () =>
                     {
-                        string p = await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token"));
+                        await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token"));
                         Log.Debug("Latitude ", location.Latitude.ToString());
                         Log.Debug("Longitude", location.Longitude.ToString());
                     });
@@ -208,9 +251,13 @@ namespace FamiliaXamarin
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new FindUsersFragment())
                         .AddToBackStack(null).Commit();
+                    Title = item.ToString();
                     break;
                 case Resource.Id.nav_devices:
-                    OpenHealthDeviceFragment();
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
+                        .AddToBackStack(null).Commit();
+                    Title = item.ToString();
                     break;
                 case Resource.Id.medicatie:
                     /*
@@ -223,11 +270,13 @@ namespace FamiliaXamarin
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new ConversationsFragment())
                         .AddToBackStack(null).Commit();
+                    Title = item.ToString();
                     break;
                 case Resource.Id.nav_manage:
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new SettingsFragment())
                         .AddToBackStack(null).Commit();
+                    Title = item.ToString();
                     break;
                 case Resource.Id.partajare_date:
                    
@@ -238,16 +287,19 @@ namespace FamiliaXamarin
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new AsistentForm())
                         .AddToBackStack(null).Commit();
+                    Title = item.ToString();
                     break;
                 case Resource.Id.nav_monitorizare:
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new MonitoringFragment())
                         .AddToBackStack(null).Commit();
+                    Title = item.ToString();
                     break;
                 case Resource.Id.nav_QRCode:
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new QrCodeGenerator())
                         .AddToBackStack(null).Commit();
+                    Title = item.ToString();
                     break;
                 case Resource.Id.logout:
 
@@ -271,7 +323,7 @@ namespace FamiliaXamarin
             // Highlight the selected item has been done by NavigationView
             item.SetChecked(true);
             // Set action bar title
-            Title = item.ToString();
+            
             var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
             return true;
@@ -281,12 +333,6 @@ namespace FamiliaXamarin
         {
             var sqlHelper = await  SqlHelper<BluetoothDeviceRecords>.CreateAsync();
             sqlHelper.DropTables(typeof(BluetoothDeviceRecords));
-        }
-        private void OpenHealthDeviceFragment()
-        {
-            SupportFragmentManager.BeginTransaction()
-                .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
-                .AddToBackStack(null).Commit();
         }
     }
 }

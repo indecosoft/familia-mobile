@@ -5,12 +5,16 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Location;
+using Android.Locations;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Util;
+using Android.Widget;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Location;
+using Java.Lang;
+using Exception = System.Exception;
 using Resource = Familia.Resource;
 
 namespace FamiliaXamarin.Services
@@ -60,6 +64,13 @@ namespace FamiliaXamarin.Services
 
                     StartForeground(ServiceRunningNotificationId, notification);
                 }
+
+                if (!Utils.CheckIfLocationIsEnabled())
+                {
+                    Toast.MakeText(Application.Context, "Nu aveti locatia activata", ToastLength.Long).Show();
+                    StopSelf();
+                }
+
 
                 _isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
 
