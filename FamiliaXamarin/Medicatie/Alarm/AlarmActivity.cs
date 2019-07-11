@@ -35,6 +35,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
     public class AlarmActivity : AppCompatActivity, View.IOnClickListener
     {
         private TextView tvMedName;
+        private TextView tvLabel;
         private string medId;
         private Button btnOk;
         private Button btnSnooze;
@@ -72,9 +73,17 @@ namespace FamiliaXamarin.Medicatie.Alarm
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            Window.SetFlags(WindowManagerFlags.Fullscreen | WindowManagerFlags.DismissKeyguard |
-                                 WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn, WindowManagerFlags.Fullscreen | WindowManagerFlags.DismissKeyguard |
-                                                                                                          WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn);
+
+//            PowerManager pm = (PowerManager)this.GetSystemService(Context.PowerService);
+//            bool isScreenOn = pm.IsInteractive; // check if screen is on
+//            if (!isScreenOn)
+//            {
+//                PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "my tag");
+//                wl.Acquire(3000); //set your time in milliseconds
+//            }
+
+
+//            Window.SetFlags(WindowManagerFlags.ShowWhenLocked ,  WindowManagerFlags.DismissKeyguard | WindowManagerFlags.ShowWhenLocked );
 
             //            if (Utils.util)
             //            {
@@ -85,6 +94,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
             SetContentView(Resource.Layout.activity_alarm);
             Log.Error("alarm activity", " started");
             tvMedName = FindViewById<TextView>(Resource.Id.tv_med_name_alarm);
+            tvLabel = FindViewById<TextView>(Resource.Id.tv_label_med_alarm);
+            tvLabel.Visibility = ViewStates.Invisible;
             btnOk = FindViewById<Button>(Resource.Id.btn_ok_alarm);
             btnOk.SetOnClickListener(this);
             btnSnooze = FindViewById<Button>(Resource.Id.btn_snooze_alarm);
@@ -96,10 +107,17 @@ namespace FamiliaXamarin.Medicatie.Alarm
             extraMessage = intent.GetStringExtra("message");
             if (extraMessage == AlarmBroadcastReceiver.FROM_APP)
             {
+                tvLabel.Visibility = ViewStates.Visible;
+
                 boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
                 medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
+                NotifyId = intent.GetIntExtra(AlarmBroadcastReceiver.NOTIFICATION_ID, 5);
+                Log.Error("ID NOTIFICARE", NotifyId + "");
                 boli = Storage.GetInstance().GetListOfDiseasesFromFile(this);
                 mBoala = Storage.GetInstance().GetDisease(boalaId);
+               
+
+
                 if (mBoala != null)
                 {
                     mMed = mBoala.GetMedicineById(medId);
@@ -110,13 +128,14 @@ namespace FamiliaXamarin.Medicatie.Alarm
             else
             {
                 if (extraMessage == AlarmBroadcastReceiverServer.FROM_SERVER)
-                {   
+                {
+                    tvLabel.Text = "";
                     title = intent.GetStringExtra(AlarmBroadcastReceiverServer.MEDICATION_NAME);
                     uuid = intent.GetStringExtra(AlarmBroadcastReceiverServer.Uuid);
                     content = intent.GetStringExtra(AlarmBroadcastReceiverServer.Content);
                     postpone =intent.GetIntExtra(AlarmBroadcastReceiverServer.Postpone, 5);
                     NotifyId = intent.GetIntExtra("notifyId", 5);
-                    tvMedName.Text = title + " " + content;
+                    tvMedName.Text = "Pentru afectiunea " + title + " trebuie luat medicamentul " + content;
                     Log.Error("Alarm activity", "1");
                     Log.Error("alarm activity", postpone + " ");
                     var path =
@@ -149,8 +168,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
                         var mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid)
                             .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
 
-                        NotificationManager notificationManager = (NotificationManager)ApplicationContext.GetSystemService(Context.NotificationService);
-                        notificationManager.Cancel(NotifyId);
+//                        NotificationManager notificationManager = (NotificationManager)ApplicationContext.GetSystemService(Context.NotificationService);
+//                        notificationManager.Cancel(NotifyId);
 
                         await Task.Run(async () =>
                         {
@@ -181,6 +200,11 @@ namespace FamiliaXamarin.Medicatie.Alarm
                         });
 
                     }
+
+                    Log.Error("ID NOTIFICARE", NotifyId +"");
+                        NotificationManager notificationManager = (NotificationManager)ApplicationContext.GetSystemService(Context.NotificationService);
+                        notificationManager.Cancel(NotifyId);
+                    
 
                     Toast.MakeText(this, "Medicament luat.", ToastLength.Short).Show();
                     Finish();
@@ -222,9 +246,10 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 i.PutExtra(DiseaseActivity.ALARM_ID, mIdAlarm);
 //                i.SetFlags(ActivityFlags.NewTask);
 
+                pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
 
-                 pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
-
+                NotificationManager notificationManager = (NotificationManager)ApplicationContext.GetSystemService(Context.NotificationService);
+                notificationManager.Cancel(NotifyId);
             }
             else
             {

@@ -22,10 +22,12 @@ using FamiliaXamarin.Medicatie.Alarm;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
 using FamiliaXamarin.Services;
+using Java.Lang;
 using Java.Text;
 using Java.Util;
 using Org.Json;
 using SQLite;
+using Exception = System.Exception;
 
 namespace Familia.Medicatie
 {
@@ -66,6 +68,8 @@ namespace Familia.Medicatie
         {
             ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
             dialog.Show();
+            await Task.Delay(5000);
+
 
             await Task.Run(async () => {
                 try
@@ -76,9 +80,9 @@ namespace Familia.Medicatie
                     {
                         Log.Error("RESULT_FOR_MEDICATIE", res);
                         if (res.Equals("[]")) return;
-
                         _medications = ParseResultFromUrl(res);
-                       
+                        Log.Error("COUNT MEDICATIE", _medications.Count + "");
+
                         for (var ms = 0; ms <= _medications.Count; ms++)
                         {
                             Log.Error("MSSSSSTRING", _medications[ms].Timestampstring);
@@ -134,6 +138,7 @@ namespace Familia.Medicatie
 
             dialog.Dismiss();
 
+//            _medications = new List<MedicationSchedule>();//delete this line 
             _medicineServerAdapter.setMedsList(_medications);
             _medicineServerAdapter.NotifyDataSetChanged();
             Storage.GetInstance().saveMedSer(_medications);
@@ -218,8 +223,8 @@ namespace Familia.Medicatie
 
             if (medDate < currentDate)
             {
-                alert.SetTitle("Doriti sa marcati medicamentul ca fiind administrat?");
-                alert.SetMessage(med.Title + ", " + med.Content);
+//                alert.SetTitle("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " se va marca administrat.");
+                alert.SetMessage("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " se va marca administrat.");
                 alert.SetPositiveButton("Da", async (senderAlert, args) => {
 
                     var now = DateTime.Now;
@@ -249,8 +254,8 @@ namespace Familia.Medicatie
             }
             else
             {
-                alert.SetTitle("Acest medicament nu se poate marca ca fiind administrat!");
-                alert.SetMessage(med.Title + ", " + med.Content);
+//                alert.SetTitle("Pentru afectiunea " + med.Title + ", mdimanetul " + med.Content + " nu se poate marca administrat.");
+                alert.SetMessage("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " nu se poate marca administrat.");
                 alert.SetPositiveButton("Ok",  (senderAlert, args) => {});
             }
 
