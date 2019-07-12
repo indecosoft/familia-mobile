@@ -242,6 +242,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     Description = description
                 };
             channel.SetSound(sound,attributes);
+//            channel.Importance = NotificationImportance.High;
             var notificationManager =
                 (NotificationManager) Application.Context.GetSystemService(
                     Context.NotificationService);

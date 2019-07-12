@@ -119,6 +119,8 @@ namespace Familia.Medicatie
                             _medicineServerAdapter.AddItem(list[ms]);
                             _medicineServerAdapter.NotifyDataSetChanged();
                         }
+                        Storage.GetInstance().saveMedSer(_medications);
+
                     }
                     else
                     {
