@@ -150,12 +150,13 @@ namespace Familia.Medicatie
 
                     if (res != null)
                     {
+                        Log.Error("if", "aici");
                         Log.Error("RESULT_FOR_MEDICATIE", res);
                         if (res.Equals("[]")) return;
                         _medications = ParseResultFromUrl(res);
                         Log.Error("COUNT MEDICATIE", _medications.Count + "");
 
-                        for (var ms = 0; ms <= _medications.Count; ms++)
+                        for (var ms = 0; ms < _medications.Count; ms++)
                         {
                             Log.Error("MSSSSSTRING", _medications[ms].Timestampstring);
                             var am = (AlarmManager)Activity.GetSystemService(Context.AlarmService);
@@ -190,9 +191,9 @@ namespace Familia.Medicatie
                     }
                     else
                     {
+                        Log.Error("else", "in pula");
                         _medications = await Storage.GetInstance().readMedSer();
-                        _medicineServerAdapter.setMedsList(_medications);
-                        _medicineServerAdapter.NotifyDataSetChanged();
+                        Log.Error("else", _medications.ToString()+"");
 
                         Activity.RunOnUiThread(() =>
                         {
@@ -211,7 +212,6 @@ namespace Familia.Medicatie
 
             _medicineServerAdapter.setMedsList(_medications);
             _medicineServerAdapter.NotifyDataSetChanged();
-            Storage.GetInstance().saveMedSer(_medications);
             cwEmpty.Visibility = _medications.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
 
         }

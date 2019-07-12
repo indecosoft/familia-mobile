@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$PROJECT_DIR$" t="IncludeFlat">
+    <e p="C:\Program Files (x86)\Android\android-sdk\platforms\android-28\Data\res" t="IncludeRecursive" />
+    <e p="C:\Users\voicu.babiciu\.Rider2018.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\voicu.babiciu\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_FamiliaXamarin.768326728.00" t="ExcludeRecursive" />
+    <e p="C:\Users\voicu.babiciu\Desktop\Familia" t="IncludeFlat">
       <e p="FamiliaXamarin" t="IncludeRecursive">
         <e p="Active Conversations" t="Include">
           <e p="ConvAdapter.cs" t="Include" />
@@ -31,6 +34,7 @@
           <e p="DeviceConfigRecords.cs" t="Include" />
           <e p="DevicesRecords.cs" t="Include" />
           <e p="MedicineRecords.cs" t="Include" />
+          <e p="MedicineServerRecords.cs" t="Include" />
           <e p="SmartBandRecords.cs" t="Include" />
         </e>
         <e p="Devices" t="Include">
@@ -84,6 +88,7 @@
           <e p="FirstSetup.cs" t="Include" />
           <e p="FirstSetupViewPager.cs" t="Include" />
           <e p="LoginActivity.cs" t="Include" />
+          <e p="PinActivity.cs" t="Include" />
           <e p="PwdResetActivity.cs" t="Include" />
           <e p="RegisterActivity.cs" t="Include" />
         </e>
@@ -112,7 +117,10 @@
           </e>
           <e p="HourAdapter.cs" t="Include" />
           <e p="MedicineAdapter.cs" t="Include" />
+          <e p="MedicineBaseActivity.cs" t="Include" />
           <e p="MedicineFragment.cs" t="Include" />
+          <e p="MedicineServerAdapter.cs" t="Include" />
+          <e p="MedicineServerFragment.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive" />
         <e p="Properties" t="Include">
@@ -146,6 +154,7 @@
             <e p="delete_empty.xml" t="Include" />
             <e p="disease_spinner.xml" t="Include" />
             <e p="dislike.xml" t="Include" />
+            <e p="doctor.xml" t="Include" />
             <e p="drawable_tint_selector.xml" t="Include" />
             <e p="drawer_item_background.xml" t="Include" />
             <e p="drawer_item_tint.axml" t="Include" />
@@ -190,6 +199,7 @@
             <e p="nav_sharing_item_color.xml" t="Include" />
             <e p="nimic.jpg" t="Include" />
             <e p="pill.xml" t="Include" />
+            <e p="pin_background.xml" t="Include" />
             <e p="plus.xml" t="Include" />
             <e p="power_sleep.xml" t="Include" />
             <e p="profile.png" t="Include" />
@@ -240,6 +250,7 @@
             <e p="activity_first_setup.axml" t="Include" />
             <e p="activity_login.axml" t="Include" />
             <e p="activity_main.axml" t="Include" />
+            <e p="activity_pin_lockscreen.axml" t="Include" />
             <e p="activity_pressure_and_glucose.axml" t="Include" />
             <e p="activity_pwdreset.axml" t="Include" />
             <e p="activity_register.axml" t="Include" />
@@ -260,6 +271,7 @@
             <e p="fragment_conversations.axml" t="Include" />
             <e p="fragment_health_devices.axml" t="Include" />
             <e p="fragment_medicine.axml" t="Include" />
+            <e p="fragment_medicine_server.axml" t="Include" />
             <e p="fragment_monitoring.axml" t="Include" />
             <e p="fragment_qr_code_generator.axml" t="Include" />
             <e p="fragment_settings.axml" t="Include" />
@@ -276,12 +288,14 @@
             <e p="item_hour.axml" t="Include" />
             <e p="item_log.xml" t="Include" />
             <e p="item_med.axml" t="Include" />
+            <e p="item_medser.axml" t="Include" />
             <e p="item_message.xml" t="Include" />
             <e p="item_my_message.xml" t="Include" />
             <e p="item_sharing.axml" t="Include" />
             <e p="item_tourist_spot_card.xml" t="Include" />
             <e p="layout_tab1.axml" t="Include" />
             <e p="layout_tab2.axml" t="Include" />
+            <e p="MedicineFragmentBase.axml" t="Include" />
             <e p="nav_header_main.axml" t="Include" />
             <e p="overlay_left.xml" t="Include" />
             <e p="overlay_right.xml" t="Include" />
@@ -296,6 +310,7 @@
             <e p="activity_main_drawer.xml" t="Include" />
             <e p="menu_first_setup.axml" t="Include" />
             <e p="menu_main.xml" t="Include" />
+            <e p="menu_medication.xml" t="Include" />
             <e p="menu_navigation.xml" t="Include" />
             <e p="menu_sharing_navigation.xml" t="Include" />
           </e>
@@ -329,6 +344,7 @@
             <e p="ic_launcher_round.png" t="Include" />
           </e>
           <e p="raw" t="Include">
+            <e p="alarm.mp3" t="Include" />
             <e p="bell.json" t="Include" />
             <e p="devices_data.db" t="Include" />
             <e p="drop.json" t="Include" />
@@ -366,6 +382,7 @@
           <e p="WebSocketService.cs" t="Include" />
         </e>
         <e p="Settings" t="Include">
+          <e p="ActivitySetPin.cs" t="Include" />
           <e p="SettingsFragment.cs" t="Include" />
         </e>
         <e p="Sharing" t="Include">
@@ -390,8 +407,5 @@
       <e p="FamiliaXamarin.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />
     </e>
-    <e p="$USER_HOME$/Library/Caches/Rider2018.3/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/Library/Caches/Rider2018.3/resharper-host/local/Transient/ReSharperHost/v183/SolutionCaches/_FamiliaXamarin.-2063066234.00" t="ExcludeRecursive" />
-    <e p="$USER_HOME$/Library/Developer/Xamarin/android-sdk-macosx/platforms/android-28/Data/res" t="IncludeRecursive" />
   </component>
 </project>

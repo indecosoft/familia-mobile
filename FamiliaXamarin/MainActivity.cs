@@ -27,6 +27,7 @@ using Android.Support.V4.Content;
 using Android.Util;
 using Com.Bumptech.Glide;
 using Familia.Active_Conversations;
+using Familia.DataModels;
 using Familia.Login_System;
 using Familia.Medicatie;
 using Familia.Services;
@@ -264,7 +265,7 @@ namespace FamiliaXamarin
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new MedicineFragment())
                         .AddToBackStack(null).Commit();*/
-                    StartActivity(new Intent(this, typeof(MedicineBaseActivity)));
+                    StartActivity(typeof(MedicineBaseActivity));
                     break;
                 case Resource.Id.chat:
                     SupportFragmentManager.BeginTransaction()
@@ -309,7 +310,8 @@ namespace FamiliaXamarin
                         StopService(_loacationServiceIntent);
                         StopService(_webSocketServiceIntent);
                        // StopService(_medicationServiceIntent);
-                    ClearDatabase();
+                    ClearBluetoothDevices();
+                    ClearMedicationStorages();
                     Task.Run(() =>
                     {
                         Glide.Get(this).ClearDiskCache();
@@ -329,10 +331,15 @@ namespace FamiliaXamarin
             return true;
         }
 
-        private async void ClearDatabase()
+        private async void ClearBluetoothDevices()
         {
             var sqlHelper = await  SqlHelper<BluetoothDeviceRecords>.CreateAsync();
             sqlHelper.DropTables(typeof(BluetoothDeviceRecords));
+        } 
+        private async void ClearMedicationStorages()
+        {
+            var sqlHelper = await  SqlHelper<MedicineServerRecords>.CreateAsync();
+            sqlHelper.DropTables(typeof(MedicineServerRecords));
         }
     }
 }
