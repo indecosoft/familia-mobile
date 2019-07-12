@@ -61,12 +61,12 @@ namespace FamiliaXamarin.Medicatie.Alarm
             CreateNotificationChannel(channel, title, content);
 
             Random random = new Random();
-            int randomNumber = random.Next(0, 5000);
+            int randomNumber = random.Next(1, 5000) * random.Next(1, 5000);
 
             NotifyId += randomNumber;
 
             var alarmIntent = new Intent(context, typeof(AlarmActivity));
-            alarmIntent.AddFlags(ActivityFlags.ClearTop);
+//            alarmIntent.AddFlags(ActivityFlags.ClearTop);
             alarmIntent.PutExtra(Uuid, uuid);
             alarmIntent.PutExtra("notifyId", NotifyId);
             alarmIntent.PutExtra("message", FROM_SERVER);

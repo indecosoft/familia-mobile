@@ -39,6 +39,7 @@ namespace Familia.Medicatie
         private SQLiteAsyncConnection _db;
         private Intent _medicationServiceIntent;
         private CardView cwEmpty;
+        private int countReq;
 
 
         private void setupRecycleView(View view)
@@ -53,28 +54,99 @@ namespace Familia.Medicatie
             _medicineServerAdapter.SetListener(this);
             _medicineServerAdapter.setMedsList(_medications);
             _medicineServerAdapter.NotifyDataSetChanged();
+            countReq = 0;
+
+            if (rvMedSer !=null)
+            {
+                rvMedSer.HasFixedSize = true;
+                var onScrollListener = new MedicineServerRecyclerViewOnScrollListener(layoutManager);
+                onScrollListener.LoadMoreEvent += async (object sender, EventArgs e) =>
+                {
+                    countReq++;
+                    Log.Error("Request Count", countReq + "");
+                    Log.Error("MEDICATION COUNT", _medications.Count + "");
+                    if (countReq == 1)
+                    {   
+                        var newItems = await GetMoreData(_medications.Count);
+                        
+                        Log.Error("MEDICATION COUNT new Items", newItems.Count + "");
+                        Log.Error("MEDICATION COUNT after get more data", _medications.Count + "");
+                        Log.Error("MEDICATION COUNT adapter", _medicineServerAdapter.ItemCount + "");
+                    }
+                };
+
+                rvMedSer.AddOnScrollListener(onScrollListener);
+                rvMedSer.SetLayoutManager(layoutManager);
+            }
+
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View view = inflater.Inflate(Resource.Layout.fragment_medicine_server, container, false);
             setupRecycleView(view);
+
             GetData();
             return view;
         }
 
+        private async Task<List<MedicationSchedule>> GetMoreData(int size)
+        {
+            var list = new List<MedicationSchedule>();
+            Log.Error("MEDICATION COUNT", _medications.Count +  " size" + size);
+            Log.Error("Request Count task", countReq + "");
+
+            await Task.Run(async () => {
+                try
+                {
+                    Log.Error("MEDICATION COUNT task", _medications.Count + " size" + size);
+                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("IdClient")}/{size + 1}", Utils.GetDefaults("Token"));
+
+                    if (!string.IsNullOrEmpty(res))
+                    {
+                        countReq = 0;
+                        Log.Error("RESULT_FOR_MEDICATIE", res);
+                        if (res.Equals("[]")) return;
+                        list = ParseResultFromUrl(res);
+
+                        for (var ms = 0; ms <= list.Count; ms++)
+                        {
+                            Log.Error("MSSSSSTRING", list[ms].Timestampstring);
+                            var date = parseTimestampStringToDate(list[ms]);
+                            list[ms].Timestampstring = date.ToString();
+
+                            _medications.Add(list[ms]);
+                            _medicineServerAdapter.AddItem(list[ms]);
+                            _medicineServerAdapter.NotifyDataSetChanged();
+                        }
+                    }
+                    else
+                    {
+                        Activity.RunOnUiThread(() =>
+                        {
+                            Log.Error("RESULT_FOR_MEDICATIE", "nu se poate conecta la server");
+                            Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
+                        });
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("AlarmError", e.Message);
+                }
+            });
+            Log.Error("AFTER AWAIT", list.Count + "");
+            return list;
+        }
 
         private async void GetData()
         {
             ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
             dialog.Show();
-            await Task.Delay(5000);
-
-
             await Task.Run(async () => {
                 try
                 {
-                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("IdClient")}", Utils.GetDefaults("Token"));
+//                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("IdClient")}", Utils.GetDefaults("Token"));
+                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("IdClient")}/0", Utils.GetDefaults("Token"));
 
                     if (res != null)
                     {
@@ -87,7 +159,7 @@ namespace Familia.Medicatie
                         {
                             Log.Error("MSSSSSTRING", _medications[ms].Timestampstring);
                             var am = (AlarmManager)Activity.GetSystemService(Context.AlarmService);
-
+                            
                             var i = new Intent(Activity, typeof(AlarmBroadcastReceiverServer));
 
                             i.PutExtra(AlarmBroadcastReceiverServer.Uuid, _medications[ms].Uuid);
@@ -103,16 +175,18 @@ namespace Familia.Medicatie
                             if (am == null) continue;
 
                             var date = parseTimestampStringToDate(_medications[ms]);
+                            
                             _medications[ms].Timestampstring = date.ToString();
-                            Storage.GetInstance().saveMedSer(_medications);
                             Calendar calendar = Calendar.Instance;
                             Calendar setcalendar = Calendar.Instance;
 
                             setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
-                            Log.Error("DATE YEAR:", date.Year.ToString(), date.Month.ToString(), date.Day.ToString());
+                            Log.Error("DATE ", date.Year + ", " + date.Month + ", " + date.Day + ", " + date.Second);
                             if (setcalendar.Before(calendar)) continue;
                             am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
                         }
+                        Storage.GetInstance().saveMedSer(_medications);
+
                     }
                     else
                     {
@@ -125,33 +199,20 @@ namespace Familia.Medicatie
                             Log.Error("RESULT_FOR_MEDICATIE", "nu se poate conecta la server");
                             Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
                         });
-
-                        
                     }
+
                 }
                 catch (Exception e)
                 {
                     Log.Error("AlarmError", e.Message);
                 }
-
             });
-
             dialog.Dismiss();
 
-//            _medications = new List<MedicationSchedule>();//delete this line 
             _medicineServerAdapter.setMedsList(_medications);
             _medicineServerAdapter.NotifyDataSetChanged();
             Storage.GetInstance().saveMedSer(_medications);
-
-
-            if (_medications.Count == 0)
-            {
-                cwEmpty.Visibility = ViewStates.Visible;
-            }
-            else
-            {
-                cwEmpty.Visibility = ViewStates.Gone;
-            }
+            cwEmpty.Visibility = _medications.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
 
         }
 

@@ -52,6 +52,15 @@ namespace Familia.Medicatie
             }
         }
 
+        public void AddItem(MedicationSchedule med)
+        {
+
+            if (med != null)
+            {
+                list.Add(med);
+            }
+        }
+
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
@@ -77,6 +86,8 @@ namespace Familia.Medicatie
                 $"{Convert.ToDateTime(medication.Timestampstring).Day}/{Convert.ToDateTime(medication.Timestampstring).Month}/{Convert.ToDateTime(medication.Timestampstring).Year} {hourPrefix}{Convert.ToDateTime(medication.Timestampstring).Hour.ToString()}:{minutePrefix}{Convert.ToDateTime(medication.Timestampstring).Minute.ToString()}";//medication.Timestampstring.Substring(0, medication.Timestampstring.Length - 6);
 
             Log.Error("Date time in Adapter:", holder.tvDateTime.Text);
+            Log.Error("Old Position & adapter position", holder.OldPosition + ", " + holder.AdapterPosition);
+
             Log.Error("Date time inainte:", medication.Timestampstring);
 
         }
@@ -122,5 +133,6 @@ namespace Familia.Medicatie
     public interface IOnMedSerListener
     {
           void OnMedSerClick(MedicationSchedule med);
+//            void OnPosition();
     }
 }

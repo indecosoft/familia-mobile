@@ -75,7 +75,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
             Log.Error("ID NOTIFICARE", NotifyId + "");
 
             var okIntent = new Intent(context, typeof(AlarmActivity));
-            okIntent.AddFlags(ActivityFlags.ClearTop);
+//            okIntent.AddFlags(ActivityFlags.ClearTop);
             okIntent.PutExtra(DiseaseActivity.MED_ID, medId);
             okIntent.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
             okIntent.PutExtra("message", FROM_APP);
