@@ -65,7 +65,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_alignParentEnd="true"
                 android:background="@drawable/secondary_button_style"
-                android:text="Mai tarziu"
+                android:text="Il iau mai tarziu"
                 android:padding="16dp" />
 
             <Button

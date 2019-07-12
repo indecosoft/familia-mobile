@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Media;
+using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
 using Familia;
@@ -19,6 +21,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
         private Disease _mDisease;
         private Medicine _mMed;
         public static readonly string FROM_APP = "from_app";
+        public static readonly string NOTIFICATION_ID = "notification_id";
+        
         private static int NotifyId = Constants.NotifId;
 
 
@@ -45,7 +49,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
        
 
-        private void LaunchAlarm(Context context, string medId, string boalaId)
+        private async void LaunchAlarm(Context context, string medId, string boalaId)
         {
             const string channel = "channelabsolut";
             var now = DateTime.Now;
@@ -56,27 +60,36 @@ namespace FamiliaXamarin.Medicatie.Alarm
             var notificationManager =
                 NotificationManagerCompat.From(context);
 
-//            var i = new Intent(context, typeof(AlarmActivity));
-//                i.AddFlags(ActivityFlags.ClearTop);
-//                i.PutExtra(DiseaseActivity.MED_ID, medId);
-//                i.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
-//                i.PutExtra("message", FROM_APP);
-//                i.SetFlags(ActivityFlags.NewTask);
-//                context.StartActivity(i);
+            //            var i = new Intent(context, typeof(AlarmActivity));
+            //                i.AddFlags(ActivityFlags.ClearTop);
+            //                i.PutExtra(DiseaseActivity.MED_ID, medId);
+            //                i.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
+            //                i.PutExtra("message", FROM_APP);
+            //                i.SetFlags(ActivityFlags.NewTask);
+            //                context.StartActivity(i);
+            Random random = new Random();
+            int randomNumber = random.Next(0, 5000);
 
+            NotifyId += randomNumber;
+
+            Log.Error("ID NOTIFICARE", NotifyId + "");
 
             var okIntent = new Intent(context, typeof(AlarmActivity));
             okIntent.AddFlags(ActivityFlags.ClearTop);
             okIntent.PutExtra(DiseaseActivity.MED_ID, medId);
             okIntent.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
             okIntent.PutExtra("message", FROM_APP);
-            okIntent.SetFlags(ActivityFlags.NewTask);
+            okIntent.PutExtra(NOTIFICATION_ID, NotifyId);
 
-            
 
-//            boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
-//            medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
-           var boli = Storage.GetInstance().GetListOfDiseasesFromFile(context);
+            //            okIntent.SetFlags(ActivityFlags.NewTask);
+
+            context.StartActivity(okIntent);
+
+
+            //            boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
+            //            medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
+            var boli = Storage.GetInstance().GetListOfDiseasesFromFile(context);
             var mBoala = Storage.GetInstance().GetDisease(boalaId);
             if (mBoala != null)
             {
@@ -86,8 +99,24 @@ namespace FamiliaXamarin.Medicatie.Alarm
             }
 
 
-            NotifyId += 1;
+           
+
             BuildNotification(context, NotifyId, channel, _mMed.Name, "medicament", okIntent);
+
+            try
+            {
+                var powerManager = (PowerManager)context.GetSystemService(Context.PowerService);
+                var wakeLock = powerManager.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "simple tag");
+                wakeLock.Acquire();
+                await Task.Delay(1000);
+                wakeLock.Release();
+            }
+            catch (Exception e)
+            {
+                Log.Error("ERR", e.ToString());
+            }
+
+          
         }
 
 

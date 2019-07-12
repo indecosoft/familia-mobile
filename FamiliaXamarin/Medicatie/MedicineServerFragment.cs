@@ -22,10 +22,12 @@ using FamiliaXamarin.Medicatie.Alarm;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
 using FamiliaXamarin.Services;
+using Java.Lang;
 using Java.Text;
 using Java.Util;
 using Org.Json;
 using SQLite;
+using Exception = System.Exception;
 
 namespace Familia.Medicatie
 {
@@ -37,7 +39,6 @@ namespace Familia.Medicatie
         private SQLiteAsyncConnection _db;
         private Intent _medicationServiceIntent;
         private CardView cwEmpty;
-
 
 
         private void setupRecycleView(View view)
@@ -56,43 +57,20 @@ namespace Familia.Medicatie
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-           
             View view = inflater.Inflate(Resource.Layout.fragment_medicine_server, container, false);
-
             setupRecycleView(view);
-
-           GetData();
-
-
-            Log.Error("GATA GET DATA", "..");
-
-
-//            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-//            var numeDB = "devices_data.db";
-//            _db = new SQLiteConnection(Path.Combine(path, numeDB));
-//            _db.CreateTable<MedicineRecords>();
-          
-
-
+            GetData();
             return view;
         }
 
-        public  override void OnResume()
-        {
-            base.OnResume();
-//            _medications = await Storage.GetInstance().readMedSer();
-//            _medicineServerAdapter.setMedsList(_medications);
-//            _medicineServerAdapter.NotifyDataSetChanged();
-//            Storage.GetInstance().saveMedSer(_medications);
-        }
 
         private async void GetData()
         {
-
-            //open loadin
             ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
-            
             dialog.Show();
+            await Task.Delay(5000);
+
+
             await Task.Run(async () => {
                 try
                 {
@@ -102,14 +80,13 @@ namespace Familia.Medicatie
                     {
                         Log.Error("RESULT_FOR_MEDICATIE", res);
                         if (res.Equals("[]")) return;
-
                         _medications = ParseResultFromUrl(res);
-                       
+                        Log.Error("COUNT MEDICATIE", _medications.Count + "");
+
                         for (var ms = 0; ms <= _medications.Count; ms++)
                         {
                             Log.Error("MSSSSSTRING", _medications[ms].Timestampstring);
                             var am = (AlarmManager)Activity.GetSystemService(Context.AlarmService);
-
 
                             var i = new Intent(Activity, typeof(AlarmBroadcastReceiverServer));
 
@@ -134,7 +111,6 @@ namespace Familia.Medicatie
                             setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
                             Log.Error("DATE YEAR:", date.Year.ToString(), date.Month.ToString(), date.Day.ToString());
                             if (setcalendar.Before(calendar)) continue;
-                            Log.Error("A trecut de if", ":)");
                             am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
                         }
                     }
@@ -158,11 +134,11 @@ namespace Familia.Medicatie
                     Log.Error("AlarmError", e.Message);
                 }
 
-
             });
 
             dialog.Dismiss();
 
+//            _medications = new List<MedicationSchedule>();//delete this line 
             _medicineServerAdapter.setMedsList(_medications);
             _medicineServerAdapter.NotifyDataSetChanged();
             Storage.GetInstance().saveMedSer(_medications);
@@ -182,7 +158,6 @@ namespace Familia.Medicatie
 
         private DateTime parseTimestampStringToDate(MedicationSchedule ms)
         {
-
             DateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             {
                 TimeZone = Java.Util.TimeZone.GetTimeZone("UTC")
@@ -248,8 +223,8 @@ namespace Familia.Medicatie
 
             if (medDate < currentDate)
             {
-                alert.SetTitle("Doriti sa marcati medicamentul ca fiind administrat?");
-                alert.SetMessage(med.Title + ", " + med.Content);
+//                alert.SetTitle("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " se va marca administrat.");
+                alert.SetMessage("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " se va marca administrat.");
                 alert.SetPositiveButton("Da", async (senderAlert, args) => {
 
                     var now = DateTime.Now;
@@ -264,7 +239,6 @@ namespace Familia.Medicatie
                         _medicineServerAdapter.removeItem(med);
                         _medicineServerAdapter.NotifyDataSetChanged();
                     }
-                    //                Toast.MakeText(Context, "....", ToastLength.Long).Show();
                     if (_medications.Count == 0)
                     {
                         cwEmpty.Visibility = ViewStates.Visible;
@@ -276,24 +250,14 @@ namespace Familia.Medicatie
 
                 });
 
-                alert.SetNegativeButton("Nu", (senderAlert, args) => {
-                });
+                alert.SetNegativeButton("Nu", (senderAlert, args) => {});
             }
             else
             {
-                alert.SetTitle("Acest medicament nu se poate marca ca fiind administrat!");
-                alert.SetMessage(med.Title + ", " + med.Content);
-                alert.SetPositiveButton("Ok", async (senderAlert, args) => {
-
-                });
-
-//                alert.SetNegativeButton("Nu", (senderAlert, args) => {
-//                });
+//                alert.SetTitle("Pentru afectiunea " + med.Title + ", mdimanetul " + med.Content + " nu se poate marca administrat.");
+                alert.SetMessage("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " nu se poate marca administrat.");
+                alert.SetPositiveButton("Ok",  (senderAlert, args) => {});
             }
-
-
-
-
 
             Dialog dialog = alert.Create();
             dialog.Show();
@@ -305,9 +269,7 @@ namespace Familia.Medicatie
             bool isOk = false;
             await  Task.Run(async () =>
             {
-                bool isSent = await SendData(Context, mArray);
-                Log.Error("RESULT", isSent + " !");
-                if (isSent)
+                if (await SendData(Context, mArray))
                 {
                     var running = IsServiceRunning(typeof(MedicationService), Context);
                     if (running)
@@ -315,7 +277,6 @@ namespace Familia.Medicatie
                         Log.Error("SERVICE", "Medication service is running");
                         Context.StopService(_medicationServiceIntent);
                     }
-
                     isOk = true;
                 }
                 else
@@ -345,13 +306,10 @@ namespace Familia.Medicatie
             var result = await WebServices.Post(
                 $"{Constants.PublicServerAddress}/api/medicine", mArray,
                 Utils.GetDefaults("Token"));
-            Log.Error("RESULT POST: ", result);
             if (!Utils.CheckNetworkAvailability()) return false;
-
-            Log.Error("RESULT POST: ", "a trcut de network");
-
             switch (result)
             {
+                case "Done":
                 case "done":
                     return true;
                 default:

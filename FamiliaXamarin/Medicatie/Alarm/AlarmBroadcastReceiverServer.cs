@@ -8,6 +8,7 @@ using Android.Media;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
+using Android.Views;
 using Familia;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
@@ -18,8 +19,12 @@ using SQLite;
 namespace FamiliaXamarin.Medicatie.Alarm
 {
     [BroadcastReceiver(Enabled = true, Exported = true)]
+//    [Android.Runtime.Register("newWakeLock", "(ILjava/lang/String;)Landroid/os/PowerManager$WakeLock;", "GetNewWakeLock_ILjava_lang_String_Handler")]
     class AlarmBroadcastReceiverServer : BroadcastReceiver
     {
+
+//        public virtual Android.OS.PowerManager.WakeLock NewWakeLock(Android.OS.WakeLockFlags levelAndFlags, string tag);
+
         public const string Uuid = "uuid";
         public const string Title = "title";
         public const string Content = "content";
@@ -40,7 +45,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
 //            var action = intent.Action;
 //            if (action == null) return;
 //            var now = DateTime.Now;
-            //todo de tratat snooze 
+           
             if (string.IsNullOrEmpty(Utils.GetDefaults("Token"))) return;
 
             var uuid = intent.GetStringExtra(Uuid);
@@ -68,114 +73,127 @@ namespace FamiliaXamarin.Medicatie.Alarm
             alarmIntent.PutExtra(MEDICATION_NAME, title);
             alarmIntent.PutExtra(Postpone, postpone);
             alarmIntent.PutExtra(Content, content);
-            alarmIntent.SetFlags(ActivityFlags.NewTask);
-
+            //            alarmIntent.SetFlags(ActivityFlags.NewTask);
+            context.StartActivity(alarmIntent);
 
             BuildNotification(context, NotifyId, channel, title, content, alarmIntent);
 
+            try
+            {
+                var powerManager = (PowerManager)context.GetSystemService(Context.PowerService);
+                var wakeLock = powerManager.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "server tag");
+                wakeLock.Acquire();
+                await Task.Delay(1000);
+                wakeLock.Release();
+            }
+            catch (Exception e)
+            {
+                Log.Error("ERR", e.ToString());
+            }
 
 
 
-//            var notificationManager =
-//                NotificationManagerCompat.From(context);
+
+            //            var notificationManager =
+            //                NotificationManagerCompat.From(context);
 
 
-//            if (ActionReceive.Equals(action))
-//            {
-//                if (string.IsNullOrEmpty(Utils.GetDefaults("Token"))) return;
-                
-
-                //de aici pt sqlite
-//                var path =
-//                    System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-//                var nameDb = "devices_data.db";
-//                _db = new SQLiteAsyncConnection(Path.Combine(path, nameDb));
-//                await _db.CreateTableAsync<MedicineRecords>();
-                //pana aici
+            //            if (ActionReceive.Equals(action))
+            //            {
+            //                if (string.IsNullOrEmpty(Utils.GetDefaults("Token"))) return;
 
 
-//                var uuid = intent.GetStringExtra(Uuid);
-//                var title = intent.GetStringExtra(Title);
-//                var content = intent.GetStringExtra(Content);
-                // var channel = uuid;
-//                const string channel = "channelabsolut";
+            //de aici pt sqlite
+            //                var path =
+            //                    System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            //                var nameDb = "devices_data.db";
+            //                _db = new SQLiteAsyncConnection(Path.Combine(path, nameDb));
+            //                await _db.CreateTableAsync<MedicineRecords>();
+            //pana aici
 
-//                CreateNotificationChannel(channel, title, content);
 
-//                NotifyId += 1;
+            //                var uuid = intent.GetStringExtra(Uuid);
+            //                var title = intent.GetStringExtra(Title);
+            //                var content = intent.GetStringExtra(Content);
+            // var channel = uuid;
+            //                const string channel = "channelabsolut";
 
-//                var okIntent = new Intent(context, typeof(AlarmBroadcastReceiverServer));
-//                var okIntent = new Intent(context, typeof(AlarmActivity));
-//
-//                okIntent.PutExtra(Uuid, uuid);
-//                okIntent.PutExtra("notifyId", NotifyId);
-//                okIntent.PutExtra("message", FROM_SERVER);
-//                okIntent.PutExtra(MEDICATION_NAME, title);
-//                okIntent.SetAction(ActionOk);
-                
-//                var piNotification = PendingIntent.GetBroadcast(context, DateTime.Now.Millisecond,
-//                    okIntent, PendingIntentFlags.OneShot);
+            //                CreateNotificationChannel(channel, title, content);
 
-//                var mBuilder =
-//                    new NotificationCompat.Builder(context, channel)
-//                        .SetSmallIcon(Resource.Drawable.logo)
-//                        .SetContentTitle(title)
-//                        .SetContentText(content)
-//                        .SetAutoCancel(true)
-//                        .SetPriority(NotificationCompat.PriorityHigh)
-//                        .AddAction(Resource.Drawable.account, Ok, piNotification)
-//                        .SetOngoing(true);
-//
-//                notificationManager.Notify(NotifyId, mBuilder.Build());
-//            }
-//            else
-//            {
-//                if (!ActionOk.Equals(action)) return;
+            //                NotifyId += 1;
+
+            //                var okIntent = new Intent(context, typeof(AlarmBroadcastReceiverServer));
+            //                var okIntent = new Intent(context, typeof(AlarmActivity));
+            //
+            //                okIntent.PutExtra(Uuid, uuid);
+            //                okIntent.PutExtra("notifyId", NotifyId);
+            //                okIntent.PutExtra("message", FROM_SERVER);
+            //                okIntent.PutExtra(MEDICATION_NAME, title);
+            //                okIntent.SetAction(ActionOk);
+
+            //                var piNotification = PendingIntent.GetBroadcast(context, DateTime.Now.Millisecond,
+            //                    okIntent, PendingIntentFlags.OneShot);
+
+            //                var mBuilder =
+            //                    new NotificationCompat.Builder(context, channel)
+            //                        .SetSmallIcon(Resource.Drawable.logo)
+            //                        .SetContentTitle(title)
+            //                        .SetContentText(content)
+            //                        .SetAutoCancel(true)
+            //                        .SetPriority(NotificationCompat.PriorityHigh)
+            //                        .AddAction(Resource.Drawable.account, Ok, piNotification)
+            //                        .SetOngoing(true);
+            //
+            //                notificationManager.Notify(NotifyId, mBuilder.Build());
+            //            }
+            //            else
+            //            {
+            //                if (!ActionOk.Equals(action)) return;
 
             //sqlite de aici
-//                var uuid = intent.GetStringExtra(Uuid);
-//                var mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid)
-//                    .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
-//
-//                var path =
-//                    System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-//                const string nameDb = "devices_data.db";
-//                _db = new SQLiteAsyncConnection(Path.Combine(path, nameDb));
-//                await _db.CreateTableAsync<MedicineRecords>();
-//                NotificationManagerCompat.From(context)
-//                    .Cancel(intent.GetIntExtra("notifyId", 0));
-//                await Task.Run(async () =>
-//                {
-//                    if (await SendData(context, mArray))
-//                    {
-//                        var running = IsServiceRunning(typeof(MedicationService), context);
-//                        if (running)
-//                        {
-//                            Log.Error("SERVICE", "Medication service is running");
-//                            context.StopService(_medicationServiceIntent);
-//                        }
-//                    }
-//                    else
-//                    {
-//                        AddMedicine(_db, uuid, now);
-//                        Log.Error("SERVICE", "Medication service started");
-//                        _medicationServiceIntent =
-//                            new Intent(context, typeof(MedicationService));
-//                        if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-//                        {
-//                            context.StartForegroundService(_medicationServiceIntent);
-//                        }
-//                        else
-//                        {
-//                            context.StartService(_medicationServiceIntent);
-//                        }
-//                    }
-//                });
+            //                var uuid = intent.GetStringExtra(Uuid);
+            //                var mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid)
+            //                    .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
+            //
+            //                var path =
+            //                    System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            //                const string nameDb = "devices_data.db";
+            //                _db = new SQLiteAsyncConnection(Path.Combine(path, nameDb));
+            //                await _db.CreateTableAsync<MedicineRecords>();
+            //                NotificationManagerCompat.From(context)
+            //                    .Cancel(intent.GetIntExtra("notifyId", 0));
+            //                await Task.Run(async () =>
+            //                {
+            //                    if (await SendData(context, mArray))
+            //                    {
+            //                        var running = IsServiceRunning(typeof(MedicationService), context);
+            //                        if (running)
+            //                        {
+            //                            Log.Error("SERVICE", "Medication service is running");
+            //                            context.StopService(_medicationServiceIntent);
+            //                        }
+            //                    }
+            //                    else
+            //                    {
+            //                        AddMedicine(_db, uuid, now);
+            //                        Log.Error("SERVICE", "Medication service started");
+            //                        _medicationServiceIntent =
+            //                            new Intent(context, typeof(MedicationService));
+            //                        if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            //                        {
+            //                            context.StartForegroundService(_medicationServiceIntent);
+            //                        }
+            //                        else
+            //                        {
+            //                            context.StartService(_medicationServiceIntent);
+            //                        }
+            //                    }
+            //                });
 
             //pana aici?
 
 
-//            }
+            //            }
         }
 
         private static bool IsServiceRunning(Type classTypeof, Context context)
