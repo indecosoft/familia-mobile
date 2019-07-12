@@ -55,7 +55,7 @@ namespace FamiliaXamarin
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+//                    Console.WriteLine(ex);
                     return null;
                 }
             }

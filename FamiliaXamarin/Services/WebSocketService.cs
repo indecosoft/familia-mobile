@@ -35,9 +35,10 @@ namespace Familia.Services
                 {
                     const string channelId = "my_channel_01";
                     var channel = new NotificationChannel(channelId, "Channel human readable title",
-                        NotificationImportance.Default);
+                        NotificationImportance.Default)
+                        { Importance = NotificationImportance.Low };
 
-                    ((NotificationManager)GetSystemService(Context.NotificationService)).CreateNotificationChannel(channel);
+                    ((NotificationManager)GetSystemService(NotificationService)).CreateNotificationChannel(channel);
 
                     var notification = new NotificationCompat.Builder(this, channelId)
                         .SetContentTitle("Familia")
@@ -89,9 +90,7 @@ namespace Familia.Services
             //               var result = await WebServices.Get(
             //                   $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetImei(Application.Context)}",
             //                   Utils.GetDefaults("Token", context));
-            if (result == null) return null;
-            Log.Error("RESULT_FROM_GIS", result);
-            return result;
+            return result ?? null;
         }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)

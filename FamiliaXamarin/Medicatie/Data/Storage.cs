@@ -64,21 +64,30 @@ namespace FamiliaXamarin.Medicatie.Data
             _medicationSchedules = list;
             foreach (var element in _medicationSchedules)
             {
-                await _db.Insert(new MedicineServerRecords()
+                var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{element.Uuid}'");
+                Log.Error("Count current", c.Count() + "");
+                if (c.Count() == 0)
                 {
-                    Title = element.Title,
-                    Content = element.Content,
-                    DateTime = element.Timestampstring,
-                    Uuid = element.Uuid,
-                    Postpone = element.Postpone + ""
+                    Log.Error("Bag", "in baza de date");
+                    await _db.Insert(new MedicineServerRecords()
+                    {
+                        Title = element.Title,
+                        Content = element.Content,
+                        DateTime = element.Timestampstring,
+                        Uuid = element.Uuid,
+                        Postpone = element.Postpone + ""
+                       
+                    });
+                }
                    
-                });
             }
         }
 
         public async Task<List<MedicationSchedule>> readMedSer()
         {
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
             var list =  await _db.QueryValuations("select * from MedicineServerRecords");
+
             var listMedSch = new List<MedicationSchedule>();
             foreach (var elem in list)
             {
@@ -92,7 +101,6 @@ namespace FamiliaXamarin.Medicatie.Data
                     Log.Error("ERR", e.ToString());
                 }
             }
-
             return listMedSch;
 
         }
