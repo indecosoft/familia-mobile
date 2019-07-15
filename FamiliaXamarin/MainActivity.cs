@@ -106,6 +106,12 @@ namespace FamiliaXamarin
                     Toast.MakeText(this, "1", ToastLength.Long).Show();
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_devices).SetVisible(false);
+
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new QrCodeGenerator())
+                        .AddToBackStack(null).Commit();
+                    Title = "Generare cod QR";
+
                     StartForegroundService(_webSocketServiceIntent);
                     break;
                 case 2:
@@ -116,10 +122,18 @@ namespace FamiliaXamarin
                     menuNav.FindItem(Resource.Id.chat).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_devices).SetVisible(false);
                     menuNav.FindItem(Resource.Id.medicatie).SetVisible(false);
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new AsistentForm())
+                        .AddToBackStack(null).Commit();
+                    Title = "Asistenta sociala";
                     break;
                 case 3:
                     Toast.MakeText(this, "3", ToastLength.Long).Show();
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
+                        .AddToBackStack(null).Commit();
+                    Title = "Dispozitive de masurare";
                     StartForegroundService(_webSocketServiceIntent);
                     break;
                 case 4:
@@ -127,6 +141,10 @@ namespace FamiliaXamarin
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_monitorizare)?.SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_QRCode)?.SetVisible(false);
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new FindUsersFragment())
+                        .AddToBackStack(null).Commit();
+                    Title = "Cauta prieteni";
                     StartForegroundService(_webSocketServiceIntent);
                     break;
             }
