@@ -152,50 +152,24 @@ namespace Familia.Medicatie
 
                     if (res != null)
                     {
+
                         Log.Error("if", "aici");
                         Log.Error("RESULT_FOR_MEDICATIE", res);
                         if (res.Equals("[]")) return;
+                      
                         _medications = ParseResultFromUrl(res);
                         Log.Error("COUNT MEDICATIE", _medications.Count + "");
-
-                        for (var ms = 0; ms < _medications.Count; ms++)
-                        {
-                            Log.Error("MSSSSSTRING", _medications[ms].Timestampstring);
-                            var am = (AlarmManager)Activity.GetSystemService(Context.AlarmService);
-                            
-                            var i = new Intent(Activity, typeof(AlarmBroadcastReceiverServer));
-
-                            i.PutExtra(AlarmBroadcastReceiverServer.Uuid, _medications[ms].Uuid);
-                            i.PutExtra(AlarmBroadcastReceiverServer.Title, _medications[ms].Title);
-                            i.PutExtra(AlarmBroadcastReceiverServer.Content, _medications[ms].Content);
-                            i.PutExtra(AlarmBroadcastReceiverServer.Postpone, _medications[ms].Postpone);
-
-                            i.SetAction(AlarmBroadcastReceiverServer.ActionReceive);
-                            var random = new System.Random();
-                            var id = CurrentTimeMillis() * random.Next();
-                            var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.UpdateCurrent);
-
-                            if (am == null) continue;
-
-                            var date = parseTimestampStringToDate(_medications[ms]);
-                            
-                            _medications[ms].Timestampstring = date.ToString();
-                            Calendar calendar = Calendar.Instance;
-                            Calendar setcalendar = Calendar.Instance;
-
-                            setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
-                            Log.Error("DATE ", date.Year + ", " + date.Month + ", " + date.Day + ", " + date.Second);
-                            if (setcalendar.Before(calendar)) continue;
-                            am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
-                        }
-                        Storage.GetInstance().saveMedSer(_medications);
+//
+//                        for (var ms = 0; ms < _medications.Count; ms++)
+//                        {
+//                            SetupAlarm(ms);
+//                        }
+//                        Storage.GetInstance().saveMedSer(_medications);
 
                     }
                     else
                     {
-                        Log.Error("else", "in pula");
                         _medications = await Storage.GetInstance().readMedSer();
-                        Log.Error("else", _medications.ToString()+"");
 
                         Activity.RunOnUiThread(() =>
                         {
@@ -210,12 +184,52 @@ namespace Familia.Medicatie
                     Log.Error("AlarmError", e.Message);
                 }
             });
+
+            if(_medications.Count != 0 )
+            for (var ms = 0; ms < _medications.Count; ms++)
+            {
+                Log.Error("COUNT MEDICATIE Alarm", _medications.Count + "");
+
+                    SetupAlarm(ms);
+            }
+            Storage.GetInstance().saveMedSer(_medications);
             dialog.Dismiss();
 
             _medicineServerAdapter.setMedsList(_medications);
             _medicineServerAdapter.NotifyDataSetChanged();
             cwEmpty.Visibility = _medications.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
 
+        }
+
+        private void SetupAlarm(int ms)
+        {
+            Log.Error("MSSSSSTRING", _medications[ms].Timestampstring);
+            var am = (AlarmManager) Activity.GetSystemService(Context.AlarmService);
+
+            var i = new Intent(Activity, typeof(AlarmBroadcastReceiverServer));
+
+            i.PutExtra(AlarmBroadcastReceiverServer.Uuid, _medications[ms].Uuid);
+            i.PutExtra(AlarmBroadcastReceiverServer.Title, _medications[ms].Title);
+            i.PutExtra(AlarmBroadcastReceiverServer.Content, _medications[ms].Content);
+            i.PutExtra(AlarmBroadcastReceiverServer.Postpone, _medications[ms].Postpone);
+
+            i.SetAction(AlarmBroadcastReceiverServer.ActionReceive);
+            var random = new System.Random();
+            var id = CurrentTimeMillis() * random.Next();
+            var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.UpdateCurrent);
+
+            if (am == null) return;
+
+            var date = parseTimestampStringToDate(_medications[ms]);
+
+            _medications[ms].Timestampstring = date.ToString();
+            Calendar calendar = Calendar.Instance;
+            Calendar setcalendar = Calendar.Instance;
+
+            setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
+            Log.Error("DATE ", date.Year + ", " + date.Month + ", " + date.Day + ", " + date.Second);
+            if (setcalendar.Before(calendar)) return;
+            am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
         }
 
 
@@ -241,7 +255,6 @@ namespace Familia.Medicatie
             catch (ParseException e)
             {
                 e.PrintStackTrace();
-                Log.Error("EROARE", "nu intra in try");
             }
             return date.ToLocalTime();
         }

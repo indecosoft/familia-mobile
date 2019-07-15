@@ -30,6 +30,7 @@ namespace FamiliaXamarin.Settings
         private Switch enablefingerprint;
         private Switch enablePin;
         private TextView _tvDevicesManagement;
+        private TextView _version;
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -43,6 +44,9 @@ namespace FamiliaXamarin.Settings
             SetupSpinner(v);
             enablefingerprint = v.FindViewById<Switch>(Resource.Id.fingerPrintSwitch);
             enablePin = v.FindViewById<Switch>(Resource.Id.pin_switch);
+            _version = v.FindViewById<TextView>(Resource.Id.tv_version);
+            var ver  = Context.PackageManager.GetPackageInfo(Context.PackageName, 0).VersionName;
+            _version.Text = "Versiunea " + ver;
             _tvDevicesManagement = v.FindViewById<TextView>(Resource.Id.devices);
             _tvDevicesManagement.Click += (sender, args) =>
                 Activity.StartActivity(typeof(DevicesManagementActivity));

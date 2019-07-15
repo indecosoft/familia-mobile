@@ -80,9 +80,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
             okIntent.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
             okIntent.PutExtra("message", FROM_APP);
             okIntent.PutExtra(NOTIFICATION_ID, NotifyId);
-
-
-            //            okIntent.SetFlags(ActivityFlags.NewTask);
+            okIntent.SetFlags(ActivityFlags.NewTask);
 
             context.StartActivity(okIntent);
 
