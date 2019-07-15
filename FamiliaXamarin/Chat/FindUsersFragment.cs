@@ -83,11 +83,13 @@ namespace FamiliaXamarin.Chat
             _cardStackView.Visibility = ViewStates.Visible;
         }
 
-        private async Task SearchPeople()
+        private async void SearchPeople()
         {
+            Log.Error("NearMe Before", "aiciuca");
             int status = 2;
             await Task.Run(async () =>
             {
+                Log.Error("NearMe Before", "aiciuca");
                 var dataToSent = new JSONObject().Put("id", Utils.GetDefaults("IdClient")).Put("distance", 3000);
                 var response = await WebServices.Post(Constants.PublicServerAddress + "/api/nearMe", dataToSent, Utils.GetDefaults("Token"));
                 Log.Error("Response: ", "" + response);
@@ -134,7 +136,14 @@ namespace FamiliaXamarin.Chat
                     {
 
                             _animationView.PlayAnimation();
-                            _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                        _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                        _rightButton.Enabled = true;
+                        _leftButton.Enabled = true;
+                        _cardStackView.Enabled = true;
+                        _lbNobody.Text = string.Empty;
+                        Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
+                        SearchPeople();
+                        
                        
                     }
                 }
@@ -178,6 +187,13 @@ namespace FamiliaXamarin.Chat
             //start annimation
             _animationView.PlayAnimation();
 
+            _rightButton.Enabled = true;
+            _leftButton.Enabled = true;
+            _cardStackView.Enabled = true;
+            _lbNobody.Text = string.Empty;
+            Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
+            SearchPeople();
+
             _leftButton.Click += delegate { SwipeLeft(); };
             _rightButton.Click += delegate { SwipeRight(); };
 
@@ -199,14 +215,9 @@ namespace FamiliaXamarin.Chat
             //throw new NotImplementedException();
         }
 
-        public async void OnAnimationStart(Animator animation)
+        public void OnAnimationStart(Animator animation)
         {
-            _rightButton.Enabled = true;
-            _leftButton.Enabled = true;
-            _cardStackView.Enabled = true;
-            _lbNobody.Text = string.Empty;
-
-            await SearchPeople();
+            
 
         }
         private void SwipeLeft()
