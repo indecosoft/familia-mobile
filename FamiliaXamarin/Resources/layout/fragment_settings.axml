@@ -57,6 +57,7 @@
     </RelativeLayout>
 
     <TextView
+		android:id="@+id/tv_medicine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Medicatie"
@@ -69,6 +70,7 @@
         android:layout_marginTop="3dp" />
 
     <RelativeLayout
+					android:id="@+id/medicine_relative"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -92,6 +94,7 @@
 
     </RelativeLayout>
     <TextView
+		android:id="@+id/tv_devices"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Dispozitive medicale"
