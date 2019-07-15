@@ -58,8 +58,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         protected override void OnDestroy()
         {
-            if (r != null)
-                r.Stop();
             base.OnDestroy();
         }
         protected override void OnUserLeaveHint()
@@ -74,23 +72,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
         {
             base.OnCreate(savedInstanceState);
 
-//            PowerManager pm = (PowerManager)this.GetSystemService(Context.PowerService);
-//            bool isScreenOn = pm.IsInteractive; // check if screen is on
-//            if (!isScreenOn)
-//            {
-//                PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "my tag");
-//                wl.Acquire(3000); //set your time in milliseconds
-//            }
-
-
-//            Window.SetFlags(WindowManagerFlags.ShowWhenLocked ,  WindowManagerFlags.DismissKeyguard | WindowManagerFlags.ShowWhenLocked );
-
-            //            if (Utils.util)
-            //            {
-            //                Utils.util = false;
-            //                Finish();
-            //                
-            //            }
             SetContentView(Resource.Layout.activity_alarm);
             Log.Error("alarm activity", " started");
             tvMedName = FindViewById<TextView>(Resource.Id.tv_med_name_alarm);
@@ -136,23 +117,15 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     postpone =intent.GetIntExtra(AlarmBroadcastReceiverServer.Postpone, 5);
                     NotifyId = intent.GetIntExtra("notifyId", 5);
                     tvMedName.Text = "Pentru afectiunea " + title + " trebuie luat medicamentul " + content;
-                    Log.Error("Alarm activity", "1");
                     Log.Error("alarm activity", postpone + " ");
                     var path =
                         System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
                     var nameDb = "devices_data.db";
                     _db = new SQLiteAsyncConnection(Path.Combine(path, nameDb));
                     await _db.CreateTableAsync<MedicineRecords>();
-                    Log.Error("Alarm activity", "2");
 
                 }
-
             }
-
-
-            //            Android.Net.Uri notification = RingtoneManager.GetDefaultUri(RingtoneType.Alarm);
-            //            r = RingtoneManager.GetRingtone(this, notification);
-            //            r.Play();
         }
 
         public async void OnClick(View v)
@@ -167,9 +140,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
                         var mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid)
                             .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
-
-//                        NotificationManager notificationManager = (NotificationManager)ApplicationContext.GetSystemService(Context.NotificationService);
-//                        notificationManager.Cancel(NotifyId);
 
                         await Task.Run(async () =>
                         {
@@ -215,7 +185,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     Finish();
                     break;
             }
-            //            r.Stop();
         }
 
         private void LaunchSnoozeAlarm()
@@ -225,22 +194,14 @@ namespace FamiliaXamarin.Medicatie.Alarm
             PendingIntent pi;
             if (extraMessage == AlarmBroadcastReceiver.FROM_APP)
             {
-                Log.Error("Alarm activity", "3");
-
                 int snoozeInMinutes;
-
-                if (int.TryParse(Utils.GetDefaults("snooze"), out snoozeInMinutes))
-                    snoozeInMinutes = int.Parse(Utils.GetDefaults("snooze"));
-                else
-                    snoozeInMinutes = 5;
-
-                 snoozeInMilisec = snoozeInMinutes * 60000;
+                snoozeInMinutes = int.TryParse(Utils.GetDefaults("snooze"), out snoozeInMinutes) ? int.Parse(Utils.GetDefaults("snooze")) : 5;
+                snoozeInMilisec = snoozeInMinutes * 60000;
 
                 Toast.MakeText(this, "Alarma amanata pentru " + snoozeInMinutes + " minute.", ToastLength.Short).Show();
 
                 i = new Intent(this, typeof(AlarmBroadcastReceiver));
-               
-                i.AddFlags(ActivityFlags.ClearTop);
+//                i.AddFlags(ActivityFlags.ClearTop);
                 i.PutExtra(DiseaseActivity.BOALA_ID, mBoala.Id);
                 i.PutExtra(DiseaseActivity.MED_ID, mMed.IdMed);
                 i.PutExtra(DiseaseActivity.ALARM_ID, mIdAlarm);
@@ -253,47 +214,31 @@ namespace FamiliaXamarin.Medicatie.Alarm
             }
             else
             {
-                Log.Error("Alarm activity", "4");
-
                 Toast.MakeText(this, "Alarma amanata pentru " + postpone + " minute.", ToastLength.Short).Show();
-                Log.Error("Alarm activity", "5");
-
                 i = new Intent(this, typeof(AlarmBroadcastReceiverServer));
-                i.AddFlags(ActivityFlags.ClearTop);
+//                i.AddFlags(ActivityFlags.ClearTop);
                 i.PutExtra(AlarmBroadcastReceiverServer.Uuid, uuid);
                 i.PutExtra("notifyId", NotifyId);
                 i.PutExtra("message", AlarmBroadcastReceiverServer.FROM_SERVER);
                 i.PutExtra(AlarmBroadcastReceiverServer.Title, title);
                 i.PutExtra(AlarmBroadcastReceiverServer.Content, content);
                 i.PutExtra(AlarmBroadcastReceiverServer.Postpone, postpone);
-//                i.SetFlags(ActivityFlags.NewTask);
                 Log.Error("Alarm activity", "6");
-
 
                 pi = PendingIntent.GetBroadcast(this, NotifyId, i, PendingIntentFlags.OneShot);
 
                 NotificationManager notificationManager = (NotificationManager)ApplicationContext.GetSystemService(Context.NotificationService);
                 notificationManager.Cancel(NotifyId);
-
             }
 
-
             var am = (AlarmManager)GetSystemService(AlarmService);
-
-            //SendBroadcast(i);
-
 
             if (am != null)
             {
                 am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + snoozeInMilisec,
                     AlarmManager.IntervalDay, pi);
             }
-
-            // Utils.util = true;
         }
-
-
-        
 
         private static bool IsServiceRunning(Type classTypeof, Context context)
         {

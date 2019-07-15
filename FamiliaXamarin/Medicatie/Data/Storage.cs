@@ -68,7 +68,7 @@ namespace FamiliaXamarin.Medicatie.Data
                 Log.Error("Count current", c.Count() + "");
                 if (c.Count() == 0)
                 {
-                    Log.Error("Bag", "in baza de date");
+                    Log.Error("STORAGE", "se introduc date in DB");
                     await _db.Insert(new MedicineServerRecords()
                     {
                         Title = element.Title,
@@ -316,7 +316,7 @@ namespace FamiliaXamarin.Medicatie.Data
                         Log.Error("Aici se verifica daca minunata data se converteste frumos",
                             (string) ((JSONObject) arrayOfMedicines.Get(j)).Get("dataMedicament"));
                         m.Date = DateTime.Parse((string)((JSONObject)arrayOfMedicines.Get(j)).Get("dataMedicament"));
-                        Log.Error("dupa conversie is Storage", m.Date.ToString());
+                        Log.Error("dupa conversie in Storage", m.Date.ToString());
                         m.NumberOfDays = (int)((JSONObject)arrayOfMedicines.Get(j)).Get("nrZileMedicament");
                         m.IntervalOfDay = (int)((JSONObject)arrayOfMedicines.Get(j)).Get("intervalZi");
 

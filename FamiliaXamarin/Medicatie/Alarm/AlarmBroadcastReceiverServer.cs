@@ -61,19 +61,19 @@ namespace FamiliaXamarin.Medicatie.Alarm
             CreateNotificationChannel(channel, title, content);
 
             Random random = new Random();
-            int randomNumber = random.Next(0, 5000);
+            int randomNumber = random.Next(1, 5000) * random.Next(1, 5000);
 
             NotifyId += randomNumber;
 
             var alarmIntent = new Intent(context, typeof(AlarmActivity));
-            alarmIntent.AddFlags(ActivityFlags.ClearTop);
+//            alarmIntent.AddFlags(ActivityFlags.ClearTop);
             alarmIntent.PutExtra(Uuid, uuid);
             alarmIntent.PutExtra("notifyId", NotifyId);
             alarmIntent.PutExtra("message", FROM_SERVER);
             alarmIntent.PutExtra(MEDICATION_NAME, title);
             alarmIntent.PutExtra(Postpone, postpone);
             alarmIntent.PutExtra(Content, content);
-            //            alarmIntent.SetFlags(ActivityFlags.NewTask);
+            alarmIntent.SetFlags(ActivityFlags.NewTask);
             context.StartActivity(alarmIntent);
 
             BuildNotification(context, NotifyId, channel, title, content, alarmIntent);
@@ -83,7 +83,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 var powerManager = (PowerManager)context.GetSystemService(Context.PowerService);
                 var wakeLock = powerManager.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "server tag");
                 wakeLock.Acquire();
-                await Task.Delay(1000);
+//                await Task.Delay(1000);
                 wakeLock.Release();
             }
             catch (Exception e)
@@ -231,6 +231,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent)
         {
+            Log.Error("RECEIVER", mTitle + " "+  mContent);
+
             var description = mContent;
             Android.Net.Uri sound = Android.Net.Uri.Parse(ContentResolver.SchemeAndroidResource + "://" + Application.Context.PackageName + "/" + Resource.Raw.alarm);  //Here is FILE_NAME is the name of file that you want to play
             AudioAttributes attributes = new AudioAttributes.Builder()
@@ -242,6 +244,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     Description = description
                 };
             channel.SetSound(sound,attributes);
+            channel.Importance = NotificationImportance.High;
+            
             var notificationManager =
                 (NotificationManager) Application.Context.GetSystemService(
                     Context.NotificationService);
@@ -253,8 +257,10 @@ namespace FamiliaXamarin.Medicatie.Alarm
         {
 
             //Log.Error("PPPAAAAAAAAAAAAAAAAAA", "build notification for " + title + " with id: " + notifyId);
+            Log.Error("RECEIVER", "build notification");
 
             var piNotification = PendingIntent.GetActivity(context, notifyId, intent, PendingIntentFlags.UpdateCurrent);
+            
             var mBuilder =
                 new NotificationCompat.Builder(context, channel)
                     .SetSmallIcon(Resource.Drawable.logo)
@@ -263,6 +269,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     .SetAutoCancel(false)
                     .SetContentIntent(piNotification)
                     .SetPriority(NotificationCompat.PriorityHigh)
+                    
                     .SetOngoing(true);
 
 
