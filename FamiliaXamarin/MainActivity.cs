@@ -78,7 +78,7 @@ namespace FamiliaXamarin
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
-            if (string.IsNullOrEmpty(Utils.GetDefaults("Token")))
+            if (string.IsNullOrEmpty(Utils.GetDefaults("Token")) || string.IsNullOrEmpty(Utils.GetDefaults("UserType")))
             {    var intent = new Intent(this, typeof(LoginActivity));
                 StartActivity(intent);
                 
