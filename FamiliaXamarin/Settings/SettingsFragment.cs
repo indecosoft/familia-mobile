@@ -31,6 +31,10 @@ namespace FamiliaXamarin.Settings
         private Switch enablePin;
         private TextView _tvDevicesManagement;
         private TextView _version;
+        private TextView _tvMedicineTitle;
+        private RelativeLayout _rlMedicineTitle;
+
+        private TextView _tvDeviceTitle;
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -40,7 +44,7 @@ namespace FamiliaXamarin.Settings
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var v =  inflater.Inflate(Resource.Layout.fragment_settings, container, false);
-
+            spinner = (Spinner)v.FindViewById(Resource.Id.alarmSpinner);
             SetupSpinner(v);
             enablefingerprint = v.FindViewById<Switch>(Resource.Id.fingerPrintSwitch);
             enablePin = v.FindViewById<Switch>(Resource.Id.pin_switch);
@@ -48,6 +52,9 @@ namespace FamiliaXamarin.Settings
             var ver  = Context.PackageManager.GetPackageInfo(Context.PackageName, 0).VersionName;
             _version.Text = "Versiunea " + ver;
             _tvDevicesManagement = v.FindViewById<TextView>(Resource.Id.devices);
+            _rlMedicineTitle = v.FindViewById<RelativeLayout>(Resource.Id.medicine_relative);
+            _tvDeviceTitle = v.FindViewById<TextView>(Resource.Id.tv_devices);
+            _tvMedicineTitle = v.FindViewById<TextView>(Resource.Id.tv_medicine);
             _tvDevicesManagement.Click += (sender, args) =>
                 Activity.StartActivity(typeof(DevicesManagementActivity));
             FingerprintManagerCompat checkHardware;
@@ -64,6 +71,18 @@ namespace FamiliaXamarin.Settings
             enablePin.Checked = !string.IsNullOrEmpty(Utils.GetDefaults("UserPin"));
             enablefingerprint.CheckedChange += Enablefingerprint_CheckedChange;
             enablePin.CheckedChange += EnablePin_CheckedChange;
+            if (int.Parse(Utils.GetDefaults("UserType")) == 2 || int.Parse(Utils.GetDefaults("UserType")) == 1)
+            {
+                _tvDevicesManagement.Visibility = ViewStates.Gone;
+                _tvDeviceTitle.Visibility = ViewStates.Gone;
+
+            }
+            if (int.Parse(Utils.GetDefaults("UserType")) == 2)
+            {
+                spinner.Visibility = ViewStates.Gone;
+                _rlMedicineTitle.Visibility = ViewStates.Gone;
+                _tvMedicineTitle.Visibility = ViewStates.Gone;
+            }
             return v;
         }
 
@@ -78,7 +97,7 @@ namespace FamiliaXamarin.Settings
 
         private void SetupSpinner(View v)
         {
-            spinner = (Spinner) v.FindViewById(Resource.Id.alarmSpinner);
+           
             spinner.ItemSelected += delegate (object sender, AdapterView.ItemSelectedEventArgs args)
                 {
                     Contract.Requires(sender != null);

@@ -434,6 +434,7 @@ namespace Familia.Login_System
                                 var logins = new JSONObject(response).GetBoolean("logins");
                                 var avatar = new JSONObject(response).GetString("avatar");
                                 var id = new JSONObject(response).GetString("id");
+                                var type = new JSONObject(response).GetString("tip");
 
                                 Utils.SetDefaults("Token", token);
                                 Utils.SetDefaults("Imei", Utils.GetImei(this));
@@ -442,6 +443,7 @@ namespace Familia.Login_System
                                 Utils.SetDefaults("Name", nume);
                                 Utils.SetDefaults("Avatar", $"{Constants.PublicServerAddress}/{avatar}");
                                 Utils.SetDefaults("IdClient", id);
+                                Utils.SetDefaults("UserType", type);
 
                                 StartActivity(logins ? typeof(MainActivity) : typeof(FirstSetup));
 

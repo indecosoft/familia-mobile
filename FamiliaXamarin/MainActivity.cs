@@ -48,6 +48,7 @@ namespace FamiliaXamarin
         Intent _webSocketServiceIntent;
         Intent _medicationServiceIntent;
         Intent _smartBandServiceIntent;
+        private IMenu _menu;
         private FusedLocationProviderClient _fusedLocationProviderClient;
         //public static bool FromDisease;
 
@@ -60,7 +61,8 @@ namespace FamiliaXamarin
                 if (Utils.CheckIfLocationIsEnabled())
                 {
                     StartForegroundService(_loacationServiceIntent);
-                    StartForegroundService(_smartBandServiceIntent);
+                    if(int.Parse(Utils.GetDefaults("UserType")) == 4 || int.Parse(Utils.GetDefaults("UserType")) == 3)
+                        StartForegroundService(_smartBandServiceIntent);
                 }
                 else
                 {
@@ -97,6 +99,37 @@ namespace FamiliaXamarin
             _loacationServiceIntent = new Intent(this, typeof(LocationService));
             _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
             _smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
+            var menuNav = navigationView.Menu;
+            switch (int.Parse(Utils.GetDefaults("UserType")))
+            {
+                case 1:
+                    Toast.MakeText(this, "1", ToastLength.Long).Show();
+                    menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.nav_devices).SetVisible(false);
+                    StartForegroundService(_webSocketServiceIntent);
+                    break;
+                case 2:
+                    Toast.MakeText(this, "2", ToastLength.Long).Show();
+                    menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.nav_QRCode).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.harta).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.chat).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.nav_devices).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.medicatie).SetVisible(false);
+                    break;
+                case 3:
+                    Toast.MakeText(this, "3", ToastLength.Long).Show();
+                    menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
+                    StartForegroundService(_webSocketServiceIntent);
+                    break;
+                case 4:
+                    Toast.MakeText(this, "4", ToastLength.Long).Show();
+                    menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.nav_monitorizare)?.SetVisible(false);
+                    menuNav.FindItem(Resource.Id.nav_QRCode)?.SetVisible(false);
+                    StartForegroundService(_webSocketServiceIntent);
+                    break;
+            }
 
             if (!Utils.CheckIfLocationIsEnabled())
             {
@@ -112,12 +145,13 @@ namespace FamiliaXamarin
             else
             {
                 StartForegroundService(_loacationServiceIntent);
-                StartForegroundService(_smartBandServiceIntent);
+                if (int.Parse(Utils.GetDefaults("UserType")) == 4 || int.Parse(Utils.GetDefaults("UserType")) == 3)
+                    StartForegroundService(_smartBandServiceIntent);
             }
             
 
             //StartForegroundService(_loacationServiceIntent);
-            StartForegroundService(_webSocketServiceIntent);
+
                 //StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);
 
@@ -219,7 +253,7 @@ namespace FamiliaXamarin
         public override void OnBackPressed()
         {
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
-            if(drawer.IsDrawerOpen(GravityCompat.Start))
+            if (drawer.IsDrawerOpen(GravityCompat.Start))
             {
                 drawer.CloseDrawer(GravityCompat.Start);
                 Utils.HideKeyboard(this);
@@ -229,10 +263,10 @@ namespace FamiliaXamarin
                 Finish();
             }
         }
-
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater.Inflate(Resource.Menu.menu_main, menu);
+            base.OnCreateOptionsMenu(menu);
             return true;
         }
 
@@ -333,13 +367,29 @@ namespace FamiliaXamarin
 
         private async void ClearBluetoothDevices()
         {
-            var sqlHelper = await  SqlHelper<BluetoothDeviceRecords>.CreateAsync();
-            sqlHelper.DropTables(typeof(BluetoothDeviceRecords));
+            try
+            {
+                var sqlHelper = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                sqlHelper.DropTables(typeof(BluetoothDeviceRecords));
+            }
+            catch (Exception e)
+            {
+                Log.Error("Logout Clear Device Error", e.Message);
+            }
+            
         } 
         private async void ClearMedicationStorages()
         {
-            var sqlHelper = await  SqlHelper<MedicineServerRecords>.CreateAsync();
-            sqlHelper.DropTables(typeof(MedicineServerRecords));
+            try
+            {
+                var sqlHelper = await SqlHelper<MedicineServerRecords>.CreateAsync();
+                sqlHelper.DropTables(typeof(MedicineServerRecords));
+            }
+            catch (Exception e)
+            {
+                Log.Error("Logout Clear Medication Error", e.Message);
+            }
+            
         }
     }
 }
