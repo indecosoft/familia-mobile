@@ -62,6 +62,13 @@ namespace FamiliaXamarin.Chat
                                   _lbNobody.Text = "Nimeni nu se afla in jurul tau";
                                   _cardStackView.SetAdapter(_adapter);
                                   _animationView.PlayAnimation();
+                                  _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                                  _rightButton.Enabled = true;
+                                  _leftButton.Enabled = true;
+                                  _cardStackView.Enabled = true;
+                                  _lbNobody.Text = string.Empty;
+                                  Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
+                                  SearchPeople();
                               }
                           }
                           else if (_cardStackView.TopIndex == _people.Count)
@@ -72,6 +79,13 @@ namespace FamiliaXamarin.Chat
                               _lbNobody.Text = "Nimeni nu se afla in jurul tau";
                               _cardStackView.SetAdapter(_adapter);
                               _animationView.PlayAnimation();
+                              _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                              _rightButton.Enabled = true;
+                              _leftButton.Enabled = true;
+                              _cardStackView.Enabled = true;
+                              _lbNobody.Text = string.Empty;
+                              Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
+                              SearchPeople();
                           }
 
                       };
