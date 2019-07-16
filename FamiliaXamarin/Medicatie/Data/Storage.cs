@@ -87,14 +87,21 @@ namespace FamiliaXamarin.Medicatie.Data
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
             var list =  await _db.QueryValuations("select * from MedicineServerRecords");
-
+           
+            var currentDate = DateTime.Now;
             var listMedSch = new List<MedicationSchedule>();
             foreach (var elem in list)
             {
                 try
                 {
-                    listMedSch.Add(new MedicationSchedule(elem.Uuid, elem.DateTime, elem.Title, elem.Content,
-                        int.Parse(elem.Postpone)));
+                    var medDate = Convert.ToDateTime(elem.DateTime);
+                    if (medDate >= currentDate)
+                    {
+                        listMedSch.Add(new MedicationSchedule(elem.Uuid, elem.DateTime, elem.Title, elem.Content,
+                            int.Parse(elem.Postpone)));
+                    }
+
+                    
                 }
                 catch (Exception e)
                 {
@@ -103,6 +110,28 @@ namespace FamiliaXamarin.Medicatie.Data
             }
             return listMedSch;
 
+        }
+
+        public async void removeMedSer(string UUIDmed)
+        {
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+            var list = await _db.QueryValuations($"delete from MedicineServerRecords where Uuid ='{UUIDmed}'");
+            Log.Error("STORAGE", "item deleted");
+        }
+
+        public async Task<bool> isHere(string UUIDmed)
+        {
+            var ok = false;
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+            var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{UUIDmed}'");
+            Log.Error("Count current", c.Count() + "");
+            if (c.Count() != 0)
+            {
+                ok = true;
+            }
+
+            Log.Error("STORAGE", "item exists");
+            return ok;
         }
 
         public List<Disease> GetDiseases()

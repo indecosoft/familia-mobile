@@ -152,32 +152,26 @@ namespace Familia.Medicatie
 
                     if (res != null)
                     {
-
-                        Log.Error("if", "aici");
-                        Log.Error("RESULT_FOR_MEDICATIE", res);
+                        Log.Error("RESULT_FOR_MEDICATIE fragment", res);
                         if (res.Equals("[]")) return;
-                      
                         _medications = ParseResultFromUrl(res);
-                        Log.Error("COUNT MEDICATIE", _medications.Count + "");
-//
-//                        for (var ms = 0; ms < _medications.Count; ms++)
-//                        {
-//                            SetupAlarm(ms);
-//                        }
-//                        Storage.GetInstance().saveMedSer(_medications);
-
+                        Log.Error("COUNT MEDICATIE fragment", _medications.Count + "");
                     }
                     else
                     {
                         _medications = await Storage.GetInstance().readMedSer();
-
+                        foreach (var med in _medications)
+                        {
+                            var medDate = Convert.ToDateTime(med.Timestampstring);
+                            var currentDate = DateTime.Now;
+                        }
+                       
                         Activity.RunOnUiThread(() =>
                         {
-                            Log.Error("RESULT_FOR_MEDICATIE", "nu se poate conecta la server");
+                            Log.Error("RESULT_FOR_MEDICATIE fragment", "nu se poate conecta la server");
                             Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
                         });
                     }
-
                 }
                 catch (Exception e)
                 {
@@ -189,8 +183,6 @@ namespace Familia.Medicatie
             for (var ms = 0; ms < _medications.Count; ms++)
             {
                 Log.Error("COUNT MEDICATIE Alarm", _medications.Count + "");
-
-                    SetupAlarm(ms);
             }
             Storage.GetInstance().saveMedSer(_medications);
             dialog.Dismiss();
@@ -201,35 +193,13 @@ namespace Familia.Medicatie
 
         }
 
-        private void SetupAlarm(int ms)
+        public async override void OnResume()
         {
-            Log.Error("MSSSSSTRING", _medications[ms].Timestampstring);
-            var am = (AlarmManager) Activity.GetSystemService(Context.AlarmService);
-
-            var i = new Intent(Activity, typeof(AlarmBroadcastReceiverServer));
-
-            i.PutExtra(AlarmBroadcastReceiverServer.Uuid, _medications[ms].Uuid);
-            i.PutExtra(AlarmBroadcastReceiverServer.Title, _medications[ms].Title);
-            i.PutExtra(AlarmBroadcastReceiverServer.Content, _medications[ms].Content);
-            i.PutExtra(AlarmBroadcastReceiverServer.Postpone, _medications[ms].Postpone);
-
-            i.SetAction(AlarmBroadcastReceiverServer.ActionReceive);
-            var random = new System.Random();
-            var id = CurrentTimeMillis() * random.Next();
-            var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.UpdateCurrent);
-
-            if (am == null) return;
-
-            var date = parseTimestampStringToDate(_medications[ms]);
-
-            _medications[ms].Timestampstring = date.ToString();
-            Calendar calendar = Calendar.Instance;
-            Calendar setcalendar = Calendar.Instance;
-
-            setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
-            Log.Error("DATE ", date.Year + ", " + date.Month + ", " + date.Day + ", " + date.Second);
-            if (setcalendar.Before(calendar)) return;
-            am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
+            base.OnResume();
+           _medications =  await Storage.GetInstance().readMedSer();
+           _medicineServerAdapter.setMedsList(_medications);
+           _medicineServerAdapter.NotifyDataSetChanged();
+           cwEmpty.Visibility = _medications.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
         }
 
 
@@ -347,17 +317,18 @@ namespace Familia.Medicatie
             {
                 if (await SendData(Context, mArray))
                 {
-                    var running = IsServiceRunning(typeof(MedicationService), Context);
-                    if (running)
-                    {
-                        Log.Error("SERVICE", "Medication service is running");
-                        Context.StopService(_medicationServiceIntent);
-                    }
+//                    var running = IsServiceRunning(typeof(MedicationService), Context);
+//                    if (running)
+//                    {
+//                        Log.Error("SERVICE", "Medication service is running");
+//                        Context.StopService(_medicationServiceIntent);
+//                    }
                     isOk = true;
                 }
                 else
                 {
                     AddMedicine(_db, med.Uuid, now);
+                    Storage.GetInstance().removeMedSer(med.Uuid);
                     Log.Error("SERVICE", "Medication service started");
                     _medicationServiceIntent =
                         new Intent(Context, typeof(MedicationService));

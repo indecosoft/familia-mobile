@@ -48,7 +48,7 @@ namespace FamiliaXamarin.Services
                     // interval = 1000 * 60 * 10;
                     interval = 6000;
                     counter = 0;
-                    StopSelf();
+//                    StopSelf();
                 }
                 else
                 {
@@ -104,9 +104,11 @@ namespace FamiliaXamarin.Services
             if (Utils.CheckNetworkAvailability())
             {
                 string result = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", jsonList, Utils.GetDefaults("Token"));
+                Log.Error("Medication Service", result);
                 switch (result)
                 {
                     case "Done":
+                    case "done":
                         aTimer.Start();
                         await _db.DropTableAsync<MedicineRecords>();
                         return true;

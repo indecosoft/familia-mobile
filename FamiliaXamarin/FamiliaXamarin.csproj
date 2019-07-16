@@ -122,6 +122,7 @@
     <Compile Include="Chat\ChatActivity.cs" />
     <Compile Include="Chat\ChatAdapter.cs" />
     <Compile Include="Chat\ChatModel.cs" />
+    <Compile Include="Services\MedicationServerService.cs" />
     <Compile Include="Services\MedicationService.cs" />
     <Compile Include="Services\MedicalAsistanceService.cs" />
     <Compile Include="Sharing\CustomDialogProfileSharingData.cs" />

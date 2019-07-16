@@ -141,19 +141,23 @@ namespace FamiliaXamarin.Medicatie.Alarm
                         var mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid)
                             .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
 
-                        await Task.Run(async () =>
-                        {
-                            if (await SendData(this, mArray))
-                            {
-                                var running = IsServiceRunning(typeof(MedicationService), this);
-                                if (running)
-                                {
-                                    Log.Error("SERVICE", "Medication service is running");
-                                    this.StopService(_medicationServiceIntent);
-                                }
-                            }
-                            else
-                             {
+                        //                        await Task.Run(async () =>
+                        //                        {
+                        //                            if (await SendData(this, mArray))
+                        //                            {   
+                        //                                Storage.GetInstance().removeMedSer(uuid);
+                        //
+                        //                                var running = IsServiceRunning(typeof(MedicationService), this);
+                        //                                if (running)
+                        //                                {
+                        //                                    Log.Error("SERVICE", "Medication service is running");
+                        //                                    this.StopService(_medicationServiceIntent);
+                        //                                }
+                        //
+                        //
+                        //                            }
+                        //                            else
+                        //                             {
                                 AddMedicine(_db, uuid, now);
                                 Log.Error("SERVICE", "Medication service started");
                                 _medicationServiceIntent =
@@ -166,15 +170,16 @@ namespace FamiliaXamarin.Medicatie.Alarm
                                 {
                                     this.StartService(_medicationServiceIntent);
                                 }
-                               }
-                        });
+                                 Storage.GetInstance().removeMedSer(uuid);
+
+                        //                               }
+                        //                        });
 
                     }
 
                     Log.Error("ID NOTIFICARE", NotifyId +"");
                         NotificationManager notificationManager = (NotificationManager)ApplicationContext.GetSystemService(Context.NotificationService);
                         notificationManager.Cancel(NotifyId);
-                    
 
                     Toast.MakeText(this, "Medicament luat.", ToastLength.Short).Show();
                     Finish();
