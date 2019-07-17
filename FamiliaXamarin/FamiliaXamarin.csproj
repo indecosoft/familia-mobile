@@ -114,8 +114,10 @@
     <Compile Include="Medicatie\MedicineAdapter.cs" />
     <Compile Include="Medicatie\MedicineBaseActivity.cs" />
     <Compile Include="Medicatie\MedicineFragment.cs" />
+    <Compile Include="Medicatie\MedicineLostAdapter.cs" />
     <Compile Include="Medicatie\MedicineServerAdapter.cs" />
     <Compile Include="Medicatie\MedicineServerFragment.cs" />
+    <Compile Include="Medicatie\MedicineLostFragment.cs" />
     <Compile Include="Medicatie\MedicineServerRecyclerViewOnScrollListener.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -886,6 +888,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\raw\alarm.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_medicine_lost.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

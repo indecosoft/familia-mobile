@@ -9,39 +9,38 @@ using RelativeLayout = Android.Widget.RelativeLayout;
 
 namespace Familia.Medicatie
 {
-    class MedicineServerAdapter : RecyclerView.Adapter
+    class MedicineLostAdapter : RecyclerView.Adapter
     {
-//        public event EventHandler<MedicineServerAdapterClickEventArgs> ItemClick;
-//        public event EventHandler<MedicineServerAdapterClickEventArgs> ItemLongClick;
-        public IOnMedSerListener listener;
+
+        public IOnMedLostListener listener;
 
         private List<MedicationSchedule> list;
 
 
-        public MedicineServerAdapter()
+        public MedicineLostAdapter()
         {
             list = new List<MedicationSchedule>();
         }
 
-        public MedicineServerAdapter(List<MedicationSchedule> data)
+        public MedicineLostAdapter(List<MedicationSchedule> data)
         {
             list = data;
             NotifyDataSetChanged();
 
         }
 
-        public void SetListener(IOnMedSerListener listener)
+        public void SetListener(IOnMedLostListener listener)
         {
             this.listener = listener;
         }
 
         public void setMedsList(List<MedicationSchedule> data)
         {
-//            list.Clear();
+            //            list.Clear();
             list = data;
-            Log.Error("INAINTE 1", "" + list.Count + ", "+ data.Count);
+            Log.Error("INAINTE 1", "" + list.Count + ", " + data.Count);
             NotifyDataSetChanged();
-            Log.Error("INAINTE 2", "" + list.Count + ", "+ data.Count);
+            Log.Error("INAINTE 2", "" + list.Count + ", " + data.Count);
         }
 
         public List<MedicationSchedule> getList()
@@ -76,12 +75,12 @@ namespace Familia.Medicatie
 
             LayoutInflater inflater = LayoutInflater.From(parent.Context);
             View v = inflater.Inflate(Resource.Layout.item_medser, parent, false);
-            return new MedicineServerAdapterViewHolder(v);
+            return new MedicineLostAdapterViewHolder(v);
         }
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
         {
-            var holder = viewHolder as MedicineServerAdapterViewHolder;
+            var holder = viewHolder as MedicineLostAdapterViewHolder;
             MedicationSchedule medication = list[position];
             holder.tvMedSer.Text = medication.Title;
             holder.tvContent.Text = medication.Content;
@@ -96,18 +95,15 @@ namespace Familia.Medicatie
 
             Log.Error("Date time in Adapter:", holder.tvDateTime.Text);
             Log.Error("Old Position & adapter position", holder.OldPosition + ", " + holder.AdapterPosition);
-
             Log.Error("Date time inainte:", medication.Timestampstring);
 
         }
 
         public override int ItemCount => list.Count;
-
-
-
+        
     }
 
-    public class MedicineServerAdapterViewHolder : RecyclerView.ViewHolder
+    public class MedicineLostAdapterViewHolder : RecyclerView.ViewHolder
     {
         public TextView tvMedSer;
         public TextView tvContent;
@@ -115,10 +111,9 @@ namespace Familia.Medicatie
         public CardView rlContainer;
         public MedicationSchedule medication;
 
-        public IOnMedSerListener listener;
+        public IOnMedLostListener listener;
 
-
-        public MedicineServerAdapterViewHolder(View itemView) : base(itemView)
+        public MedicineLostAdapterViewHolder(View itemView) : base(itemView)
         {
             tvMedSer = itemView.FindViewById<TextView>(Resource.Id.tv_medser);
             tvContent = itemView.FindViewById<TextView>(Resource.Id.info_content);
@@ -127,21 +122,16 @@ namespace Familia.Medicatie
             rlContainer.Click += delegate {
                 if (listener != null)
                 {
-                     listener.OnMedSerClick(medication);
+                    listener.OnMedLostClick(medication);
                 }
             };
         }
+
     }
 
-//    public class MedicineServerAdapterClickEventArgs : EventArgs
-//    {
-//        public View View { get; set; }
-//        public int Position { get; set; }
-//    }
-
-    public interface IOnMedSerListener
+    public interface IOnMedLostListener
     {
-          void OnMedSerClick(MedicationSchedule med);
-//            void OnPosition();
+        void OnMedLostClick(MedicationSchedule med);
+        //            void OnPosition();
     }
 }

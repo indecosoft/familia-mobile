@@ -1,17 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
+
   <item
     android:id="@+id/menu_tab1"
     android:enabled="true"
-    android:title="Tratament"
+    android:title="Neadministrata"
     android:icon="@drawable/doctor"
     app:showAsAction="ifRoom" />
 
   <item
     android:id="@+id/menu_tab2"
     android:enabled="true"
-    android:title="Medicatie Personala"
+    android:title="Asistata"
+    android:icon="@drawable/doctor"
+    app:showAsAction="ifRoom" />
+
+  <item
+    android:id="@+id/menu_tab3"
+    android:enabled="true"
+    android:title="Personala"
     app:showAsAction="ifRoom" 
     android:icon="@drawable/medical_bag"
     />

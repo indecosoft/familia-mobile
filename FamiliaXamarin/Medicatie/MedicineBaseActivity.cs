@@ -18,6 +18,7 @@ using FamiliaXamarin.Sharing;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Android.Content.PM;
 using Android.Support.V4.View;
+using Android.Util;
 using Familia;
 using FamiliaXamarin;
 using FamiliaXamarin.Medicatie;
@@ -47,22 +48,23 @@ namespace Familia.Medicatie
 
             viewPager = (ViewPager)FindViewById(Resource.Id.pager);
             SharingPagerAdapter myPagerAdapter = new SharingPagerAdapter(SupportFragmentManager);
-            myPagerAdapter.AddFragment(new MedicineServerFragment(), new String("Tratament"));
-            myPagerAdapter.AddFragment(new MedicineFragment(), new String("Medicatie Personala"));
+            myPagerAdapter.AddFragment(new MedicineLostFragment(), new String("Lost"));
+            myPagerAdapter.AddFragment(new MedicineServerFragment(), new String("Current"));
+            myPagerAdapter.AddFragment(new MedicineFragment(), new String("Personal"));
             viewPager.Adapter = myPagerAdapter;
             viewPager.PageSelected +=
                 delegate (object sender, ViewPager.PageSelectedEventArgs args)
                 {
-                    if (args.Position == 0)
+                    switch (args.Position)
                     {
-                        bottomNavigation.SelectedItemId = Resource.Id.menu_tab1;
+                        case 0: bottomNavigation.SelectedItemId = Resource.Id.menu_tab1; break;
+                        case 1: bottomNavigation.SelectedItemId = Resource.Id.menu_tab2; break;
+                        case 2: bottomNavigation.SelectedItemId = Resource.Id.menu_tab3; break;
                     }
-                    else
-                    {
-                        bottomNavigation.SelectedItemId = Resource.Id.menu_tab2;
-                    }
+
+                    
                 };
-            LoadFragment(Resource.Id.menu_tab1);
+            LoadFragment(Resource.Id.menu_tab2);
         }
 
 
@@ -94,6 +96,8 @@ namespace Familia.Medicatie
             Android.Support.Design.Widget.BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
             LoadFragment(e.Item.ItemId);
+            Log.Error("LOAD FRAGMENT", e.Item.ItemId + "");
+
         }
 
         void LoadFragment(int id)
@@ -101,10 +105,22 @@ namespace Familia.Medicatie
             switch (id)
             {
                 case Resource.Id.menu_tab1:
-                    viewPager.CurrentItem = 0;
+//                    viewPager.CurrentItem = 0;
+                    viewPager.SetCurrentItem(0, true);
+                    Log.Error("LOAD FRAGMENT", "tab 1");
                     break;
                 case Resource.Id.menu_tab2:
-                    viewPager.CurrentItem = 1;
+//                    viewPager.CurrentItem = 1;
+                    viewPager.SetCurrentItem(1, true);
+
+                    Log.Error("LOAD FRAGMENT", "tab 2");
+
+                    break;
+                case Resource.Id.menu_tab3:
+//                    viewPager.CurrentItem = 2;
+                    viewPager.SetCurrentItem(2, true);
+
+                    Log.Error("LOAD FRAGMENT", "tab 3");
                     break;
             }
         }

@@ -43,20 +43,21 @@ namespace Familia.Medicatie
 
 
         private void setupRecycleView(View view)
-        {   _medications = new List<MedicationSchedule>();
+        {
+            _medications = new List<MedicationSchedule>();
             RecyclerView rvMedSer = view.FindViewById<RecyclerView>(Resource.Id.rv_medser);
             cwEmpty = view.FindViewById<CardView>(Resource.Id.cw_empty);
             cwEmpty.Visibility = ViewStates.Gone;
             LinearLayoutManager layoutManager = new LinearLayoutManager(Activity);
             rvMedSer.SetLayoutManager(layoutManager);
-            _medicineServerAdapter = new MedicineServerAdapter();
+            _medicineServerAdapter = new MedicineServerAdapter(_medications);
             rvMedSer.SetAdapter(_medicineServerAdapter);
             _medicineServerAdapter.SetListener(this);
-            _medicineServerAdapter.setMedsList(_medications);
+//            _medicineServerAdapter.setMedsList(_medications);
             _medicineServerAdapter.NotifyDataSetChanged();
             countReq = 0;
 
-            if (rvMedSer !=null)
+            if (rvMedSer != null)
             {
                 rvMedSer.HasFixedSize = true;
                 var onScrollListener = new MedicineServerRecyclerViewOnScrollListener(layoutManager);
@@ -66,23 +67,48 @@ namespace Familia.Medicatie
                     Log.Error("Request Count", countReq + "");
                     Log.Error("MEDICATION COUNT", _medications.Count + "");
                     if (countReq == 1)
-                    {   
-                        var newItems = await GetMoreData(_medications.Count);
-                        
-                        Log.Error("MEDICATION COUNT new Items", newItems.Count + "");
-                        Log.Error("MEDICATION COUNT after get more data", _medications.Count + "");
-                        Log.Error("MEDICATION COUNT adapter", _medicineServerAdapter.ItemCount + "");
+                    {
+
+                    var newItems = await GetMoreData(_medications.Count);
+                        if (newItems.Count != 0 )
+                        {
+                            Log.Error("newItems COUNT", newItems.Count + "");
+                            try
+                            {
+                                for (var ms = 0; ms <= newItems.Count; ms++)
+                                {
+                                    Log.Error("MSSSSSTRING", newItems[ms].Timestampstring);
+                                    var date = parseTimestampStringToDate(newItems[ms]);
+                                    newItems[ms].Timestampstring = date.ToString();
+                                    Log.Error("MEDICATION COUNT IN FOR", _medications.Count + "");
+                                    _medicineServerAdapter.AddItem(newItems[ms]);
+
+                                    Log.Error("MEDICATION COUNT adapter in FOR", _medicineServerAdapter.getList().Count + "");
+
+                                    //_medications.Add(newItems[ms]);
+                                }
+//                                _medicineServerAdapter.NotifyDataSetChanged();
+                                Storage.GetInstance().saveMedSer(_medicineServerAdapter.getList());
+
+                                Log.Error("MEDICATION COUNT new Items", newItems.Count + "");
+                                Log.Error("MEDICATION COUNT after get more data", _medications.Count + "");
+                                Log.Error("MEDICATION COUNT adapter", _medicineServerAdapter.ItemCount + "");
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error("ERRRRR", ex.Message);
+                            }
+                        }
                     }
                 };
-
                 rvMedSer.AddOnScrollListener(onScrollListener);
                 rvMedSer.SetLayoutManager(layoutManager);
             }
-
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            Log.Error("CREATE VIEW", "MEDICINE SERVER FRAGMENT");
             View view = inflater.Inflate(Resource.Layout.fragment_medicine_server, container, false);
             setupRecycleView(view);
 
@@ -93,14 +119,16 @@ namespace Familia.Medicatie
         private async Task<List<MedicationSchedule>> GetMoreData(int size)
         {
             var list = new List<MedicationSchedule>();
-            Log.Error("MEDICATION COUNT", _medications.Count +  " size" + size);
+            Log.Error("MEDICATION COUNT", _medications.Count + " size" + size);
             Log.Error("Request Count task", countReq + "");
 
-            await Task.Run(async () => {
+            await Task.Run(async () =>
+            {
                 try
                 {
                     Log.Error("MEDICATION COUNT task", _medications.Count + " size" + size);
-                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("IdClient")}/{size + 1}", Utils.GetDefaults("Token"));
+//                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/missedMedicine/{Utils.GetDefaults("IdClient")}/{size}", Utils.GetDefaults("Token"));
+                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("IdClient")}/{size}", Utils.GetDefaults("Token")); //this should be here
 
                     if (!string.IsNullOrEmpty(res))
                     {
@@ -108,19 +136,6 @@ namespace Familia.Medicatie
                         Log.Error("RESULT_FOR_MEDICATIE", res);
                         if (res.Equals("[]")) return;
                         list = ParseResultFromUrl(res);
-
-                        for (var ms = 0; ms <= list.Count; ms++)
-                        {
-                            Log.Error("MSSSSSTRING", list[ms].Timestampstring);
-                            var date = parseTimestampStringToDate(list[ms]);
-                            list[ms].Timestampstring = date.ToString();
-
-                            _medications.Add(list[ms]);
-                            _medicineServerAdapter.AddItem(list[ms]);
-                            _medicineServerAdapter.NotifyDataSetChanged();
-                        }
-                        Storage.GetInstance().saveMedSer(_medications);
-
                     }
                     else
                     {
@@ -137,6 +152,8 @@ namespace Familia.Medicatie
                 }
             });
             Log.Error("AFTER AWAIT", list.Count + "");
+//            _medicineServerAdapter.NotifyDataSetChanged();
+
             return list;
         }
 
@@ -144,32 +161,34 @@ namespace Familia.Medicatie
         {
             ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
             dialog.Show();
-            await Task.Run(async () => {
+            await Task.Run(async () =>
+            {
                 try
                 {
-//                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("IdClient")}", Utils.GetDefaults("Token"));
-                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("IdClient")}/0", Utils.GetDefaults("Token"));
-
+                    //var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("IdClient")}", Utils.GetDefaults("Token"));
+//                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/missedMedicine/{Utils.GetDefaults("IdClient")}/0", Utils.GetDefaults("Token"));
+                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("IdClient")}/0", Utils.GetDefaults("Token")); //this should be here
                     if (res != null)
                     {
                         Log.Error("RESULT_FOR_MEDICATIE fragment", res);
                         if (res.Equals("[]")) return;
                         _medications = ParseResultFromUrl(res);
                         Log.Error("COUNT MEDICATIE fragment", _medications.Count + "");
+//                        _medicineServerAdapter.setMedsList(_medications);
+                        _medicineServerAdapter.NotifyDataSetChanged();
+                        dialog.Dismiss();
                     }
                     else
                     {
                         _medications = await Storage.GetInstance().readMedSer();
-                        foreach (var med in _medications)
-                        {
-                            var medDate = Convert.ToDateTime(med.Timestampstring);
-                            var currentDate = DateTime.Now;
-                        }
                        
+
                         Activity.RunOnUiThread(() =>
                         {
                             Log.Error("RESULT_FOR_MEDICATIE fragment", "nu se poate conecta la server");
                             Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
+                            dialog.Dismiss();
+
                         });
                     }
                 }
@@ -179,27 +198,47 @@ namespace Familia.Medicatie
                 }
             });
 
-            if(_medications.Count != 0 )
-            for (var ms = 0; ms < _medications.Count; ms++)
-            {
-                Log.Error("COUNT MEDICATIE Alarm", _medications.Count + "");
-            }
-            Storage.GetInstance().saveMedSer(_medications);
-            dialog.Dismiss();
-
+            Log.Error("DUPA CE IESE DIN TOATE 1", "" + _medications.Count);
             _medicineServerAdapter.setMedsList(_medications);
-            _medicineServerAdapter.NotifyDataSetChanged();
-            cwEmpty.Visibility = _medications.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
 
+            Log.Error("MEDICINE SERFER FRAGMENT", _medicineServerAdapter.getList().Count + "");
+            _medicineServerAdapter.NotifyDataSetChanged();
+
+            cwEmpty.Visibility = _medicineServerAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+
+            bool saved = await Storage.GetInstance().saveMedSer(_medications);
+            if (saved)
+            {
+                Log.Error("FRAGMENT MEDICATIE SERVER", "SAVED");
+                Log.Error("MEDICINE SERFER FRAGMENT", _medicineServerAdapter.getList().Count + "");
+                try
+                {
+                    _medicineServerAdapter.NotifyDataSetChanged();
+                    dialog.Dismiss();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("ERRRRRRRR", ex.Message);
+                }
+            }
         }
 
-        public async override void OnResume()
+        public async override void OnPause()
+        {
+            base.OnPause();
+            Log.Error("MEDICINE server FRAGMENT", "on pause called");
+//            if (_medications.Count != 0) return;
+//            _medications = await Storage.GetInstance().readMedSer();
+////            _medicineServerAdapter.setMedsList(_medications);
+//            _medicineServerAdapter.NotifyDataSetChanged();
+//            cwEmpty.Visibility = _medications.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+        }
+
+        public override void OnResume()
         {
             base.OnResume();
-           _medications =  await Storage.GetInstance().readMedSer();
-           _medicineServerAdapter.setMedsList(_medications);
-           _medicineServerAdapter.NotifyDataSetChanged();
-           cwEmpty.Visibility = _medications.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+            Log.Error("MEDICINE server FRAGMENT", "on resume called");
+            Log.Error("MEDICINE server FRAGMENT", " " + _medications.Count);
         }
 
 
@@ -269,9 +308,10 @@ namespace Familia.Medicatie
 
             if (medDate < currentDate)
             {
-//                alert.SetTitle("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " se va marca administrat.");
+                //                alert.SetTitle("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " se va marca administrat.");
                 alert.SetMessage("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " se va marca administrat.");
-                alert.SetPositiveButton("Da", async (senderAlert, args) => {
+                alert.SetPositiveButton("Da", async (senderAlert, args) =>
+                {
 
                     var now = DateTime.Now;
                     var mArray = new JSONArray().Put(new JSONObject().Put("uuid", med.Uuid)
@@ -296,13 +336,12 @@ namespace Familia.Medicatie
 
                 });
 
-                alert.SetNegativeButton("Nu", (senderAlert, args) => {});
+                alert.SetNegativeButton("Nu", (senderAlert, args) => { });
             }
             else
             {
-//                alert.SetTitle("Pentru afectiunea " + med.Title + ", mdimanetul " + med.Content + " nu se poate marca administrat.");
                 alert.SetMessage("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " nu se poate marca administrat.");
-                alert.SetPositiveButton("Ok",  (senderAlert, args) => {});
+                alert.SetPositiveButton("Ok", (senderAlert, args) => { });
             }
 
             Dialog dialog = alert.Create();
@@ -313,37 +352,37 @@ namespace Familia.Medicatie
         public async Task<bool> SendMedicationTask(JSONArray mArray, MedicationSchedule med, DateTime now)
         {
             bool isOk = false;
-            await  Task.Run(async () =>
-            {
-                if (await SendData(Context, mArray))
-                {
-//                    var running = IsServiceRunning(typeof(MedicationService), Context);
-//                    if (running)
-//                    {
-//                        Log.Error("SERVICE", "Medication service is running");
-//                        Context.StopService(_medicationServiceIntent);
-//                    }
+            await Task.Run(async () =>
+           {
+               if (await SendData(Context, mArray))
+               {
+                    //                    var running = IsServiceRunning(typeof(MedicationService), Context);
+                    //                    if (running)
+                    //                    {
+                    //                        Log.Error("SERVICE", "Medication service is running");
+                    //                        Context.StopService(_medicationServiceIntent);
+                    //                    }
                     isOk = true;
-                }
-                else
-                {
-                    AddMedicine(_db, med.Uuid, now);
-                    Storage.GetInstance().removeMedSer(med.Uuid);
-                    Log.Error("SERVICE", "Medication service started");
-                    _medicationServiceIntent =
-                        new Intent(Context, typeof(MedicationService));
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                    {
-                        Context.StartForegroundService(_medicationServiceIntent);
-                    }
-                    else
-                    {
-                        Context.StartService(_medicationServiceIntent);
-                    }
+               }
+               else
+               {
+                   AddMedicine(_db, med.Uuid, now);
+                   Storage.GetInstance().removeMedSer(med.Uuid);
+                   Log.Error("SERVICE", "Medication service started");
+                   _medicationServiceIntent =
+                       new Intent(Context, typeof(MedicationService));
+                   if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                   {
+                       Context.StartForegroundService(_medicationServiceIntent);
+                   }
+                   else
+                   {
+                       Context.StartService(_medicationServiceIntent);
+                   }
 
-                    isOk = false;
-                }
-            });
+                   isOk = false;
+               }
+           });
 
             return isOk;
         }

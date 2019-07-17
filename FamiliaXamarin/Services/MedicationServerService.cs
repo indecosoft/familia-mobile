@@ -49,7 +49,7 @@ namespace Familia.Services
             else
             {
 
-                Log.Error("MedicationServer Service", "Operation Aborted because Location or Network is disabled");
+                Log.Error("MedicationServer Service", "Operation Aborted because Network is disabled");
                 _handler.PostDelayed(_runnable, _refreshTime * 10);
             }
 
@@ -97,6 +97,18 @@ namespace Familia.Services
                     {   list.Add(_medications[ms]);
                         Log.Error("MedicationServer Service", _medications.Count + " in if storage false");
                         SetupAlarm(ms);
+                    }
+                    else
+                    {
+                        var medDate = Convert.ToDateTime(_medications[ms].Timestampstring);
+                        var currentDate = DateTime.Now;
+
+                        if (medDate >= currentDate)
+                        {
+                            SetupAlarm(ms);
+                            Log.Error("MedicationServer Service", "setup alarm ");
+                        }
+
                     }
                 }
 

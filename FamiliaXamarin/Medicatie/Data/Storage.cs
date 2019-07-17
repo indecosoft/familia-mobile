@@ -58,17 +58,17 @@ namespace FamiliaXamarin.Medicatie.Data
             return Instance;
         }
 
-        public async void saveMedSer(List<MedicationSchedule> list)
+        public async Task<bool> saveMedSer(List<MedicationSchedule> list)
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
             _medicationSchedules = list;
             foreach (var element in _medicationSchedules)
             {
                 var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{element.Uuid}'");
-                Log.Error("Count current", c.Count() + "");
-                if (c.Count() == 0)
+//                Log.Error("Count current", c.Count() + "");
+                if (!c.Any())
                 {
-                    Log.Error("STORAGE", "se introduc date in DB");
+                    Log.Error("STORAGE", "se introduc date in DB..");
                     await _db.Insert(new MedicineServerRecords()
                     {
                         Title = element.Title,
@@ -79,8 +79,11 @@ namespace FamiliaXamarin.Medicatie.Data
                        
                     });
                 }
-                   
             }
+            Log.Error("STORAGE", "finalizare");
+
+
+            return true;
         }
 
         public async Task<List<MedicationSchedule>> readMedSer()
@@ -128,9 +131,10 @@ namespace FamiliaXamarin.Medicatie.Data
             if (c.Count() != 0)
             {
                 ok = true;
+                Log.Error("STORAGE", "item exists");
             }
 
-            Log.Error("STORAGE", "item exists");
+            
             return ok;
         }
 
