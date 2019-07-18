@@ -33,7 +33,6 @@ namespace Familia.Medicatie
     {
         private ViewPager viewPager;
         private Android.Support.Design.Widget.BottomNavigationView bottomNavigation;
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -61,9 +60,9 @@ namespace Familia.Medicatie
                         case 1: bottomNavigation.SelectedItemId = Resource.Id.menu_tab2; break;
                         case 2: bottomNavigation.SelectedItemId = Resource.Id.menu_tab3; break;
                     }
-
                     
                 };
+            viewPager.OffscreenPageLimit = 3;
             LoadFragment(Resource.Id.menu_tab2);
         }
 

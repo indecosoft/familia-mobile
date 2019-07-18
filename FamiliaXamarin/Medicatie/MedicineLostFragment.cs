@@ -21,6 +21,9 @@ using Java.Text;
 using Org.Json;
 using SQLite;
 
+using System.IO;
+
+
 namespace Familia.Medicatie
 {
     class MedicineLostFragment : Android.Support.V4.App.Fragment, IOnMedLostListener
@@ -41,65 +44,10 @@ namespace Familia.Medicatie
             GetData();
             return view;
         }
-
-        private async void GetData()
-        {
-            ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
-            dialog.Show();
-            await Task.Run(async () =>
-            {
-                try
-                {
-                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/missedMedicine/{Utils.GetDefaults("IdClient")}/0", Utils.GetDefaults("Token"));
-                    if (res != null)
-                    {
-                        Log.Error("RESULT_FOR_MEDICATIE fragment", res);
-                        if (res.Equals("[]")) return;
-                        _medicationsLost = ParseResultFromUrl(res);
-                        _medicineLostAdapter.NotifyDataSetChanged();
-                        dialog.Dismiss();
-                    }
-                    else
-                    {
-                        _medicationsLost = await Storage.GetInstance().readMedSer();
-
-
-                        Activity.RunOnUiThread(() =>
-                        {
-                            Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
-                            dialog.Dismiss();
-
-                        });
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Error("AlarmError", e.Message);
-                }
-            });
-            _medicineLostAdapter.setMedsList(_medicationsLost);
-            _medicineLostAdapter.NotifyDataSetChanged();
-            cwEmpty.Visibility = _medicineLostAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
-
-            bool saved = await Storage.GetInstance().saveMedSer(_medicationsLost);
-            if (saved)
-            {
-                try
-                {
-                    _medicineLostAdapter.NotifyDataSetChanged();
-                    dialog.Dismiss();
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("ERRRRRRRR", ex.Message);
-                }
-            }
-        }
-
-
+        
         public void OnMedLostClick(MedicationSchedule med)
         {
-            Log.Error("MED", med.ToString());
+            Log.Error("MEDICINE LOST", "med clicked: " +  med.ToString());
             var alert = new Android.Support.V7.App.AlertDialog.Builder(Activity);
             var medDate = Convert.ToDateTime(med.Timestampstring);
             var currentDate = DateTime.Now;
@@ -109,14 +57,16 @@ namespace Familia.Medicatie
                 alert.SetMessage("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " se va marca administrat.");
                 alert.SetPositiveButton("Da", async (senderAlert, args) =>
                 {
+                    Log.Error("MEDICINE LOST", "DA clicked");
+
                     var now = DateTime.Now;
                     var mArray = new JSONArray().Put(new JSONObject().Put("uuid", med.Uuid)
                         .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
-                    bool isSent = await SendMedicationTask(mArray, med, now);
+                    bool isSent = SendMedicationTask(mArray, med, now);
                     if (isSent)
                     {
                         Toast.MakeText(Context, "Medicament administrat.", ToastLength.Long).Show();
-                        _medicationsLost.Remove(med);
+//                        _medicationsLost.Remove(med);
                         _medicineLostAdapter.removeItem(med);
                         _medicineLostAdapter.NotifyDataSetChanged();
                     }
@@ -133,13 +83,13 @@ namespace Familia.Medicatie
             dialog.Show();
         }
 
-
         private void setupRecycleView(View view)
         {
             _medicationsLost = new List<MedicationSchedule>();
             RecyclerView rvMedLost = view.FindViewById<RecyclerView>(Resource.Id.rv_medlost);
             cwEmpty = view.FindViewById<CardView>(Resource.Id.cw_empty);
             cwEmpty.Visibility = ViewStates.Gone;
+
             LinearLayoutManager layoutManager = new LinearLayoutManager(Activity);
             rvMedLost.SetLayoutManager(layoutManager);
             _medicineLostAdapter = new MedicineLostAdapter(_medicationsLost);
@@ -157,11 +107,10 @@ namespace Familia.Medicatie
                     countReq++;
                     if (countReq == 1)
                     {
-
                         var newItems = await GetMoreData(_medicationsLost.Count);
                         if (newItems.Count != 0)
                         {
-                            Log.Error("newItems COUNT", newItems.Count + "");
+                            Log.Error("MEDICINE LOST", "new items: " +  newItems.Count);
                             try
                             {
                                 for (var ms = 0; ms <= newItems.Count; ms++)
@@ -172,12 +121,11 @@ namespace Familia.Medicatie
                                     _medicineLostAdapter.AddItem(newItems[ms]);
                                 }
                                 await Storage.GetInstance().saveMedSer(_medicineLostAdapter.getList());
-                                Log.Error("MEDICATION COUNT lost new Items", newItems.Count + "");
-                                Log.Error("MEDICATION COUNT lost after get more data", _medicationsLost.Count + "");
+                                Log.Error("MEDICINE LOST", "new items : " +  newItems.Count + " list count: " + _medicationsLost.Count);
                             }
                             catch (Exception ex)
                             {
-                                Log.Error("ERRRRR", ex.Message);
+                                Log.Error("ERRRRR MEDICINE LOST", ex.Message);
                             }
                         }
                     }
@@ -187,45 +135,102 @@ namespace Familia.Medicatie
             }
         }
 
-
-
-        #region on pause & on resume
+        #region life cycle
 
         public async override void OnPause()
         {
             base.OnPause();
-            Log.Error("MEDICINE LOST FRAGMENT", "on pause called");
-//            if (_medicationsLost.Count != 0) return;
-//            _medicationsLost = await Storage.GetInstance().readMedSer();
-//            //            _medicineServerAdapter.setMedsList(_medicationsLost);
-//            _medicineLostAdapter.NotifyDataSetChanged();
-//            cwEmpty.Visibility = _medicationsLost.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+            Log.Error("MEDICINE LOST", "on pause called , count: " + _medicationsLost.Count);
+            //            if (_medicationsLost.Count != 0) return;
+            //            _medicationsLost = await Storage.GetInstance().readMedSer();
+            //            //            _medicineServerAdapter.setMedsList(_medicationsLost);
+            //            _medicineLostAdapter.NotifyDataSetChanged();
+            //            cwEmpty.Visibility = _medicationsLost.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
         }
 
         public override void OnResume()
         {
             base.OnResume();
-            Log.Error("MEDICINE lost FRAGMENT", "on resume called");
-            Log.Error("Medication lost Fragment", " " + _medicationsLost.Count);
+            _medicineLostAdapter.NotifyDataSetChanged();
+
+            Log.Error("MEDICINE LOST", "on resume called, count: " + _medicationsLost.Count + " adapter count: " + _medicineLostAdapter.ItemCount);
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            
+            Log.Error("MEDICINE LOST", "on destroy called , count: " + _medicationsLost.Count);
+
         }
 
         #endregion
+        private async void GetData()
+        {
+            ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
+            dialog.Show();
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/missedMedicine/{Utils.GetDefaults("IdClient")}/0", Utils.GetDefaults("Token"));
+                    if (res != null)
+                    {
+                        Log.Error(" MEDICINE LOST RESULT_FOR_MEDICATIE", res);
+                        if (res.Equals("[]")) return;
+                        _medicationsLost = ParseResultFromUrl(res);
+                        Log.Error("MEDICATION SERVER ", " count: " + _medicationsLost.Count);
+                        _medicineLostAdapter.NotifyDataSetChanged();
+                        dialog.Dismiss();
+                    }
+                    else
+                    {
+                        _medicationsLost = await Storage.GetInstance().readMedSer();
+                        Log.Error("MEDICATION SERVER ", " count: " + _medicationsLost.Count);
+                        Activity.RunOnUiThread(() =>
+                        {
+                            Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
+                            dialog.Dismiss();
 
+                        });
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("MEDICINE LOST ERR", e.Message);
+                }
+            });
+            _medicineLostAdapter.setMedsList(_medicationsLost);
+            _medicineLostAdapter.NotifyDataSetChanged();
+            cwEmpty.Visibility = _medicineLostAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+
+            bool saved = await Storage.GetInstance().saveMedSer(_medicationsLost);
+            if (saved)
+            {
+                try
+                {
+                    _medicineLostAdapter.NotifyDataSetChanged();
+                    dialog.Dismiss();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("MEDICINE LOST ERR", ex.Message);
+                }
+            }
+        }
         private async Task<List<MedicationSchedule>> GetMoreData(int size)
         {
             var list = new List<MedicationSchedule>();
-            Log.Error("MEDICATION COUNT lost", _medicationsLost.Count + " size" + size);
-
+            Log.Error("MEDICATION LOST", _medicationsLost.Count + " size " + size);
             await Task.Run(async () =>
             {
                 try
                 {
                     var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/missedMedicine/{Utils.GetDefaults("IdClient")}/{size}", Utils.GetDefaults("Token"));//this should be here
-
                     if (!string.IsNullOrEmpty(res))
                     {
                         countReq = 0;
-                        Log.Error("RESULT_FOR_MEDICATIE", res);
+                        Log.Error("MEDICATION LOST RESULT_FOR_MEDICATIE", res);
                         if (res.Equals("[]")) return;
                         list = ParseResultFromUrl(res);
                     }
@@ -233,7 +238,7 @@ namespace Familia.Medicatie
                     {
                         Activity.RunOnUiThread(() =>
                         {
-                            Log.Error("RESULT_FOR_MEDICATIE", "nu se poate conecta la server");
+                            Log.Error("MEDICATION LOST RESULT_FOR_MEDICATIE", "nu se poate conecta la server");
                             Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
                         });
                     }
@@ -246,6 +251,7 @@ namespace Familia.Medicatie
             return list;
         }
 
+        #region parse data
         private List<MedicationSchedule> ParseResultFromUrl(string res)
         {
             if (res != null)
@@ -291,40 +297,25 @@ namespace Familia.Medicatie
             }
             return date.ToLocalTime();
         }
+        #endregion
 
         #region send data to medication service
 
-
-
-
-        public async Task<bool> SendMedicationTask(JSONArray mArray, MedicationSchedule med, DateTime now)
+        public bool SendMedicationTask(JSONArray mArray, MedicationSchedule med, DateTime now)
         {
-            bool isOk = false;
-            await Task.Run(async () =>
+            AddMedicine(_db, med.Uuid, now);
+            Log.Error("MEDICINE LOST", "Medication service started");
+            _medicationLostIntent = new Intent(Context, typeof(MedicationService));
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-//                if (await SendData(Context, mArray))
-//                {
-//                    isOk = true;
-//                }
-//                else
-//                {
-                    AddMedicine(_db, med.Uuid, now);
-                    Storage.GetInstance().removeMedSer(med.Uuid);
-                    Log.Error("SERVICE", "Medication lost service started");
-                    _medicationLostIntent =
-                        new Intent(Context, typeof(MedicationService));
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                    {
-                        Context.StartForegroundService(_medicationLostIntent);
-                    }
-                    else
-                    {
-                        Context.StartService(_medicationLostIntent);
-                    }
-                    isOk = false;
-//                }
-            });
-            return isOk;
+                Context.StartForegroundService(_medicationLostIntent);
+            }
+            else
+            {
+                Context.StartService(_medicationLostIntent);
+            }
+            Storage.GetInstance().removeMedSer(med.Uuid);
+            return true;
         }
 
         private static async Task<bool> SendData(Context context, JSONArray mArray)
@@ -345,6 +336,10 @@ namespace Familia.Medicatie
 
         private static async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now)
         {
+            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            var nameDb = "devices_data.db";
+            db = new SQLiteAsyncConnection(Path.Combine(path, nameDb));
+            await db.CreateTableAsync<MedicineRecords>();
             await db.InsertAsync(new MedicineRecords()
             {
                 Uuid = uuid,

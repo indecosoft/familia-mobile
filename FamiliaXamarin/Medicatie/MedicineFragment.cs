@@ -46,7 +46,23 @@ namespace FamiliaXamarin.Medicatie
         {
             base.OnResume();
             SetListForAdapter();
+            Log.Error("MEDICINE PERSONALA", "on resume called");
         }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            Log.Error("MEDICINE PERSONALA", "on destroy called");
+
+        }
+
+        public override void OnPause()
+        {
+            base.OnPause();
+            Log.Error("MEDICINE PERSONALA", "on pause called");
+
+        }
+
 
         private void SetListForAdapter()
         {

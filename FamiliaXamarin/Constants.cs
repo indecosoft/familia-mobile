@@ -61,10 +61,10 @@ namespace FamiliaXamarin
         #endregion
         public static string SaveDeviceDataUrl { get; } = "https://gisdev.indecosoft.net/devices/save-device-measurements";
 //        public static string SaveDeviceDataUrl { get; } = "http://192.168.101.77/devices/save-device-measurements";
-//        public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/chat";
-        public static string PublicServerAddress { get; } = "http://192.168.101.54:3000";
-//        public static string WebSocketAddress { get; } = "https://gisdev.indecosoft.net/ws";
-        public static string WebSocketAddress { get; } = "http://192.168.101.54:3000/ws";
+        public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/chat";
+//        public static string PublicServerAddress { get; } = "http://192.168.101.54:3000";
+        public static string WebSocketAddress { get; } = "https://gisdev.indecosoft.net/ws";
+//        public static string WebSocketAddress { get; } = "http://192.168.101.54:3000/ws";
         public static int WebSocketPort { get; } = 3000;
         public static int RequestGallery { get; } = 2;
         public static int RequestCamera { get; } = 1;

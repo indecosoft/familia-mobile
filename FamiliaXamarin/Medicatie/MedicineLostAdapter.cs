@@ -20,6 +20,8 @@ namespace Familia.Medicatie
         public MedicineLostAdapter()
         {
             list = new List<MedicationSchedule>();
+            NotifyDataSetChanged();
+
         }
 
         public MedicineLostAdapter(List<MedicationSchedule> data)
@@ -38,9 +40,9 @@ namespace Familia.Medicatie
         {
             //            list.Clear();
             list = data;
-            Log.Error("INAINTE 1", "" + list.Count + ", " + data.Count);
             NotifyDataSetChanged();
-            Log.Error("INAINTE 2", "" + list.Count + ", " + data.Count);
+            Log.Error("ADAPTER MEDICINE LOST", "set list");
+
         }
 
         public List<MedicationSchedule> getList()
@@ -65,7 +67,6 @@ namespace Familia.Medicatie
             {
                 list.Add(med);
                 NotifyDataSetChanged();
-
             }
         }
 
@@ -74,7 +75,7 @@ namespace Familia.Medicatie
         {
 
             LayoutInflater inflater = LayoutInflater.From(parent.Context);
-            View v = inflater.Inflate(Resource.Layout.item_medser, parent, false);
+            View v = inflater.Inflate(Resource.Layout.item_med_lost, parent, false);
             return new MedicineLostAdapterViewHolder(v);
         }
 
@@ -93,9 +94,8 @@ namespace Familia.Medicatie
             holder.tvDateTime.Text =
                 $"{Convert.ToDateTime(medication.Timestampstring).Day}/{Convert.ToDateTime(medication.Timestampstring).Month}/{Convert.ToDateTime(medication.Timestampstring).Year} {hourPrefix}{Convert.ToDateTime(medication.Timestampstring).Hour.ToString()}:{minutePrefix}{Convert.ToDateTime(medication.Timestampstring).Minute.ToString()}";//medication.Timestampstring.Substring(0, medication.Timestampstring.Length - 6);
 
-            Log.Error("Date time in Adapter:", holder.tvDateTime.Text);
-            Log.Error("Old Position & adapter position", holder.OldPosition + ", " + holder.AdapterPosition);
-            Log.Error("Date time inainte:", medication.Timestampstring);
+            Log.Error("ADAPTER MEDICINE LOST", "on bind view holder");
+            
 
         }
 
@@ -132,6 +132,5 @@ namespace Familia.Medicatie
     public interface IOnMedLostListener
     {
         void OnMedLostClick(MedicationSchedule med);
-        //            void OnPosition();
     }
 }
