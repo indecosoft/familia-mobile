@@ -105,7 +105,7 @@ namespace Familia.Services
 
                         if (medDate >= currentDate)
                         {
-                            SetupAlarm(ms);
+//                            SetupAlarm(ms);
                             Log.Error("MedicationServer Service", "setup alarm ");
                         }
 

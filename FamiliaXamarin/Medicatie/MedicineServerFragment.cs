@@ -117,26 +117,38 @@ namespace Familia.Medicatie
                     Log.Error("MEDICATION SERVER", _medications.Count + "");
                     if (countReq == 1)
                     {
-                        var newItems = await GetMoreData(_medications.Count);
-                        if (newItems.Count != 0)
+                        try
                         {
-                            try
+
+                            if (_medications.Count <= 25) return;
+
+                            var newItems = await GetMoreData(_medications.Count);
+                            if (newItems.Count != 0)
                             {
-                                for (var ms = 0; ms <= newItems.Count; ms++)
+                                try
                                 {
-                                    Log.Error("MSSSSSTRING", newItems[ms].Timestampstring);
-                                    var date = parseTimestampStringToDate(newItems[ms]);
-                                    newItems[ms].Timestampstring = date.ToString();
-                                    _medicineServerAdapter.AddItem(newItems[ms]);
+                                    for (var ms = 0; ms <= newItems.Count; ms++)
+                                    {
+                                        Log.Error("MSSSSSTRING", newItems[ms].Timestampstring);
+                                        var date = parseTimestampStringToDate(newItems[ms]);
+                                        newItems[ms].Timestampstring = date.ToString();
+                                        _medicineServerAdapter.AddItem(newItems[ms]);
+                                    }
+
+                                    _medicineServerAdapter.NotifyDataSetChanged();
+                                    await Storage.GetInstance().saveMedSer(_medicineServerAdapter.getList());
+                                    Log.Error("MEDICINE SERVER",
+                                        "new items : " + newItems.Count + " list count: " + _medications.Count);
                                 }
-                                //                                _medicineServerAdapter.NotifyDataSetChanged();
-                                await Storage.GetInstance().saveMedSer(_medicineServerAdapter.getList());
-                                Log.Error("MEDICINE SERVER", "new items : " + newItems.Count + " list count: " + _medications.Count);
+                                catch (Exception ex)
+                                {
+                                    Log.Error("ERRRRR", ex.Message);
+                                }
                             }
-                            catch (Exception ex)
-                            {
-                                Log.Error("ERRRRR", ex.Message);
-                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(" MEDICINE SER ERRRRR", ex.Message);
                         }
                     }
                 };

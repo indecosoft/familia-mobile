@@ -107,6 +107,11 @@ namespace Familia.Medicatie
                     countReq++;
                     if (countReq == 1)
                     {
+                        try
+                        {
+
+
+                            if (_medicationsLost.Count <= 25) return;
                         var newItems = await GetMoreData(_medicationsLost.Count);
                         if (newItems.Count != 0)
                         {
@@ -120,6 +125,7 @@ namespace Familia.Medicatie
                                     newItems[ms].Timestampstring = date.ToString();
                                     _medicineLostAdapter.AddItem(newItems[ms]);
                                 }
+                                _medicineLostAdapter.NotifyDataSetChanged();
                                 await Storage.GetInstance().saveMedSer(_medicineLostAdapter.getList());
                                 Log.Error("MEDICINE LOST", "new items : " +  newItems.Count + " list count: " + _medicationsLost.Count);
                             }
@@ -127,6 +133,11 @@ namespace Familia.Medicatie
                             {
                                 Log.Error("ERRRRR MEDICINE LOST", ex.Message);
                             }
+                        }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(" MEDICINE LOST ERRRRR", ex.Message);
                         }
                     }
                 };
