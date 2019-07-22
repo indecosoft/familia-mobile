@@ -24,14 +24,14 @@
             android:id="@+id/iw_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/pill"
+            android:src="@drawable/pill_lost"
             android:layout_centerHorizontal="true"/>
         <TextView
             android:id="@+id/tv_empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:text="Hello new Fragment!"
+            android:text="Nu exista tratament"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/iw_icon"
             android:textSize="18sp"

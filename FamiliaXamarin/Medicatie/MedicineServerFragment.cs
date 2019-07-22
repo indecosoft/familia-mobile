@@ -120,7 +120,7 @@ namespace Familia.Medicatie
                         try
                         {
 
-                            if (_medications.Count <= 25) return;
+                            if (_medications.Count <= 7) return;
 
                             var newItems = await GetMoreData(_medications.Count);
                             if (newItems.Count != 0)
@@ -318,7 +318,9 @@ namespace Familia.Medicatie
                     var title = obj.GetString("title");
                     var content = obj.GetString("content");
                     var postpone = Convert.ToInt32(obj.GetString("postpone"));
-                    medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone));
+
+                    medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone, 0));
+                   
                     Log.Error("MEDICATIONSTRING", timestampString);
                 }
                 return medicationScheduleList;

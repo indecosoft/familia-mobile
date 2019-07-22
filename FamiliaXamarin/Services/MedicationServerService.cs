@@ -62,7 +62,6 @@ namespace Familia.Services
                 try
                 {
                     var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("IdClient")}", Utils.GetDefaults("Token"));
-//                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("IdClient")}/0", Utils.GetDefaults("Token"));
 
                     if (res != null)
                     {
@@ -96,7 +95,7 @@ namespace Familia.Services
                     if (x == false)
                     {   list.Add(_medications[ms]);
                         Log.Error("MedicationServer Service", _medications.Count + " in if storage false");
-                        SetupAlarm(ms);
+                        SetupAlarm(ms, _medications[ms].IdNotification);
                     }
                     else
                     {
@@ -105,14 +104,23 @@ namespace Familia.Services
 
                         if (medDate >= currentDate)
                         {
-//                            SetupAlarm(ms);
+                            var medObj = await Storage.GetInstance().getElementByUUID(_medications[ms].Uuid);
+                            if (medObj.IdNotification == 0)
+                            {
+                                SetupAlarm(ms, _medications[ms].IdNotification);
+                            }
+                            else
+                            {
+                                SetupAlarm(ms, medObj.IdNotification);
+                            }
+
                             Log.Error("MedicationServer Service", "setup alarm ");
                         }
 
                     }
                 }
 
-                Storage.GetInstance().saveMedSer(list);
+               await Storage.GetInstance().saveMedSer(list);
             }
 
           
@@ -134,7 +142,12 @@ namespace Familia.Services
                     var title = obj.GetString("title");
                     var content = obj.GetString("content");
                     var postpone = Convert.ToInt32(obj.GetString("postpone"));
-                    medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone));
+
+                    var random = new System.Random();
+
+                    var id = CurrentTimeMillis() * random.Next();
+
+                    medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone, id));
                     Log.Error("MEDICATIONSTRING", timestampString);
                 }
 
@@ -144,7 +157,7 @@ namespace Familia.Services
         }
 
 
-        private void SetupAlarm(int ms)
+        private void SetupAlarm(int ms, int id)
         {
             Log.Error("MSSSSSTRING", _medications[ms].Timestampstring);
             var am = (AlarmManager)this.GetSystemService(AlarmService);
@@ -156,8 +169,6 @@ namespace Familia.Services
             i.PutExtra(AlarmBroadcastReceiverServer.Postpone, _medications[ms].Postpone);
 
             i.SetAction(AlarmBroadcastReceiverServer.ActionReceive);
-            var random = new System.Random();
-            var id = CurrentTimeMillis() * random.Next();
             var pi = PendingIntent.GetBroadcast(this, id, i, PendingIntentFlags.UpdateCurrent);
 
             if (am == null) return;

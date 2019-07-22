@@ -22,6 +22,7 @@ using Org.Json;
 using SQLite;
 using File = Java.IO.File;
 using IOException = Java.IO.IOException;
+using Task = System.Threading.Tasks.Task;
 
 namespace FamiliaXamarin.Medicatie.Data
 {
@@ -64,6 +65,12 @@ namespace FamiliaXamarin.Medicatie.Data
             _medicationSchedules = list;
             foreach (var element in _medicationSchedules)
             {
+                var objMed = await getElementByUUID(element.Uuid);
+                if (objMed != null && element.IdNotification == 0)
+                {
+                    element.IdNotification = objMed.IdNotification;
+                }
+
                 var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{element.Uuid}'");
 //                Log.Error("Count current", c.Count() + "");
                 if (!c.Any())
@@ -75,7 +82,8 @@ namespace FamiliaXamarin.Medicatie.Data
                         Content = element.Content,
                         DateTime = element.Timestampstring,
                         Uuid = element.Uuid,
-                        Postpone = element.Postpone + ""
+                        Postpone = element.Postpone + "",
+                        IdNotification = element.IdNotification + ""
                        
                     });
                 }
@@ -101,7 +109,7 @@ namespace FamiliaXamarin.Medicatie.Data
                     if (medDate >= currentDate)
                     {
                         listMedSch.Add(new MedicationSchedule(elem.Uuid, elem.DateTime, elem.Title, elem.Content,
-                            int.Parse(elem.Postpone)));
+                            int.Parse(elem.Postpone), int.Parse(elem.IdNotification)));
                     }
 
                     
@@ -127,15 +135,37 @@ namespace FamiliaXamarin.Medicatie.Data
             var ok = false;
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
             var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{UUIDmed}'");
-            Log.Error("Count current", c.Count() + "");
+
             if (c.Count() != 0)
             {
                 ok = true;
                 Log.Error("STORAGE", "item exists");
             }
 
-            
             return ok;
+        }
+
+        public async Task<MedicationSchedule> getElementByUUID(string UUIDmed)
+        {
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+            var list = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{UUIDmed}'");
+            var listMedSch = new List<MedicationSchedule>();
+            if (list.Count() != 0)
+            {
+                foreach (var item in list)
+                {
+                    return new MedicationSchedule(item.Uuid, item.DateTime, item.Title, item.Content, int.Parse(item.Postpone), int.Parse(item.IdNotification));
+                }
+            }
+            return null;
+        }
+
+        public async Task<bool> updateNotificationIdForElementByUUID(string UUIDmed, int IdNotif)
+        {
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+            var list = await _db.QueryValuations($"UPDATE MedicineServerRecords  SET IdNotification = '{IdNotif}' WHERE Uuid ='{UUIDmed}'");
+
+            return true;
         }
 
         public List<Disease> GetDiseases()

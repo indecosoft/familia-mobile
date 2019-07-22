@@ -121,11 +121,11 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent)
         {
-            var description = mContent;    
-            
+            var description = mContent;
+            long[] vibrationPattern = { 100, 200, 300, 400, 500, 400, 300, 200, 400 };
             Android.Net.Uri sound = Android.Net.Uri.Parse(ContentResolver.SchemeAndroidResource + "://" + Application.Context.PackageName + "/" + Resource.Raw.alarm);  //Here is FILE_NAME is the name of file that you want to play
             AudioAttributes attributes = new AudioAttributes.Builder()                                                
-                .SetUsage(AudioUsageKind.Notification)
+                .SetUsage(AudioUsageKind.Alarm)
                 .Build();
 
             var channel =
@@ -134,7 +134,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     Description = description
                     
                 };
+                channel.EnableVibration(true);
                 channel.SetSound(sound, attributes);
+                channel.SetVibrationPattern(vibrationPattern);
             var notificationManager =
                 (NotificationManager)Application.Context.GetSystemService(
                     Context.NotificationService);

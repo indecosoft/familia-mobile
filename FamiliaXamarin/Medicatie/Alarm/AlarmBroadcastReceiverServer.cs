@@ -79,7 +79,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
             alarmIntent.PutExtra(MEDICATION_NAME, title);
             alarmIntent.PutExtra(Postpone, postpone);
             alarmIntent.PutExtra(Content, content);
-            alarmIntent.SetFlags(ActivityFlags.MultipleTask);
+            alarmIntent.SetFlags(ActivityFlags.NewTask);
             context.StartActivity(alarmIntent);
 
             BuildNotification(context, NotifyId, channel, title, content, alarmIntent);
