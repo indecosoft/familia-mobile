@@ -263,7 +263,12 @@ namespace FamiliaXamarin.Medicatie
             var timeHour = Convert.ToInt32(parts[0]);
             var timeMinute = Convert.ToInt32(parts[1]);
             Log.Error("inainte de date", med.Date.ToString());
-    
+
+            if (timeHour == 24)
+            {
+                timeHour = 0;
+            }
+
             var setDt = new DateTime(med.Date.Year, med.Date.Month, med.Date.Day ,timeHour,timeMinute,0);
             Log.Error("AAAA", setDt.ToString());
             var calendar = Calendar.Instance;

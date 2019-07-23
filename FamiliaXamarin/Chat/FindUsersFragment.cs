@@ -67,7 +67,7 @@ namespace FamiliaXamarin.Chat
                                   _leftButton.Enabled = true;
                                   _cardStackView.Enabled = true;
                                   _lbNobody.Text = string.Empty;
-                                  Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
+//                                  Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
                                   SearchPeople();
                               }
                           }
@@ -84,7 +84,7 @@ namespace FamiliaXamarin.Chat
                               _leftButton.Enabled = true;
                               _cardStackView.Enabled = true;
                               _lbNobody.Text = string.Empty;
-                              Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
+//                              Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
                               SearchPeople();
                           }
 
@@ -99,14 +99,14 @@ namespace FamiliaXamarin.Chat
 
         private async void SearchPeople()
         {
-            Log.Error("NearMe Before", "aiciuca");
+//            Log.Error("NearMe Before", "aiciuca");
             int status = 2;
             await Task.Run(async () =>
             {
-                Log.Error("NearMe Before", "aiciuca");
+//                Log.Error("NearMe Before", "aiciuca");
                 var dataToSent = new JSONObject().Put("id", Utils.GetDefaults("IdClient")).Put("distance", 3000);
                 var response = await WebServices.Post(Constants.PublicServerAddress + "/api/nearMe", dataToSent, Utils.GetDefaults("Token"));
-                Log.Error("Response: ", "" + response);
+//                Log.Error("Response: ", "" + response);
                 try
                 {
                     if (response != null)
@@ -155,7 +155,7 @@ namespace FamiliaXamarin.Chat
                         _leftButton.Enabled = true;
                         _cardStackView.Enabled = true;
                         _lbNobody.Text = string.Empty;
-                        Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
+//                        Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
                         SearchPeople();
                         
                        

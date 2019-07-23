@@ -94,6 +94,31 @@ namespace FamiliaXamarin.Medicatie.Data
             return true;
         }
 
+
+
+        public async void saveElementMedSer(MedicationSchedule med)
+        {
+
+            var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{med.Uuid}'");
+            //                Log.Error("Count current", c.Count() + "");
+            if (!c.Any())
+            {
+                Log.Error("STORAGE", "se introduc date in DB..");
+                await _db.Insert(new MedicineServerRecords()
+                {
+                    Title = med.Title,
+                    Content = med.Content,
+                    DateTime = med.Timestampstring,
+                    Uuid = med.Uuid,
+                    Postpone = med.Postpone + "",
+                    IdNotification = med.IdNotification + ""
+
+                });
+
+                _medicationSchedules.Add(med);
+            }
+        }
+
         public async Task<List<MedicationSchedule>> readMedSer()
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
@@ -119,6 +144,8 @@ namespace FamiliaXamarin.Medicatie.Data
                     Log.Error("ERR", e.ToString());
                 }
             }
+
+            _medicationSchedules = listMedSch;
             return listMedSch;
 
         }
@@ -128,6 +155,7 @@ namespace FamiliaXamarin.Medicatie.Data
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
             var list = await _db.QueryValuations($"delete from MedicineServerRecords where Uuid ='{UUIDmed}'");
             Log.Error("STORAGE", "item deleted");
+            _medicationSchedules.Remove(await getElementByUUID(UUIDmed));
         }
 
         public async Task<bool> isHere(string UUIDmed)
@@ -143,6 +171,11 @@ namespace FamiliaXamarin.Medicatie.Data
             }
 
             return ok;
+        }
+
+        public List<MedicationSchedule> getMSList()
+        {
+             return new List<MedicationSchedule>(_medicationSchedules);
         }
 
         public async Task<MedicationSchedule> getElementByUUID(string UUIDmed)
