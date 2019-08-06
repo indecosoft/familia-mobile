@@ -72,8 +72,8 @@ namespace FamiliaXamarin.Medicatie.Data
                 }
 
                 var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{element.Uuid}'");
-//                Log.Error("Count current", c.Count() + "");
-                if (!c.Any())
+                Log.Error("Count current saveMedSer", c.Count() + "");
+                if (c.Count() ==0)
                 {
                     Log.Error("STORAGE", "se introduc date in DB..");
                     await _db.Insert(new MedicineServerRecords()
@@ -84,7 +84,6 @@ namespace FamiliaXamarin.Medicatie.Data
                         Uuid = element.Uuid,
                         Postpone = element.Postpone + "",
                         IdNotification = element.IdNotification + ""
-                       
                     });
                 }
             }
@@ -98,25 +97,34 @@ namespace FamiliaXamarin.Medicatie.Data
 
         public async void saveElementMedSer(MedicationSchedule med)
         {
-
-            var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{med.Uuid}'");
-            //                Log.Error("Count current", c.Count() + "");
-            if (!c.Any())
+            try
             {
-                Log.Error("STORAGE", "se introduc date in DB..");
-                await _db.Insert(new MedicineServerRecords()
+
+                var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{med.Uuid}'");
+                Log.Error("Count current save Element", c.Count() + "");
+                if (c.Count() == 0)
                 {
-                    Title = med.Title,
-                    Content = med.Content,
-                    DateTime = med.Timestampstring,
-                    Uuid = med.Uuid,
-                    Postpone = med.Postpone + "",
-                    IdNotification = med.IdNotification + ""
+                    Log.Error("STORAGE", "se introduc date in DB..");
+                    await _db.Insert(new MedicineServerRecords()
+                    {
+                        Title = med.Title,
+                        Content = med.Content,
+                        DateTime = med.Timestampstring,
+                        Uuid = med.Uuid,
+                        Postpone = med.Postpone + "",
+                        IdNotification = med.IdNotification + ""
 
-                });
+                    });
 
-                _medicationSchedules.Add(med);
+                    _medicationSchedules.Add(med);
+                    Log.Error("STORAGE", _medicationSchedules.Count() + "");
+                }
             }
+            catch (Exception e)
+            {
+                Log.Error("ERR", e.ToString());
+            }
+
         }
 
         public async Task<List<MedicationSchedule>> readMedSer()

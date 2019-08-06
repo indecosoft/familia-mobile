@@ -45,8 +45,16 @@ namespace Familia.Medicatie
         {
             Log.Error("CREATE VIEW", "MEDICINE SERVER FRAGMENT");
             View view = inflater.Inflate(Resource.Layout.fragment_medicine_server, container, false);
-            setupRecycleView(view);
-            GetData();
+            try
+            {
+                setupRecycleView(view);
+                GetData();
+            }
+            catch (Exception e)
+            {
+                Log.Error("ERR", e.ToString());
+            }
+           
             return view;
         }
 
@@ -119,7 +127,6 @@ namespace Familia.Medicatie
                     {
                         try
                         {
-
                             if (_medications.Count <= 7) return;
 
                             var newItems = await GetMoreData(_medications.Count);
@@ -136,7 +143,7 @@ namespace Familia.Medicatie
                                     }
 
                                     _medicineServerAdapter.NotifyDataSetChanged();
-                                    await Storage.GetInstance().saveMedSer(_medicineServerAdapter.getList());
+//                                    await Storage.GetInstance().saveMedSer(_medicineServerAdapter.getList());
                                     Log.Error("MEDICINE SERVER",
                                         "new items : " + newItems.Count + " list count: " + _medications.Count);
                                 }
@@ -158,15 +165,10 @@ namespace Familia.Medicatie
         }
 
         #region life cycle
-        public async override void OnPause()
+        public override void OnPause()
         {
             base.OnPause();
             Log.Error("MEDICINE SERVER", "on pause called, count: " + _medications.Count);
-            //            if (_medications.Count != 0) return;
-            //            _medications = await Storage.GetInstance().readMedSer();
-            ////            _medicineServerAdapter.setMedsList(_medications);
-            //            _medicineServerAdapter.NotifyDataSetChanged();
-            //            cwEmpty.Visibility = _medications.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
         }
 
         public override void OnResume()
@@ -199,12 +201,18 @@ namespace Familia.Medicatie
                         if (res.Equals("[]")) return;
                         _medications = ParseResultFromUrl(res);
                         Log.Error("MEDICATION SERVER ", " count: " + _medications.Count);
-                        _medicineServerAdapter.NotifyDataSetChanged();
-                        dialog.Dismiss();
+
+                        Activity.RunOnUiThread(() =>
+                        {
+                            _medicineServerAdapter.setMedsList(_medications);
+                            _medicineServerAdapter.NotifyDataSetChanged();
+                            cwEmpty.Visibility = _medicineServerAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+                            dialog.Dismiss();
+                        });
                     }
                     else
                     {
-                        _medications = await Storage.GetInstance().readMedSer();
+//                        _medications = await Storage.GetInstance().readMedSer();
                         Log.Error("MEDICATION SERVER ", " count: " + _medications.Count);
                         Activity.RunOnUiThread(() =>
                         {
@@ -220,23 +228,25 @@ namespace Familia.Medicatie
                 }
             });
 
-            _medicineServerAdapter.setMedsList(_medications);
             _medicineServerAdapter.NotifyDataSetChanged();
-            cwEmpty.Visibility = _medicineServerAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+            dialog.Dismiss();
 
-            bool saved = await Storage.GetInstance().saveMedSer(_medications);
-            if (saved)
-            {
-                try
-                {
-                    _medicineServerAdapter.NotifyDataSetChanged();
-                    dialog.Dismiss();
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("ERRRRRRRR", ex.Message);
-                }
-            }
+            //            cwEmpty.Visibility = _medicineServerAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+            //            dialog.Dismiss();
+            //            bool saved = await Storage.GetInstance().saveMedSer(_medications);
+            //            if (saved)
+            //            {
+            //                try
+            //                {
+            //                    Log.Error("MEDICINE SERGER STORAGE", "saved");
+            //                    _medicineServerAdapter.NotifyDataSetChanged();
+            ////                    dialog.Dismiss(); //mutat sus
+            //                }
+            //                catch (Exception ex)
+            //                {
+            //                    Log.Error("ERRRRRRRR", ex.Message);
+            //                }
+            //            }
         }
         private async Task<List<MedicationSchedule>> GetMoreData(int size)
         {
