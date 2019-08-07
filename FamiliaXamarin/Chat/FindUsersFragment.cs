@@ -206,7 +206,7 @@ namespace FamiliaXamarin.Chat
             _cardStackView.Enabled = true;
             _lbNobody.Text = string.Empty;
             Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
-            SearchPeople();
+//            SearchPeople();
 
             _leftButton.Click += delegate { SwipeLeft(); };
             _rightButton.Click += delegate { SwipeRight(); };

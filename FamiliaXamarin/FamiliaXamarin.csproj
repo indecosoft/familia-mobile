@@ -100,6 +100,7 @@
     <Compile Include="Medicatie\Alarm\App.cs" />
     <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiverServer.cs" />
     <Compile Include="Medicatie\CustomDialogDeleteDisease.cs" />
+    <Compile Include="Medicatie\Data\NetworkingData.cs" />
     <Compile Include="Medicatie\DiseaseActivity.cs" />
     <Compile Include="Medicatie\DiseaseAdapter.cs" />
     <Compile Include="Medicatie\CustomDialogDeleteMedicament.cs" />

@@ -37,7 +37,7 @@ namespace Familia.Medicatie
 
         public void setMedsList(List<MedicationSchedule> data)
         {
-//            list.Clear();
+            list.Clear();
             list = data;
             Log.Error("INAINTE 1", "" + list.Count + ", "+ data.Count);
             NotifyDataSetChanged();

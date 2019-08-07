@@ -68,6 +68,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                 {
                     var response = await WebServices.Get($"{Constants.PublicServerAddress}/api/getBenefits", Utils.GetDefaults("Token"));
                     var jsonResponse = new JSONObject(response);
+                    Log.Error("ASISTEN FORM BENEFITS", jsonResponse.ToString());
                     if (jsonResponse.GetInt("status") == 2)
                     {
                         var dataArray = jsonResponse.GetJSONArray("data");

@@ -14,6 +14,7 @@ using Android.Views;
 using Android.Widget;
 using Familia;
 using Familia.DataModels;
+using Familia.Medicatie.Data;
 using FamiliaXamarin;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
@@ -141,9 +142,7 @@ namespace Familia.Medicatie
                                         newItems[ms].Timestampstring = date.ToString();
                                         _medicineServerAdapter.AddItem(newItems[ms]);
                                     }
-
                                     _medicineServerAdapter.NotifyDataSetChanged();
-//                                    await Storage.GetInstance().saveMedSer(_medicineServerAdapter.getList());
                                     Log.Error("MEDICINE SERVER",
                                         "new items : " + newItems.Count + " list count: " + _medications.Count);
                                 }
@@ -190,94 +189,43 @@ namespace Familia.Medicatie
         {
             ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
             dialog.Show();
-            await Task.Run(async () =>
+            Log.Error("NetworkingData", "task getting data..");
+            var dataMedicationSchedules = await NetworkingData.GetInstance().ReadDataTask(0);
+            Log.Error("NetworkingData", "task data received");
+
+
+            Activity.RunOnUiThread(() =>
             {
-                try
+                Log.Error("NetworkingData", "uiThread");
+                if (dataMedicationSchedules != null && dataMedicationSchedules.Count!=0)
                 {
-                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("IdClient")}/0", Utils.GetDefaults("Token")); //this should be here
-                    if (res != null)
+                    _medications.Clear();
+                    _medications = new List<MedicationSchedule>(dataMedicationSchedules);
+                    _medicineServerAdapter.setMedsList(_medications);
+                    foreach (var el in _medicineServerAdapter.getList())
                     {
-                        Log.Error("MEDICATION SERVER  RESULT_FOR_MEDICATIE", res);
-                        if (res.Equals("[]")) return;
-                        _medications = ParseResultFromUrl(res);
-                        Log.Error("MEDICATION SERVER ", " count: " + _medications.Count);
-
-                        Activity.RunOnUiThread(() =>
-                        {
-                            _medicineServerAdapter.setMedsList(_medications);
-                            _medicineServerAdapter.NotifyDataSetChanged();
-                            cwEmpty.Visibility = _medicineServerAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
-                            dialog.Dismiss();
-                        });
+                        Log.Error("NetworkingData", el.ToString());
                     }
-                    else
-                    {
-//                        _medications = await Storage.GetInstance().readMedSer();
-                        Log.Error("MEDICATION SERVER ", " count: " + _medications.Count);
-                        Activity.RunOnUiThread(() =>
-                        {
-                            Log.Error("MEDICATION SERVER RESULT_FOR_MEDICATIE fragment", "nu se poate conecta la server");
-                            Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
-                            dialog.Dismiss();
-                        });
-                    }
+                    _medicineServerAdapter.NotifyDataSetChanged();
+                    cwEmpty.Visibility = _medicineServerAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
                 }
-                catch (Exception e)
+                else
                 {
-                    Log.Error("MEDICATION SERVER ERR", e.Message);
+                    cwEmpty.Visibility = _medicineServerAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
                 }
+                dialog.Dismiss();
             });
-
-            _medicineServerAdapter.NotifyDataSetChanged();
-            dialog.Dismiss();
-
-            //            cwEmpty.Visibility = _medicineServerAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
-            //            dialog.Dismiss();
-            //            bool saved = await Storage.GetInstance().saveMedSer(_medications);
-            //            if (saved)
-            //            {
-            //                try
-            //                {
-            //                    Log.Error("MEDICINE SERGER STORAGE", "saved");
-            //                    _medicineServerAdapter.NotifyDataSetChanged();
-            ////                    dialog.Dismiss(); //mutat sus
-            //                }
-            //                catch (Exception ex)
-            //                {
-            //                    Log.Error("ERRRRRRRR", ex.Message);
-            //                }
-            //            }
         }
         private async Task<List<MedicationSchedule>> GetMoreData(int size)
         {
             var list = new List<MedicationSchedule>();
-            Log.Error("MEDICATION SERVER ", _medications.Count + " size " + size);
-
-            await Task.Run(async () =>
+            list = await NetworkingData.GetInstance().ReadDataTask(size);
+            Activity.RunOnUiThread(() =>
             {
-                try
+                Log.Error("NetworkingData more data", "uiThread");
+                if (list == null)
                 {
-                    Log.Error("MEDICATION SERVER", _medications.Count + " size" + size);
-                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("IdClient")}/{size}", Utils.GetDefaults("Token")); //this should be here
-                    if (!string.IsNullOrEmpty(res))
-                    {
-                        countReq = 0;
-                        Log.Error("MEDICATION SERVER RESULT_FOR_MEDICATIE", res);
-                        if (res.Equals("[]")) return;
-                        list = ParseResultFromUrl(res);
-                    }
-                    else
-                    {
-                        Activity.RunOnUiThread(() =>
-                        {
-                            Log.Error("MEDICATION SERVER RESULT_FOR_MEDICATIE", "nu se poate conecta la server");
-                            Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
-                        });
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Error("MEDICATION SERVER ERR", e.Message);
+                    Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
                 }
             });
             return list;

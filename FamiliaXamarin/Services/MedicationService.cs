@@ -45,7 +45,6 @@ namespace FamiliaXamarin.Services
                 if (await SendData(this))
                 {
                     Log.Error("Medication Service", "S-a conectat la server");
-                    // interval = 1000 * 60 * 10;
                     interval = 6000;
                     counter = 0;
 //                    StopSelf();
@@ -56,8 +55,6 @@ namespace FamiliaXamarin.Services
                     counter++;
                     if (counter == 5)
                     {
-                        // interval = 1000 * 60 * 60;
-
                         interval = 10000;
                         counter = 0;
                     }
