@@ -76,6 +76,19 @@ namespace FamiliaXamarin.Asistenta_sociala
                         {
                             _benefitsList.Add(dataArray.GetJSONObject(i).GetString("benefit"));
                         }
+                        _listVOs = new List<BenefitSpinnerState>();
+
+                        foreach (var t in _benefitsList)
+                        {
+                            var stateVo = new BenefitSpinnerState
+                            {
+                                Title = t,
+                                IsSelected = false
+                            };
+                            _listVOs.Add(stateVo);
+                        }
+                        var myAdapter = new BenefitAdapter(Activity, 0, _listVOs);
+                        _benefitsSpinner.Adapter = myAdapter;
                     }
                 }
                 catch (Exception ex)
@@ -97,19 +110,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             GetBenefits();
             //string[] selectQualification = {
                 //"Beneficiu acordat", "Masaj", "Baie", "Perfuzie", "Pansament"};
-            _listVOs = new List<BenefitSpinnerState>();
-
-            foreach (var t in _benefitsList)
-            {
-                var stateVo = new BenefitSpinnerState
-                {
-                    Title = t,
-                    IsSelected = false
-                };
-                _listVOs.Add(stateVo);
-            }
-            var myAdapter = new BenefitAdapter(Activity, 0, _listVOs);
-            _benefitsSpinner.Adapter = myAdapter;
+           
             var fromPreferences = Utils.GetDefaults("ActivityStart");
             _tbDetails.TextChanged += delegate
             {
