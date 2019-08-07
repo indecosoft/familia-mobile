@@ -32,6 +32,8 @@ namespace FamiliaXamarin.Medicatie
         private SQLiteConnection _db;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            Log.Error("CREATE VIEW", "MEDICINE PERSONALA FRAGMENT");
+
             View view = inflater.Inflate(Resource.Layout.fragment_medicine, container, false);
             view.FindViewById(Resource.Id.btn_add_disease).SetOnClickListener(this);
             setupRecycleView(view);
@@ -44,7 +46,23 @@ namespace FamiliaXamarin.Medicatie
         {
             base.OnResume();
             SetListForAdapter();
+            Log.Error("MEDICINE PERSONALA", "on resume called");
         }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            Log.Error("MEDICINE PERSONALA", "on destroy called");
+
+        }
+
+        public override void OnPause()
+        {
+            base.OnPause();
+            Log.Error("MEDICINE PERSONALA", "on pause called");
+
+        }
+
 
         private void SetListForAdapter()
         {

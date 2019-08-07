@@ -12,6 +12,7 @@ using Android.Views;
 using Familia;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
+using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Services;
 using Org.Json;
 using SQLite;
@@ -53,6 +54,11 @@ namespace FamiliaXamarin.Medicatie.Alarm
             var content = intent.GetStringExtra(Content);
             var postpone = intent.GetIntExtra(Postpone, 5);
 
+            if (await Storage.GetInstance().isHere(uuid) == false)
+            {
+                Log.Error("RECEIVER SERVER", "med is not here anymore");
+                return;
+            }
             
 
             const string channel = "channelabsolut";

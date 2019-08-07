@@ -48,6 +48,7 @@ namespace FamiliaXamarin
         Intent _webSocketServiceIntent;
         Intent _medicationServiceIntent;
         Intent _smartBandServiceIntent;
+        Intent _medicationServerServiceIntent;
         private IMenu _menu;
         private FusedLocationProviderClient _fusedLocationProviderClient;
         //public static bool FromDisease;
@@ -60,7 +61,7 @@ namespace FamiliaXamarin
             {
                 if (Utils.CheckIfLocationIsEnabled())
                 {
-                    StartForegroundService(_loacationServiceIntent);
+                    // StartForegroundService(_loacationServiceIntent);
                     if(int.Parse(Utils.GetDefaults("UserType")) == 4 || int.Parse(Utils.GetDefaults("UserType")) == 3)
                         StartForegroundService(_smartBandServiceIntent);
                 }
@@ -78,10 +79,26 @@ namespace FamiliaXamarin
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
-            if (string.IsNullOrEmpty(Utils.GetDefaults("Token")))
+            if (string.IsNullOrEmpty(Utils.GetDefaults("Token")) || string.IsNullOrEmpty(Utils.GetDefaults("UserType")))
             {    var intent = new Intent(this, typeof(LoginActivity));
                 StartActivity(intent);
                 
+            }
+            bool ok = int.TryParse(Utils.GetDefaults("UserType"), out var type);
+            if (!ok)
+            {
+                Utils.RemoveDefaults();
+                ClearBluetoothDevices();
+                ClearMedicationStorages();
+                Task.Run(() =>
+                {
+                    Glide.Get(this).ClearDiskCache();
+                    //
+                });
+                Glide.Get(this).ClearMemory();
+                StartActivity(typeof(LoginActivity));
+                Finish();
+                return;
             }
             var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
@@ -99,8 +116,11 @@ namespace FamiliaXamarin
             _loacationServiceIntent = new Intent(this, typeof(LocationService));
             _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
             _smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
+            _medicationServerServiceIntent = new Intent(this, typeof(MedicationServerService));
+            _medicationServiceIntent = new Intent(this, typeof(MedicationService));
             var menuNav = navigationView.Menu;
-            switch (int.Parse(Utils.GetDefaults("UserType")))
+            
+            switch (type)
             {
                 case 1:
                     Toast.MakeText(this, "1", ToastLength.Long).Show();
@@ -113,6 +133,10 @@ namespace FamiliaXamarin
                     Title = "Generare cod QR";
 
                     StartForegroundService(_webSocketServiceIntent);
+                    StartService(_medicationServerServiceIntent);
+                    StartService(_medicationServiceIntent);
+
+
                     break;
                 case 2:
                     Toast.MakeText(this, "2", ToastLength.Long).Show();
@@ -135,6 +159,10 @@ namespace FamiliaXamarin
                         .AddToBackStack(null).Commit();
                     Title = "Dispozitive de masurare";
                     StartForegroundService(_webSocketServiceIntent);
+                    StartService(_medicationServerServiceIntent);
+                    StartService(_medicationServiceIntent);
+
+
                     break;
                 case 4:
                     Toast.MakeText(this, "4", ToastLength.Long).Show();
@@ -146,6 +174,10 @@ namespace FamiliaXamarin
                         .AddToBackStack(null).Commit();
                     Title = "Cauta prieteni";
                     StartForegroundService(_webSocketServiceIntent);
+                    StartService(_medicationServerServiceIntent);
+                    StartService(_medicationServiceIntent);
+
+
                     break;
             }
 
@@ -162,13 +194,13 @@ namespace FamiliaXamarin
             }
             else
             {
-                StartForegroundService(_loacationServiceIntent);
+                // StartForegroundService(_loacationServiceIntent);
                 if (int.Parse(Utils.GetDefaults("UserType")) == 4 || int.Parse(Utils.GetDefaults("UserType")) == 3)
                     StartForegroundService(_smartBandServiceIntent);
             }
             
 
-            //StartForegroundService(_loacationServiceIntent);
+            //// StartForegroundService(_loacationServiceIntent);
 
                 //StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);
@@ -361,6 +393,7 @@ namespace FamiliaXamarin
                     //Process.KillProcess(Process.MyPid());
                         StopService(_loacationServiceIntent);
                         StopService(_webSocketServiceIntent);
+                        StopService(_medicationServerServiceIntent);
                        // StopService(_medicationServiceIntent);
                     ClearBluetoothDevices();
                     ClearMedicationStorages();

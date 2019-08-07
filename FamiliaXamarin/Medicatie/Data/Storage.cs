@@ -22,6 +22,7 @@ using Org.Json;
 using SQLite;
 using File = Java.IO.File;
 using IOException = Java.IO.IOException;
+using Task = System.Threading.Tasks.Task;
 
 namespace FamiliaXamarin.Medicatie.Data
 {
@@ -58,51 +59,154 @@ namespace FamiliaXamarin.Medicatie.Data
             return Instance;
         }
 
-        public async void saveMedSer(List<MedicationSchedule> list)
+        public async Task<bool> saveMedSer(List<MedicationSchedule> list)
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
             _medicationSchedules = list;
             foreach (var element in _medicationSchedules)
             {
-                var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{element.Uuid}'");
-                Log.Error("Count current", c.Count() + "");
-                if (c.Count() == 0)
+                var objMed = await getElementByUUID(element.Uuid);
+                if (objMed != null && element.IdNotification == 0)
                 {
-                    Log.Error("STORAGE", "se introduc date in DB");
+                    element.IdNotification = objMed.IdNotification;
+                }
+
+                var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{element.Uuid}'");
+                Log.Error("Count current saveMedSer", c.Count() + "");
+                if (c.Count() ==0)
+                {
+                    Log.Error("STORAGE", "se introduc date in DB..");
                     await _db.Insert(new MedicineServerRecords()
                     {
                         Title = element.Title,
                         Content = element.Content,
                         DateTime = element.Timestampstring,
                         Uuid = element.Uuid,
-                        Postpone = element.Postpone + ""
-                       
+                        Postpone = element.Postpone + "",
+                        IdNotification = element.IdNotification + ""
                     });
                 }
-                   
             }
+            Log.Error("STORAGE", "finalizare");
+
+
+            return true;
+        }
+
+
+
+        public async void saveElementMedSer(MedicationSchedule med)
+        {
+            try
+            {
+
+                var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{med.Uuid}'");
+                Log.Error("Count current save Element", c.Count() + "");
+                if (c.Count() == 0)
+                {
+                    Log.Error("STORAGE", "se introduc date in DB..");
+                    await _db.Insert(new MedicineServerRecords()
+                    {
+                        Title = med.Title,
+                        Content = med.Content,
+                        DateTime = med.Timestampstring,
+                        Uuid = med.Uuid,
+                        Postpone = med.Postpone + "",
+                        IdNotification = med.IdNotification + ""
+
+                    });
+
+                    _medicationSchedules.Add(med);
+                    Log.Error("STORAGE", _medicationSchedules.Count() + "");
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error("ERR", e.ToString());
+            }
+
         }
 
         public async Task<List<MedicationSchedule>> readMedSer()
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
             var list =  await _db.QueryValuations("select * from MedicineServerRecords");
-
+           
+            var currentDate = DateTime.Now;
             var listMedSch = new List<MedicationSchedule>();
             foreach (var elem in list)
             {
                 try
                 {
-                    listMedSch.Add(new MedicationSchedule(elem.Uuid, elem.DateTime, elem.Title, elem.Content,
-                        int.Parse(elem.Postpone)));
+                    var medDate = Convert.ToDateTime(elem.DateTime);
+                    if (medDate >= currentDate)
+                    {
+                        listMedSch.Add(new MedicationSchedule(elem.Uuid, elem.DateTime, elem.Title, elem.Content,
+                            int.Parse(elem.Postpone), int.Parse(elem.IdNotification)));
+                    }
+
+                    
                 }
                 catch (Exception e)
                 {
                     Log.Error("ERR", e.ToString());
                 }
             }
+
+            _medicationSchedules = listMedSch;
             return listMedSch;
 
+        }
+
+        public async void removeMedSer(string UUIDmed)
+        {
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+            var list = await _db.QueryValuations($"delete from MedicineServerRecords where Uuid ='{UUIDmed}'");
+            Log.Error("STORAGE", "item deleted");
+            _medicationSchedules.Remove(await getElementByUUID(UUIDmed));
+        }
+
+        public async Task<bool> isHere(string UUIDmed)
+        {
+            var ok = false;
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+            var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{UUIDmed}'");
+
+            if (c.Count() != 0)
+            {
+                ok = true;
+                Log.Error("STORAGE", "item exists");
+            }
+
+            return ok;
+        }
+
+        public List<MedicationSchedule> getMSList()
+        {
+             return new List<MedicationSchedule>(_medicationSchedules);
+        }
+
+        public async Task<MedicationSchedule> getElementByUUID(string UUIDmed)
+        {
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+            var list = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{UUIDmed}'");
+            var listMedSch = new List<MedicationSchedule>();
+            if (list.Count() != 0)
+            {
+                foreach (var item in list)
+                {
+                    return new MedicationSchedule(item.Uuid, item.DateTime, item.Title, item.Content, int.Parse(item.Postpone), int.Parse(item.IdNotification));
+                }
+            }
+            return null;
+        }
+
+        public async Task<bool> updateNotificationIdForElementByUUID(string UUIDmed, int IdNotif)
+        {
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+            var list = await _db.QueryValuations($"UPDATE MedicineServerRecords  SET IdNotification = '{IdNotif}' WHERE Uuid ='{UUIDmed}'");
+
+            return true;
         }
 
         public List<Disease> GetDiseases()

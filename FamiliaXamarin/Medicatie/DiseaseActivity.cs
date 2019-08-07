@@ -5,6 +5,7 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Location;
+using Android.Media;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
@@ -239,6 +240,7 @@ namespace FamiliaXamarin.Medicatie
         private void SetAlarm(Hour hour, Medicine med, Disease boala, ref List<int> alarms, int position)
         {
             var am = (AlarmManager)GetSystemService(AlarmService);
+            
             var idAlarm = DateTime.Now.Millisecond ;
             var id = 0;
             var days = 0;
@@ -261,7 +263,12 @@ namespace FamiliaXamarin.Medicatie
             var timeHour = Convert.ToInt32(parts[0]);
             var timeMinute = Convert.ToInt32(parts[1]);
             Log.Error("inainte de date", med.Date.ToString());
-    
+
+            if (timeHour == 24)
+            {
+                timeHour = 0;
+            }
+
             var setDt = new DateTime(med.Date.Year, med.Date.Month, med.Date.Day ,timeHour,timeMinute,0);
             Log.Error("AAAA", setDt.ToString());
             var calendar = Calendar.Instance;

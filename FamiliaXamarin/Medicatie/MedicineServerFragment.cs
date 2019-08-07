@@ -14,6 +14,7 @@ using Android.Views;
 using Android.Widget;
 using Familia;
 using Familia.DataModels;
+using Familia.Medicatie.Data;
 using FamiliaXamarin;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
@@ -40,269 +41,36 @@ namespace Familia.Medicatie
         private Intent _medicationServiceIntent;
         private CardView cwEmpty;
         private int countReq;
-
-
-        private void setupRecycleView(View view)
-        {   _medications = new List<MedicationSchedule>();
-            RecyclerView rvMedSer = view.FindViewById<RecyclerView>(Resource.Id.rv_medser);
-            cwEmpty = view.FindViewById<CardView>(Resource.Id.cw_empty);
-            cwEmpty.Visibility = ViewStates.Gone;
-            LinearLayoutManager layoutManager = new LinearLayoutManager(Activity);
-            rvMedSer.SetLayoutManager(layoutManager);
-            _medicineServerAdapter = new MedicineServerAdapter();
-            rvMedSer.SetAdapter(_medicineServerAdapter);
-            _medicineServerAdapter.SetListener(this);
-            _medicineServerAdapter.setMedsList(_medications);
-            _medicineServerAdapter.NotifyDataSetChanged();
-            countReq = 0;
-
-            if (rvMedSer !=null)
-            {
-                rvMedSer.HasFixedSize = true;
-                var onScrollListener = new MedicineServerRecyclerViewOnScrollListener(layoutManager);
-                onScrollListener.LoadMoreEvent += async (object sender, EventArgs e) =>
-                {
-                    countReq++;
-                    Log.Error("Request Count", countReq + "");
-                    Log.Error("MEDICATION COUNT", _medications.Count + "");
-                    if (countReq == 1)
-                    {   
-                        var newItems = await GetMoreData(_medications.Count);
-                        
-                        Log.Error("MEDICATION COUNT new Items", newItems.Count + "");
-                        Log.Error("MEDICATION COUNT after get more data", _medications.Count + "");
-                        Log.Error("MEDICATION COUNT adapter", _medicineServerAdapter.ItemCount + "");
-                    }
-                };
-
-                rvMedSer.AddOnScrollListener(onScrollListener);
-                rvMedSer.SetLayoutManager(layoutManager);
-            }
-
-        }
-
+       
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            Log.Error("CREATE VIEW", "MEDICINE SERVER FRAGMENT");
             View view = inflater.Inflate(Resource.Layout.fragment_medicine_server, container, false);
-            setupRecycleView(view);
-
-            GetData();
-            return view;
-        }
-
-        private async Task<List<MedicationSchedule>> GetMoreData(int size)
-        {
-            var list = new List<MedicationSchedule>();
-            Log.Error("MEDICATION COUNT", _medications.Count +  " size" + size);
-            Log.Error("Request Count task", countReq + "");
-
-            await Task.Run(async () => {
-                try
-                {
-                    Log.Error("MEDICATION COUNT task", _medications.Count + " size" + size);
-                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("IdClient")}/{size + 1}", Utils.GetDefaults("Token"));
-
-                    if (!string.IsNullOrEmpty(res))
-                    {
-                        countReq = 0;
-                        Log.Error("RESULT_FOR_MEDICATIE", res);
-                        if (res.Equals("[]")) return;
-                        list = ParseResultFromUrl(res);
-
-                        for (var ms = 0; ms <= list.Count; ms++)
-                        {
-                            Log.Error("MSSSSSTRING", list[ms].Timestampstring);
-                            var date = parseTimestampStringToDate(list[ms]);
-                            list[ms].Timestampstring = date.ToString();
-
-                            _medications.Add(list[ms]);
-                            _medicineServerAdapter.AddItem(list[ms]);
-                            _medicineServerAdapter.NotifyDataSetChanged();
-                        }
-                        Storage.GetInstance().saveMedSer(_medications);
-
-                    }
-                    else
-                    {
-                        Activity.RunOnUiThread(() =>
-                        {
-                            Log.Error("RESULT_FOR_MEDICATIE", "nu se poate conecta la server");
-                            Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
-                        });
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Error("AlarmError", e.Message);
-                }
-            });
-            Log.Error("AFTER AWAIT", list.Count + "");
-            return list;
-        }
-
-        private async void GetData()
-        {
-            ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
-            dialog.Show();
-            await Task.Run(async () => {
-                try
-                {
-//                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("IdClient")}", Utils.GetDefaults("Token"));
-                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("IdClient")}/0", Utils.GetDefaults("Token"));
-
-                    if (res != null)
-                    {
-
-                        Log.Error("if", "aici");
-                        Log.Error("RESULT_FOR_MEDICATIE", res);
-                        if (res.Equals("[]")) return;
-                      
-                        _medications = ParseResultFromUrl(res);
-                        Log.Error("COUNT MEDICATIE", _medications.Count + "");
-//
-//                        for (var ms = 0; ms < _medications.Count; ms++)
-//                        {
-//                            SetupAlarm(ms);
-//                        }
-//                        Storage.GetInstance().saveMedSer(_medications);
-
-                    }
-                    else
-                    {
-                        _medications = await Storage.GetInstance().readMedSer();
-
-                        Activity.RunOnUiThread(() =>
-                        {
-                            Log.Error("RESULT_FOR_MEDICATIE", "nu se poate conecta la server");
-                            Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
-                        });
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    Log.Error("AlarmError", e.Message);
-                }
-            });
-
-            if(_medications.Count != 0 )
-            for (var ms = 0; ms < _medications.Count; ms++)
-            {
-                Log.Error("COUNT MEDICATIE Alarm", _medications.Count + "");
-
-                    SetupAlarm(ms);
-            }
-            Storage.GetInstance().saveMedSer(_medications);
-            dialog.Dismiss();
-
-            _medicineServerAdapter.setMedsList(_medications);
-            _medicineServerAdapter.NotifyDataSetChanged();
-            cwEmpty.Visibility = _medications.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
-
-        }
-
-        private void SetupAlarm(int ms)
-        {
-            Log.Error("MSSSSSTRING", _medications[ms].Timestampstring);
-            var am = (AlarmManager) Activity.GetSystemService(Context.AlarmService);
-
-            var i = new Intent(Activity, typeof(AlarmBroadcastReceiverServer));
-
-            i.PutExtra(AlarmBroadcastReceiverServer.Uuid, _medications[ms].Uuid);
-            i.PutExtra(AlarmBroadcastReceiverServer.Title, _medications[ms].Title);
-            i.PutExtra(AlarmBroadcastReceiverServer.Content, _medications[ms].Content);
-            i.PutExtra(AlarmBroadcastReceiverServer.Postpone, _medications[ms].Postpone);
-
-            i.SetAction(AlarmBroadcastReceiverServer.ActionReceive);
-            var random = new System.Random();
-            var id = CurrentTimeMillis() * random.Next();
-            var pi = PendingIntent.GetBroadcast(Activity, id, i, PendingIntentFlags.UpdateCurrent);
-
-            if (am == null) return;
-
-            var date = parseTimestampStringToDate(_medications[ms]);
-
-            _medications[ms].Timestampstring = date.ToString();
-            Calendar calendar = Calendar.Instance;
-            Calendar setcalendar = Calendar.Instance;
-
-            setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
-            Log.Error("DATE ", date.Year + ", " + date.Month + ", " + date.Day + ", " + date.Second);
-            if (setcalendar.Before(calendar)) return;
-            am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
-        }
-
-
-        private DateTime parseTimestampStringToDate(MedicationSchedule ms)
-        {
-            DateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-            {
-                TimeZone = Java.Util.TimeZone.GetTimeZone("UTC")
-            };
-
-            DateTime date = new DateTime();
             try
             {
-                date = DateTime.Parse(ms.Timestampstring);
-
-                DateFormat pstFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
-                {
-                    TimeZone = Java.Util.TimeZone.GetTimeZone("PST")
-                };
-                Log.Error("TIMESTAMPSTRING", date.ToLocalTime().ToString());
-
+                setupRecycleView(view);
+                GetData();
             }
-            catch (ParseException e)
+            catch (Exception e)
             {
-                e.PrintStackTrace();
+                Log.Error("ERR", e.ToString());
             }
-            return date.ToLocalTime();
-        }
-
-
-        public int CurrentTimeMillis()
-        {
-            return (DateTime.UtcNow).Millisecond;
-        }
-
-        private List<MedicationSchedule> ParseResultFromUrl(string res)
-        {
-            if (res != null)
-            {
-                var medicationScheduleList = new List<MedicationSchedule>();
-                var results = new JSONArray(res);
-
-                for (var i = 0; i < results.Length(); i++)
-                {
-                    var obj = (JSONObject)results.Get(i);
-                    var uuid = obj.GetString("uuid");
-                    var timestampString = obj.GetString("timestamp");
-                    var title = obj.GetString("title");
-                    var content = obj.GetString("content");
-                    var postpone = Convert.ToInt32(obj.GetString("postpone"));
-                    medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone));
-                    Log.Error("MEDICATIONSTRING", timestampString);
-                }
-
-                return medicationScheduleList;
-            }
-
-            return null;
+           
+            return view;
         }
 
         public void OnMedSerClick(MedicationSchedule med)
         {
-            Log.Error("MED", med.ToString());
+            Log.Error("MEDICATION SERVER", "med clicked" +  med.ToString());
             var alert = new Android.Support.V7.App.AlertDialog.Builder(Activity);
             var medDate = Convert.ToDateTime(med.Timestampstring);
             var currentDate = DateTime.Now;
 
             if (medDate < currentDate)
             {
-//                alert.SetTitle("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " se va marca administrat.");
                 alert.SetMessage("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " se va marca administrat.");
-                alert.SetPositiveButton("Da", async (senderAlert, args) => {
-
+                alert.SetPositiveButton("Da", async (senderAlert, args) =>
+                {
                     var now = DateTime.Now;
                     var mArray = new JSONArray().Put(new JSONObject().Put("uuid", med.Uuid)
                         .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
@@ -323,42 +91,224 @@ namespace Familia.Medicatie
                     {
                         cwEmpty.Visibility = ViewStates.Gone;
                     }
-
                 });
-
-                alert.SetNegativeButton("Nu", (senderAlert, args) => {});
+                alert.SetNegativeButton("Nu", (senderAlert, args) => { });
             }
             else
             {
-//                alert.SetTitle("Pentru afectiunea " + med.Title + ", mdimanetul " + med.Content + " nu se poate marca administrat.");
                 alert.SetMessage("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " nu se poate marca administrat.");
-                alert.SetPositiveButton("Ok",  (senderAlert, args) => {});
+                alert.SetPositiveButton("Ok", (senderAlert, args) => { });
             }
-
             Dialog dialog = alert.Create();
             dialog.Show();
         }
+        private void setupRecycleView(View view)
+        {
+            _medications = new List<MedicationSchedule>();
+            RecyclerView rvMedSer = view.FindViewById<RecyclerView>(Resource.Id.rv_medser);
+            cwEmpty = view.FindViewById<CardView>(Resource.Id.cw_empty);
+            cwEmpty.Visibility = ViewStates.Gone;
+            LinearLayoutManager layoutManager = new LinearLayoutManager(Activity);
+            rvMedSer.SetLayoutManager(layoutManager);
+            _medicineServerAdapter = new MedicineServerAdapter(_medications);
+            rvMedSer.SetAdapter(_medicineServerAdapter);
+            _medicineServerAdapter.SetListener(this);
+            _medicineServerAdapter.NotifyDataSetChanged();
+            countReq = 0;
+
+            if (rvMedSer != null)
+            {
+                rvMedSer.HasFixedSize = true;
+                var onScrollListener = new MedicineServerRecyclerViewOnScrollListener(layoutManager);
+                onScrollListener.LoadMoreEvent += async (object sender, EventArgs e) =>
+                {
+                    countReq++;
+                    Log.Error("MEDICATION SERVER", _medications.Count + "");
+                    if (countReq == 1)
+                    {
+                        try
+                        {
+                            if (_medications.Count <= 7) return;
+
+                            var newItems = await GetMoreData(_medications.Count);
+                            if (newItems.Count != 0)
+                            {
+                                try
+                                {
+                                    for (var ms = 0; ms <= newItems.Count; ms++)
+                                    {
+                                        Log.Error("MSSSSSTRING", newItems[ms].Timestampstring);
+                                        var date = parseTimestampStringToDate(newItems[ms]);
+                                        newItems[ms].Timestampstring = date.ToString();
+                                        _medicineServerAdapter.AddItem(newItems[ms]);
+                                    }
+                                    _medicineServerAdapter.NotifyDataSetChanged();
+                                    Log.Error("MEDICINE SERVER",
+                                        "new items : " + newItems.Count + " list count: " + _medications.Count);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Error("ERRRRR", ex.Message);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(" MEDICINE SER ERRRRR", ex.Message);
+                        }
+                    }
+                };
+                rvMedSer.AddOnScrollListener(onScrollListener);
+                rvMedSer.SetLayoutManager(layoutManager);
+            }
+        }
+
+        #region life cycle
+        public override void OnPause()
+        {
+            base.OnPause();
+            Log.Error("MEDICINE SERVER", "on pause called, count: " + _medications.Count);
+        }
+
+        public override void OnResume()
+        {
+            base.OnResume();
+            Log.Error("MEDICINE SERVER", "on resume called, count: " + _medications.Count);
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            Log.Error("MEDICINE SERVER", "on destroy called, count: " + _medications.Count);
+
+        }
+
+        #endregion
+
+        private async void GetData()
+        {
+            ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
+            dialog.Show();
+            Log.Error("NetworkingData", "task getting data..");
+            var dataMedicationSchedules = await NetworkingData.GetInstance().ReadDataTask(0);
+            Log.Error("NetworkingData", "task data received");
 
 
+            Activity.RunOnUiThread(() =>
+            {
+                Log.Error("NetworkingData", "uiThread");
+                if (dataMedicationSchedules != null && dataMedicationSchedules.Count!=0)
+                {
+                    _medications.Clear();
+                    _medications = new List<MedicationSchedule>(dataMedicationSchedules);
+                    _medicineServerAdapter.setMedsList(_medications);
+                    foreach (var el in _medicineServerAdapter.getList())
+                    {
+                        Log.Error("NetworkingData", el.ToString());
+                    }
+                    _medicineServerAdapter.NotifyDataSetChanged();
+                    cwEmpty.Visibility = _medicineServerAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+                }
+                else
+                {
+                    cwEmpty.Visibility = _medicineServerAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+                }
+                dialog.Dismiss();
+            });
+        }
+        private async Task<List<MedicationSchedule>> GetMoreData(int size)
+        {
+            var list = new List<MedicationSchedule>();
+            list = await NetworkingData.GetInstance().ReadDataTask(size);
+            Activity.RunOnUiThread(() =>
+            {
+                Log.Error("NetworkingData more data", "uiThread");
+                if (list == null)
+                {
+                    Toast.MakeText(Activity, "Nu se poate conecta la server", ToastLength.Short).Show();
+                }
+            });
+            return list;
+        }
+
+        #region parse data
+        private DateTime parseTimestampStringToDate(MedicationSchedule ms)
+        {
+            DateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            {
+                TimeZone = Java.Util.TimeZone.GetTimeZone("UTC")
+            };
+            DateTime date = new DateTime();
+            try
+            {
+                date = DateTime.Parse(ms.Timestampstring);
+
+                DateFormat pstFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
+                {
+                    TimeZone = Java.Util.TimeZone.GetTimeZone("PST")
+                };
+                Log.Error("TIMESTAMPSTRING", date.ToLocalTime().ToString());
+
+            }
+            catch (ParseException e)
+            {
+                e.PrintStackTrace();
+            }
+            return date.ToLocalTime();
+        }
+
+        public int CurrentTimeMillis()
+        {
+            return (DateTime.UtcNow).Millisecond;
+        }
+
+        private List<MedicationSchedule> ParseResultFromUrl(string res)
+        {
+            if (res != null)
+            {
+                var medicationScheduleList = new List<MedicationSchedule>();
+                var results = new JSONArray(res);
+                for (var i = 0; i < results.Length(); i++)
+                {
+                    var obj = (JSONObject)results.Get(i);
+                    var uuid = obj.GetString("uuid");
+                    var timestampString = obj.GetString("timestamp");
+                    var title = obj.GetString("title");
+                    var content = obj.GetString("content");
+                    var postpone = Convert.ToInt32(obj.GetString("postpone"));
+
+                    medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone, 0));
+                   
+                    Log.Error("MEDICATIONSTRING", timestampString);
+                }
+                return medicationScheduleList;
+            }
+            return null;
+        }
+
+        #endregion
+
+        #region send data to medication service
         public async Task<bool> SendMedicationTask(JSONArray mArray, MedicationSchedule med, DateTime now)
         {
             bool isOk = false;
-            await  Task.Run(async () =>
+            await Task.Run(async () =>
             {
                 if (await SendData(Context, mArray))
                 {
-                    var running = IsServiceRunning(typeof(MedicationService), Context);
-                    if (running)
-                    {
-                        Log.Error("SERVICE", "Medication service is running");
-                        Context.StopService(_medicationServiceIntent);
-                    }
+                    //                    var running = IsServiceRunning(typeof(MedicationService), Context);
+                    //                    if (running)
+                    //                    {
+                    //                        Log.Error("SERVICE", "Medication service is running");
+                    //                        Context.StopService(_medicationServiceIntent);
+                    //                    }
                     isOk = true;
                 }
                 else
                 {
                     AddMedicine(_db, med.Uuid, now);
-                    Log.Error("SERVICE", "Medication service started");
+                    Storage.GetInstance().removeMedSer(med.Uuid);
+                    Log.Error("MEDICATION SERVER", "Medication service started");
                     _medicationServiceIntent =
                         new Intent(Context, typeof(MedicationService));
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
@@ -369,11 +319,9 @@ namespace Familia.Medicatie
                     {
                         Context.StartService(_medicationServiceIntent);
                     }
-
                     isOk = false;
                 }
             });
-
             return isOk;
         }
 
@@ -409,5 +357,9 @@ namespace Familia.Medicatie
                 DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
             });
         }
+
+        #endregion
+
+
     }
 }

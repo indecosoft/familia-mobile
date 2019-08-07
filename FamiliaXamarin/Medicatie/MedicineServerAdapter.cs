@@ -26,6 +26,8 @@ namespace Familia.Medicatie
         public MedicineServerAdapter(List<MedicationSchedule> data)
         {
             list = data;
+            NotifyDataSetChanged();
+
         }
 
         public void SetListener(IOnMedSerListener listener)
@@ -37,6 +39,9 @@ namespace Familia.Medicatie
         {
             list.Clear();
             list = data;
+            Log.Error("INAINTE 1", "" + list.Count + ", "+ data.Count);
+            NotifyDataSetChanged();
+            Log.Error("INAINTE 2", "" + list.Count + ", "+ data.Count);
         }
 
         public List<MedicationSchedule> getList()
@@ -49,6 +54,8 @@ namespace Familia.Medicatie
             if (med != null)
             {
                 list.Remove(med);
+                NotifyDataSetChanged();
+
             }
         }
 
@@ -58,6 +65,8 @@ namespace Familia.Medicatie
             if (med != null)
             {
                 list.Add(med);
+                NotifyDataSetChanged();
+
             }
         }
 
@@ -85,10 +94,7 @@ namespace Familia.Medicatie
             holder.tvDateTime.Text =
                 $"{Convert.ToDateTime(medication.Timestampstring).Day}/{Convert.ToDateTime(medication.Timestampstring).Month}/{Convert.ToDateTime(medication.Timestampstring).Year} {hourPrefix}{Convert.ToDateTime(medication.Timestampstring).Hour.ToString()}:{minutePrefix}{Convert.ToDateTime(medication.Timestampstring).Minute.ToString()}";//medication.Timestampstring.Substring(0, medication.Timestampstring.Length - 6);
 
-            Log.Error("Date time in Adapter:", holder.tvDateTime.Text);
-            Log.Error("Old Position & adapter position", holder.OldPosition + ", " + holder.AdapterPosition);
-
-            Log.Error("Date time inainte:", medication.Timestampstring);
+            Log.Error("MEDICINE SERVER", "on bind view holder");
 
         }
 

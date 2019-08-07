@@ -14,5 +14,7 @@ namespace Familia.DataModels
         public string Title { get; set; }
         public string Content { get; set; }
         public string Postpone { get; set; }
+
+        public string IdNotification { get; set; }
     }
 }
