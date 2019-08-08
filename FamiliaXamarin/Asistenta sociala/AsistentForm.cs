@@ -110,7 +110,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             GetBenefits();
             //string[] selectQualification = {
                 //"Beneficiu acordat", "Masaj", "Baie", "Perfuzie", "Pansament"};
-           
+            
             var fromPreferences = Utils.GetDefaults("ActivityStart");
             _tbDetails.TextChanged += delegate
             {
@@ -156,7 +156,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                 .SetPriority(LocationRequest.PriorityHighAccuracy)
                 .SetInterval(1000)
                 .SetFastestInterval(1000);
-            _= new FusedLocationProviderCallback(Activity);
+            new FusedLocationProviderCallback(Activity);
 
             _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Activity);
 
