@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Android.Content;
+using Android.Content.Res;
+using Android.Graphics;
+using Android.Support.V4.Content;
 using Android.Views;
 using Android.Widget;
 using Android.Support.V7.Widget;
@@ -83,6 +87,18 @@ namespace Familia.Medicatie
         {
             var holder = viewHolder as MedicineLostAdapterViewHolder;
             MedicationSchedule medication = list[position];
+
+            if (medication.Uuid.Contains("disease"))
+            {
+                holder.ivIcon.SetImageResource(Resource.Drawable.pill_lost_pers);
+                holder.tvDateTime.SetTextColor(Color.ParseColor("#1AB188"));
+            }
+            else
+            {
+                holder.ivIcon.SetImageResource(Resource.Drawable.pill_lost);
+                holder.tvDateTime.SetTextColor(Color.ParseColor("#f02b4c"));
+            }
+
             holder.tvMedSer.Text = medication.Title;
             holder.tvContent.Text = medication.Content;
             holder.medication = medication;
@@ -95,16 +111,15 @@ namespace Familia.Medicatie
                 $"{Convert.ToDateTime(medication.Timestampstring).Day}/{Convert.ToDateTime(medication.Timestampstring).Month}/{Convert.ToDateTime(medication.Timestampstring).Year} {hourPrefix}{Convert.ToDateTime(medication.Timestampstring).Hour.ToString()}:{minutePrefix}{Convert.ToDateTime(medication.Timestampstring).Minute.ToString()}";//medication.Timestampstring.Substring(0, medication.Timestampstring.Length - 6);
 
             Log.Error("ADAPTER MEDICINE LOST", "on bind view holder");
-            
-
         }
 
         public override int ItemCount => list.Count;
         
     }
-
+    
     public class MedicineLostAdapterViewHolder : RecyclerView.ViewHolder
     {
+        public ImageView ivIcon;
         public TextView tvMedSer;
         public TextView tvContent;
         public TextView tvDateTime;
@@ -115,6 +130,7 @@ namespace Familia.Medicatie
 
         public MedicineLostAdapterViewHolder(View itemView) : base(itemView)
         {
+            ivIcon = itemView.FindViewById<ImageView>(Resource.Id.icon);
             tvMedSer = itemView.FindViewById<TextView>(Resource.Id.tv_medser);
             tvContent = itemView.FindViewById<TextView>(Resource.Id.info_content);
             tvDateTime = itemView.FindViewById<TextView>(Resource.Id.info_date_time);
@@ -126,7 +142,6 @@ namespace Familia.Medicatie
                 }
             };
         }
-
     }
 
     public interface IOnMedLostListener

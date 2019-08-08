@@ -61,7 +61,7 @@ namespace FamiliaXamarin
             {
                 if (Utils.CheckIfLocationIsEnabled())
                 {
-                    // StartForegroundService(_loacationServiceIntent);
+                    StartForegroundService(_loacationServiceIntent);
                     if(int.Parse(Utils.GetDefaults("UserType")) == 4 || int.Parse(Utils.GetDefaults("UserType")) == 3)
                         StartForegroundService(_smartBandServiceIntent);
                 }
@@ -194,13 +194,13 @@ namespace FamiliaXamarin
             }
             else
             {
-                // StartForegroundService(_loacationServiceIntent);
+                StartForegroundService(_loacationServiceIntent);
                 if (int.Parse(Utils.GetDefaults("UserType")) == 4 || int.Parse(Utils.GetDefaults("UserType")) == 3)
                     StartForegroundService(_smartBandServiceIntent);
             }
             
 
-            //// StartForegroundService(_loacationServiceIntent);
+            // StartForegroundService(_loacationServiceIntent);
 
                 //StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);

@@ -28,22 +28,21 @@ namespace FamiliaXamarin.Medicatie.Data
 {
     class Storage
     {
-       
+
         private static Storage Instance;
         private List<Disease> DiseaseList;
         private static readonly object padlock = new object();
-        private SqlHelper<MedicineServerRecords> _db;
 
+        // will be removed
+        private SqlHelper<MedicineServerRecords> _db;
         private List<MedicationSchedule> _medicationSchedules;
         private Storage()
         {
             this.DiseaseList = new List<Disease>();
-
+            // will be removed
             _medicationSchedules = new List<MedicationSchedule>();
             var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var numeDB = "devices_data.db";
-          
-       
         }
 
         public static Storage GetInstance()
@@ -55,10 +54,10 @@ namespace FamiliaXamarin.Medicatie.Data
                     Instance = new Storage();
                 }
             }
-
             return Instance;
         }
 
+        // will be updated to save Storage type of data - personal medication 
         public async Task<bool> saveMedSer(List<MedicationSchedule> list)
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
@@ -70,10 +69,9 @@ namespace FamiliaXamarin.Medicatie.Data
                 {
                     element.IdNotification = objMed.IdNotification;
                 }
-
                 var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{element.Uuid}'");
                 Log.Error("Count current saveMedSer", c.Count() + "");
-                if (c.Count() ==0)
+                if (c.Count() == 0)
                 {
                     Log.Error("STORAGE", "se introduc date in DB..");
                     await _db.Insert(new MedicineServerRecords()
@@ -88,18 +86,14 @@ namespace FamiliaXamarin.Medicatie.Data
                 }
             }
             Log.Error("STORAGE", "finalizare");
-
-
             return true;
         }
 
-
-
+        // will be removed & moved to NetworkingData class
         public async void saveElementMedSer(MedicationSchedule med)
         {
             try
             {
-
                 var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{med.Uuid}'");
                 Log.Error("Count current save Element", c.Count() + "");
                 if (c.Count() == 0)
@@ -115,7 +109,6 @@ namespace FamiliaXamarin.Medicatie.Data
                         IdNotification = med.IdNotification + ""
 
                     });
-
                     _medicationSchedules.Add(med);
                     Log.Error("STORAGE", _medicationSchedules.Count() + "");
                 }
@@ -124,14 +117,13 @@ namespace FamiliaXamarin.Medicatie.Data
             {
                 Log.Error("ERR", e.ToString());
             }
-
         }
 
+        // will be removed
         public async Task<List<MedicationSchedule>> readMedSer()
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
-            var list =  await _db.QueryValuations("select * from MedicineServerRecords");
-           
+            var list = await _db.QueryValuations("select * from MedicineServerRecords");
             var currentDate = DateTime.Now;
             var listMedSch = new List<MedicationSchedule>();
             foreach (var elem in list)
@@ -144,20 +136,17 @@ namespace FamiliaXamarin.Medicatie.Data
                         listMedSch.Add(new MedicationSchedule(elem.Uuid, elem.DateTime, elem.Title, elem.Content,
                             int.Parse(elem.Postpone), int.Parse(elem.IdNotification)));
                     }
-
-                    
                 }
                 catch (Exception e)
                 {
                     Log.Error("ERR", e.ToString());
                 }
             }
-
             _medicationSchedules = listMedSch;
             return listMedSch;
-
         }
 
+        // will be removed
         public async void removeMedSer(string UUIDmed)
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
@@ -166,6 +155,7 @@ namespace FamiliaXamarin.Medicatie.Data
             _medicationSchedules.Remove(await getElementByUUID(UUIDmed));
         }
 
+        // will be removed
         public async Task<bool> isHere(string UUIDmed)
         {
             var ok = false;
@@ -183,14 +173,14 @@ namespace FamiliaXamarin.Medicatie.Data
 
         public List<MedicationSchedule> getMSList()
         {
-             return new List<MedicationSchedule>(_medicationSchedules);
+            return new List<MedicationSchedule>(_medicationSchedules);
         }
 
+        // will be removed
         public async Task<MedicationSchedule> getElementByUUID(string UUIDmed)
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
             var list = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{UUIDmed}'");
-            var listMedSch = new List<MedicationSchedule>();
             if (list.Count() != 0)
             {
                 foreach (var item in list)
@@ -201,28 +191,16 @@ namespace FamiliaXamarin.Medicatie.Data
             return null;
         }
 
-        public async Task<bool> updateNotificationIdForElementByUUID(string UUIDmed, int IdNotif)
-        {
-            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
-            var list = await _db.QueryValuations($"UPDATE MedicineServerRecords  SET IdNotification = '{IdNotif}' WHERE Uuid ='{UUIDmed}'");
-
-            return true;
-        }
-
         public List<Disease> GetDiseases()
         {
             return new List<Disease>(DiseaseList);
         }
-
 
         public void AddDisease(Context context, Disease disease)
         {
             DiseaseList.Add(disease);
             disease.Id = DiseaseList.IndexOf(disease).ToString();
             SaveData(context, disease);
-
-
-
         }
 
         public Disease GetDisease(string id)
@@ -244,7 +222,6 @@ namespace FamiliaXamarin.Medicatie.Data
             return disease;
         }
 
-
         public Disease updateBoala(Context context, Disease disease)
         {
             foreach (Disease item in DiseaseList)
@@ -257,26 +234,26 @@ namespace FamiliaXamarin.Medicatie.Data
             }
             SaveCurrentData(context);
             return disease;
-    }
+        }
 
         public void SaveCurrentData(Context context)
         {
-            File file = new File(context.FilesDir, Constants.MedicationFile);
-            JSONArray data = new JSONArray();
-
-            if (DiseaseList.Count == 0)
-            {
-                file.Delete();
-                file = new File(context.FilesDir, Constants.MedicationFile);
-            }
-            
-            for (int i = 0; i < DiseaseList.Count; i++)
-            {
-                data.Put(CreateJsonObject(DiseaseList[i]));
-            }
-          
             try
             {
+                File file = new File(context.FilesDir, Constants.MedicationFile);
+                JSONArray data = new JSONArray();
+
+                if (DiseaseList.Count == 0)
+                {
+                    file.Delete();
+                    file = new File(context.FilesDir, Constants.MedicationFile);
+                }
+
+                for (int i = 0; i < DiseaseList.Count; i++)
+                {
+                    data.Put(CreateJsonObject(DiseaseList[i]));
+                }
+
                 FileWriter fileWriter = new FileWriter(file);
                 BufferedWriter outBufferedWriter = new BufferedWriter(fileWriter);
                 outBufferedWriter.Write(data.ToString());
@@ -294,10 +271,9 @@ namespace FamiliaXamarin.Medicatie.Data
             try
             {
                 jsonObject.Put("idBoala", disease.Id);
-
                 jsonObject.Put("numeBoala", disease.DiseaseName);
-
                 JSONArray listOfMedicines = new JSONArray();
+
                 for (int i = 0; i < disease.ListOfMedicines.Count; i++)
                 {
                     JSONObject medicament = new JSONObject();
@@ -306,7 +282,6 @@ namespace FamiliaXamarin.Medicatie.Data
                     medicament.Put("dataMedicament", disease.ListOfMedicines[i].Date.ToString());
                     medicament.Put("nrZileMedicament", disease.ListOfMedicines[i].NumberOfDays);
                     medicament.Put("intervalZi", disease.ListOfMedicines[i].IntervalOfDay);
-
                     JSONArray arrayOfHours = new JSONArray();
 
                     for (int j = 0; j < disease.ListOfMedicines[i].Hours.Count; j++)
@@ -317,7 +292,6 @@ namespace FamiliaXamarin.Medicatie.Data
                     medicament.Put("listaOre", arrayOfHours);
                     listOfMedicines.Put(medicament);
                 }
-
                 jsonObject.Put("listaMedicamente", listOfMedicines);
             }
             catch (JSONException e)
@@ -332,16 +306,8 @@ namespace FamiliaXamarin.Medicatie.Data
             try
             {
                 string data = ReadData(context);
-                JSONArray listOfDiseases;
-                if (data != null)
-                {
-                    listOfDiseases = new JSONArray(data);
-                }
-                else
-                {
-                    listOfDiseases = new JSONArray();
-                }
-
+                JSONArray listOfDiseases = data != null ? new JSONArray(data) : new JSONArray();
+                
                 listOfDiseases.Put(CreateJsonObject(disease));
 
                 File file = new File(context.FilesDir, Constants.MedicationFile);
@@ -362,10 +328,9 @@ namespace FamiliaXamarin.Medicatie.Data
 
         public string ReadData(Context context)
         {
-            Stream fis;
             try
             {
-                fis = context.OpenFileInput(Constants.MedicationFile);
+                Stream fis = context.OpenFileInput(Constants.MedicationFile);
                 InputStreamReader isr = new InputStreamReader(fis);
                 BufferedReader bufferedReader = new BufferedReader(isr);
                 StringBuilder sb = new StringBuilder();
@@ -389,17 +354,8 @@ namespace FamiliaXamarin.Medicatie.Data
             try
             {
                 DiseaseList.Clear();
-
                 string data = ReadData(context);
-                JSONArray diseases;
-                if (data != null)
-                {
-                    diseases = new JSONArray(data);
-                }
-                else
-                {
-                    diseases = new JSONArray();
-                }
+                JSONArray diseases = data != null ? new JSONArray(data) : new JSONArray();
 
                 for (int i = 0; i < diseases.Length(); i++)
                 {
@@ -415,18 +371,16 @@ namespace FamiliaXamarin.Medicatie.Data
                     for (int j = 0; j < arrayOfMedicines.Length(); j++)
                     {
                         Medicine m = new Medicine();
-                        m.IdMed= (string)((JSONObject)arrayOfMedicines.Get(j)).Get("idMedicament");
+                        m.IdMed = (string)((JSONObject)arrayOfMedicines.Get(j)).Get("idMedicament");
                         m.Name = (string)((JSONObject)arrayOfMedicines.Get(j)).Get("numeMedicament");
-                        Log.Error("Aici se verifica daca minunata data se converteste frumos",
-                            (string) ((JSONObject) arrayOfMedicines.Get(j)).Get("dataMedicament"));
+                        Log.Error("Storage conversion date", (string)((JSONObject)arrayOfMedicines.Get(j)).Get("dataMedicament"));
                         m.Date = DateTime.Parse((string)((JSONObject)arrayOfMedicines.Get(j)).Get("dataMedicament"));
-                        Log.Error("dupa conversie in Storage", m.Date.ToString());
+                        Log.Error("Storage after conversion", m.Date.ToString());
                         m.NumberOfDays = (int)((JSONObject)arrayOfMedicines.Get(j)).Get("nrZileMedicament");
                         m.IntervalOfDay = (int)((JSONObject)arrayOfMedicines.Get(j)).Get("intervalZi");
 
                         List<Hour> ListOfHours = new List<Hour>();
                         JSONArray arrayOfHours = (JSONArray)((JSONObject)arrayOfMedicines.Get(j)).Get("listaOre");
-
                         for (int k = 0; k < arrayOfHours.Length(); k++)
                         {
                             Hour h = new Hour();
@@ -434,9 +388,7 @@ namespace FamiliaXamarin.Medicatie.Data
                             h.HourName = (string)((JSONObject)arrayOfHours.Get(k)).Get("numeOra");
                             ListOfHours.Add(h);
                         }
-
                         m.Hours = ListOfHours;
-
                         listOfMedicines.Add(m);
                     }
                     b.ListOfMedicines = listOfMedicines;
