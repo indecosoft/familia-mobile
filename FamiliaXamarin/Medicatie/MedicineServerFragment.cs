@@ -193,7 +193,6 @@ namespace Familia.Medicatie
             var dataMedicationSchedules = await NetworkingData.GetInstance().ReadDataTask(0);
             Log.Error("NetworkingData", "task data received");
 
-
             Activity.RunOnUiThread(() =>
             {
                 Log.Error("NetworkingData", "uiThread");
@@ -202,10 +201,6 @@ namespace Familia.Medicatie
                     _medications.Clear();
                     _medications = new List<MedicationSchedule>(dataMedicationSchedules);
                     _medicineServerAdapter.setMedsList(_medications);
-                    foreach (var el in _medicineServerAdapter.getList())
-                    {
-                        Log.Error("NetworkingData", el.ToString());
-                    }
                     _medicineServerAdapter.NotifyDataSetChanged();
                     cwEmpty.Visibility = _medicineServerAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
                 }
