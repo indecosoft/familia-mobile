@@ -191,6 +191,351 @@ namespace FamiliaXamarin.Medicatie.Data
             return null;
         }
 
+        #region personal medication
+
+
+        public async Task<List<MedicationSchedule>> GetPersonalMedicationConverted()
+        {
+            var listFromFileConverted = ConvertPersonalMedicationListToMedicationSchedules(GetInstance().GetDiseases());
+            var listFromLocalDb = await ReadListFromDbPastDataTask();
+
+            if (listFromLocalDb.Count == 0)
+            {
+                Log.Error("Storage", "saving in db.." + await SaveListInDBTask(listFromFileConverted));
+                return listFromFileConverted;
+            }
+
+            if (listFromLocalDb.Count != 0)
+            {
+                Log.Error("STORAGE class", " selecting data from lists...");
+
+                var finalList = new List<MedicationSchedule>();
+                foreach (var fileItem in listFromFileConverted)
+                {
+                    var diseasemedFile = fileItem.Uuid.Split("hour")[0];
+                    var hourFile = fileItem.Uuid.Split("hour")[1];
+
+                    var listWithRemovedItems = new List<MedicationSchedule>();
+
+                    for (var i = 0; i < listFromLocalDb.Count; i++)
+                    {
+                        var dbItem = listFromLocalDb[i];
+                        var diseasemedDB = dbItem.Uuid.Split("hour")[0];
+                        var hourDB = dbItem.Uuid.Split("hour")[1];
+
+                        if (hourDB != null & hourDB.Contains("removed"))
+                        {
+                            Log.Error("STORAGE class REMOVED", "item removed: " + dbItem.ToString());
+                            listWithRemovedItems.Add(dbItem);
+                        }
+                        var isItemRemoved = false;
+
+                        if (listWithRemovedItems.Count != 0)
+                        {
+                            var itemToFind = fileItem;
+                            itemToFind.Uuid += "removed";
+                            Log.Error("STORAGE class REMOVED", "uuid to find " + itemToFind.ToString());
+
+                            if (ItemInListFound(itemToFind, listWithRemovedItems))
+                            {
+                                Log.Error("STORAGE class REMOVED", "item removed: " + dbItem.ToString());
+                                isItemRemoved = true;
+                            }
+                        }
+                        
+                        if (isItemRemoved == false)
+                        {
+                            if (diseasemedFile.Equals(diseasemedDB))
+                            {
+                                if (hourFile.Equals(hourDB))
+                                {
+                                    finalList.Add(dbItem);
+                                    Log.Error("STORAGE class", "same hours, added to final list");
+                                }
+                                else
+                                {
+                                    if (!(ItemInListFound(dbItem, listFromFileConverted)))
+                                    {
+                                        Log.Error("STORAGE class", " item was deleted: " + dbItem.ToString());
+                                    }
+                                    else
+                                    {
+                                        if (!(ItemInListFound(fileItem, listFromLocalDb)))
+                                        {
+                                            //element updated
+                                            if (fileItem.Uuid.Contains("removed"))
+                                            {
+
+                                            }
+                                            else
+                                            {
+                                                Log.Error("STORAGE class UPDATE", "element to save: " + fileItem.ToString());
+                                                var currentDate = DateTime.Now;
+                                                var medDate = Convert.ToDateTime(fileItem.Timestampstring);
+                                                if (medDate <= currentDate)
+                                                {
+                                                    var isSaved = await SaveItemInDBTask(fileItem);
+                                                    if (isSaved)
+                                                    {
+                                                        listFromLocalDb.Add(fileItem);
+
+                                                        finalList.Add(fileItem);
+                                                    }
+                                                    Log.Error("STORAGE class UPDATE", "count db list after adding element: " + listFromLocalDb.Count);
+                                                    Log.Error("STORAGE class UPDATE", "list from local db");
+
+                                                    foreach (var el in listFromLocalDb)
+                                                    {
+                                                        Log.Error("STORAGE class UPDATE", el.ToString());
+                                                    }
+                                                    finalList.Remove(fileItem);
+                                                }
+                                            }
+
+                                           
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (!(ItemInListFound(fileItem, listFromLocalDb)))
+                                {
+                                    //save element in db
+                                    Log.Error("STORAGE class", "element to save: " + fileItem.ToString());
+                                    var currentDate = DateTime.Now;
+                                    var medDate = Convert.ToDateTime(fileItem.Timestampstring);
+                                    if (medDate <= currentDate)
+                                    {
+                                        var isSaved = await SaveItemInDBTask(fileItem);
+                                        if (isSaved)
+                                        {
+                                            listFromLocalDb.Add(fileItem);
+                                            finalList.Add(fileItem);
+                                        }
+                                        Log.Error("STORAGE class", "count db list after adding element: " + listFromLocalDb.Count);
+                                        Log.Error("STORAGE class", "list from local db");
+                                        foreach (var el in listFromLocalDb)
+                                        {
+                                            Log.Error("STORAGE class", el.ToString());
+                                        }
+                                        finalList.Remove(fileItem);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                Log.Error("STORAGE class", "final list");
+                foreach (var el in finalList)
+                {
+                    Log.Error("STORAGE class", el.ToString());
+                }
+
+                Log.Error("STORAGE class", "return final list");
+                return finalList;
+            }
+
+            return listFromFileConverted;
+            // id example: disease0medid0hour0
+            // 1. lista din db = 0 => salvare in db med din file
+            // 2.lista din db != 0 => parcurgere array-uri
+            // 2.1. comparare uuid-uri: if disease0medid0 exists in both arrays, verify hour, if hours are different =: element updated
+            // 2.1.1 if hour from db list doesn't exist don't add it to final array  
+            // 2.2 else for 2.1 if disease0medid0 exists only in file list, save it in db 
+        }
+
+        public async Task<bool> RemoveItemFromDBTask(MedicationSchedule item)
+        {
+            try
+            {
+                if (item.Uuid.Contains("removed")) return false;
+                _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+                var newUuid = item.Uuid + "removed";
+                await _db.QueryValuations($"update MedicineServerRecords set Uuid='{newUuid}' where Uuid ='{item.Uuid}'");
+                Log.Error("STORAGE deleted item new UUid: ", (await getElementByUUID(newUuid)).ToString());
+            }
+            catch (Exception e)
+            {
+                Log.Error("STORAGE class ERROR", e.Message);
+                return false;
+            }
+            return true;
+        }
+
+        private bool ItemInListFound(MedicationSchedule item, List<MedicationSchedule> list)
+        {
+            foreach (var variable in list)
+            {
+                if (variable.Uuid.Equals(item.Uuid))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public async Task<List<MedicationSchedule>> ReadListFromDbPastDataTask()
+        {
+            var list = await GetDataFromDb();
+            var currentDate = DateTime.Now;
+            var listMedSch = new List<MedicationSchedule>();
+
+            foreach (var elem in list)
+            {
+                try
+                {
+                    var medDate = Convert.ToDateTime(elem.DateTime);
+                    if (medDate <= currentDate)
+                    {
+                        listMedSch.Add(new MedicationSchedule(elem.Uuid, elem.DateTime, elem.Title, elem.Content,
+                            int.Parse(elem.Postpone), int.Parse(elem.IdNotification)));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("ERR", e.ToString());
+                }
+            }
+            Log.Error("Storage class", "past data list count from db" + listMedSch.Count);
+            //            var arr = listMedSch.Where(c => !(c.Uuid.Contains("disease"))).ToList();
+            return new List<MedicationSchedule>(listMedSch.Where(c => c.Uuid.Contains("disease")).ToList());
+        }
+
+        private async Task<IEnumerable<MedicineServerRecords>> GetDataFromDb()
+        {
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+            var list = await _db.QueryValuations("select * from MedicineServerRecords");
+            return list;
+        }
+
+        public async Task<bool> SaveItemInDBTask(MedicationSchedule element)
+        {
+            try
+            {
+                _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+                Log.Error("Storage class saving element..", element.ToString());
+                if (!(await SearchItemTask(element.Uuid)))
+                {
+                    Log.Error("Storage class", "inserting in db..");
+                    await _db.Insert(new MedicineServerRecords()
+                    {
+                        Title = element.Title,
+                        Content = element.Content,
+                        DateTime = element.Timestampstring,
+                        Uuid = element.Uuid,
+                        Postpone = element.Postpone + "",
+                        IdNotification = "" + element.IdNotification
+                    });
+                    Log.Error("Storage class", "element saved");
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error("STORAGE error", e.Message);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> SaveListInDBTask(List<MedicationSchedule> list)
+        {
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+
+            foreach (var element in list)
+            {
+                Log.Error("Storage class saving..", element.ToString());
+                if (!(await SearchItemTask(element.Uuid)))
+                {
+
+
+                    var objMed = await getElementByUUID(element.Uuid);
+                    if (objMed != null && element.IdNotification == 0)
+                    {
+                        element.IdNotification = objMed.IdNotification;
+                    }
+                    Log.Error("Storage class", "inserting in db..");
+                    await _db.Insert(new MedicineServerRecords()
+                    {
+                        Title = element.Title,
+                        Content = element.Content,
+                        DateTime = element.Timestampstring,
+                        Uuid = element.Uuid,
+                        Postpone = element.Postpone + "",
+                        IdNotification = "" + element.IdNotification
+                    });
+                }
+            }
+
+            Log.Error("Storage class", "saved");
+
+            return true;
+        }
+
+        public async Task<bool> SearchItemTask(string UUIDmed)
+        {
+            var found = false;
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+            var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{UUIDmed}'");
+            if (c.Count() != 0)
+            {
+                found = true;
+                Log.Error("Storage class", "item exists");
+            }
+            return found;
+        }
+
+
+        private static List<MedicationSchedule> ConvertPersonalMedicationListToMedicationSchedules(List<Disease> LD)
+        {
+            var listMedSchPersonal = new List<MedicationSchedule>();
+
+            foreach (var item in LD)
+            {
+                foreach (var itemMed in item.ListOfMedicines)
+                {
+                    foreach (var itemHour in itemMed.Hours)
+                    {
+                        if (itemHour.HourName.Equals("24:00"))
+                        {
+                            itemHour.HourName = "23:59";
+                        }
+                        var tspan = TimeSpan.Parse(itemHour.HourName);
+                        Log.Error("TIME SPAN: ", tspan.ToString());
+                        var dtMed = new DateTime(itemMed.Date.Year, itemMed.Date.Month, itemMed.Date.Day, tspan.Hours, tspan.Minutes, tspan.Seconds);
+                        Log.Error("MEDICINE LOST", "item med: " + dtMed);
+
+                        var currentDate = DateTime.Now;
+                        if (dtMed < currentDate)
+                        {
+                            TimeSpan difference = DateTime.Now.Subtract(dtMed);
+                            var days = (int)difference.TotalDays + 1;
+                            Log.Error("MEDICINE LOST DAYS", "days betweet 2 dates: " + days);
+                            if (itemMed.NumberOfDays != 0)
+                            {
+                                days = days >= itemMed.NumberOfDays
+                                    ? itemMed.NumberOfDays
+                                    : itemMed.NumberOfDays - days;
+                            }
+
+                            Log.Error("MEDICINE LOST DAYS", "days: " + days);
+                            var objMedSch = new MedicationSchedule("disease" + item.Id + "med" + itemMed.IdMed + "hour" + itemHour.Id + "time" + dtMed.ToString(), dtMed.ToString(), item.DiseaseName, itemMed.Name, 5, 0);
+                            listMedSchPersonal.Add(objMedSch);
+                            for (int j = 1; j < days; j++)
+                            {
+                                dtMed = dtMed.AddDays(1);
+                                objMedSch = new MedicationSchedule("disease" + item.Id + "med" + itemMed.IdMed + "hour" + itemHour.Id + "time" + dtMed.ToString(), dtMed.ToString(), item.DiseaseName, itemMed.Name, 5, 0);
+                                listMedSchPersonal.Add(objMedSch);
+                            }
+                        }
+                    }
+                }
+            }
+            return listMedSchPersonal.OrderBy(x => DateTime.Parse(x.Timestampstring)).ToList();
+        }
+
+
         public List<Disease> GetDiseases()
         {
             return new List<Disease>(DiseaseList);
@@ -307,7 +652,7 @@ namespace FamiliaXamarin.Medicatie.Data
             {
                 string data = ReadData(context);
                 JSONArray listOfDiseases = data != null ? new JSONArray(data) : new JSONArray();
-                
+
                 listOfDiseases.Put(CreateJsonObject(disease));
 
                 File file = new File(context.FilesDir, Constants.MedicationFile);
@@ -401,5 +746,6 @@ namespace FamiliaXamarin.Medicatie.Data
             }
             return new List<Disease>(DiseaseList);
         }
+        #endregion
     }
 }

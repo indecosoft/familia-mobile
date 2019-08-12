@@ -126,6 +126,8 @@ namespace Familia.Medicatie
             Title = "Medicatie";
         }
 
+        
+
       
 
         private void BottomNavigation_NavigationItemSelected(object sender,

@@ -226,11 +226,8 @@ namespace FamiliaXamarin
              }
              if (Intent.GetBooleanExtra("FromMedicine", false))
              {
-//                 SupportFragmentManager.BeginTransaction()
-//                     .Replace(Resource.Id.fragment_container, new MedicineFragment())
-//                     .AddToBackStack(null).Commit();
                  StartActivity(new Intent(this, typeof(MedicineBaseActivity)));
-
+                 Log.Error("MAIN ACTIVITY", "on back pressed");
                 Title = "Medicatie";
              }
              if (Intent.GetBooleanExtra("FromSmartband", false))

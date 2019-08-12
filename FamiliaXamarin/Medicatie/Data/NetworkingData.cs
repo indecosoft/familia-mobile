@@ -165,14 +165,6 @@ namespace Familia.Medicatie.Data
                 }
             }
 
-//            var l = await ReadListFromDbFutureDataTask();
-//            Log.Error("NeworkingData class", "data from db");
-//
-//            foreach (var el in l)
-//            {
-//                Log.Error("NetwokingData class", el.ToString());
-//            }
-
             Log.Error("NeworkingData class", "saved");
 
             return true;
