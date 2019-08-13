@@ -27,6 +27,7 @@ using Android.Support.V4.Content;
 using Android.Util;
 using Com.Bumptech.Glide;
 using Familia.Active_Conversations;
+using Familia.Chat;
 using Familia.DataModels;
 using Familia.Login_System;
 using Familia.Medicatie;
@@ -61,7 +62,7 @@ namespace FamiliaXamarin
             {
                 if (Utils.CheckIfLocationIsEnabled())
                 {
-                    // StartForegroundService(_loacationServiceIntent);
+                    StartForegroundService(_loacationServiceIntent);
                     if(int.Parse(Utils.GetDefaults("UserType")) == 4 || int.Parse(Utils.GetDefaults("UserType")) == 3)
                         StartForegroundService(_smartBandServiceIntent);
                 }
@@ -194,13 +195,13 @@ namespace FamiliaXamarin
             }
             else
             {
-                // StartForegroundService(_loacationServiceIntent);
+                StartForegroundService(_loacationServiceIntent);
                 if (int.Parse(Utils.GetDefaults("UserType")) == 4 || int.Parse(Utils.GetDefaults("UserType")) == 3)
                     StartForegroundService(_smartBandServiceIntent);
             }
             
 
-            //// StartForegroundService(_loacationServiceIntent);
+            //StartForegroundService(_loacationServiceIntent);
 
                 //StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);

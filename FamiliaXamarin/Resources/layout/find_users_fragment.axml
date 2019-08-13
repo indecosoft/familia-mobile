@@ -1,81 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    >
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animation_view"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"
-        app:lottie_autoPlay="false"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/location" />
-
-    <TextView
-        android:id="@+id/lbNobody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/animation_view" />
-
-    <com.yuyakaido.android.cardstackview.CardStackView
-        android:id="@+id/activity_main_card_stack_view"
-        android:layout_marginBottom="100dp"
-        android:layout_height="match_parent"
+		<RelativeLayout
+		android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        app:elevationEnabled="true"
-        app:leftOverlay="@layout/overlay_left"
-        app:rightOverlay="@layout/overlay_right"
-        app:swipeDirection="horizontal"
-        app:swipeEnabled="true"
-        app:visibleCount="3">
+		android:layout_centerInParent= "true">
 
+			<com.airbnb.lottie.LottieAnimationView
+			android:id="@+id/animation_view"
+			android:layout_width="160dp"
+			android:layout_height="160dp"
+			app:lottie_autoPlay="false"
+			app:lottie_loop="true"
+		    android:layout_centerHorizontal="true"
+			app:lottie_rawRes="@raw/location" />
 
-    </com.yuyakaido.android.cardstackview.CardStackView>
+			<TextView
+			android:id="@+id/lbNobody"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Nimeni nu se afla in jurul tau"
+		    android:layout_centerHorizontal="true"
+			android:layout_below="@+id/animation_view" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="5dp"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_main_card_stack_view">
+		<Button android:id="@+id/searchButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="5dp"
+			android:text="Cauta prieteni"
+			android:padding ="16dp"
+			android:background="@drawable/main_button_style"
+			android:layout_centerHorizontal="true"
+			android:layout_below="@+id/lbNobody"/>
+			</RelativeLayout>
+		<android.support.constraint.ConstraintLayout
+		android:layout_height="match_parent"
+        android:layout_width="match_parent"
+		>
+			   
+		       <com.yuyakaido.android.cardstackview.CardStackView
+				android:id="@+id/activity_main_card_stack_view"
+				android:layout_height="match_parent"
+				android:layout_width="match_parent"
+				app:elevationEnabled="true"
+				app:leftOverlay="@layout/overlay_left"
+				app:rightOverlay="@layout/overlay_right"
+				app:swipeDirection="horizontal"
+				app:swipeEnabled="true"
+				app:visibleCount="3"/>
+				  <RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				app:layout_constraintBottom_toBottomOf="parent">
+					<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal"
+					android:padding="5dp"
+					android:layout_centerHorizontal="true">
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btnLeft"
-            android:background="@drawable/swipe_left_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginEnd="10dp"
-            android:backgroundTint="@color/colorDanger"
-            android:padding="28dp"
-            android:drawableStart="@drawable/message_off" />
+						<android.support.v7.widget.AppCompatButton
+							android:id="@+id/btnLeft"
+							android:background="@drawable/swipe_left_button"
+							android:layout_width="80dp"
+							android:layout_height="80dp"
+							android:layout_marginTop="5dp"
+							android:layout_marginBottom="5dp"
+							android:layout_marginEnd="10dp"
+							android:backgroundTint="@color/colorDanger"
+							android:padding="28dp"
+							android:drawableStart="@drawable/message_off" />
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btnRight"
-            android:background="@drawable/swipe_left_button"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginStart="10dp"
-            android:padding="28dp"
-            android:backgroundTint="@color/colorAccent"
-            android:drawableStart="@drawable/swipe_message" />
-    </LinearLayout>
-</android.support.constraint.ConstraintLayout>
+						<android.support.v7.widget.AppCompatButton
+							android:id="@+id/btnRight"
+							android:background="@drawable/swipe_left_button"
+							android:layout_width="80dp"
+							android:layout_height="80dp"
+							android:layout_marginTop="5dp"
+							android:layout_marginBottom="5dp"
+							android:layout_marginStart="10dp"
+							android:padding="28dp"
+							android:backgroundTint="@color/colorAccent"
+							android:drawableStart="@drawable/swipe_message" />
+					</LinearLayout>
+				</RelativeLayout>
+    
+
+				
+			
+
+		</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
