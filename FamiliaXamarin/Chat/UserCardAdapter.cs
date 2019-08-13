@@ -1,25 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Familia;
-using Android.App;
+﻿using System.Collections.Generic;
 using Android.Content;
-using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
-using Java.Lang;
+using FamiliaXamarin;
 using Object = Java.Lang.Object;
 
-namespace FamiliaXamarin
+namespace Familia.Chat
 {
     class UserCardAdapter : ArrayAdapter<UserCard>
     {
-    public UserCardAdapter(Context context) : base(context, 0)
+    public UserCardAdapter(Context context, IList<UserCard> people) : base(context, Resource.Layout.item_tourist_spot_card, people)
     {
-        //super(context, 0);
     }
 
     public override View GetView(int position, View convertView, ViewGroup parent)
@@ -45,20 +37,20 @@ namespace FamiliaXamarin
 
         holder.Name.Text = spot.Name;
         holder.Probleme.Text = spot.Probleme ;
-        holder.Image.SetImageResource(spot.Url);
+        //holder.Image.SetImageResource(spot.Url);
 
         Glide.With(Context).Load(spot.Url).Into(holder.Image);
 
         return convertView;
 
     }
+        
 
     private class ViewHolder : Object
     {
-        public TextView Name;
-        public TextView Probleme;
-        public ImageView Image;
-        //private View Curentview;
+        public readonly TextView Name;
+        public readonly TextView Probleme;
+        public readonly ImageView Image;
 
             public ViewHolder(View view)
         {

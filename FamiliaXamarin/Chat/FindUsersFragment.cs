@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Familia;
 using Android.Animation;
+using Android.App;
 using Android.OS;
-using Android.Support.V4.Content;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Airbnb.Lottie;
-using Com.Airbnb.Lottie.Model;
-using Com.Airbnb.Lottie.Value;
 using Com.Yuyakaido.Android.CardStackView;
+using FamiliaXamarin;
 using FamiliaXamarin.Helpers;
+using Java.Security.Interfaces;
 using Org.Json;
 
-namespace FamiliaXamarin.Chat
+namespace Familia.Chat
 {
-    public class FindUsersFragment : Android.Support.V4.App.Fragment, Animator.IAnimatorListener
+    public class FindUsersFragment : Android.Support.V4.App.Fragment
     {
         private UserCardAdapter _adapter;
         private CardStackView _cardStackView;
@@ -25,218 +24,175 @@ namespace FamiliaXamarin.Chat
         private TextView _lbNobody;
         private Button _leftButton;
         private Button _rightButton;
-        private List<UserCard> _people;
-        private bool _doRefresh = true;
+        private Button _searchButton;
+        private List<UserCard> _people = new List<UserCard>();
 
-        UserCardAdapter CreateUserCardAdapter()
+        private void Setup()
         {
-            var userCardAdapter = new UserCardAdapter(Activity);
-            userCardAdapter.AddAll(_people);
-            return userCardAdapter;
+
+            _cardStackView.CardSwiped += async (sender, args) =>
+            {
+                if (args.Direction.ToString() == "Right" && _adapter.Count != 0)
+                {
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            var emailFrom = Utils.GetDefaults("Email");
+
+                            var emailObject = new JSONObject().Put("dest", _adapter.GetItem(_cardStackView.TopIndex - 1).Email)
+                                .Put("from", emailFrom);
+                            WebSocketClient.Client.Emit("chat request", emailObject);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error("Chat Request Err: ", e.Message);
+                        }
+                    });
+
+
+                    if (_cardStackView.TopIndex != _adapter.Count) return;
+                    _rightButton.Visibility = ViewStates.Gone;
+                    _leftButton.Visibility = ViewStates.Gone;
+                    _cardStackView.Visibility = ViewStates.Gone;
+                    _searchButton.Visibility = ViewStates.Visible;
+                    _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                }
+                else if (_cardStackView.TopIndex == _adapter.Count)
+                {
+                    _rightButton.Visibility = ViewStates.Gone;
+                    _leftButton.Visibility = ViewStates.Gone;
+                    _cardStackView.Visibility = ViewStates.Gone;
+                    _searchButton.Visibility = ViewStates.Visible;
+                    _lbNobody.Text = "Nimeni nu se afla in jurul tau";
+                }
+
+            };
         }
-        public override void OnDestroy()
+
+        private async Task<List<UserCard>> GetListOfPeople()
         {
-            base.OnDestroy();
-            _doRefresh = false;
-        }
-        private void Setup() => _cardStackView.CardSwiped += delegate (object sender, CardStackView.CardSwipedEventArgs args)
-                      {
-                          if (args.Direction.ToString() == "Right" && _people.Count != 0)
-                          {
-                              try
-                              {
-                                  var emailFrom = Utils.GetDefaults("Email");
+            var list = new List<UserCard>();
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    var dataToSent = new JSONObject().Put("id", Utils.GetDefaults("IdClient")).Put("distance", 3000);
+                    var response = await WebServices.Post(Constants.PublicServerAddress + "/api/nearMe", dataToSent, Utils.GetDefaults("Token"));
+                    Log.Error("SA VINA RASPUNSURILEEEEE: ", response);
 
-                                  var emailObject = new JSONObject().Put("dest", _people[_cardStackView.TopIndex - 1].Email).Put("from", emailFrom);
-                                  WebSocketClient.Client.Emit("chat request", emailObject);
-                              }
-                              catch (Exception e)
-                              {
-                                  Console.WriteLine(e.Message);
-                              }
-                              if (_cardStackView.TopIndex == _people.Count)
-                              {
-                                  _rightButton.Enabled = false;
-                                  _leftButton.Enabled = false;
-                                  _cardStackView.Enabled = false;
-                                  _lbNobody.Text = "Nimeni nu se afla in jurul tau";
-                                  _cardStackView.SetAdapter(_adapter);
-                                  _animationView.PlayAnimation();
-                                  _lbNobody.Text = "Nimeni nu se afla in jurul tau";
-                                  _rightButton.Enabled = true;
-                                  _leftButton.Enabled = true;
-                                  _cardStackView.Enabled = true;
-                                  _lbNobody.Text = string.Empty;
-//                                  Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
-                                  SearchPeople();
-                              }
-                          }
-                          else if (_cardStackView.TopIndex == _people.Count)
-                          {
-                              _rightButton.Enabled = false;
-                              _leftButton.Enabled = false;
-                              _cardStackView.Enabled = false;
-                              _lbNobody.Text = "Nimeni nu se afla in jurul tau";
-                              _cardStackView.SetAdapter(_adapter);
-                              _animationView.PlayAnimation();
-                              _lbNobody.Text = "Nimeni nu se afla in jurul tau";
-                              _rightButton.Enabled = true;
-                              _leftButton.Enabled = true;
-                              _cardStackView.Enabled = true;
-                              _lbNobody.Text = string.Empty;
-//                              Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
-                              SearchPeople();
-                          }
+                    if (response != null)
+                    {
+                        var nearMe = new JSONArray(response);
+                        for (var i = 0; i < nearMe.Length(); i++)
+                        {
+                            var nearMeObj = (JSONObject)nearMe.Get(i);
 
-                      };
 
-        private void Reload()
-        {
-            _adapter = CreateUserCardAdapter();
-            _cardStackView.SetAdapter(_adapter);
-            _cardStackView.Visibility = ViewStates.Visible;
+                            list.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
+                                string.Empty, nearMeObj.GetString("avatar"),
+                                Resource.Drawable.card));
+                            Log.Error("FORULETUL DE PE NEARME: ", "Ma bucur ca am inserat");
+
+                        }
+                    }
+                    
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Error occurred in " + nameof(FindUsersFragment), e.Message);
+                    list = null;
+                }
+                
+
+            });
+
+            return list;
         }
 
         private async void SearchPeople()
         {
-//            Log.Error("NearMe Before", "aiciuca");
-            int status = 2;
-            await Task.Run(async () =>
-            {
-//                Log.Error("NearMe Before", "aiciuca");
-                var dataToSent = new JSONObject().Put("id", Utils.GetDefaults("IdClient")).Put("distance", 3000);
-                var response = await WebServices.Post(Constants.PublicServerAddress + "/api/nearMe", dataToSent, Utils.GetDefaults("Token"));
-//                Log.Error("Response: ", "" + response);
-                try
-                {
-                    if (response != null)
-                    {
-
-                        var nearMe = new JSONArray(response);
-                        _people = new List<UserCard>();
-                        if (nearMe.Length() != 0)
-                        {
-                            for (var i = 0; i < nearMe.Length(); i++)
-                            {
-                                var nearMeObj = (JSONObject)nearMe.Get(i);
-                                _people.Add(new UserCard(nearMeObj.GetString("nume"), nearMeObj.GetString("email"),
-                                    string.Empty, nearMeObj.GetString("avatar"),
-                                    Resource.Drawable.card));
-                            }
-                        }
-
-                        status = 1;
-
-                    }
-                    else
-                    {
-                        status = 2;
-                    }
-
-
-                }
-                catch (JSONException e)
-                {
-                    status = 2;
-                    e.PrintStackTrace();
-                }
-            });
             try
             {
-                if (status == 1)
-                {
-                    Reload();
-                    if (_people.Count == 0 && _doRefresh)
-                    {
+                _people = await GetListOfPeople();
 
-                            _animationView.PlayAnimation();
-                        _lbNobody.Text = "Nimeni nu se afla in jurul tau";
-                        _rightButton.Enabled = true;
-                        _leftButton.Enabled = true;
-                        _cardStackView.Enabled = true;
-                        _lbNobody.Text = string.Empty;
-//                        Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
-                        SearchPeople();
-                        
-                       
-                    }
+                Log.Error("Debug Log From " + nameof(FindUsersFragment), "CurrentList Count " + _people.Count);
+                if (_people == null)
+                {
+                    _rightButton.Visibility = ViewStates.Gone;
+                    _leftButton.Visibility = ViewStates.Gone;
+                    _cardStackView.Visibility = ViewStates.Gone;
+                    _searchButton.Visibility = ViewStates.Visible;
+                    _lbNobody.Text = "Nu se poate realiza conexiunea la server";
+                } else if (_people.Count > 0)
+                {
+                    _rightButton.Visibility = ViewStates.Visible;
+                    _leftButton.Visibility = ViewStates.Visible;
+                    _cardStackView.Visibility = ViewStates.Visible;
+                    _searchButton.Visibility = ViewStates.Gone;
+                    _adapter.Clear();
+                    _adapter.AddAll(_people);
+                    _lbNobody.Text = string.Empty;
+                    _adapter.NotifyDataSetChanged();
                 }
                 else
                 {
-                    _lbNobody.Text = "A fost intampinata o eroare in timpul conectarii la server!";
-
-                    //Utils.DisplayNotification(Activity, "Eroare", "A fost intampinata o eroare in timpul conectarii la server!");
-
+                    _rightButton.Visibility = ViewStates.Gone;
+                    _leftButton.Visibility = ViewStates.Gone;
+                    _cardStackView.Visibility = ViewStates.Gone;
+                    _searchButton.Visibility = ViewStates.Visible;
+                    _lbNobody.Text = "Nimeni nu se afla in jurul tau";
                 }
+
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e);
-                //throw;
+                Log.Error("Error occurred in " + nameof(FindUsersFragment), ex.Message);
+                _lbNobody.Text = "Nu se poate realiza conexiunea la server";
             }
-            _animationView.Progress = 1f;
-
-
-            if (_animationView.IsAnimating)
-                _animationView.CancelAnimation();
         }
 
-        void InitUi(View view)
+        private void InitUi(View view)
         {
             _cardStackView = view.FindViewById<CardStackView>(Resource.Id.activity_main_card_stack_view);
             _animationView = view.FindViewById<LottieAnimationView>(Resource.Id.animation_view);
             _lbNobody = view.FindViewById<TextView>(Resource.Id.lbNobody);
             _rightButton = view.FindViewById<Button>(Resource.Id.btnRight);
             _leftButton = view.FindViewById<Button>(Resource.Id.btnLeft);
+            _searchButton = view.FindViewById<Button>(Resource.Id.searchButton);
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            // Use this to return your custom view for this Fragment
-            // return inflater.Inflate(Resource.Layout.YourFragment, container, false);
-            View view = inflater.Inflate(Resource.Layout.find_users_fragment, container, false);
+            var view = inflater.Inflate(Resource.Layout.find_users_fragment, container, false);
+
             InitUi(view);
             Setup();
-            _animationView.AddAnimatorListener(this);
             //start annimation
             _animationView.PlayAnimation();
-
-            _rightButton.Enabled = true;
-            _leftButton.Enabled = true;
-            _cardStackView.Enabled = true;
+            _adapter = new UserCardAdapter(Activity, _people);
+            _cardStackView.SetAdapter(_adapter);
+            _searchButton.Visibility = ViewStates.Gone;
+            _searchButton.Click += (sender, args) =>
+           {
+               _rightButton.Visibility = ViewStates.Visible;
+               _leftButton.Visibility = ViewStates.Visible;
+               _cardStackView.Visibility = ViewStates.Visible;
+               _searchButton.Visibility = ViewStates.Gone;
+               _lbNobody.Text = "Cautare";
+               SearchPeople();
+           };
             _lbNobody.Text = string.Empty;
-            Log.Error("Aici inainte de search", "intra? azi o sa aflam!");
-//            SearchPeople();
+            SearchPeople();
 
             _leftButton.Click += delegate { SwipeLeft(); };
             _rightButton.Click += delegate { SwipeRight(); };
 
             return view;
         }
-
-        public void OnAnimationCancel(Animator animation)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void OnAnimationEnd(Animator animation)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void OnAnimationRepeat(Animator animation)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void OnAnimationStart(Animator animation)
-        {
-            
-
-        }
         private void SwipeLeft()
         {
-            List<UserCard> spots = ExtractRemainingUserCards();
+            var spots = ExtractRemainingUserCards();
             if (spots.Count == 0)
             {
                 return;
@@ -269,7 +225,7 @@ namespace FamiliaXamarin.Chat
 
         private void SwipeRight()
         {
-            List<UserCard> spots = ExtractRemainingUserCards();
+            var spots = ExtractRemainingUserCards();
             if (spots.Count == 0)
             {
                 return;

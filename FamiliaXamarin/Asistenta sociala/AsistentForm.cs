@@ -61,12 +61,15 @@ namespace FamiliaXamarin.Asistenta_sociala
             return _benefitsSpinner.SelectedItem != null && !_benefitsSpinner.SelectedItem.Equals(string.Empty) && !_tbDetails.Text.Equals(string.Empty);
 
         }
-        private async void GetBenefits()
+        private async Task<bool> GetBenefits(int idClient)
         {
+            Log.Error("Debug Log in " + nameof(AsistentForm), idClient.ToString());
+            var status = false;
             await Task.Run(async () => {
                 try
                 {
-                    var response = await WebServices.Get($"{Constants.PublicServerAddress}/api/getBenefits", Utils.GetDefaults("Token"));
+                    var response = await WebServices.Get($"{Constants.PublicServerAddress}/api/getBenefits/{idClient}", Utils.GetDefaults("Token"));
+                    Log.Error("Debug Log in " + nameof(AsistentForm), "Response: " + response);
                     var jsonResponse = new JSONObject(response);
                     Log.Error("ASISTEN FORM BENEFITS", jsonResponse.ToString());
                     if (jsonResponse.GetInt("status") == 2)
@@ -89,14 +92,17 @@ namespace FamiliaXamarin.Asistenta_sociala
                         }
                         var myAdapter = new BenefitAdapter(Activity, 0, _listVOs);
                         _benefitsSpinner.Adapter = myAdapter;
+                        status = true;
                     }
                 }
                 catch (Exception ex)
                 {
                     Log.Error("error la beneficii", ex.Message);
+                    status = false;
                 }
                
             });
+            return status;
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -107,7 +113,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             IntiUi(view);
             _distanceCalculatorService = new Intent(Activity, typeof(DistanceCalculator));
             _medicalAsistanceService = new Intent(Activity, typeof(MedicalAsistanceService));
-            GetBenefits();
+            
             //string[] selectQualification = {
                 //"Beneficiu acordat", "Masaj", "Baie", "Perfuzie", "Pansament"};
             
@@ -186,7 +192,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                     _qrJsonData = new JSONObject(result.Text);
 
                     Log.Error("QrCode", _qrJsonData.ToString());
-
+                    await GetBenefits(_qrJsonData.GetInt("Id"));
 
                     var expDateTime = _qrJsonData.GetString("expirationDateTime");
                     var dateTimeExp = sdf.Parse(expDateTime);

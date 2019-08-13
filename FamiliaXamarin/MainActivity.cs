@@ -27,6 +27,7 @@ using Android.Support.V4.Content;
 using Android.Util;
 using Com.Bumptech.Glide;
 using Familia.Active_Conversations;
+using Familia.Chat;
 using Familia.DataModels;
 using Familia.Login_System;
 using Familia.Medicatie;
