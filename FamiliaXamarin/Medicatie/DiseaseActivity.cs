@@ -182,7 +182,7 @@ namespace FamiliaXamarin.Medicatie
             disease.ListOfMedicines = medicamentAdapter.GetMedicaments();
             disease.DiseaseName = numeBoala;
             Storage.GetInstance().updateBoala(this, disease);
-
+            
             SetupAlarm();
 
             Finish();
@@ -325,6 +325,10 @@ namespace FamiliaXamarin.Medicatie
         {
             medicamentAdapter.UpdateMedicament(medicament, medicament.IdMed);
             medicamentAdapter.NotifyDataSetChanged();
+
+            //delete disease-med from local storage for MedicationSchedule
+
+
         }
 
         public void OnMedicamentClick(Medicine medicament)

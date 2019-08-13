@@ -18,6 +18,7 @@ using Familia.DataModels;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Medicatie.Entities;
 using Java.IO;
+using Javax.Security.Auth;
 using Org.Json;
 using SQLite;
 using File = Java.IO.File;
@@ -198,6 +199,13 @@ namespace FamiliaXamarin.Medicatie.Data
         {
             var listFromFileConverted = ConvertPersonalMedicationListToMedicationSchedules(GetInstance().GetDiseases());
             var listFromLocalDb = await ReadListFromDbPastDataTask();
+            var listWithRemovedItems = new List<MedicationSchedule>(listFromLocalDb.Where(c => c.Uuid.Contains("removed")).ToList());
+            Log.Error("STORAGE class", "removed items:");
+
+            foreach (var item in listWithRemovedItems)
+            {
+                Log.Error("STORAGE class", "item removed" + item.ToString());
+            }
 
             if (listFromLocalDb.Count == 0)
             {
@@ -214,32 +222,36 @@ namespace FamiliaXamarin.Medicatie.Data
                 {
                     var diseasemedFile = fileItem.Uuid.Split("hour")[0];
                     var hourFile = fileItem.Uuid.Split("hour")[1];
-
-                    var listWithRemovedItems = new List<MedicationSchedule>();
-
+                    
                     for (var i = 0; i < listFromLocalDb.Count; i++)
                     {
                         var dbItem = listFromLocalDb[i];
                         var diseasemedDB = dbItem.Uuid.Split("hour")[0];
                         var hourDB = dbItem.Uuid.Split("hour")[1];
 
-                        if (hourDB != null & hourDB.Contains("removed"))
-                        {
-                            Log.Error("STORAGE class REMOVED", "item removed: " + dbItem.ToString());
-                            listWithRemovedItems.Add(dbItem);
-                        }
+//                        if (hourDB != null & hourDB.Contains("removed"))
+//                        {
+////                            Log.Error("STORAGE class REMOVED", "item removed: " + dbItem.ToString());
+//                           
+//                        }
                         var isItemRemoved = false;
 
                         if (listWithRemovedItems.Count != 0)
                         {
-                            var itemToFind = fileItem;
+                            Log.Error("STORAGE class REMOVED file item", "uuid to find " + fileItem.ToString());
+
+                            var itemToFind = new MedicationSchedule(fileItem.Uuid, fileItem.Timestampstring, fileItem.Title, fileItem.Content, fileItem.Postpone, fileItem.IdNotification);
                             itemToFind.Uuid += "removed";
-                            Log.Error("STORAGE class REMOVED", "uuid to find " + itemToFind.ToString());
 
                             if (ItemInListFound(itemToFind, listWithRemovedItems))
                             {
-                                Log.Error("STORAGE class REMOVED", "item removed: " + dbItem.ToString());
+                                Log.Error("STORAGE class REMOVED", "item removed: " + itemToFind.ToString());
                                 isItemRemoved = true;
+                            }
+                            else
+                            {
+                                Log.Error("STORAGE class REMOVED", "item : " + itemToFind.ToString());
+
                             }
                         }
                         
@@ -349,11 +361,13 @@ namespace FamiliaXamarin.Medicatie.Data
         {
             try
             {
+                Log.Error("STORAGE class", " item arrived: " + item.ToString() );
+
                 if (item.Uuid.Contains("removed")) return false;
                 _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
                 var newUuid = item.Uuid + "removed";
                 await _db.QueryValuations($"update MedicineServerRecords set Uuid='{newUuid}' where Uuid ='{item.Uuid}'");
-                Log.Error("STORAGE deleted item new UUid: ", (await getElementByUUID(newUuid)).ToString());
+                Log.Error("STORAGE class deleted item new UUid: ", (await getElementByUUID(newUuid)).ToString());
             }
             catch (Exception e)
             {
@@ -398,7 +412,6 @@ namespace FamiliaXamarin.Medicatie.Data
                 }
             }
             Log.Error("Storage class", "past data list count from db" + listMedSch.Count);
-            //            var arr = listMedSch.Where(c => !(c.Uuid.Contains("disease"))).ToList();
             return new List<MedicationSchedule>(listMedSch.Where(c => c.Uuid.Contains("disease")).ToList());
         }
 
@@ -536,6 +549,70 @@ namespace FamiliaXamarin.Medicatie.Data
         }
 
 
+        private async void UpdateDiseaseInLocalDbTask(Disease disease)
+        {
+            var listFromLocalDb = await ReadListFromDbPastDataTask();
+            var listForCurrentDisease = listFromLocalDb.Where(c=> c.Uuid.Contains("disease"+ disease.Id));
+            Log.Error("STORAGE class", "items for this disease");
+            foreach (var item in listForCurrentDisease)
+            {
+                Log.Error("STORAGE class", "item: " + item.ToString());
+            }
+            Log.Error("STORAGE class", "splitting items....");
+
+            var list = new List<MedicationSchedule>();
+            foreach (var item in listFromLocalDb)
+            {
+                MedicationSchedule obj = new MedicationSchedule(item.Uuid, item.Timestampstring, item.Title, item.Content, item.Postpone, item.IdNotification);
+                var diseaseId = item.Uuid.Split("med")[0].Split("disease")[1];
+                var medId = item.Uuid.Split("med")[1].Split("hour")[0];
+                var hourId = item.Uuid.Split("med")[1].Split("hour")[1].Split("time")[0];
+                var time = item.Timestampstring;
+                Log.Error("STORAGE class", "item splitted " + "disease: " + diseaseId + " medId: " + medId + " hourId: " + hourId + " time "  + time);
+
+                if (disease.Id.Equals(diseaseId))
+                {
+                    foreach (var med in disease.ListOfMedicines)
+                    {
+                        if (med.IdMed.Equals(medId))
+                        {
+                            foreach (var hour in med.Hours)
+                            {
+                                if (hour.Id.Equals(hourId))
+                                {
+                                    var tspan = TimeSpan.Parse(hour.HourName);
+                                    var dtMed = new DateTime(med.Date.Year, med.Date.Month, med.Date.Day, tspan.Hours, tspan.Minutes, tspan.Seconds);
+                                    if (time.Equals(dtMed.ToString()))
+                                    {
+                                        Log.Error("STORAGE class", "same datetime" + item.ToString());
+                                    }
+
+                                    var dt = DateTime.Parse(time);
+                                    if (!(dt.TimeOfDay.Equals(tspan)))
+                                    {
+                                        Log.Error("STORAGE class", "different hour" + item.ToString());
+                                        obj = new MedicationSchedule("disease" + disease.Id + "med" + med.IdMed + "hour" + hour.Id + "time" + dtMed.ToString(), dtMed.ToString(), disease.DiseaseName, med.Name, 5, 0);
+                                       
+                                    }
+                                    else
+                                    {
+                                        
+                                        Log.Error("STORAGE class", "same hour" + item.ToString());
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                list.Add(obj);
+            }
+
+        }
+
+
         public List<Disease> GetDiseases()
         {
             return new List<Disease>(DiseaseList);
@@ -574,7 +651,12 @@ namespace FamiliaXamarin.Medicatie.Data
                 if (item.Id.Equals(disease.Id))
                 {
                     item.DiseaseName = disease.DiseaseName;
+                    //AICI remain in db only same items 
+                    //                        .. if date & hour is diferent from local db then delete it from local db
                     item.ListOfMedicines = disease.ListOfMedicines;
+
+                    UpdateDiseaseInLocalDbTask(disease);
+
                 }
             }
             SaveCurrentData(context);
