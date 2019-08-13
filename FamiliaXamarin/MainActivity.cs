@@ -161,7 +161,7 @@ namespace FamiliaXamarin
                     StartForegroundService(_webSocketServiceIntent);
                     StartService(_medicationServerServiceIntent);
                     StartService(_medicationServiceIntent);
-
+                    //commet for push
 
                     break;
                 case 4:
