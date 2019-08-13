@@ -2,7 +2,7 @@
 {
     public class MedicationSchedule
     {
-        public string Uuid { get;}
+        public string Uuid { get; set; }
         public string Timestampstring { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }

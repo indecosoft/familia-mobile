@@ -13,6 +13,7 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Familia.Medicatie;
 using FamiliaXamarin.Medicatie.Alarm;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
@@ -91,7 +92,7 @@ namespace FamiliaXamarin.Medicatie
             else
             {
                 //base.OnBackPressed();
-                var intent = new Intent(this, typeof(MainActivity));
+                var intent = new Intent(this, typeof(MedicineBaseActivity));
                 intent.AddFlags(ActivityFlags.ClearTop);
                 intent.PutExtra("FromMedicine", true);
                 StartActivity(intent);
@@ -181,7 +182,7 @@ namespace FamiliaXamarin.Medicatie
             disease.ListOfMedicines = medicamentAdapter.GetMedicaments();
             disease.DiseaseName = numeBoala;
             Storage.GetInstance().updateBoala(this, disease);
-
+            
             SetupAlarm();
 
             Finish();
@@ -324,6 +325,10 @@ namespace FamiliaXamarin.Medicatie
         {
             medicamentAdapter.UpdateMedicament(medicament, medicament.IdMed);
             medicamentAdapter.NotifyDataSetChanged();
+
+            //delete disease-med from local storage for MedicationSchedule
+
+
         }
 
         public void OnMedicamentClick(Medicine medicament)

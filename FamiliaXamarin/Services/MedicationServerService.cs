@@ -37,22 +37,23 @@ namespace Familia.Services
         {
             if (Utils.CheckNetworkAvailability())
             {
-                Log.Error("MedicationServer Service",
-                    "Sa zicem ca acest minunat log reprezinta requestul catre server.");
-                _medications = new List<MedicationSchedule>();
-                 GetData();
-
-
+                if (int.Parse(Utils.GetDefaults("UserType")) == 3)
+                {
+                    Log.Error("MedicationServer Service", "server call");
+                    _medications = new List<MedicationSchedule>();
+                    GetData();
+                }
+                else
+                {
+                    Log.Error("MedicationServer Service", "another type of user");
+                }
                 _handler.PostDelayed(_runnable, _refreshTime * 3600 * 24);
-
             }
             else
             {
-
                 Log.Error("MedicationServer Service", "Operation Aborted because Network is disabled");
                 _handler.PostDelayed(_runnable, _refreshTime * 10);
             }
-
         }
 
         private async void GetData()
@@ -77,13 +78,11 @@ namespace Familia.Services
                     Log.Error("AlarmError", e.Message);
                 }
             });
-
            
             Log.Error("MedicationServer Service", _medications.Count + "_med list med count");
 
             if (_medications.Count != 0)
             {
-//                Storage.GetInstance().saveMedSer(_medications);
                 var list = new List<MedicationSchedule>();
                 Log.Error("MedicationServer Service", _medications.Count + " in if");
 
@@ -116,16 +115,11 @@ namespace Familia.Services
 
                             Log.Error("MedicationServer Service", "setup alarm ");
                         }
-
                     }
                 }
-
                await Storage.GetInstance().saveMedSer(list);
             }
-
-          
         }
-
 
         private List<MedicationSchedule> ParseResultFromUrl(string res)
         {
@@ -144,13 +138,11 @@ namespace Familia.Services
                     var postpone = Convert.ToInt32(obj.GetString("postpone"));
 
                     var random = new System.Random();
-
                     var id = CurrentTimeMillis() * random.Next();
 
                     medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone, id));
                     Log.Error("MEDICATIONSTRING", timestampString);
                 }
-
                 return medicationScheduleList;
             }
             return null;
@@ -191,18 +183,15 @@ namespace Familia.Services
             {
                 TimeZone = Java.Util.TimeZone.GetTimeZone("UTC")
             };
-
             DateTime date = new DateTime();
             try
             {
                 date = DateTime.Parse(ms.Timestampstring);
-
                 DateFormat pstFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
                 {
                     TimeZone = Java.Util.TimeZone.GetTimeZone("PST")
                 };
                 Log.Error("TIMESTAMPSTRING", date.ToLocalTime().ToString());
-
             }
             catch (ParseException e)
             {

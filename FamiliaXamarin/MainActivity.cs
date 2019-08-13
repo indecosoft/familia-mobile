@@ -162,7 +162,7 @@ namespace FamiliaXamarin
                     StartForegroundService(_webSocketServiceIntent);
                     StartService(_medicationServerServiceIntent);
                     StartService(_medicationServiceIntent);
-
+                    //commet for push
 
                     break;
                 case 4:
@@ -201,7 +201,7 @@ namespace FamiliaXamarin
             }
             
 
-            //StartForegroundService(_loacationServiceIntent);
+            // StartForegroundService(_loacationServiceIntent);
 
                 //StartForegroundService(_smartBandServiceIntent);
                    // StartForegroundService(_medicationServiceIntent);
@@ -227,11 +227,8 @@ namespace FamiliaXamarin
              }
              if (Intent.GetBooleanExtra("FromMedicine", false))
              {
-//                 SupportFragmentManager.BeginTransaction()
-//                     .Replace(Resource.Id.fragment_container, new MedicineFragment())
-//                     .AddToBackStack(null).Commit();
                  StartActivity(new Intent(this, typeof(MedicineBaseActivity)));
-
+                 Log.Error("MAIN ACTIVITY", "on back pressed");
                 Title = "Medicatie";
              }
              if (Intent.GetBooleanExtra("FromSmartband", false))

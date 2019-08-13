@@ -25,27 +25,27 @@ namespace Familia.Medicatie.Data
         private List<MedicationSchedule> _medicationSchedules;
         private SqlHelper<MedicineServerRecords> _db;
 
-        private NetworkingData()
+        public NetworkingData()
         {
             _medicationSchedules = new List<MedicationSchedule>();
             var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var numeDB = "devices_data.db";
         }
 
-        public static NetworkingData GetInstance()
-        {
-            lock (Padlock)
-            {
-                if (_instance == null)
-                {
-                    _instance = new NetworkingData();
-                }
-            }
+//        public static NetworkingData GetInstance()
+//        {
+//            lock (Padlock)
+//            {
+//                if (_instance == null)
+//                {
+//                    _instance = new NetworkingData();
+//                }
+//            }
+//
+//            return _instance;
+//        }
 
-            return _instance;
-        }
-
-        private async Task<List<MedicationSchedule>> CallServer(int size)
+        private async Task<List<MedicationSchedule>> CallServerFutureData(int size)
         {
             var medications = new List<MedicationSchedule>();
             await Task.Run(async () =>
@@ -68,11 +68,55 @@ namespace Familia.Medicatie.Data
             return medications;
         }
 
-        public async Task<List<MedicationSchedule>> ReadDataTask(int size)
+        private async Task<List<MedicationSchedule>> CallServerPastData(int size)
         {
-                _medicationSchedules = new List<MedicationSchedule>(await CallServer(size));
-           
+            var medications = new List<MedicationSchedule>();
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/missedMedicine/{Utils.GetDefaults("IdClient")}/{size}", Utils.GetDefaults("Token")); //this should be here
+                    if (res != null)
+                    {
+                        Log.Error("Networking data", " RESULT_FOR_MEDICATIE" + res);
+                        medications = ParseResultFromUrl(res);
+                        Log.Error("Networking data", " count: " + medications.Count);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("MEDICATION SERVER ERR", e.Message);
+                }
+            });
+            return medications;
+        }
 
+        public async Task<List<MedicationSchedule>> ReadFutureDataTask(int size)
+        {
+            _medicationSchedules = new List<MedicationSchedule>(await CallServerFutureData(size));
+            if (_medicationSchedules.Count != 0)
+            {
+                bool finished = await SaveListInDBTask(_medicationSchedules);
+                Log.Error("NetworkingData class", "saved: " + finished);
+
+            }
+            else
+            {
+                if (size == 0)
+                {
+                    Log.Error("NetworkingData class", "reading from local db..");
+                    _medicationSchedules = new List<MedicationSchedule>(await ReadListFromDbFutureDataTask());
+                    Log.Error("NetworkingData class", "reading finish");
+                }
+            }
+
+            Log.Error("NetworkingData class", "count from reading" + _medicationSchedules.Count);
+            return ExtractFutureData(_medicationSchedules.OrderBy(x => DateTime.Parse(x.Timestampstring)).ToList());
+        }
+
+        public async Task<List<MedicationSchedule>> ReadPastDataTask(int size)
+        {
+            _medicationSchedules = new List<MedicationSchedule>(await CallServerPastData(size));
             if (_medicationSchedules.Count != 0)
             {
                 bool finished = await SaveListInDBTask(_medicationSchedules);
@@ -83,7 +127,7 @@ namespace Familia.Medicatie.Data
                 if (size == 0)
                 {
                     Log.Error("NetworkingData class", "reading from local db..");
-                    _medicationSchedules = new List<MedicationSchedule>(await ReadListFromDbTask());
+                    _medicationSchedules = new List<MedicationSchedule>(await ReadListFromDbPastDataTask());
                     Log.Error("NetworkingData class", "reading finish");
                 }
             }
@@ -121,14 +165,6 @@ namespace Familia.Medicatie.Data
                 }
             }
 
-            var l = await ReadListFromDbTask();
-            Log.Error("NeworkingData class", "data from db");
-
-            foreach (var el in l)
-            {
-                Log.Error("NetwokingData class", el.ToString());
-            }
-
             Log.Error("NeworkingData class", "saved");
 
             return true;
@@ -162,7 +198,7 @@ namespace Familia.Medicatie.Data
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
             var list = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{UUIDmed}'");
-            var listMedSch = new List<MedicationSchedule>();
+
             if (list.Count() != 0)
             {
                 foreach (var item in list)
@@ -174,10 +210,9 @@ namespace Familia.Medicatie.Data
         }
 
 
-        public async Task<List<MedicationSchedule>> ReadListFromDbTask()
+        public async Task<List<MedicationSchedule>> ReadListFromDbFutureDataTask()
         {
-            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
-            var list = await _db.QueryValuations("select * from MedicineServerRecords");
+            var list = await GetDataFromDb();
             var currentDate = DateTime.Now;
             var listMedSch = new List<MedicationSchedule>();
 
@@ -197,9 +232,68 @@ namespace Familia.Medicatie.Data
                     Log.Error("ERR", e.ToString());
                 }
             }
-            Log.Error("NetworkingData class", "list count from db" + listMedSch.Count);
-            return listMedSch;
 
+            Log.Error("NetworkingData class", "future data list count from db" + listMedSch.Count);
+            return listMedSch;
+        }
+
+        private static List<MedicationSchedule> ExtractFutureData(List<MedicationSchedule> list)
+        {
+            var currentDate = DateTime.Now;
+            var listMedSch = new List<MedicationSchedule>();
+
+            foreach (var elem in list)
+            {
+                try
+                {
+                    var medDate = Convert.ToDateTime(elem.Timestampstring);
+                    if (medDate >= currentDate)
+                    {
+                        listMedSch.Add(new MedicationSchedule(elem.Uuid, elem.Timestampstring, elem.Title, elem.Content,
+                            elem.Postpone, elem.IdNotification));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("ERR", e.ToString());
+                }
+            }
+
+            Log.Error("NetworkingData class", "future data list count from db" + listMedSch.Count);
+            return listMedSch;
+        }
+
+        public async Task<List<MedicationSchedule>> ReadListFromDbPastDataTask()
+        {
+            var list = await GetDataFromDb();
+            var currentDate = DateTime.Now;
+            var listMedSch = new List<MedicationSchedule>();
+
+            foreach (var elem in list)
+            {
+                try
+                {
+                    var medDate = Convert.ToDateTime(elem.DateTime);
+                    if (medDate <= currentDate)
+                    {
+                        listMedSch.Add(new MedicationSchedule(elem.Uuid, elem.DateTime, elem.Title, elem.Content,
+                            int.Parse(elem.Postpone), int.Parse(elem.IdNotification)));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("ERR", e.ToString());
+                }
+            }
+            Log.Error("NetworkingData class", "past data list count from db" + listMedSch.Count);
+            return listMedSch;
+        }
+
+        private async Task<IEnumerable<MedicineServerRecords>> GetDataFromDb()
+        {
+            _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
+            var list = await _db.QueryValuations("select * from MedicineServerRecords");
+            return list;
         }
 
         public async void removeMedSer(string UUIDmed)
