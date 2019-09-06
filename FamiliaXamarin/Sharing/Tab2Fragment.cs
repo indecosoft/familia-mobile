@@ -39,7 +39,8 @@ namespace FamiliaXamarin.Sharing
         {
             try
             {
-
+                ProgressBarDialog progressBarDialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
+                progressBarDialog.Show();
                 // Initialize contacts
                 List<SharingModel> contacts = null;
                 await Task.Run(async () =>
@@ -53,6 +54,13 @@ namespace FamiliaXamarin.Sharing
                         contacts = JsonConvert.DeserializeObject<List<SharingModel>>(response);
                     }
                 });
+
+
+                Activity.RunOnUiThread(() =>
+                {
+                    progressBarDialog.Dismiss();
+                });
+
                 if (contacts != null)
                 {
 

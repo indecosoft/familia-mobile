@@ -28,7 +28,8 @@ namespace Familia.Sharing
         {
             try
             {
-
+                ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
+                dialog.Show();
                 // Initialize contacts
                 List<SharingModel> contacts = null;
                 await Task.Run(async () =>
@@ -61,10 +62,15 @@ namespace Familia.Sharing
                         intent.PutExtra("Email", email);
                         intent.PutExtra("Imei", imei);
                         StartActivity(intent);
-
                     };
                    
                 }
+
+                Activity.RunOnUiThread(() =>
+                {
+                    dialog.Dismiss();
+                });
+
 
             }
             catch (Java.Lang.Exception e)
