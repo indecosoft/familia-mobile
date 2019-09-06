@@ -185,7 +185,8 @@ namespace FamiliaXamarin.Medicatie
             
             SetupAlarm();
 
-            Finish();
+//            Finish();
+            OnBackPressed();
         }
 
         private void AddNewBoala()
@@ -207,8 +208,9 @@ namespace FamiliaXamarin.Medicatie
 
             SetupAlarm();
             
-            Finish();
+//            Finish();
             
+            OnBackPressed();
             
         
         }

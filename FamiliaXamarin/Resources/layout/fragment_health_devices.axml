@@ -133,7 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/imageWatch"
-                android:text="Bratara Fittness"
+                android:text="Bratara Fitness"
                 android:textSize="18sp"
                 android:textAlignment="center" />
 
