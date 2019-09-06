@@ -61,6 +61,8 @@ namespace FamiliaXamarin.Sharing
                     progressBarDialog.Dismiss();
                 });
 
+
+
                 if (contacts != null)
                 {
 
