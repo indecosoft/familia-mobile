@@ -106,7 +106,7 @@ namespace Familia.Medicatie.Data
                 {
                     Log.Error("NetworkingData class", "reading from local db..");
                     _medicationSchedules = new List<MedicationSchedule>(await ReadListFromDbFutureDataTask());
-                    Log.Error("NetworkingData class", "reading finish");
+                    Log.Error("NetworkingData class", "reading is finished");
                 }
             }
 
