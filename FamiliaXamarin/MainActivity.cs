@@ -218,6 +218,7 @@ namespace FamiliaXamarin
             {
                 //TODO: Implementateaza acivitaste pentru profil 
                 StartActivity(new Intent(this, typeof(ProfileActivity)));
+//                Title = "Profilul meu";
             };
 
              if (Intent.GetBooleanExtra("FromChat", false))
