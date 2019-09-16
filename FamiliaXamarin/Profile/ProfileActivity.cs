@@ -66,12 +66,17 @@ namespace Familia.Profile
                 var tvEmail = FindViewById<TextView>(Resource.Id.tv_email);
                 tvEmail.Text = Utils.GetDefaults("Email");
 
+                var tvGender = FindViewById<TextView>(Resource.Id.tv_gender);
+
                 if (personalData.Gender.Equals("Feminin"))
                 {
                     var iwGender = FindViewById<ImageView>(Resource.Id.iw_gender);
                     iwGender.SetImageResource(Resource.Drawable.human_female);
-                    var tvGender = FindViewById<TextView>(Resource.Id.tv_gender);
                     tvGender.Text = "Feminin";
+                }
+                else
+                {
+                    tvGender.Text = "Masculin";
                 }
 
                 var tvDateOftBirth = FindViewById<TextView>(Resource.Id.tv_labelDate);

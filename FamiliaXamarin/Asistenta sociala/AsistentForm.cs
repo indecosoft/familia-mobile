@@ -323,15 +323,30 @@ namespace FamiliaXamarin.Asistenta_sociala
                                         switch (responseJson.GetInt("status"))
                                         {
                                             case 0:
+//                                                Activity.RunOnUiThread(delegate
+//                                                {
+//                                                    _progressBarDialog.Dismiss();
+//
+//                                                });
                                                 Snackbar.Make(_formContainer, "Nu sunteti la pacient!", Snackbar.LengthLong).Show();
+                                               
                                                 break;
                                             case 1:
+//                                                Activity.RunOnUiThread(delegate
+//                                                {
+//                                                    _progressBarDialog.Dismiss();
+//
+//                                                });
                                                 Snackbar.Make(_formContainer, "Eroare conectare la server", Snackbar.LengthLong).Show();
                                                 break;
                                             case 2:
                                                 break;
                                         }
-                                        _progressBarDialog.Dismiss();
+                                        Activity.RunOnUiThread(delegate
+                                        {
+                                            _progressBarDialog.Dismiss();
+
+                                        });
                                     }
                                     else
                                         Snackbar.Make(_formContainer, "Nu se poate conecta la server!", Snackbar.LengthLong).Show();

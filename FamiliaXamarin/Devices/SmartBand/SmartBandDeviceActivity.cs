@@ -240,7 +240,7 @@ namespace FamiliaXamarin.Devices.SmartBand
                     RunOnUiThread(() =>
                     {
                         _lbSteps.Text = $"{steps}";
-                        _lbActivity.Text = $"{activeMinutes}";
+                        _lbActivity.Text = $"{activeMinutes} min";
                     });
                 }
                 catch (JSONException e)
