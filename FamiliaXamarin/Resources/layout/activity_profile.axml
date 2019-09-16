@@ -174,29 +174,23 @@
   </android.support.v7.widget.CardView>
 
  
-   
-      <android.support.v7.widget.CardView
-        android:id="@+id/cw_diseases"
-        android:layout_gravity="center"
+	<RelativeLayout
+		android:id="@+id/cw_diseases"
         android:layout_width="match_parent"
-        android:layout_height="700dp"
-        app:cardCornerRadius="4dp"
-        android:layout_marginTop="20px"
-        android:layout_below="@id/cw_years"
-        app:cardBackgroundColor="@color/colorPrimaryDark"
-        android:padding="16dp"
-      >
-        <RelativeLayout
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:layout_centerHorizontal="true"
-          android:padding="16dp">
-          <ImageView
+		android:layout_height="match_parent"
+		android:layout_below="@id/cw_years"
+		android:background="@color/colorPrimaryDark"
+		android:layout_marginTop="10dp"
+		android:padding="16dp"
+		>
+		 <ImageView
             android:id="@+id/iw_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:src="@drawable/bottle_tonic_plus"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+			
+		/>
           <TextView
             android:id="@+id/tv_labelDiseases"
             android:layout_width="wrap_content"
@@ -209,24 +203,32 @@
             android:textStyle="bold"/>
           />
 
+		<android.support.v4.widget.NestedScrollView
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+			android:layout_below="@+id/tv_labelDiseases">
+
           <RelativeLayout
-            android:layout_below="@+id/tv_labelDiseases"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
+			android:layout_marginTop="5dp"
+			
             >
           <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_diseases"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/tv_labelDiseases"
-            android:scrollbars="vertical" />
+            android:nestedScrollingEnabled="false"
+		   />
 
           </RelativeLayout>
 
-        </RelativeLayout>
-      </android.support.v7.widget.CardView>
+		</android.support.v4.widget.NestedScrollView>
 
+		</RelativeLayout>
 
+		
 
 </RelativeLayout>

@@ -68,7 +68,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             await Task.Run(async () => {
                 try
                 {
-                    var response = await WebServices.Get($"{Constants.PublicServerAddress}/api/getBenefits/{idClient}", Utils.GetDefaults("Token"));
+                    var response = await WebServices.Get($"{Constants.PublicServerAddress}/api/getBenefits", Utils.GetDefaults("Token"));
                     Log.Error("Debug Log in " + nameof(AsistentForm), "Response: " + response);
                     var jsonResponse = new JSONObject(response);
                     Log.Error("ASISTEN FORM BENEFITS", jsonResponse.ToString());

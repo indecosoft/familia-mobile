@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Util;
+using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
 using Familia.Profile.Data;
@@ -85,6 +86,8 @@ namespace Familia.Profile
                 
             }
         }
+
+      
 
         public int getAge()
         {
