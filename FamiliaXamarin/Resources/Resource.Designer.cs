@@ -4019,14 +4019,14 @@ namespace Familia
 			// aapt resource value: 0x7f0e004c
 			public const int CTRL = 2131624012;
 			
-			// aapt resource value: 0x7f0e016d
-			public const int DetailsInputLayout = 2131624301;
+			// aapt resource value: 0x7f0e016e
+			public const int DetailsInputLayout = 2131624302;
 			
 			// aapt resource value: 0x7f0e00cb
 			public const int DiastoleTextView = 2131624139;
 			
-			// aapt resource value: 0x7f0e018b
-			public const int Disease_spinner = 2131624331;
+			// aapt resource value: 0x7f0e018c
+			public const int Disease_spinner = 2131624332;
 			
 			// aapt resource value: 0x7f0e010a
 			public const int EmailInputLayout = 2131624202;
@@ -4055,8 +4055,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e010f
 			public const int PasswordRetypeInputLayout = 2131624207;
 			
-			// aapt resource value: 0x7f0e0183
-			public const int ProfileImage = 2131624323;
+			// aapt resource value: 0x7f0e0184
+			public const int ProfileImage = 2131624324;
 			
 			// aapt resource value: 0x7f0e00cc
 			public const int PulseTextView = 2131624140;
@@ -4088,11 +4088,11 @@ namespace Familia
 			// aapt resource value: 0x7f0e00ca
 			public const int SystoleTextView = 2131624138;
 			
-			// aapt resource value: 0x7f0e0190
-			public const int action = 2131624336;
+			// aapt resource value: 0x7f0e0191
+			public const int action = 2131624337;
 			
-			// aapt resource value: 0x7f0e01ad
-			public const int action0 = 2131624365;
+			// aapt resource value: 0x7f0e01ae
+			public const int action0 = 2131624366;
 			
 			// aapt resource value: 0x7f0e00ae
 			public const int action_bar = 2131624110;
@@ -4115,17 +4115,17 @@ namespace Familia
 			// aapt resource value: 0x7f0e008a
 			public const int action_bar_title = 2131624074;
 			
-			// aapt resource value: 0x7f0e01aa
-			public const int action_container = 2131624362;
+			// aapt resource value: 0x7f0e01ab
+			public const int action_container = 2131624363;
 			
 			// aapt resource value: 0x7f0e00af
 			public const int action_context_bar = 2131624111;
 			
-			// aapt resource value: 0x7f0e01b1
-			public const int action_divider = 2131624369;
+			// aapt resource value: 0x7f0e01b2
+			public const int action_divider = 2131624370;
 			
-			// aapt resource value: 0x7f0e01ab
-			public const int action_image = 2131624363;
+			// aapt resource value: 0x7f0e01ac
+			public const int action_image = 2131624364;
 			
 			// aapt resource value: 0x7f0e0003
 			public const int action_menu_divider = 2131623939;
@@ -4142,11 +4142,11 @@ namespace Familia
 			// aapt resource value: 0x7f0e008c
 			public const int action_mode_close_button = 2131624076;
 			
-			// aapt resource value: 0x7f0e01ac
-			public const int action_text = 2131624364;
+			// aapt resource value: 0x7f0e01ad
+			public const int action_text = 2131624365;
 			
-			// aapt resource value: 0x7f0e01b8
-			public const int actions = 2131624376;
+			// aapt resource value: 0x7f0e01b9
+			public const int actions = 2131624377;
 			
 			// aapt resource value: 0x7f0e008d
 			public const int activity_chooser_view_content = 2131624077;
@@ -4166,14 +4166,11 @@ namespace Familia
 			// aapt resource value: 0x7f0e0031
 			public const int adjust_width = 2131623985;
 			
-			// aapt resource value: 0x7f0e017d
-			public const int alarm = 2131624317;
-			
 			// aapt resource value: 0x7f0e017e
-			public const int alarmSpinner = 2131624318;
+			public const int alarm = 2131624318;
 			
-			// aapt resource value: 0x7f0e0172
-			public const int alarmSpinner = 2131624306;
+			// aapt resource value: 0x7f0e017f
+			public const int alarmSpinner = 2131624319;
 			
 			// aapt resource value: 0x7f0e00a0
 			public const int alertTitle = 2131624096;
@@ -4202,11 +4199,11 @@ namespace Familia
 			// aapt resource value: 0x7f0e0048
 			public const int beginning = 2131624008;
 			
-			// aapt resource value: 0x7f0e016c
-			public const int benefits_spinner = 2131624300;
+			// aapt resource value: 0x7f0e016d
+			public const int benefits_spinner = 2131624301;
 			
-			// aapt resource value: 0x7f0e01bb
-			public const int bg = 2131624379;
+			// aapt resource value: 0x7f0e01bc
+			public const int bg = 2131624380;
 			
 			// aapt resource value: 0x7f0e0081
 			public const int blocking = 2131624065;
@@ -4214,14 +4211,14 @@ namespace Familia
 			// aapt resource value: 0x7f0e0025
 			public const int bottom = 2131623973;
 			
-			// aapt resource value: 0x7f0e018e
-			public const int bottom_navigation = 2131624334;
+			// aapt resource value: 0x7f0e018f
+			public const int bottom_navigation = 2131624335;
 			
-			// aapt resource value: 0x7f0e01a7
-			public const int bottom_navigation_tip4 = 2131624359;
+			// aapt resource value: 0x7f0e01a8
+			public const int bottom_navigation_tip4 = 2131624360;
 			
-			// aapt resource value: 0x7f0e01bc
-			public const int box = 2131624380;
+			// aapt resource value: 0x7f0e01bd
+			public const int box = 2131624381;
 			
 			// aapt resource value: 0x7f0e013a
 			public const int browser_actions_header_text = 2131624250;
@@ -4238,20 +4235,23 @@ namespace Familia
 			// aapt resource value: 0x7f0e0139
 			public const int browser_actions_menu_view = 2131624249;
 			
-			// aapt resource value: 0x7f0e018a
-			public const int btnBack = 2131624330;
+			// aapt resource value: 0x7f0e016c
+			public const int btnAnulare = 2131624300;
+			
+			// aapt resource value: 0x7f0e018b
+			public const int btnBack = 2131624331;
 			
 			// aapt resource value: 0x7f0e0111
 			public const int btnCancel = 2131624209;
 			
-			// aapt resource value: 0x7f0e0189
-			public const int btnDate = 2131624329;
+			// aapt resource value: 0x7f0e018a
+			public const int btnDate = 2131624330;
 			
 			// aapt resource value: 0x7f0e0169
 			public const int btnLeft = 2131624297;
 			
-			// aapt resource value: 0x7f0e0185
-			public const int btnNext = 2131624325;
+			// aapt resource value: 0x7f0e0186
+			public const int btnNext = 2131624326;
 			
 			// aapt resource value: 0x7f0e0112
 			public const int btnReset = 2131624210;
@@ -4262,14 +4262,14 @@ namespace Familia
 			// aapt resource value: 0x7f0e016b
 			public const int btnScan = 2131624299;
 			
-			// aapt resource value: 0x7f0e0184
-			public const int btnUpload = 2131624324;
+			// aapt resource value: 0x7f0e0185
+			public const int btnUpload = 2131624325;
 			
 			// aapt resource value: 0x7f0e00de
 			public const int btn_add_device = 2131624158;
 			
-			// aapt resource value: 0x7f0e0171
-			public const int btn_add_disease = 2131624305;
+			// aapt resource value: 0x7f0e0172
+			public const int btn_add_disease = 2131624306;
 			
 			// aapt resource value: 0x7f0e0162
 			public const int btn_blood_glucose = 2131624290;
@@ -4289,11 +4289,11 @@ namespace Familia
 			// aapt resource value: 0x7f0e0154
 			public const int btn_da_delete_medicament = 2131624276;
 			
-			// aapt resource value: 0x7f0e019a
-			public const int btn_delete = 2131624346;
+			// aapt resource value: 0x7f0e019b
+			public const int btn_delete = 2131624347;
 			
-			// aapt resource value: 0x7f0e0193
-			public const int btn_delete_boala = 2131624339;
+			// aapt resource value: 0x7f0e0194
+			public const int btn_delete_boala = 2131624340;
 			
 			// aapt resource value: 0x7f0e00eb
 			public const int btn_login = 2131624171;
@@ -4319,8 +4319,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e014f
 			public const int btn_save_med_dialog = 2131624271;
 			
-			// aapt resource value: 0x7f0e01a6
-			public const int btn_scanQR = 2131624358;
+			// aapt resource value: 0x7f0e01a7
+			public const int btn_scanQR = 2131624359;
 			
 			// aapt resource value: 0x7f0e00c5
 			public const int btn_snooze_alarm = 2131624133;
@@ -4331,8 +4331,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0093
 			public const int buttonPanel = 2131624083;
 			
-			// aapt resource value: 0x7f0e01ae
-			public const int cancel_action = 2131624366;
+			// aapt resource value: 0x7f0e01af
+			public const int cancel_action = 2131624367;
 			
 			// aapt resource value: 0x7f0e013e
 			public const int card_frame_content_container = 2131624254;
@@ -4370,14 +4370,14 @@ namespace Familia
 			// aapt resource value: 0x7f0e00f3
 			public const int chart_content = 2131624179;
 			
-			// aapt resource value: 0x7f0e01c8
-			public const int chat = 2131624392;
+			// aapt resource value: 0x7f0e01c9
+			public const int chat = 2131624393;
 			
 			// aapt resource value: 0x7f0e00a7
 			public const int checkbox = 2131624103;
 			
-			// aapt resource value: 0x7f0e01b5
-			public const int chronometer = 2131624373;
+			// aapt resource value: 0x7f0e01b6
+			public const int chronometer = 2131624374;
 			
 			// aapt resource value: 0x7f0e0070
 			public const int clip_horizontal = 2131624048;
@@ -4388,11 +4388,11 @@ namespace Familia
 			// aapt resource value: 0x7f0e0052
 			public const int collapseActionView = 2131624018;
 			
-			// aapt resource value: 0x7f0e0182
-			public const int constraintLayout = 2131624322;
+			// aapt resource value: 0x7f0e0183
+			public const int constraintLayout = 2131624323;
 			
-			// aapt resource value: 0x7f0e0194
-			public const int contact_name = 2131624340;
+			// aapt resource value: 0x7f0e0195
+			public const int contact_name = 2131624341;
 			
 			// aapt resource value: 0x7f0e00e1
 			public const int container = 2131624161;
@@ -4400,14 +4400,14 @@ namespace Familia
 			// aapt resource value: 0x7f0e00a3
 			public const int content = 2131624099;
 			
-			// aapt resource value: 0x7f0e01c1
-			public const int contentFrame = 2131624385;
+			// aapt resource value: 0x7f0e01c2
+			public const int contentFrame = 2131624386;
 			
 			// aapt resource value: 0x7f0e0096
 			public const int contentPanel = 2131624086;
 			
-			// aapt resource value: 0x7f0e016f
-			public const int conversations = 2131624303;
+			// aapt resource value: 0x7f0e0170
+			public const int conversations = 2131624304;
 			
 			// aapt resource value: 0x7f0e0158
 			public const int coordinator = 2131624280;
@@ -4421,8 +4421,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0107
 			public const int cw_diseases = 2131624199;
 			
-			// aapt resource value: 0x7f0e0172
-			public const int cw_empty = 2131624306;
+			// aapt resource value: 0x7f0e0173
+			public const int cw_empty = 2131624307;
 			
 			// aapt resource value: 0x7f0e0103
 			public const int cw_gender = 2131624195;
@@ -4457,8 +4457,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e015c
 			public const int design_navigation_view = 2131624284;
 			
-			// aapt resource value: 0x7f0e0180
-			public const int devices = 2131624320;
+			// aapt resource value: 0x7f0e0181
+			public const int devices = 2131624321;
 			
 			// aapt resource value: 0x7f0e007e
 			public const int dimensions = 2131624062;
@@ -4478,8 +4478,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0049
 			public const int end = 2131624009;
 			
-			// aapt resource value: 0x7f0e01ba
-			public const int end_padder = 2131624378;
+			// aapt resource value: 0x7f0e01bb
+			public const int end_padder = 2131624379;
 			
 			// aapt resource value: 0x7f0e0056
 			public const int enterAlways = 2131624022;
@@ -4553,8 +4553,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e00d5
 			public const int fab_add_med = 2131624149;
 			
-			// aapt resource value: 0x7f0e0188
-			public const int female_toggle = 2131624328;
+			// aapt resource value: 0x7f0e0189
+			public const int female_toggle = 2131624329;
 			
 			// aapt resource value: 0x7f0e006d
 			public const int fill = 2131624045;
@@ -4568,14 +4568,11 @@ namespace Familia
 			// aapt resource value: 0x7f0e006e
 			public const int filled = 2131624046;
 			
-			// aapt resource value: 0x7f0e0178
-			public const int fingerPrint = 2131624312;
-			
 			// aapt resource value: 0x7f0e0179
-			public const int fingerPrintSwitch = 2131624313;
+			public const int fingerPrint = 2131624313;
 			
-			// aapt resource value: 0x7f0e016d
-			public const int fingerPrintSwitch = 2131624301;
+			// aapt resource value: 0x7f0e017a
+			public const int fingerPrintSwitch = 2131624314;
 			
 			// aapt resource value: 0x7f0e006b
 			public const int @fixed = 2131624043;
@@ -4592,8 +4589,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0028
 			public const int freedom_no_bottom = 2131623976;
 			
-			// aapt resource value: 0x7f0e0186
-			public const int gender_selector = 2131624326;
+			// aapt resource value: 0x7f0e0187
+			public const int gender_selector = 2131624327;
 			
 			// aapt resource value: 0x7f0e000a
 			public const int ghost_view = 2131623946;
@@ -4604,14 +4601,14 @@ namespace Familia
 			// aapt resource value: 0x7f0e00a2
 			public const int group_divider = 2131624098;
 			
-			// aapt resource value: 0x7f0e01a3
-			public const int guideline = 2131624355;
+			// aapt resource value: 0x7f0e01a4
+			public const int guideline = 2131624356;
 			
 			// aapt resource value: 0x7f0e0087
 			public const int hardware = 2131624071;
 			
-			// aapt resource value: 0x7f0e01c7
-			public const int harta = 2131624391;
+			// aapt resource value: 0x7f0e01c8
+			public const int harta = 2131624392;
 			
 			// aapt resource value: 0x7f0e0128
 			public const int header = 2131624232;
@@ -4631,8 +4628,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0092
 			public const int icon = 2131624082;
 			
-			// aapt resource value: 0x7f0e01b9
-			public const int icon_group = 2131624377;
+			// aapt resource value: 0x7f0e01ba
+			public const int icon_group = 2131624378;
 			
 			// aapt resource value: 0x7f0e0032
 			public const int icon_only = 2131623986;
@@ -4652,8 +4649,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0125
 			public const int imageWatch = 2131624229;
 			
-			// aapt resource value: 0x7f0e01a0
-			public const int imagine = 2131624352;
+			// aapt resource value: 0x7f0e01a1
+			public const int imagine = 2131624353;
 			
 			// aapt resource value: 0x7f0e00ce
 			public const int info = 2131624142;
@@ -4661,14 +4658,14 @@ namespace Familia
 			// aapt resource value: 0x7f0e00c9
 			public const int infoContainer = 2131624137;
 			
+			// aapt resource value: 0x7f0e019f
+			public const int info_content = 2131624351;
+			
 			// aapt resource value: 0x7f0e019e
-			public const int info_content = 2131624350;
+			public const int info_date_time = 2131624350;
 			
-			// aapt resource value: 0x7f0e019d
-			public const int info_date_time = 2131624349;
-			
-			// aapt resource value: 0x7f0e016e
-			public const int input_details = 2131624302;
+			// aapt resource value: 0x7f0e016f
+			public const int input_details = 2131624303;
 			
 			// aapt resource value: 0x7f0e0075
 			public const int invisible = 2131624053;
@@ -4679,17 +4676,17 @@ namespace Familia
 			// aapt resource value: 0x7f0e0000
 			public const int item_touch_helper_previous_elevation = 2131623936;
 			
+			// aapt resource value: 0x7f0e01a6
+			public const int item_tourist_spot_card_city = 2131624358;
+			
+			// aapt resource value: 0x7f0e01a3
+			public const int item_tourist_spot_card_image = 2131624355;
+			
 			// aapt resource value: 0x7f0e01a5
-			public const int item_tourist_spot_card_city = 2131624357;
+			public const int item_tourist_spot_card_name = 2131624357;
 			
-			// aapt resource value: 0x7f0e01a2
-			public const int item_tourist_spot_card_image = 2131624354;
-			
-			// aapt resource value: 0x7f0e01a4
-			public const int item_tourist_spot_card_name = 2131624356;
-			
-			// aapt resource value: 0x7f0e0198
-			public const int iv_img = 2131624344;
+			// aapt resource value: 0x7f0e0199
+			public const int iv_img = 2131624345;
 			
 			// aapt resource value: 0x7f0e0104
 			public const int iw_gender = 2131624196;
@@ -4727,8 +4724,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0166
 			public const int lbNobody = 2131624294;
 			
-			// aapt resource value: 0x7f0e01a9
-			public const int lbNume = 2131624361;
+			// aapt resource value: 0x7f0e01aa
+			public const int lbNume = 2131624362;
 			
 			// aapt resource value: 0x7f0e0130
 			public const int lbSleepTime = 2131624240;
@@ -4757,17 +4754,17 @@ namespace Familia
 			// aapt resource value: 0x7f0e0091
 			public const int list_item = 2131624081;
 			
-			// aapt resource value: 0x7f0e01bf
-			public const int loader = 2131624383;
+			// aapt resource value: 0x7f0e01c0
+			public const int loader = 2131624384;
 			
 			// aapt resource value: 0x7f0e0135
 			public const int loading = 2131624245;
 			
-			// aapt resource value: 0x7f0e01c0
-			public const int loading_msg = 2131624384;
+			// aapt resource value: 0x7f0e01c1
+			public const int loading_msg = 2131624385;
 			
-			// aapt resource value: 0x7f0e01cd
-			public const int logout = 2131624397;
+			// aapt resource value: 0x7f0e01ce
+			public const int logout = 2131624398;
 			
 			// aapt resource value: 0x7f0e0024
 			public const int lottie_layer_name = 2131623972;
@@ -4775,35 +4772,32 @@ namespace Familia
 			// aapt resource value: 0x7f0e00e0
 			public const int main_content = 2131624160;
 			
-			// aapt resource value: 0x7f0e0187
-			public const int male_toggle = 2131624327;
-			
-			// aapt resource value: 0x7f0e01c3
-			public const int masked = 2131624387;
-			
-			// aapt resource value: 0x7f0e01b0
-			public const int media_actions = 2131624368;
-			
-			// aapt resource value: 0x7f0e01ca
-			public const int medicatie = 2131624394;
-			
-			// aapt resource value: 0x7f0e017c
-			public const int medicine_relative = 2131624316;
-			
-			// aapt resource value: 0x7f0e01a8
-			public const int menu_profile_image = 2131624360;
-			
-			// aapt resource value: 0x7f0e01ce
-			public const int menu_tab1 = 2131624398;
-			
-			// aapt resource value: 0x7f0e01cf
-			public const int menu_tab2 = 2131624399;
-			
-			// aapt resource value: 0x7f0e01d0
-			public const int menu_tab3 = 2131624400;
+			// aapt resource value: 0x7f0e0188
+			public const int male_toggle = 2131624328;
 			
 			// aapt resource value: 0x7f0e01c4
-			public const int menu_tab3 = 2131624388;
+			public const int masked = 2131624388;
+			
+			// aapt resource value: 0x7f0e01b1
+			public const int media_actions = 2131624369;
+			
+			// aapt resource value: 0x7f0e01cb
+			public const int medicatie = 2131624395;
+			
+			// aapt resource value: 0x7f0e017d
+			public const int medicine_relative = 2131624317;
+			
+			// aapt resource value: 0x7f0e01a9
+			public const int menu_profile_image = 2131624361;
+			
+			// aapt resource value: 0x7f0e01cf
+			public const int menu_tab1 = 2131624399;
+			
+			// aapt resource value: 0x7f0e01d0
+			public const int menu_tab2 = 2131624400;
+			
+			// aapt resource value: 0x7f0e01d1
+			public const int menu_tab3 = 2131624401;
 			
 			// aapt resource value: 0x7f0e00bd
 			public const int message = 2131624125;
@@ -4817,8 +4811,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0068
 			public const int mini = 2131624040;
 			
-			// aapt resource value: 0x7f0e01d2
-			public const int month_tab = 2131624402;
+			// aapt resource value: 0x7f0e01d3
+			public const int month_tab = 2131624403;
 			
 			// aapt resource value: 0x7f0e0014
 			public const int mtrl_child_content_container = 2131623956;
@@ -4829,23 +4823,23 @@ namespace Familia
 			// aapt resource value: 0x7f0e0041
 			public const int multiply = 2131624001;
 			
-			// aapt resource value: 0x7f0e0195
-			public const int name = 2131624341;
+			// aapt resource value: 0x7f0e0196
+			public const int name = 2131624342;
 			
-			// aapt resource value: 0x7f0e01c6
-			public const int nav_QRCode = 2131624390;
-			
-			// aapt resource value: 0x7f0e01c4
-			public const int nav_asistenta = 2131624388;
-			
-			// aapt resource value: 0x7f0e01c9
-			public const int nav_devices = 2131624393;
-			
-			// aapt resource value: 0x7f0e01cc
-			public const int nav_manage = 2131624396;
+			// aapt resource value: 0x7f0e01c7
+			public const int nav_QRCode = 2131624391;
 			
 			// aapt resource value: 0x7f0e01c5
-			public const int nav_monitorizare = 2131624389;
+			public const int nav_asistenta = 2131624389;
+			
+			// aapt resource value: 0x7f0e01ca
+			public const int nav_devices = 2131624394;
+			
+			// aapt resource value: 0x7f0e01cd
+			public const int nav_manage = 2131624397;
+			
+			// aapt resource value: 0x7f0e01c6
+			public const int nav_monitorizare = 2131624390;
 			
 			// aapt resource value: 0x7f0e00ef
 			public const int nav_view = 2131624175;
@@ -4862,14 +4856,14 @@ namespace Familia
 			// aapt resource value: 0x7f0e002d
 			public const int normal = 2131623981;
 			
-			// aapt resource value: 0x7f0e01b7
-			public const int notification_background = 2131624375;
+			// aapt resource value: 0x7f0e01b8
+			public const int notification_background = 2131624376;
+			
+			// aapt resource value: 0x7f0e01b4
+			public const int notification_main_column = 2131624372;
 			
 			// aapt resource value: 0x7f0e01b3
-			public const int notification_main_column = 2131624371;
-			
-			// aapt resource value: 0x7f0e01b2
-			public const int notification_main_column_container = 2131624370;
+			public const int notification_main_column_container = 2131624371;
 			
 			// aapt resource value: 0x7f0e0089
 			public const int number = 2131624073;
@@ -4883,8 +4877,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e007a
 			public const int packed = 2131624058;
 			
-			// aapt resource value: 0x7f0e018d
-			public const int pager = 2131624333;
+			// aapt resource value: 0x7f0e018e
+			public const int pager = 2131624334;
 			
 			// aapt resource value: 0x7f0e0066
 			public const int parallax = 2131624038;
@@ -4898,20 +4892,20 @@ namespace Familia
 			// aapt resource value: 0x7f0e000b
 			public const int parent_matrix = 2131623947;
 			
-			// aapt resource value: 0x7f0e01cb
-			public const int partajare_date = 2131624395;
+			// aapt resource value: 0x7f0e01cc
+			public const int partajare_date = 2131624396;
 			
 			// aapt resource value: 0x7f0e0077
 			public const int percent = 2131624055;
 			
-			// aapt resource value: 0x7f0e01a1
-			public const int person_name = 2131624353;
+			// aapt resource value: 0x7f0e01a2
+			public const int person_name = 2131624354;
 			
 			// aapt resource value: 0x7f0e0067
 			public const int pin = 2131624039;
 			
-			// aapt resource value: 0x7f0e017a
-			public const int pin_switch = 2131624314;
+			// aapt resource value: 0x7f0e017b
+			public const int pin_switch = 2131624315;
 			
 			// aapt resource value: 0x7f0e00f1
 			public const int pinview = 2131624177;
@@ -4925,8 +4919,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0007
 			public const int progress_horizontal = 2131623943;
 			
-			// aapt resource value: 0x7f0e0177
-			public const int qrCode = 2131624311;
+			// aapt resource value: 0x7f0e0178
+			public const int qrCode = 2131624312;
 			
 			// aapt resource value: 0x7f0e00a8
 			public const int radio = 2131624104;
@@ -4949,17 +4943,17 @@ namespace Familia
 			// aapt resource value: 0x7f0e0064
 			public const int right = 2131624036;
 			
-			// aapt resource value: 0x7f0e01b6
-			public const int right_icon = 2131624374;
+			// aapt resource value: 0x7f0e01b7
+			public const int right_icon = 2131624375;
 			
-			// aapt resource value: 0x7f0e01b4
-			public const int right_side = 2131624372;
+			// aapt resource value: 0x7f0e01b5
+			public const int right_side = 2131624373;
 			
 			// aapt resource value: 0x7f0e00c2
 			public const int rl_alarm = 2131624130;
 			
-			// aapt resource value: 0x7f0e0196
-			public const int rl_hours = 2131624342;
+			// aapt resource value: 0x7f0e0197
+			public const int rl_hours = 2131624343;
 			
 			// aapt resource value: 0x7f0e00fe
 			public const int rl_line = 2131624190;
@@ -4967,26 +4961,26 @@ namespace Familia
 			// aapt resource value: 0x7f0e00cf
 			public const int rl_meds = 2131624143;
 			
-			// aapt resource value: 0x7f0e019b
-			public const int rl_medser = 2131624347;
+			// aapt resource value: 0x7f0e019c
+			public const int rl_medser = 2131624348;
 			
 			// aapt resource value: 0x7f0e0145
 			public const int rl_rv_meds = 2131624261;
 			
-			// aapt resource value: 0x7f0e018c
-			public const int rl_something = 2131624332;
+			// aapt resource value: 0x7f0e018d
+			public const int rl_something = 2131624333;
 			
 			// aapt resource value: 0x7f0e00d0
 			public const int rl_up = 2131624144;
 			
-			// aapt resource value: 0x7f0e01be
-			public const int round_image = 2131624382;
+			// aapt resource value: 0x7f0e01bf
+			public const int round_image = 2131624383;
 			
 			// aapt resource value: 0x7f0e00dd
 			public const int rv_available_devices = 2131624157;
 			
-			// aapt resource value: 0x7f0e0191
-			public const int rv_boala_container = 2131624337;
+			// aapt resource value: 0x7f0e0192
+			public const int rv_boala_container = 2131624338;
 			
 			// aapt resource value: 0x7f0e0109
 			public const int rv_diseases = 2131624201;
@@ -4994,20 +4988,20 @@ namespace Familia
 			// aapt resource value: 0x7f0e0146
 			public const int rv_hours = 2131624262;
 			
-			// aapt resource value: 0x7f0e0174
-			public const int rv_medlost = 2131624308;
+			// aapt resource value: 0x7f0e0175
+			public const int rv_medlost = 2131624309;
 			
 			// aapt resource value: 0x7f0e00d6
 			public const int rv_meds = 2131624150;
 			
-			// aapt resource value: 0x7f0e0175
-			public const int rv_medser = 2131624309;
-			
-			// aapt resource value: 0x7f0e0170
-			public const int rv_notes = 2131624304;
-			
 			// aapt resource value: 0x7f0e0176
-			public const int rv_persons = 2131624310;
+			public const int rv_medser = 2131624310;
+			
+			// aapt resource value: 0x7f0e0171
+			public const int rv_notes = 2131624305;
+			
+			// aapt resource value: 0x7f0e0177
+			public const int rv_persons = 2131624311;
 			
 			// aapt resource value: 0x7f0e002e
 			public const int satellite = 2131623982;
@@ -5147,8 +5141,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e00c7
 			public const int status = 2131624135;
 			
-			// aapt resource value: 0x7f0e01af
-			public const int status_bar_latest_event_content = 2131624367;
+			// aapt resource value: 0x7f0e01b0
+			public const int status_bar_latest_event_content = 2131624368;
 			
 			// aapt resource value: 0x7f0e006a
 			public const int stretch = 2131624042;
@@ -5210,8 +5204,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e00f0
 			public const int textview_error = 2131624176;
 			
-			// aapt resource value: 0x7f0e019f
-			public const int time = 2131624351;
+			// aapt resource value: 0x7f0e01a0
+			public const int time = 2131624352;
 			
 			// aapt resource value: 0x7f0e0023
 			public const int title = 2131623971;
@@ -5267,8 +5261,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0102
 			public const int tv_age = 2131624194;
 			
-			// aapt resource value: 0x7f0e0192
-			public const int tv_boala = 2131624338;
+			// aapt resource value: 0x7f0e0193
+			public const int tv_boala = 2131624339;
 			
 			// aapt resource value: 0x7f0e0148
 			public const int tv_data_inceput = 2131624264;
@@ -5276,8 +5270,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0163
 			public const int tv_device = 2131624291;
 			
-			// aapt resource value: 0x7f0e017f
-			public const int tv_devices = 2131624319;
+			// aapt resource value: 0x7f0e0180
+			public const int tv_devices = 2131624320;
 			
 			// aapt resource value: 0x7f0e014a
 			public const int tv_durata = 2131624266;
@@ -5285,8 +5279,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e00e4
 			public const int tv_email = 2131624164;
 			
-			// aapt resource value: 0x7f0e0173
-			public const int tv_empty = 2131624307;
+			// aapt resource value: 0x7f0e0174
+			public const int tv_empty = 2131624308;
 			
 			// aapt resource value: 0x7f0e0116
 			public const int tv_first_name = 2131624214;
@@ -5297,8 +5291,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e00e3
 			public const int tv_header = 2131624163;
 			
-			// aapt resource value: 0x7f0e0197
-			public const int tv_hour = 2131624343;
+			// aapt resource value: 0x7f0e0198
+			public const int tv_hour = 2131624344;
 			
 			// aapt resource value: 0x7f0e0143
 			public const int tv_interval = 2131624259;
@@ -5336,11 +5330,11 @@ namespace Familia
 			// aapt resource value: 0x7f0e00c4
 			public const int tv_med_name_alarm = 2131624132;
 			
-			// aapt resource value: 0x7f0e017b
-			public const int tv_medicine = 2131624315;
+			// aapt resource value: 0x7f0e017c
+			public const int tv_medicine = 2131624316;
 			
-			// aapt resource value: 0x7f0e019c
-			public const int tv_medser = 2131624348;
+			// aapt resource value: 0x7f0e019d
+			public const int tv_medser = 2131624349;
 			
 			// aapt resource value: 0x7f0e00fd
 			public const int tv_name = 2131624189;
@@ -5354,8 +5348,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e010e
 			public const int tv_password_retype = 2131624206;
 			
-			// aapt resource value: 0x7f0e01bd
-			public const int tv_person_name = 2131624381;
+			// aapt resource value: 0x7f0e01be
+			public const int tv_person_name = 2131624382;
 			
 			// aapt resource value: 0x7f0e011a
 			public const int tv_retype_password = 2131624218;
@@ -5363,8 +5357,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0149
 			public const int tv_start_date = 2131624265;
 			
-			// aapt resource value: 0x7f0e0199
-			public const int tv_title = 2131624345;
+			// aapt resource value: 0x7f0e019a
+			public const int tv_title = 2131624346;
 			
 			// aapt resource value: 0x7f0e0150
 			public const int tv_txt = 2131624272;
@@ -5372,8 +5366,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0153
 			public const int tv_txt_medicament = 2131624275;
 			
-			// aapt resource value: 0x7f0e0181
-			public const int tv_version = 2131624321;
+			// aapt resource value: 0x7f0e0182
+			public const int tv_version = 2131624322;
 			
 			// aapt resource value: 0x7f0e0140
 			public const int txt_dia = 2131624256;
@@ -5390,8 +5384,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e003f
 			public const int useLogo = 2131623999;
 			
-			// aapt resource value: 0x7f0e018f
-			public const int username = 2131624335;
+			// aapt resource value: 0x7f0e0190
+			public const int username = 2131624336;
 			
 			// aapt resource value: 0x7f0e002a
 			public const int vertical = 2131623978;
@@ -5399,11 +5393,11 @@ namespace Familia
 			// aapt resource value: 0x7f0e001b
 			public const int view_offset_helper = 2131623963;
 			
-			// aapt resource value: 0x7f0e01c2
-			public const int visible = 2131624386;
+			// aapt resource value: 0x7f0e01c3
+			public const int visible = 2131624387;
 			
-			// aapt resource value: 0x7f0e01d1
-			public const int week_tab = 2131624401;
+			// aapt resource value: 0x7f0e01d2
+			public const int week_tab = 2131624402;
 			
 			// aapt resource value: 0x7f0e0034
 			public const int wide = 2131623988;
@@ -5417,8 +5411,8 @@ namespace Familia
 			// aapt resource value: 0x7f0e0047
 			public const int wrap_content = 2131624007;
 			
-			// aapt resource value: 0x7f0e01d3
-			public const int year_tab = 2131624403;
+			// aapt resource value: 0x7f0e01d4
+			public const int year_tab = 2131624404;
 			
 			static Id()
 			{
