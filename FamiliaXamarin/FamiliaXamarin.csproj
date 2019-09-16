@@ -49,10 +49,7 @@
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
-    <AndroidSupportedAbis>armeabi;armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
-    <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
-    <BundleAssemblies>false</BundleAssemblies>
-    <EnableProguard>false</EnableProguard>
+    <AndroidSupportedAbis>x86;x86_64;arm64-v8a;armeabi-v7a</AndroidSupportedAbis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev.Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -126,6 +123,13 @@
     <Compile Include="Medicatie\MedicineServerFragment.cs" />
     <Compile Include="Medicatie\MedicineLostFragment.cs" />
     <Compile Include="Medicatie\MedicineServerRecyclerViewOnScrollListener.cs" />
+    <Compile Include="Profile\Data\db\DiseaseDataModel.cs" />
+    <Compile Include="Profile\Data\PersonalData.cs" />
+    <Compile Include="Profile\Data\PersonalDisease.cs" />
+    <Compile Include="Profile\Data\db\ProfileDataModel.cs" />
+    <Compile Include="Profile\Data\ProfileStorage.cs" />
+    <Compile Include="Profile\DiseasesAdapter.cs" />
+    <Compile Include="Profile\ProfileActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Chat\ChatActivity.cs" />
@@ -919,6 +923,28 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\raw\alarm.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_profile.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\calendar_age.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\human_female.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\human_male.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_profile_disease.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\bottle_tonic_plus.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

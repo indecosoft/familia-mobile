@@ -19,6 +19,8 @@ using Android.Widget;
 using Com.Bumptech.Glide;
 using Com.Bumptech.Glide.Util;
 using Familia;
+using Familia.Profile;
+using Familia.Profile.Data;
 using FamiliaXamarin.Asistenta_sociala;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
@@ -107,6 +109,8 @@ namespace FamiliaXamarin.Login_System
             private string _imageExtension, _imagePath;
             private List<BenefitSpinnerState> _listVOs;
             private List<DiseaseModel> _diseaseList;
+
+            private List<PersonalDisease> listOfPersonalDiseases = new List<PersonalDisease>();
 
 
             public static PlaceholderFragment NewInstance(int sectionNumber)
@@ -527,11 +531,13 @@ namespace FamiliaXamarin.Login_System
                                                                             where disease.IsSelected
                                                                             select disease).Count()];
 
+
                         var k = 0;
                         for (var i = 0; i < _listVOs.Count; i++)
                         {
                             if (!_listVOs[i].IsSelected) continue;
                             FragmentContext._firstSetupModel.Disease[k] = _diseaseList[i].Cod;
+                            listOfPersonalDiseases.Add(new PersonalDisease(_diseaseList[i].Cod, _listVOs[i].Title));
                             k++;
                         }
 
@@ -539,7 +545,9 @@ namespace FamiliaXamarin.Login_System
                         {
                             var jsonData =
                                 JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
+                            
                             Log.Error("data to send", jsonData);
+                            
                             var response = await WebServices.Post(
                                 Constants.PublicServerAddress + "/api/firstSetup",
                                 new JSONObject(jsonData), Utils.GetDefaults("Token"));
@@ -561,8 +569,11 @@ namespace FamiliaXamarin.Login_System
                                         break;
                                     case 2:
 
+                                        await SaveProfileData();
+
                                         Utils.SetDefaults("Logins", true.ToString());
-                                        Utils.SetDefaults("Avatar", $"{Constants.PublicServerAddress}/{Utils.GetDefaults("Email")}.{FragmentContext._firstSetupModel.ImageExtension}");
+                                        Utils.SetDefaults("Avatar",
+                                            $"{Constants.PublicServerAddress}/{Utils.GetDefaults("Email")}.{FragmentContext._firstSetupModel.ImageExtension}");
                                         FragmentContext.StartActivity(typeof(MainActivity));
                                         FragmentContext.Finish();
                                         break;
@@ -579,6 +590,30 @@ namespace FamiliaXamarin.Login_System
                         FragmentContext._progressBarDialog.Dismiss();
 
                         break;
+                }
+            }
+
+            private async Task SaveProfileData()
+            {
+                var personalData = new PersonalData(
+                    listOfPersonalDiseases,
+                    FragmentContext._firstSetupModel.Base64Image,
+                    FragmentContext._firstSetupModel.DateOfBirth,
+                    FragmentContext._firstSetupModel.Gender,
+                    FragmentContext._firstSetupModel.ImageName,
+                    FragmentContext._firstSetupModel.ImageExtension
+                );
+                if (!(await ProfileStorage.GetInstance().clearDb()))
+                {
+                    Log.Error("FirstSetup", "Error clearing profile data ..");
+                }
+                else
+                {
+                    ProfileStorage.GetInstance().personalData = personalData;
+                    if (!(await ProfileStorage.GetInstance().save()))
+                    {
+                        Log.Error("FirstSetup", "Error saving profile data ..");
+                    }
                 }
             }
 

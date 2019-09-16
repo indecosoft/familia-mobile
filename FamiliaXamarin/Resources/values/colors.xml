@@ -14,6 +14,8 @@
   <!--<color name="colorDanger">#FE3267</color>-->
   <color name="accent">#FF783F</color>
   <!--<color name="accent">#FF783F</color>-->
+
+  <color name="whited5">#F5F5F5</color>
   
   <color name="primary">#9F0E20</color>
   <color name="primary_dark">#E12929</color>

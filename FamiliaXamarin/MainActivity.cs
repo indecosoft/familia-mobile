@@ -31,6 +31,7 @@ using Familia.Chat;
 using Familia.DataModels;
 using Familia.Login_System;
 using Familia.Medicatie;
+using Familia.Profile;
 using Familia.Services;
 using Familia.Sharing;
 using FamiliaXamarin.DataModels;
@@ -216,6 +217,8 @@ namespace FamiliaXamarin
             profileImageView.Click += delegate
             {
                 //TODO: Implementateaza acivitaste pentru profil 
+                StartActivity(new Intent(this, typeof(ProfileActivity)));
+//                Title = "Profilul meu";
             };
 
              if (Intent.GetBooleanExtra("FromChat", false))
