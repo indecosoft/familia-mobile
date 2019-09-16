@@ -5,6 +5,7 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.App;
@@ -14,6 +15,7 @@ using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
 using Familia.Profile.Data;
+using FamiliaXamarin.Helpers;
 using Java.Util;
 using Refractored.Controls;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -21,7 +23,8 @@ using Utils = FamiliaXamarin.Helpers.Utils;
 
 namespace Familia.Profile
 {
-    [Activity(Label = "Profile")]
+    [Activity(Label = "Profile", Theme = "@style/AppTheme.Dark",
+        ScreenOrientation = ScreenOrientation.Portrait)]
     public class ProfileActivity : AppCompatActivity
     {
         private PersonalData personalData;
@@ -32,8 +35,6 @@ namespace Familia.Profile
             SetContentView(Resource.Layout.activity_profile);
             SetToolbar();
             getData();
-
-         
         }
 
         private void SetToolbar()
@@ -51,6 +52,8 @@ namespace Familia.Profile
 
         public async void getData()
         {
+            ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
+            dialog.Show();
             personalData = await ProfileStorage.GetInstance().read();
             if (personalData != null)
             {
@@ -70,6 +73,10 @@ namespace Familia.Profile
                     var tvGender = FindViewById<TextView>(Resource.Id.tv_gender);
                     tvGender.Text = "Feminin";
                 }
+
+                var tvDateOftBirth = FindViewById<TextView>(Resource.Id.tv_labelDate);
+                tvDateOftBirth.Text = convertDateToStringFormat();
+
                 var age = getAge();
                 var tvAge = FindViewById<TextView>(Resource.Id.tv_age);
                 tvAge.Text = age + " ani";
@@ -83,7 +90,20 @@ namespace Familia.Profile
                 var adapter = new DiseasesAdapter(this, personalData.listOfPersonalDiseases);
                 rv.SetAdapter(adapter);
                 adapter.NotifyDataSetChanged();
-                
+
+                RunOnUiThread(() =>
+                {
+                    dialog.Dismiss();
+                });
+             
+            }
+            else
+            {
+                RunOnUiThread(() =>
+                {
+                    dialog.Dismiss();
+                    Toast.MakeText(this, "Nu există date despre profilul dumneavoastră. Incercați să vă reautentificați.", ToastLength.Long);
+                });
             }
         }
 
@@ -96,6 +116,12 @@ namespace Familia.Profile
             var age = today.Year - birthdate.Year;
             if (birthdate.Date > today.AddYears(-age)) age--;
             return age;
+        }
+
+        public string convertDateToStringFormat()
+        {
+            var birthdate = DateTime.Parse(personalData.DateOfBirth);
+            return birthdate.Day + "/" + birthdate.Month + "/"+birthdate.Year;
         }
     }
 }
