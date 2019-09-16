@@ -78,8 +78,8 @@ namespace FamiliaXamarin.Services
                 if (!_isGooglePlayServicesInstalled) return;
                 _locationRequest = new LocationRequest()
                     .SetPriority(LocationRequest.PriorityBalancedPowerAccuracy)
-                    .SetInterval(1000 * 60 * 10)
-                    .SetMaxWaitTime(1000 * 60 * 60);
+                    .SetInterval(1000 * 60)
+                    .SetMaxWaitTime(1000 * 60 * 2);
                 _locationCallback = new FusedLocationProviderCallback(this);
 
                 _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);

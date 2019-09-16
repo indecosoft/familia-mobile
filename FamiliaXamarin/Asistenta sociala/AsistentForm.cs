@@ -33,7 +33,7 @@ namespace FamiliaXamarin.Asistenta_sociala
         private bool _isGooglePlayServicesInstalled;
         private Spinner _benefitsSpinner;
         private EditText _tbDetails;
-        private Button _btnScan;
+        private Button _btnScan, _btnAnulare;
         private ConstraintLayout _formContainer;
         private string _dateTimeStart, _dateTimeEnd;
         private double _latitude, _longitude;
@@ -50,6 +50,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             _benefitsSpinner = v.FindViewById<Spinner>(Resource.Id.benefits_spinner);
             _tbDetails = v.FindViewById<EditText>(Resource.Id.input_details);
             _btnScan = v.FindViewById<Button>(Resource.Id.btnScan);
+            _btnAnulare = v.FindViewById<Button>(Resource.Id.btnAnulare);
             _formContainer = v.FindViewById<ConstraintLayout>(Resource.Id.container);
 
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se trimit datele...", Activity, false);
@@ -63,12 +64,13 @@ namespace FamiliaXamarin.Asistenta_sociala
         }
         private async Task<bool> GetBenefits(int idClient)
         {
+            _benefitsList = new List<string>();
             Log.Error("Debug Log in " + nameof(AsistentForm), idClient.ToString());
             var status = false;
             await Task.Run(async () => {
                 try
                 {
-                    var response = await WebServices.Get($"{Constants.PublicServerAddress}/api/getBenefits/{idClient}", Utils.GetDefaults("Token"));
+                    var response = await WebServices.Get($"{Constants.PublicServerAddress}/api/getBenefits", Utils.GetDefaults("Token"));
                     Log.Error("Debug Log in " + nameof(AsistentForm), "Response: " + response);
                     var jsonResponse = new JSONObject(response);
                     Log.Error("ASISTEN FORM BENEFITS", jsonResponse.ToString());
@@ -80,7 +82,6 @@ namespace FamiliaXamarin.Asistenta_sociala
                             _benefitsList.Add(dataArray.GetJSONObject(i).GetString("benefit"));
                         }
                         _listVOs = new List<BenefitSpinnerState>();
-
                         foreach (var t in _benefitsList)
                         {
                             var stateVo = new BenefitSpinnerState
@@ -90,8 +91,12 @@ namespace FamiliaXamarin.Asistenta_sociala
                             };
                             _listVOs.Add(stateVo);
                         }
-                        var myAdapter = new BenefitAdapter(Activity, 0, _listVOs);
-                        _benefitsSpinner.Adapter = myAdapter;
+                        Activity.RunOnUiThread(delegate
+                        {
+                            var myAdapter = new BenefitAdapter(Activity, 0, _listVOs);
+                            _benefitsSpinner.Adapter = myAdapter;
+                        });
+                        
                         status = true;
                     }
                 }
@@ -113,24 +118,47 @@ namespace FamiliaXamarin.Asistenta_sociala
             IntiUi(view);
             _distanceCalculatorService = new Intent(Activity, typeof(DistanceCalculator));
             _medicalAsistanceService = new Intent(Activity, typeof(MedicalAsistanceService));
-            
+
             //string[] selectQualification = {
-                //"Beneficiu acordat", "Masaj", "Baie", "Perfuzie", "Pansament"};
-            
+            //"Beneficiu acordat", "Masaj", "Baie", "Perfuzie", "Pansament"};
+
+            if(!string.IsNullOrEmpty(Utils.GetDefaults("QrId")))
+                GetBenefits(int.Parse(Utils.GetDefaults("QrId")));
             var fromPreferences = Utils.GetDefaults("ActivityStart");
             _tbDetails.TextChanged += delegate
             {
 
                 _btnScan.Enabled = FieldsValidation();
             };
+            _btnAnulare.Click += delegate(object sender, EventArgs args)
+            {
+                Utils.SetDefaults("ActivityStart", "");
+                Utils.SetDefaults("QrId", "");
+
+                _formContainer.Visibility = ViewStates.Gone;
+                _btnAnulare.Visibility = ViewStates.Gone;
+                _btnScan.Text = "Incepe activitatea";
+                Activity.StopService(_medicalAsistanceService);
+                Activity.StopService(_distanceCalculatorService);
+                _tbDetails.Text = string.Empty;
+                foreach (var t in _listVOs)
+                {
+                    t.IsSelected = false;
+                }
+
+                _btnScan.Enabled = true;
+            };
             
             if (string.IsNullOrEmpty(fromPreferences))
             {
                 _formContainer.Visibility = ViewStates.Gone;
+                _btnAnulare.Visibility = ViewStates.Gone;
+
                 _btnScan.Text = "Incepe activitatea";
             }
             else
             {
+                _btnAnulare.Visibility = ViewStates.Visible;
                 _formContainer.Visibility = ViewStates.Visible;
                 try
                 {
@@ -192,8 +220,11 @@ namespace FamiliaXamarin.Asistenta_sociala
                     _qrJsonData = new JSONObject(result.Text);
 
                     Log.Error("QrCode", _qrJsonData.ToString());
-                    await GetBenefits(_qrJsonData.GetInt("Id"));
-
+                    if(!await GetBenefits(_qrJsonData.GetInt("Id")))
+                    {
+                        return;
+                    }
+                    Utils.SetDefaults("QrId", _qrJsonData.GetInt("Id").ToString());
                     var expDateTime = _qrJsonData.GetString("expirationDateTime");
                     var dateTimeExp = sdf.Parse(expDateTime);
                     if (dateTimeExp.After(dateTimeNow))
@@ -204,6 +235,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                             _formContainer.Visibility = ViewStates.Visible;
                             _btnScan.Text = "Finalizeaza activitatea";
                             _btnScan.Enabled = false;
+                            _btnAnulare.Visibility = ViewStates.Visible;
                             try
                             {
                                 _progressBarDialog.Show();
@@ -246,6 +278,9 @@ namespace FamiliaXamarin.Asistenta_sociala
                         {
                             _formContainer.Visibility = ViewStates.Gone;
                             _btnScan.Text = "Incepe activitatea";
+                            _btnAnulare.Visibility = ViewStates.Gone;
+                            Utils.SetDefaults("QrId","");
+
                             try
                             {
                                 _progressBarDialog.Show();
@@ -284,17 +319,14 @@ namespace FamiliaXamarin.Asistenta_sociala
                                     var response = await WebServices.Post(Constants.PublicServerAddress + "/api/consult", dataToSend, Utils.GetDefaults("Token"));
                                     if (response != null)
                                     {
-                                        Snackbar snack;
                                         var responseJson = new JSONObject(response);
                                         switch (responseJson.GetInt("status"))
                                         {
                                             case 0:
-                                                snack = Snackbar.Make(_formContainer, "Nu sunteti la pacient!", Snackbar.LengthLong);
-                                                snack.Show();
+                                                Snackbar.Make(_formContainer, "Nu sunteti la pacient!", Snackbar.LengthLong).Show();
                                                 break;
                                             case 1:
-                                                snack = Snackbar.Make(_formContainer, "Eroare conectare la server", Snackbar.LengthLong);
-                                                snack.Show();
+                                                Snackbar.Make(_formContainer, "Eroare conectare la server", Snackbar.LengthLong).Show();
                                                 break;
                                             case 2:
                                                 break;
