@@ -75,9 +75,10 @@
         android:id="@+id/rl_line"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_below="@id/profile_image"
-		android:layout_marginTop="150px"
-		android:background="@color/colorSecondary">
+        android:layout_below="@id/tv_email"
+		android:layout_marginTop="20dp"
+		android:background="@color/colorSecondary"
+		android:layout_marginBottom="20dp">
 	/>
     </RelativeLayout>
 	
@@ -103,7 +104,7 @@
 	app:layout_constraintHorizontal_chainStyle="spread"
     >
     <RelativeLayout
-        android:layout_width="160dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp">
         <ImageView
@@ -172,7 +173,7 @@
 	app:layout_constraintBottom_toBottomOf="parent"	
   >
     <RelativeLayout
-      android:layout_width="160dp"
+      android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:padding="16dp">
       <ImageView

@@ -79,6 +79,19 @@
                 app:layout_constraintStart_toEndOf="@+id/FitBitprofileImage"
                 app:layout_constraintTop_toBottomOf="@+id/lbDisplayName" />
 
+			<TextView
+                android:id="@+id/lbl"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:padding="3dp"
+                android:text="Activitate"
+                app:layout_constraintLeft_toRightOf="@+id/FitBitprofileImage"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/FitBitprofileImage"
+                app:layout_constraintTop_toBottomOf="@+id/lbFullName" />
+
             <TextView
                 android:id="@+id/lbActivTime"
                 android:layout_width="100dp"
@@ -92,7 +105,7 @@
                 app:layout_constraintLeft_toRightOf="@+id/FitBitprofileImage"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/FitBitprofileImage"
-                app:layout_constraintTop_toBottomOf="@+id/lbFullName" />
+                app:layout_constraintTop_toBottomOf="@+id/lbl" />
         </android.support.constraint.ConstraintLayout>
 
         <ScrollView
