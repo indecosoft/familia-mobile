@@ -12,14 +12,14 @@ namespace FamiliaXamarin.Asistenta_sociala
     {
         private readonly Context _mContext;
         readonly List<BenefitSpinnerState> _listState;
-        readonly BenefitAdapter _myAdapter;
+//        readonly BenefitAdapter _myAdapter;
         bool _isFromView;
         public BenefitAdapter(Context context, int resource, List<BenefitSpinnerState> objects) : base(context, resource, objects)
         {
 
             _mContext = context;
             _listState = objects;
-            _myAdapter = this;
+//            _myAdapter = this;
         }
 
         public override View GetDropDownView(int position, View convertView,
@@ -34,7 +34,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             return GetCustomView(position, convertView, parent);
         }
 
-        public View GetCustomView(int position, View convertView,
+        private View GetCustomView(int position, View convertView,
                                   ViewGroup parent)
         {
             if (parent == null)
@@ -42,7 +42,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                 throw new System.ArgumentNullException(nameof(parent));
             }
 
-            Contract.Ensures(Contract.Result<View>() != null);
+//            Contract.Ensures(Contract.Result<View>() != null);
 
             ViewHolder holder;
             if (convertView == null)
@@ -74,8 +74,8 @@ namespace FamiliaXamarin.Asistenta_sociala
             holder.mCheckBox.Tag = position;
             holder.mCheckBox.CheckedChange += delegate (object sender, CompoundButton.CheckedChangeEventArgs args)
             {
-                Contract.Requires(sender != null);
-                int getPosition = (int)holder.mCheckBox.Tag;
+//                Contract.Requires(sender != null);
+//                int getPosition = (int)holder.mCheckBox.Tag;
 
                 if (!_isFromView)
                 {
@@ -84,7 +84,7 @@ namespace FamiliaXamarin.Asistenta_sociala
             };
             return convertView;
         }
-        internal class ViewHolder : Object
+        class ViewHolder : Object
         {
             public TextView mTextView;
             public CheckBox mCheckBox;

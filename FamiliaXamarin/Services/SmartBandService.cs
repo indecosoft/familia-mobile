@@ -46,14 +46,14 @@ namespace Familia.Services
 
                 await RefreshToken();
                 SentData();
-                _handler.PostDelayed(_runnable, _refreshTime * 5);
+                _handler.PostDelayed(_runnable, _refreshTime * 3600 * 6);
 
             }
             else
             {
 
                 Log.Error("SmartBand Service", "Operation Aborted because Location or Network is disabled");
-                _handler.PostDelayed(_runnable, _refreshTime * 10);
+                _handler.PostDelayed(_runnable, _refreshTime * 3600 * 3);
             }
 
         }

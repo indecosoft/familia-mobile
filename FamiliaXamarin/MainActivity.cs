@@ -395,6 +395,7 @@ namespace FamiliaXamarin
                         StopService(_loacationServiceIntent);
                         StopService(_webSocketServiceIntent);
                         StopService(_medicationServerServiceIntent);
+                        StopService(_smartBandServiceIntent);
                        // StopService(_medicationServiceIntent);
                     ClearBluetoothDevices();
                     ClearMedicationStorages();

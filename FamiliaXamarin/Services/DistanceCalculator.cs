@@ -56,7 +56,7 @@ namespace FamiliaXamarin.Services
 
                     Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                         .SetContentTitle("Familia")
-                        .SetContentText("AZsistenta la domiciliu in curs de desfasurare")
+                        .SetContentText("Asistenta la domiciliu in curs de desfasurare")
                         .SetSmallIcon(Resource.Drawable.logo)
                         .SetOngoing(true)
                         .Build();
@@ -119,11 +119,12 @@ namespace FamiliaXamarin.Services
                 {
                     _ctx._currentLongitude = double.Parse(Utils.GetDefaults("Longitude"));
                     _ctx._currentLatitude = double.Parse(Utils.GetDefaults("Latitude"));
+                    Log.Error("consultLog", _ctx._longitude.ToString());
+                    Log.Error("consultLat", _ctx._latitude.ToString());
 
-
-                    double distance = Utils.HaversineFormula(_ctx._latitude, _ctx._longitude, _ctx._currentLatitude, _ctx._currentLongitude);
+                    var distance = Utils.HaversineFormula(_ctx._latitude, _ctx._longitude, _ctx._currentLatitude, _ctx._currentLongitude);
                     Log.Error("Distance", "" + distance);
-                    //Toast.MakeText(_ctx, "" + distance + " metri", ToastLength.Short).Show();
+//                    Toast.MakeText(_ctx, "" + distance + " metri", ToastLength.Short).Show();
                     if (distance > 180 && distance < 220)
                     {
                         Log.Warn("Distance warning", "mai mult de 200 metri.Esti la " + Math.Round(distance) + " metrii distanta");
