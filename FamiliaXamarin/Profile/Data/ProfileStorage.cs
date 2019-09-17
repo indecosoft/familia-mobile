@@ -131,9 +131,16 @@ namespace Familia.Profile
                 );
             }
 
-            logData();
+           
             Log.Error("ProfileStorage", "read");
-            return personalData;
+
+            if (listDiseases.Count > 0 )
+            {
+                logData();
+                return personalData;
+            }
+
+            return null;
         }
 
         private async Task<IEnumerable<DiseaseDataModel>> GetDiseasesFromDb()

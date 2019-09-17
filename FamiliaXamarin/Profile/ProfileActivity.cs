@@ -55,6 +55,14 @@ namespace Familia.Profile
             ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
             dialog.Show();
             personalData = await ProfileStorage.GetInstance().read();
+
+            if (personalData == null)
+            {
+                Log.Error("ProfileStorage", "obj is null");
+                dialog.Dismiss();
+                Toast.MakeText(this, "Nu există date despre profilul dumneavoastră. Incercați să vă reautentificați.", ToastLength.Long);
+            }
+            else 
             if (personalData != null)
             {
 
