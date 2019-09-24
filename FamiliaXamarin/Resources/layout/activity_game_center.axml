@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:padding="16dp">
+
+	 <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:fitsSystemWindows="false">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+
+                android:id="@+id/toolbar"
+                style="@style/SharingBar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/ActionBarPopupThemeOverlayDark"
+                app:theme="@style/ActionBarThemeOverlayDark" />
+
+        </android.support.design.widget.AppBarLayout>
+    </android.support.constraint.ConstraintLayout>
+
+	<RelativeLayout
+		android:id="@+id/rl_ball"
+		android:layout_width="70dp"
+        android:layout_height="70dp"
+		android:background="@color/colorSecondary"
+		android:layout_below="@id/toolbar"
+		android:layout_marginTop="50dp"
+		>
+
+		<TextView
+            android:id="@+id/tv_ball"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Minge"
+			android:layout_marginLeft="10dp"
+			android:layout_centerInParent="true"
+		    android:textColor="#F5F5F5"
+		    android:layout_marginTop="50dp"
+		/>
+
+	</RelativeLayout>
+
+	
+</RelativeLayout>
