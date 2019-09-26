@@ -1,148 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        body {
-            background: linear-gradient(135deg, rgb(144, 187, 109) 0%,rgb(135, 193, 87) 100%);
-        }
-
-        .wrapper {
-            position: absolute;
-            top: 15%;
-            left: 25%;
-        }
-
-        .ball {
-            width: 200px;
-            height: 200px;
-            position: absolute;
-            border-radius: 50%;
-            overflow: hidden;
-            box-shadow: -5px -5x 5px red;
-            left: 25%;
-            top: 25%;
-            box-shadow: -3px 3px 15px rgba(0,0,0,0.35), 0px 0px 100px rgba(0,0,0,0.25), 0px 0px 5px rgba(255,255,255,0.5);
-            z-index: 1;
-        }
-
-            .ball:before {
-                position: absolute;
-                content: '';
-                height: 100%;
-                width: 100%;
-                background-image: linear-gradient(transparent 0%, rgba(0,0,0,0.2) 50%);
-                transform: rotate(-125deg);
-            }
-
-
-        .texture {
-            position: relative;
-            animation: translateBackground 40s infinite linear;
-            background: url(http://thumbs.dreamstime.com/x/golf-ball-texture-17926947.jpg) 0% 0 repeat-x;
-            width: 200px;
-            height: 200px;
-            position: absolute;
-            border-radius: 50%;
-        }
-
-        @keyframes translateBackground {
-            0% {
-                background-position-x: 0;
-            }
-
-            100% {
-                background-position-x: -600px;
-            }
-        }
-
-        html {
-            overflow: hidden !important;
-        }
-
-        .player {
-            width: 80px;
-            height: 80px;
-            position: absolute;
-        }
-
-        .brick {
-            width: 35px;
-            height: 35px;
-            position: absolute;
-            background: green;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="test.css">
 </head>
 <body>
 
-    <div class="player">
-        <div class="wrapper">
-            <div class="ball texture"></div>
-        </div>
-    </div>
+    <div class="player wrapper ball texture"></div>
 
-    <button onclick="sendMessage();">Send to Android</button>
-    <input type="button" value="Get from android" onclick="getFromAndroid()" />
+    <div class="arrival"></div>
+
+    <!-- <button onclick="sendMessage();">Send to Android</button> -->
+    <!-- <input type="button" value="Get from android" onclick="getFromAndroid()" /> -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-    <script type="text/javascript">
-
-        function getFromAndroid() {
-           var myVar = JSHandler.getFromAndroid();
-            alert(myVar);
-        }
-
-        function sendMessage() {
-            JSHandler.receiveMessageFromJS("Hello Wooooorld!");
-        }
-
-        //SET SCENE 
-
-        var dimensionsString = JSHandler.getScreenDimension();
-        var screen = {
-            width: Number(dimensionsString.split("/")[0]),
-            height: Number(dimensionsString.split("/")[1])
-        };
-
-        var movementX = 0;
-        var movementY = 0;
-
-        var updateScreen = function () {
-
-            var values = JSHandler.getXYFromGyro();
-            var currentX = Number(values.split("/")[0]);
-            var currentY = Number(values.split("/")[1]);
-
-            var speed = 3;
-
-            $(".player").parent().css({ position: 'relative' });
-
-
-            if (currentX > 0.3 && (speed * currentX) + $(".player").position().left + 200 + 5 < Number($(window).width())) {
-                    movementX = (speed * currentX) + ($(".player").position().left + 5);
-            } else {
-                if (currentX < -0.3 && (speed * currentX) + $(".player").position().left -5 >= -20) {
-                        movementX = (speed * currentX) + ($(".player").position().left - 5);
-                }
-            }
-
-            if (currentY < -0.3 && (speed * currentY) + $(".player").position().top - 5 >= 0) {
-                movementY = (speed * currentY) + ($(".player").position().top - 5) ;
-            } else {
-                if (currentY > 0.2 && (speed * currentY) + $(".player").position().top + 200 + 5 < Number($(window).height()) -20) {
-                        movementY = (speed * currentY) + ($(".player").position().top + 5) ;
-                }
-            }
-
-            $(".player").css({ top: movementY, left: movementX, position: 'absolute' });
-
-//            alert("from android: " + dimensionsString + " from window: " + $(window).width() + "/" + $(window).height());
-        };
-
-        setInterval(updateScreen, 20);
-
-    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="test.js"></script>
 
 </body>
 </html>

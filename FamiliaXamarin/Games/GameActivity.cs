@@ -56,7 +56,7 @@ namespace Familia.Games
         public void OnGyroSensorChanged(float x, float y)
         {
 
-            Log.Error("GameActivity", " x " + x + " y " + y);
+//            Log.Error("GameActivity", " x " + x + " y " + y);
             currentX = x;
             currentY = y;
         }
@@ -81,9 +81,9 @@ namespace Familia.Games
         [JavascriptInterface]
         public void receiveMessageFromJS(Java.Lang.String message)
         {
-            Log.Error("WebViewJavascriptInterface", "receiving from html..");
+            Log.Error("WebViewJavascriptInterface", "receiving from html.." + message);
 
-            Toast.MakeText(context, message, ToastLength.Long).Show();
+//            Toast.MakeText(context, message, ToastLength.Long).Show();
 
         }
 
