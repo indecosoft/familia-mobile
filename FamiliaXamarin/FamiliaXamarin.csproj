@@ -189,7 +189,6 @@
     <Compile Include="Settings\ActivitySetPin.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\styles.scss" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
@@ -1001,6 +1000,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\test.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\jquery.keyframes.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
