@@ -29,6 +29,7 @@ using Com.Bumptech.Glide;
 using Familia.Active_Conversations;
 using Familia.Chat;
 using Familia.DataModels;
+using Familia.Games;
 using Familia.Login_System;
 using Familia.Medicatie;
 using Familia.Profile;
@@ -216,9 +217,7 @@ namespace FamiliaXamarin
             //lbEmail.Text = Utils.GetDefaults("Email", this);
             profileImageView.Click += delegate
             {
-                //TODO: Implementateaza acivitaste pentru profil 
                 StartActivity(new Intent(this, typeof(ProfileActivity)));
-//                Title = "Profilul meu";
             };
 
              if (Intent.GetBooleanExtra("FromChat", false))
@@ -368,6 +367,9 @@ namespace FamiliaXamarin
                    
                     StartActivity(new Intent(this, typeof(SharingDataActivity)));
 
+                    break;
+                case Resource.Id.games:
+                    StartActivity(new Intent(this, typeof(GameCenterActivity)));
                     break;
                 case Resource.Id.nav_asistenta:
                     SupportFragmentManager.BeginTransaction()

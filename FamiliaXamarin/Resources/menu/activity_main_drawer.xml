@@ -36,6 +36,10 @@
             android:id="@+id/partajare_date"
             android:icon="@drawable/share_variant"
             android:title="Partajare Date" />
+      <item
+        android:id="@+id/games"
+        android:icon="@drawable/gamepad_variant"
+        android:title="Jocuri" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"

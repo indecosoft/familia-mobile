@@ -47,8 +47,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         }
 
-       
-
         private async void LaunchAlarm(Context context, string medId, string boalaId)
         {
             const string channel = "channelabsolut";
@@ -60,13 +58,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
             var notificationManager =
                 NotificationManagerCompat.From(context);
 
-            //            var i = new Intent(context, typeof(AlarmActivity));
-            //                i.AddFlags(ActivityFlags.ClearTop);
-            //                i.PutExtra(DiseaseActivity.MED_ID, medId);
-            //                i.PutExtra(DiseaseActivity.BOALA_ID, boalaId);
-            //                i.PutExtra("message", FROM_APP);
-            //                i.SetFlags(ActivityFlags.NewTask);
-            //                context.StartActivity(i);
             Random random = new Random();
             int randomNumber = random.Next(0, 5000);
 
@@ -84,20 +75,12 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
             context.StartActivity(okIntent);
 
-
-            //            boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
-            //            medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
             var boli = Storage.GetInstance().GetListOfDiseasesFromFile(context);
             var mBoala = Storage.GetInstance().GetDisease(boalaId);
             if (mBoala != null)
             {
                var mMed = mBoala.GetMedicineById(medId);
-//               var mIdAlarm = intent.GetIntExtra(DiseaseActivity.ALARM_ID, -1);
-//                tvMedName.Text = mMed.Name;
             }
-
-
-           
 
             BuildNotification(context, NotifyId, channel, _mMed.Name, "medicament", okIntent);
 
@@ -113,11 +96,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
             {
                 Log.Error("ERR", e.ToString());
             }
-
-          
         }
-
-
 
         private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent)
         {
@@ -145,9 +124,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         private static void BuildNotification(Context context, int notifyId, string channel, string title, string content, Intent intent)
         {
-
-            //Log.Error("PPPAAAAAAAAAAAAAAAAAA", "build notification for " + title + " with id: " + notifyId);
-
             var piNotification = PendingIntent.GetActivity(context, notifyId, intent, PendingIntentFlags.UpdateCurrent);
             var mBuilder =
                 new NotificationCompat.Builder(context, channel)
@@ -158,10 +134,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     .SetContentIntent(piNotification)
                     .SetPriority(NotificationCompat.PriorityHigh);
 
-          
-
             var notificationManager = NotificationManagerCompat.From(context);
-
             notificationManager.Notify(notifyId, mBuilder.Build());
         }
     }

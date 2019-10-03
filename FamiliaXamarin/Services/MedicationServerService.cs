@@ -66,6 +66,7 @@ namespace Familia.Services
 
                     if (res != null)
                     {
+
                         Log.Error("if", "aici");
                         Log.Error("RESULT_FOR_MEDICATIE", res);
                         if (res.Equals("[]")) return;

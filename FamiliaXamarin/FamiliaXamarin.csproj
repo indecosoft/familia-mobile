@@ -63,6 +63,7 @@
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Android.Export" />
     <Reference Include="System" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
@@ -84,6 +85,9 @@
     <Compile Include="Devices\DevicesManagementAdapter.cs" />
     <Compile Include="Devices\DevicesManagementModel.cs" />
     <Compile Include="Devices\DevicesManagementRecyclerViewAdapter.cs" />
+    <Compile Include="Games\GameActivity.cs" />
+    <Compile Include="Games\GameCenterActivity.cs" />
+    <Compile Include="Games\Sensors\GyroSensor.cs" />
     <Compile Include="Helpers\AlarmDeviceReceiver.cs" />
     <Compile Include="Helpers\BiometricUtils.cs" />
     <Compile Include="Helpers\ChargerReceiver.cs" />
@@ -948,6 +952,57 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\disease_bag.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\gamepad_variant.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_game_center.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\test.html">
+      <SubType>Designer</SubType>
+    </AndroidAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_game.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\parallax.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\images\layer1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\images\layer2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\images\layer3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\images\layer4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\images\layer5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\images\layer6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\interactive.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\test.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\test.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\jquery.keyframes.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
