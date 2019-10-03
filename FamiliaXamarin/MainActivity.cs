@@ -143,7 +143,7 @@ namespace FamiliaXamarin
                     break;
                 case 2:
                     Toast.MakeText(this, "2", ToastLength.Long).Show();
-                    menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(true);
                     menuNav.FindItem(Resource.Id.nav_QRCode).SetVisible(false);
                     menuNav.FindItem(Resource.Id.harta).SetVisible(false);
                     menuNav.FindItem(Resource.Id.chat).SetVisible(false);

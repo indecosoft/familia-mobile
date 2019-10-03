@@ -434,6 +434,7 @@ namespace Familia.Login_System
                                 var logins = new JSONObject(response).GetBoolean("logins");
                                 var avatar = new JSONObject(response).GetString("avatar");
                                 var id = new JSONObject(response).GetString("id");
+                                var idClient = new JSONObject(response).GetString("idClient");
                                 var idPersoana = new JSONObject(response).GetString("idPersAsisoc");
                                 var type = new JSONObject(response).GetString("tip");
 
@@ -444,6 +445,7 @@ namespace Familia.Login_System
                                 Utils.SetDefaults("Name", nume);
                                 Utils.SetDefaults("Avatar", $"{Constants.PublicServerAddress}/{avatar}");
                                 Utils.SetDefaults("IdClient", id);
+                                Utils.SetDefaults("IdClientPentruFitbit", idClient);
                                 Utils.SetDefaults("IdPersoana", idPersoana);
                                 Utils.SetDefaults("UserType", type);
 

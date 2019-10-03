@@ -203,7 +203,7 @@ namespace Familia.Services
                                     }
                                     jsonArray.Put(jsonObject);
                                     var obj = new JSONObject();
-                                    obj.Put("imei", Utils.GetImei(this)).Put("idClient", Utils.GetDefaults("IdClient")).Put("idPersoana", Utils.GetDefaults("IdPersoana")).Put("data", jsonArray).Put("latitude", Utils.GetDefaults("Latitude").Replace(',', '.')).Put("longitude", Utils.GetDefaults("Longitude").Replace(',', '.'));
+                                    obj.Put("imei", Utils.GetImei(this)).Put("idClient", Utils.GetDefaults("IdClientPentruFitbit")).Put("idPersoana", Utils.GetDefaults("IdPersoana")).Put("data", jsonArray).Put("latitude", Utils.GetDefaults("Latitude").Replace(',', '.')).Put("longitude", Utils.GetDefaults("Longitude").Replace(',', '.'));
 
                                     var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/smartband/activity", obj, Utils.GetDefaults("Token"));
 
@@ -281,7 +281,7 @@ namespace Familia.Services
                         }
                         jsonArray.Put(jsonObject);
                         var obj = new JSONObject();
-                        obj.Put("imei", Utils.GetImei(this)).Put("idClient", Utils.GetDefaults("IdClient")).Put("idPersoana", Utils.GetDefaults("IdPersoana")).Put("data", jsonArray).Put("latitude", Utils.GetDefaults("Latitude").Replace(',', '.')).Put("longitude", Utils.GetDefaults("Longitude").Replace(',', '.'));
+                        obj.Put("imei", Utils.GetImei(this)).Put("idClient", Utils.GetDefaults("IdClientPentruFitbit")).Put("idPersoana", Utils.GetDefaults("IdPersoana")).Put("data", jsonArray).Put("latitude", Utils.GetDefaults("Latitude").Replace(',', '.')).Put("longitude", Utils.GetDefaults("Longitude").Replace(',', '.'));
                         var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/smartband/sleep", obj, Utils.GetDefaults("Token"));
                         if (!string.IsNullOrEmpty(result))
                         {
