@@ -36,8 +36,8 @@ namespace Familia.Login_System
     {
         private ConstraintLayout _layout;
 
-        private EditText _usernameEditText;
-        private EditText _passwordEditText;
+        private TextInputEditText _usernameEditText;
+        private TextInputEditText _passwordEditText;
         private AppCompatButton _registerButton;
         private TextView _pwdResetTextView;
         private AppCompatButton _loginButton;
@@ -369,8 +369,8 @@ namespace Familia.Login_System
 
             _layout = FindViewById<ConstraintLayout>(Resource.Id.layout);
 
-            _usernameEditText = FindViewById<EditText>(Resource.Id.et_email);
-            _passwordEditText = FindViewById<EditText>(Resource.Id.et_password);
+            _usernameEditText = FindViewById<TextInputEditText>(Resource.Id.et_email);
+            _passwordEditText = FindViewById<TextInputEditText>(Resource.Id.et_password);
 
             _loginButton = FindViewById<AppCompatButton>(Resource.Id.btn_login);
 

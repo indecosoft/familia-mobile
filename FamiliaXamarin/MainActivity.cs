@@ -122,7 +122,8 @@ namespace FamiliaXamarin
             _medicationServerServiceIntent = new Intent(this, typeof(MedicationServerService));
             _medicationServiceIntent = new Intent(this, typeof(MedicationService));
             var menuNav = navigationView.Menu;
-            
+            menuNav.FindItem(Resource.Id.games).SetVisible(false);
+
             switch (type)
             {
                 case 1:
