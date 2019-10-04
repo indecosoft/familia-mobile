@@ -59,6 +59,8 @@ namespace FamiliaXamarin
         public static string ClientId { get; } = "22CZRL";
         public static string CallbackUrl { get; } = "fittauth://finish";
         #endregion
+
+        
         public static string SaveDeviceDataUrl { get; } = "https://gisdev.indecosoft.net/devices/save-device-measurements";
 //        public static string SaveDeviceDataUrl { get; } = "http://192.168.101.77/devices/save-device-measurements";
         public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/chat";

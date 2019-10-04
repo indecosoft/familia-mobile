@@ -30,7 +30,7 @@ using Familia;
 using FamiliaXamarin.Services;
 using Orientation = Android.Media.Orientation;
 using Resource = Familia.Resource;
-
+using Familia.Helpers;
 
 namespace FamiliaXamarin.Helpers
 {
@@ -182,7 +182,7 @@ namespace FamiliaXamarin.Helpers
                     Options = new EncodingOptions { Height = 1000, Width = 1000 }
 
                 };
-                var bitmap = writer.Write(qrCodeData.ToString());
+                var bitmap = writer.Write(Encryption.Encrypt(qrCodeData.ToString()));
 
                 return bitmap;
             }
@@ -294,12 +294,7 @@ namespace FamiliaXamarin.Helpers
                     var acceptIntent = stackBuilderAccept.GetPendingIntent(DateTime.Now.Millisecond, (int)PendingIntentFlags.OneShot);
 
                      var rejectIntent = PendingIntent.GetBroadcast(Application.Context, DateTime.Now.Millisecond, chatActivityRejectedIntent, PendingIntentFlags.OneShot);
-                    //var rejectIntent = stackBuilderReject.Get(2, (int)PendingIntentFlags.OneShot);
 
-//                    var stackBuilderReject = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
-//                    stackBuilderReject.AddNextIntentWithParentStack(chatActivityRejectedIntent);
-
-                   // var rejectIntent = stackBuilderReject.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
                     return new NotificationCompat.Builder(Application.Context, email)
                         .SetContentTitle(title)
                         .SetContentText(body)

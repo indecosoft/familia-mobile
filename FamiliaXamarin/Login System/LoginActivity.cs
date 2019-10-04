@@ -36,11 +36,9 @@ namespace Familia.Login_System
     {
         private ConstraintLayout _layout;
 
-        private TextInputEditText _usernameEditText;
-        private TextInputEditText _passwordEditText;
-        private AppCompatButton _registerButton;
+        private EditText _usernameEditText, _passwordEditText;
+        private AppCompatButton _loginButton, _registerButton;
         private TextView _pwdResetTextView;
-        private AppCompatButton _loginButton;
         private KeyStore _keyStore;
         private Cipher _cipher;
         private readonly string _keyName = "EDMTDev";
@@ -120,10 +118,9 @@ namespace Familia.Login_System
                         GenKey();
 
                     if (!CipherInit()) return;
-                    var cryptoObject = new FingerprintManager.CryptoObject(_cipher);
-                    var helper = new FingerprintHandler(this);
 
-                    helper.StartAuthentication(fingerprintManager, cryptoObject);
+                    var helper = new FingerprintHandler(this);
+                    helper.StartAuthentication(fingerprintManager, new FingerprintManager.CryptoObject(_cipher));
                     helper.FingerprintAuth += delegate (object sender,
                         FingerprintHandler.FingerprintAuthEventArgs args)
                     {
@@ -296,10 +293,9 @@ namespace Familia.Login_System
                 StartActivity(typeof(MainActivity));
                 Finish();
             }
-            catch
-
+            catch(Exception ex)
             {
-                // ignored
+                Log.Error("loginActivity", ex.Message);
             }
         }
 
@@ -369,8 +365,8 @@ namespace Familia.Login_System
 
             _layout = FindViewById<ConstraintLayout>(Resource.Id.layout);
 
-            _usernameEditText = FindViewById<TextInputEditText>(Resource.Id.et_email);
-            _passwordEditText = FindViewById<TextInputEditText>(Resource.Id.et_password);
+            _usernameEditText = FindViewById<EditText>(Resource.Id.et_email);
+            _passwordEditText = FindViewById<EditText>(Resource.Id.et_password);
 
             _loginButton = FindViewById<AppCompatButton>(Resource.Id.btn_login);
 

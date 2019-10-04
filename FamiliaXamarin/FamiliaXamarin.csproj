@@ -48,13 +48,9 @@
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <AndroidLinkMode>None</AndroidLinkMode>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-    <AndroidSupportedAbis>armeabi;armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <Debugger>Xamarin</Debugger>
-    <BundleAssemblies>false</BundleAssemblies>
-    <EnableProguard>false</EnableProguard>
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
-    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev.Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -191,6 +187,8 @@
     <Compile Include="WebServices\WebServices.cs" />
     <Compile Include="Login System\PinActivity.cs" />
     <Compile Include="Settings\ActivitySetPin.cs" />
+    <Compile Include="DataModels\ConversationsRecord.cs" />
+    <Compile Include="Helpers\Encryption.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

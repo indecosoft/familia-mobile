@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
-using Android.Support.V4.App;
 using Android.Util;
+using Familia.DataModels;
 using FamiliaXamarin.Chat;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
@@ -22,9 +24,12 @@ namespace FamiliaXamarin
         public static Socket Client;
 
         Context _context;
-        public void Connect(string hostname, int port, Context context)
+        private SqlHelper<ConversationsRecords> _conversationsRecords;
+ 
+
+        public async Task Connect(string hostname, int port, Context context)
         {
-            
+            _conversationsRecords = await SqlHelper<ConversationsRecords>.CreateAsync();
             _context = context;
             try
             {
@@ -54,8 +59,6 @@ namespace FamiliaXamarin
             }
             catch (Exception e)
             {     
-
-
                 Log.Error("WSConnectionError: ", e.ToString());
             }
         }
@@ -96,7 +99,7 @@ namespace FamiliaXamarin
             Log.Error("WebSocket", "Connection Timeout");
         }
 
-        private void OnConversation(Object[] obj)
+        private async void OnConversation(Object[] obj)
         {
             Log.Error("WebSocket", "OnConversation");
             var data = (JSONObject)obj[0];
@@ -117,16 +120,23 @@ namespace FamiliaXamarin
 
             try
             {
+                if (!string.IsNullOrEmpty(message))
+                {
+                    await _conversationsRecords.Insert(new ConversationsRecords
+                    {
+                        Message = message,
+                        Room = room,
+                        MessageDateTime = DateTime.Now,
+                        MessageType = 1
 
+                    });
+                }
                 Utils.CreateChannels("1", "1");
                 //CAZUL 1 chat simplu intre 2 useri
-                //var c = Utils.isRunning(ChatActivity.Ctx);
                 var c = Utils.IsActivityRunning(Class.FromType(typeof(ChatActivity)));
-                //var c =   typeof(ChatActivity).;
                 if (c && ChatActivity.RoomName.Equals(room))
                 {
                     Log.Error("Caz 1", "*********************");
-                    //Utils.CreateChannels("Caz 1", "Caz 1");
                     ChatActivity.AddMessage(message, ChatModel.TypeMessage);
                 }
                 //CAZUL 2 user offline primeste chat
