@@ -25,7 +25,7 @@ namespace Familia.Profile
 {
     [Activity(Label = "Profile", Theme = "@style/AppTheme.Dark",
         ScreenOrientation = ScreenOrientation.Portrait)]
-    public class ProfileActivity : AppCompatActivity
+    public class ProfileActivity : AppCompatActivity, View.IOnClickListener
     {
         private PersonalData personalData;
         
@@ -34,6 +34,7 @@ namespace Familia.Profile
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_profile);
             SetToolbar();
+            FindViewById<Button>(Resource.Id.btn_update).SetOnClickListener(this);
             getData();
         }
 
@@ -135,6 +136,16 @@ namespace Familia.Profile
         {
             var birthdate = DateTime.Parse(personalData.DateOfBirth);
             return birthdate.Day + "/" + birthdate.Month + "/"+birthdate.Year;
+        }
+
+        public void OnClick(View v)
+        {
+            switch (v.Id)
+            {
+                case Resource.Id.btn_update:
+                    StartActivity(new Intent(this, typeof(UpdateProfileActivity)));
+                    break;
+            }
         }
     }
 }
