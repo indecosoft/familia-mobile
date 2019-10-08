@@ -148,7 +148,7 @@ namespace FamiliaXamarin
                     break;
                 case 2:
                     Toast.MakeText(this, "2", ToastLength.Long).Show();
-                    menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(true);
                     menuNav.FindItem(Resource.Id.nav_QRCode).SetVisible(false);
                     menuNav.FindItem(Resource.Id.harta).SetVisible(false);
                     menuNav.FindItem(Resource.Id.chat).SetVisible(false);
@@ -406,6 +406,7 @@ namespace FamiliaXamarin
                        // StopService(_medicationServiceIntent);
                     ClearBluetoothDevices();
                     ClearMedicationStorages();
+                    ClearConversationsStorages();
                     Task.Run(() =>
                     {
                         Glide.Get(this).ClearDiskCache();
@@ -450,6 +451,19 @@ namespace FamiliaXamarin
                 Log.Error("Logout Clear Medication Error", e.Message);
             }
             
+        }
+        private async void ClearConversationsStorages()
+        {
+            try
+            {
+                var sqlHelper = await SqlHelper<ConversationsRecords>.CreateAsync();
+                sqlHelper.DropTables(typeof(ConversationsRecords));
+            }
+            catch (Exception e)
+            {
+                Log.Error("Logout Clear Conversations Error", e.Message);
+            }
+
         }
     }
 }

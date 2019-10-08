@@ -36,11 +36,9 @@ namespace Familia.Login_System
     {
         private ConstraintLayout _layout;
 
-        private EditText _usernameEditText;
-        private EditText _passwordEditText;
-        private AppCompatButton _registerButton;
+        private EditText _usernameEditText, _passwordEditText;
+        private AppCompatButton _loginButton, _registerButton;
         private TextView _pwdResetTextView;
-        private AppCompatButton _loginButton;
         private KeyStore _keyStore;
         private Cipher _cipher;
         private readonly string _keyName = "EDMTDev";
@@ -120,10 +118,9 @@ namespace Familia.Login_System
                         GenKey();
 
                     if (!CipherInit()) return;
-                    var cryptoObject = new FingerprintManager.CryptoObject(_cipher);
-                    var helper = new FingerprintHandler(this);
 
-                    helper.StartAuthentication(fingerprintManager, cryptoObject);
+                    var helper = new FingerprintHandler(this);
+                    helper.StartAuthentication(fingerprintManager, new FingerprintManager.CryptoObject(_cipher));
                     helper.FingerprintAuth += delegate (object sender,
                         FingerprintHandler.FingerprintAuthEventArgs args)
                     {
@@ -296,10 +293,9 @@ namespace Familia.Login_System
                 StartActivity(typeof(MainActivity));
                 Finish();
             }
-            catch
-
+            catch(Exception ex)
             {
-                // ignored
+                Log.Error("loginActivity", ex.Message);
             }
         }
 
@@ -434,6 +430,7 @@ namespace Familia.Login_System
                                 var logins = new JSONObject(response).GetBoolean("logins");
                                 var avatar = new JSONObject(response).GetString("avatar");
                                 var id = new JSONObject(response).GetString("id");
+                                var idClient = new JSONObject(response).GetString("idClient");
                                 var idPersoana = new JSONObject(response).GetString("idPersAsisoc");
                                 var type = new JSONObject(response).GetString("tip");
 
@@ -444,6 +441,7 @@ namespace Familia.Login_System
                                 Utils.SetDefaults("Name", nume);
                                 Utils.SetDefaults("Avatar", $"{Constants.PublicServerAddress}/{avatar}");
                                 Utils.SetDefaults("IdClient", id);
+                                Utils.SetDefaults("IdClientPentruFitbit", idClient);
                                 Utils.SetDefaults("IdPersoana", idPersoana);
                                 Utils.SetDefaults("UserType", type);
 

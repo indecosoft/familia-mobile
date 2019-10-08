@@ -14,6 +14,9 @@ using FamiliaXamarin.JsonModels;
 using Newtonsoft.Json;
 using Org.Json;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
+using System.Threading.Tasks;
+using System;
+using Familia.DataModels;
 
 namespace FamiliaXamarin.Chat
 {
@@ -37,6 +40,7 @@ namespace FamiliaXamarin.Chat
         private static LinearLayoutManager layoutManager;
         private static string mUsername;
         private static ChatActivity Ctx;
+        private SqlHelper<ConversationsRecords> _conversationsRecords;
 
         protected override void OnUserLeaveHint()
         {
@@ -51,6 +55,28 @@ namespace FamiliaXamarin.Chat
             intent.AddFlags(ActivityFlags.ClearTop);
             intent.PutExtra("FromChat", true);
             StartActivity(intent);
+        }
+
+        private void Send_Click(object sender, EventArgs e)
+        {
+            Task.Run(async () =>
+            {
+                if (!string.IsNullOrEmpty(mInputMessageView.Text))
+                {
+                    await _conversationsRecords.Insert(new ConversationsRecords
+                    {
+                        Message = mInputMessageView.Text,
+                        Room = RoomName,
+                        MessageDateTime = DateTime.Now,
+                        MessageType = 0
+
+                    });
+                }
+                Ctx.RunOnUiThread(() =>
+                {
+                    AttemptSend();
+                });
+            });
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -78,9 +104,9 @@ namespace FamiliaXamarin.Chat
             Ctx = this;
             mInputMessageView = (EditText) FindViewById(Resource.Id.tbMessage);
             send = FindViewById<Button>(Resource.Id.Send);
-            send.Click += delegate { AttemptSend(); };
+            send.Click += Send_Click; // delegate async {
 
-            mAdapter.Clear();
+        mAdapter.Clear();
             
             if (savedInstanceState == null)
             {
@@ -139,7 +165,7 @@ namespace FamiliaXamarin.Chat
                             Utils.SetDefaults("Rooms", serialized);
                         }
                     }
-                    catch (System.Exception e)
+                    catch (Exception e)
                     {
                         Log.Error("Error", e.Message);
                     }
@@ -162,12 +188,15 @@ namespace FamiliaXamarin.Chat
 
                 //NotificationManagerCompat.From(this).Cancel(400);
 
-                for (var i = 0; i < Messages.Count; i++)
+                Task.Run(async () =>
                 {
-                    if (Messages[i].Room != RoomName) continue;
-                    AddMessage(Messages[i].Message, ChatModel.TypeMessage);
-                    Messages.RemoveAt(i--);
-                }
+                    _conversationsRecords = await SqlHelper<ConversationsRecords>.CreateAsync();
+                    var conversations = await _conversationsRecords.QueryValuations($"SELECT * FROM ConversationsRecords WHERE Room = '{RoomName}'");
+                    foreach (var message in conversations)
+                    {
+                        AddMessage(message.Message, message.MessageType == 0 ? 3 : 0);
+                    }
+                });
             }
 
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);

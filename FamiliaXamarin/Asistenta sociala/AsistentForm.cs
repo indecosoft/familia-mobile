@@ -24,6 +24,7 @@ using Java.Util;
 using Org.Json;
 using ZXing.Mobile;
 using Resource = Familia.Resource;
+using Familia.Helpers;
 
 namespace FamiliaXamarin.Asistenta_sociala
 {
@@ -217,7 +218,7 @@ namespace FamiliaXamarin.Asistenta_sociala
 
                 try
                 {
-                    _qrJsonData = new JSONObject(result.Text);
+                    _qrJsonData = new JSONObject(Encryption.Decrypt(result.Text));
 
                     Log.Error("QrCode", _qrJsonData.ToString());
                     if(!await GetBenefits(_qrJsonData.GetInt("Id")))

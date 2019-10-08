@@ -41,11 +41,7 @@ namespace FamiliaXamarin.Login_System
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class FirstSetup : FragmentActivity
     {
-        private static class App
-        {
-            public static File Dir;
-        }
-
+        private File Dir;
         private SectionsPagerAdapter _sectionsPagerAdapter;
         private FirstSetupViewPager _viewPager;
 
@@ -159,12 +155,12 @@ namespace FamiliaXamarin.Login_System
 
             private static void CreateDirectoryForPictures()
             {
-                App.Dir = new File(
+                FragmentContext.Dir = new File(
                     Environment.GetExternalStoragePublicDirectory(
                         Environment.DirectoryPictures), "Familia");
-                if (!App.Dir.Exists())
+                if (!FragmentContext.Dir.Exists())
                 {
-                    App.Dir.Mkdirs();
+                    FragmentContext.Dir.Mkdirs();
                 }
             }
 
@@ -448,7 +444,7 @@ namespace FamiliaXamarin.Login_System
                 }
                 catch (Exception ex)
                 {
-
+                    Log.Error("FirstSetup err: ",ex.Message);
                 }
                
 

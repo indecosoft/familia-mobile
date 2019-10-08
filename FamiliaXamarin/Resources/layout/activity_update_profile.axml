@@ -85,10 +85,10 @@
         />
 
         <EditText
-            android:id="@+id/et_lastname"
+            android:id="@+id/et_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nume"
+            android:hint="Nume Prenume"
             android:textColor="@color/white"
             android:textColorHint="@color/colorSecondary"
             android:layout_marginTop="30dp"
@@ -105,47 +105,29 @@
             android:background="@drawable/edit_text_layout"
             android:layout_below="@+id/btn_upload" />
 
-		<EditText
-            android:id="@+id/et_firstname"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Prenume"
-            android:textColor="@color/white"
-            android:textColorHint="@color/colorSecondary"
-            android:layout_marginTop="10dp"
-			android:layout_marginLeft="16dp"
-			android:layout_marginRight="16dp"
-            android:drawableStart="@drawable/account"
-            android:drawableTint="@drawable/drawable_tint_selector"
-            android:drawablePadding="5dp"
-            android:paddingStart="10dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
-            android:paddingEnd="10dp"
-            android:inputType="text"
-            android:background="@drawable/edit_text_layout"
-            android:layout_below="@+id/et_lastname" />
+		
+       
 
 
 		  <TextView
-            android:id="@+id/tv_data_inceput"
+            android:id="@+id/tv_label_birthdate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/et_firstname"
+            android:layout_below="@+id/et_name"
 			android:layout_marginLeft="16dp"
             android:layout_marginTop="30dp"
             android:text="Data nașterii:"
 			android:textSize="18dp"/>
 
         <TextView
-            android:id="@+id/btnDate"
+            android:id="@+id/tv_birthdate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/et_firstname"
+            android:layout_below="@+id/et_name"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="30dp"
-            android:layout_toEndOf="@+id/tv_data_inceput"
-            android:layout_toRightOf="@+id/tv_data_inceput"
+            android:layout_toEndOf="@+id/tv_label_birthdate"
+            android:layout_toRightOf="@+id/tv_label_birthdate"
             android:text="19/12/1997"
             android:textColor="@color/colorAccent"
             android:textSize="18dp" />
@@ -153,10 +135,10 @@
 
 
 		<TextView
-            android:id="@+id/tv_durata"
+            android:id="@+id/tv_gender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_data_inceput"
+            android:layout_below="@+id/tv_birthdate"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="10dp"
             android:text="Gen:"
@@ -166,13 +148,13 @@
             android:id="@+id/gender_selector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_durata"
+            android:layout_below="@+id/tv_gender"
             android:layout_marginTop="5dp"
             android:orientation="horizontal"
 				android:layout_centerHorizontal="true">
 
             <RadioButton
-                android:id="@+id/rb_continuu"
+                android:id="@+id/rb_male"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/colorAccent"
@@ -180,7 +162,7 @@
 			/>
 
             <RadioButton
-                android:id="@+id/rb_numar_zile"
+                android:id="@+id/rb_female"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="60dp"

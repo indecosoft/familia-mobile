@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -20,6 +21,9 @@ using Java.Util;
 using Refractored.Controls;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Utils = FamiliaXamarin.Helpers.Utils;
+using System.Threading.Tasks;
+using FamiliaXamarin;
+using Org.Json;
 
 namespace Familia.Profile
 {
@@ -28,7 +32,7 @@ namespace Familia.Profile
     public class ProfileActivity : AppCompatActivity, View.IOnClickListener
     {
         private PersonalData personalData;
-        
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -36,7 +40,96 @@ namespace Familia.Profile
             SetToolbar();
             FindViewById<Button>(Resource.Id.btn_update).SetOnClickListener(this);
             getData();
+            CallServerToGetData(); //for test
         }
+
+
+        private async void CallServerToGetData()
+        {
+            Log.Error("Profile SERVER", "task started");
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/myProfile", Utils.GetDefaults("Token"));
+                    if (res != null)
+                    {
+                        Log.Error("Profile SERVER", res);
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Profile SERVER ERR", e.Message);
+                }
+            });
+
+        }
+
+        async void CallServerToSendData()
+        {
+            try
+            {
+
+
+                Log.Error("Update Profile data", "start");
+                if (personalData != null && personalData.listOfPersonalDiseases.Count != 0)
+                {
+
+                    JSONArray jsonArray = new JSONArray();
+
+                    for (int i=0; i< personalData.listOfPersonalDiseases.Count - 1; i++) {
+                        JSONObject disease = new JSONObject().Put("cod", personalData.listOfPersonalDiseases[i].Cod);
+                        jsonArray.Put(disease);
+                    }
+
+                   
+
+                    JSONObject jsonObject = new JSONObject()
+                        .Put("imageBase64", "none")
+                        .Put("nume", "Mic Patriciaa")
+                        .Put("dataNastere", personalData.DateOfBirth)
+                        .Put("sex", "Masculin")
+                        .Put("afectiuni", jsonArray);
+
+
+
+                    if (Utils.CheckNetworkAvailability())
+                    {
+                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/myProfile", jsonObject, Utils.GetDefaults("Token"));
+                        if (result != null)
+                        {
+                            Log.Error("Update Profile data", result);
+                            switch (result)
+                            {
+                                case "Done":
+                                case "done":
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            Log.Error("Update Profile data", "res e null");
+
+                        }
+
+
+                    }
+
+                }
+                else
+                {
+                    Log.Error("Update Profile data", "list is nempty");
+
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log.Error("Update Profile data ERR", e.Message);
+            }
+        }
+
 
         private void SetToolbar()
         {
@@ -63,7 +156,7 @@ namespace Familia.Profile
                 dialog.Dismiss();
                 Toast.MakeText(this, "Nu există date despre profilul dumneavoastră. Incercați să vă reautentificați.", ToastLength.Long);
             }
-            else 
+            else
             if (personalData != null)
             {
 
@@ -96,8 +189,8 @@ namespace Familia.Profile
                 tvAge.Text = age + " ani";
 
                 var rv = FindViewById<RecyclerView>(Resource.Id.rv_diseases);
-                
-                
+
+
                 var layoutManager = new LinearLayoutManager(this);
                 rv.SetLayoutManager(layoutManager);
 
@@ -109,7 +202,10 @@ namespace Familia.Profile
                 {
                     dialog.Dismiss();
                 });
-             
+
+                CallServerToSendData();
+
+
             }
             else
             {
@@ -121,7 +217,7 @@ namespace Familia.Profile
             }
         }
 
-      
+
 
         public int getAge()
         {
@@ -135,7 +231,7 @@ namespace Familia.Profile
         public string convertDateToStringFormat()
         {
             var birthdate = DateTime.Parse(personalData.DateOfBirth);
-            return birthdate.Day + "/" + birthdate.Month + "/"+birthdate.Year;
+            return birthdate.Day + "/" + birthdate.Month + "/" + birthdate.Year;
         }
 
         public void OnClick(View v)
@@ -143,7 +239,11 @@ namespace Familia.Profile
             switch (v.Id)
             {
                 case Resource.Id.btn_update:
-                    StartActivity(new Intent(this, typeof(UpdateProfileActivity)));
+
+                    //                    CallServerToSendData(); // for test
+
+                    Intent intent = new Intent(this, typeof(UpdateProfileActivity));
+                    StartActivity(intent);
                     break;
             }
         }
