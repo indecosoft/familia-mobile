@@ -8,13 +8,13 @@ using Object = Java.Lang.Object;
 
 namespace FamiliaXamarin.Asistenta_sociala
 {
-    class BenefitAdapter : ArrayAdapter<BenefitSpinnerState>
+    class BenefitAdapter : ArrayAdapter<SearchListModel>
     {
         private readonly Context _mContext;
-        readonly List<BenefitSpinnerState> _listState;
+        readonly List<SearchListModel> _listState;
 //        readonly BenefitAdapter _myAdapter;
         bool _isFromView;
-        public BenefitAdapter(Context context, int resource, List<BenefitSpinnerState> objects) : base(context, resource, objects)
+        public BenefitAdapter(Context context, int resource, List<SearchListModel> objects) : base(context, resource, objects)
         {
 
             _mContext = context;

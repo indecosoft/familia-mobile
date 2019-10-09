@@ -177,7 +177,7 @@
     <Compile Include="Active Conversations\ConversationsFragment.cs" />
     <Compile Include="Asistenta sociala\AsistentForm.cs" />
     <Compile Include="Asistenta sociala\BenefitAdapter.cs" />
-    <Compile Include="Asistenta sociala\BenefitSpinnerState.cs" />
+    <Compile Include="Asistenta sociala\SearchListModel.cs" />
     <Compile Include="Asistenta sociala\QrCodeGenerator.cs" />
     <Compile Include="Login System\FirstSetup.cs" />
     <Compile Include="Login System\FirstSetupViewPager.cs" />
@@ -191,6 +191,8 @@
     <Compile Include="Settings\ActivitySetPin.cs" />
     <Compile Include="DataModels\ConversationsRecord.cs" />
     <Compile Include="Helpers\Encryption.cs" />
+    <Compile Include="Asistenta sociala\SearchListActivity.cs" />
+    <Compile Include="Asistenta sociala\SearchListAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -212,6 +214,18 @@
     <AndroidResource Include="Resources\raw\devices_data.db" />
     <AndroidResource Include="Resources\layout\activity_pin_lockscreen.axml" />
     <AndroidResource Include="Resources\drawable\pin_background.xml" />
+    <AndroidResource Include="Resources\layout\activity_diseases.axml">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable\magnify.xml">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable\check.xml">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
