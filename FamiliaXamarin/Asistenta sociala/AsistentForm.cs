@@ -25,6 +25,8 @@ using Org.Json;
 using ZXing.Mobile;
 using Resource = Familia.Resource;
 using Familia.Helpers;
+using Familia.Asistentasociala;
+using Newtonsoft.Json;
 
 namespace FamiliaXamarin.Asistenta_sociala
 {
@@ -32,83 +34,34 @@ namespace FamiliaXamarin.Asistenta_sociala
     {
         private FusedLocationProviderClient _fusedLocationProviderClient;
         private bool _isGooglePlayServicesInstalled;
-        private Spinner _benefitsSpinner;
         private EditText _tbDetails;
-        private Button _btnScan, _btnAnulare;
+        private Button _btnScan, _btnAnulare, _btnBenefits;
         private ConstraintLayout _formContainer;
         private string _dateTimeStart, _dateTimeEnd;
         private double _latitude, _longitude;
         private ProgressBarDialog _progressBarDialog;
         private JSONObject _location, _details, _qrJsonData;
         private JSONArray _benefitsArray;
-        private List<BenefitSpinnerState> _listVOs;
-        private Intent _distanceCalculatorService;
-        private Intent _medicalAsistanceService;
-        private List<string> _benefitsList = new List<string>();
+        private List<SearchListModel> SelectedBenefits = new List<SearchListModel>();
+        private Intent _distanceCalculatorService, _medicalAsistanceService;
 
         private void IntiUi(View v)
         {
-            _benefitsSpinner = v.FindViewById<Spinner>(Resource.Id.benefits_spinner);
+            
             _tbDetails = v.FindViewById<EditText>(Resource.Id.input_details);
             _btnScan = v.FindViewById<Button>(Resource.Id.btnScan);
             _btnAnulare = v.FindViewById<Button>(Resource.Id.btnAnulare);
-            _formContainer = v.FindViewById<ConstraintLayout>(Resource.Id.container);
+            _btnBenefits = v.FindViewById<Button>(Resource.Id.benefits_button); 
+             _formContainer = v.FindViewById<ConstraintLayout>(Resource.Id.container);
 
-            _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se trimit datele...", Activity, false);
+            _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Datele sunt procesate...", Activity, false);
             _progressBarDialog.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimary);
         }
 
         private bool FieldsValidation()
         {
-            return _benefitsSpinner.SelectedItem != null && !_benefitsSpinner.SelectedItem.Equals(string.Empty) && !_tbDetails.Text.Equals(string.Empty);
+            return SelectedBenefits.Count > 0 && !string.IsNullOrEmpty(_tbDetails.Text);
 
-        }
-        private async Task<bool> GetBenefits(int idClient)
-        {
-            _benefitsList = new List<string>();
-            Log.Error("Debug Log in " + nameof(AsistentForm), idClient.ToString());
-            var status = false;
-            await Task.Run(async () => {
-                try
-                {
-                    var response = await WebServices.Get($"{Constants.PublicServerAddress}/api/getBenefits", Utils.GetDefaults("Token"));
-                    Log.Error("Debug Log in " + nameof(AsistentForm), "Response: " + response);
-                    var jsonResponse = new JSONObject(response);
-                    Log.Error("ASISTEN FORM BENEFITS", jsonResponse.ToString());
-                    if (jsonResponse.GetInt("status") == 2)
-                    {
-                        var dataArray = jsonResponse.GetJSONArray("data");
-                        for (int i = 0; i < dataArray.Length(); i++)
-                        {
-                            _benefitsList.Add(dataArray.GetJSONObject(i).GetString("benefit"));
-                        }
-                        _listVOs = new List<BenefitSpinnerState>();
-                        foreach (var t in _benefitsList)
-                        {
-                            var stateVo = new BenefitSpinnerState
-                            {
-                                Title = t,
-                                IsSelected = false
-                            };
-                            _listVOs.Add(stateVo);
-                        }
-                        Activity.RunOnUiThread(delegate
-                        {
-                            var myAdapter = new BenefitAdapter(Activity, 0, _listVOs);
-                            _benefitsSpinner.Adapter = myAdapter;
-                        });
-                        
-                        status = true;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("error la beneficii", ex.Message);
-                    status = false;
-                }
-               
-            });
-            return status;
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -120,11 +73,6 @@ namespace FamiliaXamarin.Asistenta_sociala
             _distanceCalculatorService = new Intent(Activity, typeof(DistanceCalculator));
             _medicalAsistanceService = new Intent(Activity, typeof(MedicalAsistanceService));
 
-            //string[] selectQualification = {
-            //"Beneficiu acordat", "Masaj", "Baie", "Perfuzie", "Pansament"};
-
-            if(!string.IsNullOrEmpty(Utils.GetDefaults("QrId")))
-                GetBenefits(int.Parse(Utils.GetDefaults("QrId")));
             var fromPreferences = Utils.GetDefaults("ActivityStart");
             _tbDetails.TextChanged += delegate
             {
@@ -141,15 +89,15 @@ namespace FamiliaXamarin.Asistenta_sociala
                 _btnScan.Text = "Incepe activitatea";
                 Activity.StopService(_medicalAsistanceService);
                 Activity.StopService(_distanceCalculatorService);
+                SelectedBenefits.Clear();
                 _tbDetails.Text = string.Empty;
-                foreach (var t in _listVOs)
-                {
-                    t.IsSelected = false;
-                }
-
+                _btnBenefits.Text = "Selecteaza beneficii";
                 _btnScan.Enabled = true;
             };
-            
+
+            _btnBenefits.Click += OpenDiseaseList;
+
+
             if (string.IsNullOrEmpty(fromPreferences))
             {
                 _formContainer.Visibility = ViewStates.Gone;
@@ -191,12 +139,51 @@ namespace FamiliaXamarin.Asistenta_sociala
                 .SetPriority(LocationRequest.PriorityHighAccuracy)
                 .SetInterval(1000)
                 .SetFastestInterval(1000);
-            new FusedLocationProviderCallback(Activity);
+            _ = new FusedLocationProviderCallback(Activity);
 
             _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Activity);
 
 
             return view;
+        }
+
+        private async void OpenDiseaseList(object sender, EventArgs e)
+        {
+            _progressBarDialog.Show();
+            await Task.Run(async () => {
+                try
+                {
+                    //Utils.GetDefaults("QrId")
+                    var response = await WebServices.Get($"{Constants.PublicServerAddress}/api/getBenefits", Utils.GetDefaults("Token"));
+                    Log.Error("Debug Log in " + nameof(AsistentForm), "Response: " + response);
+                    var jsonResponse = new JSONObject(response);
+                    Log.Error("ASISTEN FORM BENEFITS", jsonResponse.ToString());
+                    if (jsonResponse.GetInt("status") == 2)
+                    {
+                        var dataArray = jsonResponse.GetJSONArray("data");
+                        var items = new List<SearchListModel>();
+                        for (int i = 0; i < dataArray.Length(); i++)
+                        {
+                            items.Add(new SearchListModel{
+                            Id= dataArray.GetJSONObject(i).GetInt("id"),
+                            Title = dataArray.GetJSONObject(i).GetString("benefit")
+                            } );
+                        }
+                        Intent intent = new Intent(Activity, typeof(SearchListActivity));
+                        intent.PutExtra("Items", JsonConvert.SerializeObject(items));
+                        intent.PutExtra("SelectedItems", JsonConvert.SerializeObject(SelectedBenefits)); 
+                        StartActivityForResult(intent, 1);
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("error la beneficii", ex.Message);
+                }
+            });
+            _progressBarDialog.Dismiss();
+
+
         }
 
         private async void BtnScan_Click(object sender, EventArgs e)
@@ -221,10 +208,6 @@ namespace FamiliaXamarin.Asistenta_sociala
                     _qrJsonData = new JSONObject(Encryption.Decrypt(result.Text));
 
                     Log.Error("QrCode", _qrJsonData.ToString());
-                    if(!await GetBenefits(_qrJsonData.GetInt("Id")))
-                    {
-                        return;
-                    }
                     Utils.SetDefaults("QrId", _qrJsonData.GetInt("Id").ToString());
                     var expDateTime = _qrJsonData.GetString("expirationDateTime");
                     var dateTimeExp = sdf.Parse(expDateTime);
@@ -289,17 +272,14 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 Utils.SetDefaults("ActivityStart", "");
                                 //DateTimeStart = null;
                                 _dateTimeEnd = currentDateandTime;
-                                GetLastLocationButtonOnClick();
+                                if (ContextCompat.CheckSelfPermission(Activity, Manifest.Permission.AccessFineLocation) == Permission.Granted)
+                                {
+                                    await GetLastLocationFromDevice();
+                                }
                                 _location = new JSONObject().Put("latitude", _latitude).Put("longitude", _longitude);
                                 _benefitsArray = new JSONArray();
-                                foreach (var t in _listVOs)
-                                {
-                                    if (t.IsSelected)
-                                    {
-                                        _benefitsArray.Put(t.Title);
-                                    }
-                                    //BenefitAdapter el = listVOs.get(i).isSelected();
-                                }
+                                foreach (var t in SelectedBenefits)
+                                    _benefitsArray.Put(t.Id);
 
                                 _details = new JSONObject().Put("benefit", _benefitsArray).Put("details", _tbDetails.Text);
                                 Log.Error("Details", _details.ToString());
@@ -324,30 +304,15 @@ namespace FamiliaXamarin.Asistenta_sociala
                                         switch (responseJson.GetInt("status"))
                                         {
                                             case 0:
-//                                                Activity.RunOnUiThread(delegate
-//                                                {
-//                                                    _progressBarDialog.Dismiss();
-//
-//                                                });
                                                 Snackbar.Make(_formContainer, "Nu sunteti la pacient!", Snackbar.LengthLong).Show();
-                                               
                                                 break;
                                             case 1:
-//                                                Activity.RunOnUiThread(delegate
-//                                                {
-//                                                    _progressBarDialog.Dismiss();
-//
-//                                                });
                                                 Snackbar.Make(_formContainer, "Eroare conectare la server", Snackbar.LengthLong).Show();
                                                 break;
                                             case 2:
                                                 break;
                                         }
-                                        Activity.RunOnUiThread(delegate
-                                        {
-                                            _progressBarDialog.Dismiss();
-
-                                        });
+                                        Activity.RunOnUiThread(_progressBarDialog.Dismiss);
                                     }
                                     else
                                         Snackbar.Make(_formContainer, "Nu se poate conecta la server!", Snackbar.LengthLong).Show();
@@ -355,12 +320,9 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 Activity.StopService(_medicalAsistanceService);
                                 Activity.StopService(_distanceCalculatorService);
                                 _tbDetails.Text = string.Empty;
-                                foreach (var t in _listVOs)
-                                {
-                                    t.IsSelected = false;
-                                }
-
+                                SelectedBenefits.Clear();
                                 _btnScan.Enabled = true;
+                                _btnBenefits.Text = "Selecteaza beneficii";
                             }
                             catch (JSONException ex)
                             {
@@ -434,14 +396,6 @@ namespace FamiliaXamarin.Asistenta_sociala
         }
 
 
-        private async void GetLastLocationButtonOnClick()
-        {
-            if (ContextCompat.CheckSelfPermission(Activity, Manifest.Permission.AccessFineLocation) == Permission.Granted)
-            {
-                await GetLastLocationFromDevice();
-            }
-        }
-
         private async Task GetLastLocationFromDevice()
         {
             var location = await _fusedLocationProviderClient.GetLastLocationAsync();
@@ -462,5 +416,21 @@ namespace FamiliaXamarin.Asistenta_sociala
 
             }
         }
+
+        public override void OnActivityResult(int requestCode, int resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            if (resultCode == (int)Result.Ok)
+            {
+                SelectedBenefits = JsonConvert.DeserializeObject<List<SearchListModel>>(data.GetStringExtra("result"));
+                Log.Error("Avem result", data.GetStringExtra("result"));
+                _btnScan.Enabled = FieldsValidation();
+                _btnBenefits.Text = $"Ati Selectat {SelectedBenefits.Count} beneficii";
+            } else
+            {
+                Log.Error("Nu avem result", "User-ul a zis CANCEL");
+            }
+        }
     }
+
 }

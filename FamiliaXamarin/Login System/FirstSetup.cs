@@ -19,6 +19,7 @@ using Android.Widget;
 using Com.Bumptech.Glide;
 using Com.Bumptech.Glide.Util;
 using Familia;
+using Familia.Asistentasociala;
 using Familia.Profile;
 using Familia.Profile.Data;
 using FamiliaXamarin.Asistenta_sociala;
@@ -95,7 +96,7 @@ namespace FamiliaXamarin.Login_System
             //private Button _btnDate;
             private Button _btnDate;
             //            private Spinner _genderSpinner;
-            private Spinner _diseaseSpinner;
+            private Button _diseasaesButton;
             private ToggleButton _maleToggleButton;
             private ToggleButton _femaleToggleButton;
             private CircleImageView _profileImage;
@@ -103,7 +104,7 @@ namespace FamiliaXamarin.Login_System
             private Android.Net.Uri _photoUri;
             private FileInfo _fileInformations;
             private string _imageExtension, _imagePath;
-            private List<BenefitSpinnerState> _listVOs;
+            private List<SearchListModel> _selectedDiseases = new List<SearchListModel>();
             private List<DiseaseModel> _diseaseList;
 
             private List<PersonalDisease> listOfPersonalDiseases = new List<PersonalDisease>();
@@ -282,6 +283,13 @@ namespace FamiliaXamarin.Login_System
 
                             _imageValidator = true;
                             break;
+                        case 3:
+
+                                _selectedDiseases = JsonConvert.DeserializeObject<List<SearchListModel>>(data.GetStringExtra("result"));
+                                Log.Error("Avem result", data.GetStringExtra("result"));
+                            _diseasaesButton.Text = $"Ati Selectat {_selectedDiseases.Count} boli";
+                   
+                            break;
                         default:
                             _imageValidator = false;
                             break;
@@ -346,8 +354,8 @@ namespace FamiliaXamarin.Login_System
 
             private void IniThirdViewUi(View v)
             {
-                _diseaseSpinner = v.FindViewById<Spinner>(Resource.Id.Disease_spinner);
-                _diseaseSpinner.Prompt = "Selectati Afectiuni";
+                _diseasaesButton = v.FindViewById<Button>(Resource.Id.diseases_button);
+                _diseasaesButton.Text = "Selectati Afectiuni";
             }
 
             private void InitDefaultUi(View v)
@@ -372,9 +380,10 @@ namespace FamiliaXamarin.Login_System
                                 false);
                             InitDefaultUi(rootView);
                             InitFirstViewUi(rootView);
-                            _btnUpload.Click += delegate { 
-                            ShowPictureDialog();
- };
+                            _btnUpload.Click += delegate
+                            {
+                                ShowPictureDialog();
+                            };
 
                             break;
                         case 1:
@@ -417,9 +426,9 @@ namespace FamiliaXamarin.Login_System
                             IniThirdViewUi(rootView);
                             // Create an ArrayAdapter using the string array and a default spinner layout
                             //FragmentContext._firstSetupModel.Disease = new JSONArray();
-                            DiseaseSelectorView();
+                            _diseasaesButton.Click += GetDiseaseList;
                             break;
-                        //default:
+                            //default:
                             //rootView = inflater.Inflate(Resource.Layout.fragment_setup1, container,
                             //    false);
                             //InitDefaultUi(rootView);
@@ -444,60 +453,44 @@ namespace FamiliaXamarin.Login_System
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("FirstSetup err: ",ex.Message);
+                    Log.Error("FirstSetup err: ", ex.Message);
                 }
-               
+
 
 
                 return rootView;
             }
 
-            private async void DiseaseSelectorView()
+
+            private void GetDiseaseList(object sender, EventArgs e)
             {
-                _diseaseList = await GetDiseaseList();
-
-
-                _listVOs = new List<BenefitSpinnerState>();
-                foreach (var t in _diseaseList)
+                var progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se aduc date...", Activity, false);
+                progressBarDialog.Show();
+                Task.Run(async () =>
                 {
-                    var stateVo = new BenefitSpinnerState
-                    {
-                        Title = t.Name,
-                        IsSelected = false
-                    };
-                    _listVOs.Add(stateVo);
-                }
+                    var result = await WebServices.Get(Constants.PublicServerAddress + "/api/getDisease", Utils.GetDefaults("Token"));
+                    if (result == null) return;
 
-                var myAdapter = new BenefitAdapter(Activity, 0, _listVOs);
-                _diseaseSpinner.Adapter = myAdapter;
-            }
-            private async Task<List<DiseaseModel>> GetDiseaseList()
-            {
-                var result = await WebServices.Get(
-                    Constants.PublicServerAddress + "/api/getDisease",
-                    Utils.GetDefaults("Token"));
-                if (result == null) return null;
-                var listOfDiseases =
-                    new List<DiseaseModel>
+                    var arrayOfDiseases = new JSONArray(result);
+                    var items = new List<SearchListModel>();
+                    for (var i = 0; i < arrayOfDiseases.Length(); i++)
                     {
-                        new DiseaseModel
+                        var jsonModel = new JSONObject(arrayOfDiseases.Get(i).ToString());
+
+                        items.Add(new SearchListModel
                         {
-                            Cod = -1,
-                            Name = "Selectati Afectiuni"
-                        },
-                    };
-                var arrayOfDiseases = new JSONArray(result);
-                for (var i = 0; i < arrayOfDiseases.Length(); i++)
-                {
-                    var jsonModel = new JSONObject(arrayOfDiseases.Get(i).ToString());
-                    var model = new DiseaseModel
-                    { Cod = jsonModel.GetInt("cod"), Name = jsonModel.GetString("denumire") };
-                    if (!listOfDiseases.Contains(model))
-                        listOfDiseases.Add(model);
-                }
+                            Id = jsonModel.GetInt("cod"),
+                            Title = jsonModel.GetString("denumire")
 
-                return listOfDiseases;
+                        });
+                    }
 
+                    Intent intent = new Intent(Activity, typeof(SearchListActivity));
+                    intent.PutExtra("Items", JsonConvert.SerializeObject(items));
+                    intent.PutExtra("SelectedItems", JsonConvert.SerializeObject(_selectedDiseases));
+                    StartActivityForResult(intent, 3);
+                    Activity.RunOnUiThread(progressBarDialog.Dismiss);
+                });
             }
 
             private async void _btnNext_Click(object sender, EventArgs e)
@@ -523,27 +516,21 @@ namespace FamiliaXamarin.Login_System
                         FragmentContext._progressBarDialog.Show();
                         FragmentContext._firstSetupModel.ImageName =
                             Utils.GetDefaults("Email");
-                        FragmentContext._firstSetupModel.Disease = new int[(from disease in _listVOs
-                                                                            where disease.IsSelected
-                                                                            select disease).Count()];
 
 
-                        var k = 0;
-                        for (var i = 0; i < _listVOs.Count; i++)
+                        foreach (var el in _selectedDiseases)
                         {
-                            if (!_listVOs[i].IsSelected) continue;
-                            FragmentContext._firstSetupModel.Disease[k] = _diseaseList[i].Cod;
-                            listOfPersonalDiseases.Add(new PersonalDisease(_diseaseList[i].Cod, _listVOs[i].Title));
-                            k++;
+                            if (!el.IsSelected) continue;
+                            FragmentContext._firstSetupModel.Disease.Add(el.Id);
+                            listOfPersonalDiseases.Add(new PersonalDisease(el.Id, el.Title));
                         }
-
                         await Task.Run(async () =>
                         {
                             var jsonData =
                                 JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
-                            
+
                             Log.Error("data to send", jsonData);
-                            
+
                             var response = await WebServices.Post(
                                 Constants.PublicServerAddress + "/api/firstSetup",
                                 new JSONObject(jsonData), Utils.GetDefaults("Token"));
