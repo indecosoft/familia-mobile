@@ -21,8 +21,6 @@ namespace Familia.Profile
 
     class ProfileStorage
     {
-
-
         private static ProfileStorage Instance;
         private static readonly object padlock = new object();
         private FirstSetupModel model;
@@ -106,6 +104,33 @@ namespace Familia.Profile
             }
         }
 
+        public async Task<bool> saveDiseases(List<PersonalDisease> list)
+        {
+            try
+            {
+                if (list == null) return false;
+                Log.Error("ProfileStorage", "saving diseases ...");
+
+                foreach (var item in list)
+                {
+                    _dbProfileDisease = await SqlHelper<DiseaseDataModel>.CreateAsync();
+                    await _dbProfileDisease.Insert(new DiseaseDataModel()
+                    {
+                        Name = item.Name,
+                        Cod = item.Cod
+                    });
+                }
+                Log.Error("ProfileStorage", "saved");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error("ProfileStorage ERR", ex.Message);
+                return false;
+            }
+        }
+        
+
         public async Task<PersonalData> read()
         {
             Log.Error("ProfileStorage", "reading...");
@@ -161,7 +186,7 @@ namespace Familia.Profile
         public void logData()
         {
 
-            Log.Error("ProfileStorage ", "Personal data:");
+            Log.Error("ProfileStorage ", "Personal diseases:");
             foreach (var item in personalData.listOfPersonalDiseases)
             {
                 Log.Error("Disease: ", item.Name + item.Cod);

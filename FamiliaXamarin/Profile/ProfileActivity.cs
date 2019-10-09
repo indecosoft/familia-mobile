@@ -22,8 +22,10 @@ using Refractored.Controls;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Utils = FamiliaXamarin.Helpers.Utils;
 using System.Threading.Tasks;
+using Android.Provider;
 using FamiliaXamarin;
 using Org.Json;
+
 
 namespace Familia.Profile
 {
@@ -32,21 +34,48 @@ namespace Familia.Profile
     public class ProfileActivity : AppCompatActivity, View.IOnClickListener
     {
         private PersonalData personalData;
+        private CircleImageView ciwProfileImage;
+        private TextView tvName;
+        private TextView tvEmail;
+        private TextView tvBirtdate;
+        private TextView tvGender;
+        private TextView tvDateOftBirth;
+        private TextView tvAge;
+        private ImageView iwGender;
+        private RecyclerView rv;
+
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_profile);
             SetToolbar();
+            InitView();
+            LoadModel();
+        }
+
+        private void InitView()
+        {
             FindViewById<Button>(Resource.Id.btn_update).SetOnClickListener(this);
-            getData();
-            CallServerToGetData(); //for test
+            ciwProfileImage = FindViewById<CircleImageView>(Resource.Id.profile_image);
+            tvName = FindViewById<TextView>(Resource.Id.tv_name);
+            tvEmail = FindViewById<TextView>(Resource.Id.tv_email);
+            tvGender = FindViewById<TextView>(Resource.Id.tv_gender);
+            iwGender = FindViewById<ImageView>(Resource.Id.iw_gender);
+            tvDateOftBirth = FindViewById<TextView>(Resource.Id.tv_labelDate);
+            tvAge = FindViewById<TextView>(Resource.Id.tv_age);
+            rv = FindViewById<RecyclerView>(Resource.Id.rv_diseases);
+            var layoutManager = new LinearLayoutManager(this);
+            rv.SetLayoutManager(layoutManager);
+
+           //TODO hide "afectiuni" for correct type of user
         }
 
 
-        private async void CallServerToGetData()
+        private async Task<PersonView> CallServerToGetData()
         {
             Log.Error("Profile SERVER", "task started");
+            PersonView person = null;
             await Task.Run(async () =>
             {
                 try
@@ -54,80 +83,48 @@ namespace Familia.Profile
                     var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/myProfile", Utils.GetDefaults("Token"));
                     if (res != null)
                     {
-                        Log.Error("Profile SERVER", res);
-
+                        Log.Error("ProfileActivity", res);
+                        person = parseResultFromUrl(res);
+                        if (person != null && person.ListOfPersonalDiseases.Count !=0)
+                        {
+                            await ProfileStorage.GetInstance().saveDiseases(person.ListOfPersonalDiseases);
+                        }
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.Error("Profile SERVER ERR", e.Message);
+                    Log.Error("ProfileActivity Err", e.Message);
                 }
             });
-
+            return person;
         }
 
-        async void CallServerToSendData()
+        private PersonView parseResultFromUrl(string res)
         {
-            try
+            if (res != null)
             {
+                var result = new JSONObject(res);
 
+                var name = result.GetString("nume");
+                var email = result.GetString("email");
+                var birthdate = result.GetString("dataNastere");
+                var gender = result.GetString("sex");
+                var avatar = Utils.GetDefaults("Avatar");
+                var list = new List<PersonalDisease>();
 
-                Log.Error("Update Profile data", "start");
-                if (personalData != null && personalData.listOfPersonalDiseases.Count != 0)
+                JSONArray jsonList = result.GetJSONArray("afectiuni");
+                for (var i = 0; i < jsonList.Length(); i++)
                 {
+                    var jsonObj = (JSONObject)jsonList.Get(i);
+                    var cod = jsonObj.GetInt("id");
+                    var nameDisease = jsonObj.GetString("denumire");
 
-                    JSONArray jsonArray = new JSONArray();
-
-                    for (int i=0; i< personalData.listOfPersonalDiseases.Count - 1; i++) {
-                        JSONObject disease = new JSONObject().Put("cod", personalData.listOfPersonalDiseases[i].Cod);
-                        jsonArray.Put(disease);
-                    }
-
-                   
-
-                    JSONObject jsonObject = new JSONObject()
-                        .Put("imageBase64", "none")
-                        .Put("nume", "Mic Patriciaa")
-                        .Put("dataNastere", personalData.DateOfBirth)
-                        .Put("sex", "Masculin")
-                        .Put("afectiuni", jsonArray);
-
-
-
-                    if (Utils.CheckNetworkAvailability())
-                    {
-                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/myProfile", jsonObject, Utils.GetDefaults("Token"));
-                        if (result != null)
-                        {
-                            Log.Error("Update Profile data", result);
-                            switch (result)
-                            {
-                                case "Done":
-                                case "done":
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            Log.Error("Update Profile data", "res e null");
-
-                        }
-
-
-                    }
-
+                    list.Add(new PersonalDisease(cod, nameDisease));
                 }
-                else
-                {
-                    Log.Error("Update Profile data", "list is nempty");
-
-                }
-
+                var obj = new PersonView(name, email, birthdate, gender, avatar, list);
+                return obj;
             }
-            catch (Exception e)
-            {
-                Log.Error("Update Profile data ERR", e.Message);
-            }
+            return null;
         }
 
 
@@ -144,93 +141,76 @@ namespace Familia.Profile
             Title = "Profilul meu";
         }
 
-        public async void getData()
+        public async void LoadModel()
         {
             ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
             dialog.Show();
-            personalData = await ProfileStorage.GetInstance().read();
+            var person = await CallServerToGetData();
+            DiseasesAdapter adapter = new DiseasesAdapter(this);
 
-            if (personalData == null)
+            if (person != null)
             {
-                Log.Error("ProfileStorage", "obj is null");
-                dialog.Dismiss();
-                Toast.MakeText(this, "Nu există date despre profilul dumneavoastră. Incercați să vă reautentificați.", ToastLength.Long);
+                LoadModelInView(person.Avatar, person.Name, person.Email, person.Gender, person.Birthdate);
+                adapter = new DiseasesAdapter(this, person.ListOfPersonalDiseases);
             }
             else
-            if (personalData != null)
             {
-
-                var profileImageView = FindViewById<CircleImageView>(Resource.Id.profile_image);
-                var avatar = Utils.GetDefaults("Avatar");
-                Glide.With(this).Load(avatar).Into(profileImageView);
-                var tvName = FindViewById<TextView>(Resource.Id.tv_name);
-                tvName.Text = Utils.GetDefaults("Name");
-                var tvEmail = FindViewById<TextView>(Resource.Id.tv_email);
-                tvEmail.Text = Utils.GetDefaults("Email");
-
-                var tvGender = FindViewById<TextView>(Resource.Id.tv_gender);
-
-                if (personalData.Gender.Equals("Feminin"))
+                personalData = await ProfileStorage.GetInstance().read();
+                if (personalData == null)
                 {
-                    var iwGender = FindViewById<ImageView>(Resource.Id.iw_gender);
-                    iwGender.SetImageResource(Resource.Drawable.human_female);
-                    tvGender.Text = "Feminin";
+                    Log.Error("ProfileActivity", "data from db is null");
+                    Toast.MakeText(this, "Nu există date despre profilul dumneavoastră. Incercați să vă reautentificați.", ToastLength.Long);
                 }
                 else
                 {
-                    tvGender.Text = "Masculin";
+                    LoadModelInView(Utils.GetDefaults("Avatar"), Utils.GetDefaults("Name"), Utils.GetDefaults("Email"), personalData.Gender, personalData.DateOfBirth);
+                    adapter = new DiseasesAdapter(this, personalData.listOfPersonalDiseases);
                 }
+            }
 
-                var tvDateOftBirth = FindViewById<TextView>(Resource.Id.tv_labelDate);
-                tvDateOftBirth.Text = convertDateToStringFormat();
+            rv.SetAdapter(adapter);
+            adapter.NotifyDataSetChanged();
+            RunOnUiThread(() => dialog.Dismiss());
+        }
 
-                var age = getAge();
-                var tvAge = FindViewById<TextView>(Resource.Id.tv_age);
-                tvAge.Text = age + " ani";
+        private void LoadModelInView(string avatar, string name, string email, string gender, string birthdate)
+        {
+            Glide.With(this).Load(avatar).Into(ciwProfileImage);
+            tvName.Text = name;
+            tvEmail.Text = email;
+            SetGender(gender);
+            tvDateOftBirth.Text = convertDateToStringFormat(birthdate);
+            tvAge.Text = getAge(birthdate) + " ani";
+        }
 
-                var rv = FindViewById<RecyclerView>(Resource.Id.rv_diseases);
-
-
-                var layoutManager = new LinearLayoutManager(this);
-                rv.SetLayoutManager(layoutManager);
-
-                var adapter = new DiseasesAdapter(this, personalData.listOfPersonalDiseases);
-                rv.SetAdapter(adapter);
-                adapter.NotifyDataSetChanged();
-
-                RunOnUiThread(() =>
-                {
-                    dialog.Dismiss();
-                });
-
-                CallServerToSendData();
-
-
+        private void SetGender(string gender)
+        {
+            if (gender.Equals("Feminin"))
+            {
+                iwGender.SetImageResource(Resource.Drawable.human_female);
+                tvGender.Text = "Feminin";
             }
             else
             {
-                RunOnUiThread(() =>
-                {
-                    dialog.Dismiss();
-                    Toast.MakeText(this, "Nu există date despre profilul dumneavoastră. Incercați să vă reautentificați.", ToastLength.Long);
-                });
+                tvGender.Text = "Masculin";
             }
         }
 
+       
 
 
-        public int getAge()
+        public int getAge(string dateString)
         {
-            var birthdate = DateTime.Parse(personalData.DateOfBirth);
+            var birthdate = DateTime.Parse(dateString);
             var today = DateTime.Today;
             var age = today.Year - birthdate.Year;
             if (birthdate.Date > today.AddYears(-age)) age--;
             return age;
         }
 
-        public string convertDateToStringFormat()
+        public string convertDateToStringFormat(string dateString)
         {
-            var birthdate = DateTime.Parse(personalData.DateOfBirth);
+            var birthdate = DateTime.Parse(dateString);
             return birthdate.Day + "/" + birthdate.Month + "/" + birthdate.Year;
         }
 
@@ -239,12 +219,32 @@ namespace Familia.Profile
             switch (v.Id)
             {
                 case Resource.Id.btn_update:
-
-                    //                    CallServerToSendData(); // for test
-
                     Intent intent = new Intent(this, typeof(UpdateProfileActivity));
-                    StartActivity(intent);
+                    intent.PutExtra("name", tvName.Text);
+                    intent.PutExtra("birthdate", tvDateOftBirth.Text);
+                    intent.PutExtra("gender", tvGender.Text);
+                    intent.PutExtra("avatar", Utils.GetDefaults("Avatar"));
+                    StartActivityForResult(intent, 1);
                     break;
+            }
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            Log.Error("ProfileActivity", "requestCode: " + requestCode);
+
+            if (requestCode == 1)
+            {
+                if (resultCode == Result.Ok)
+                {
+                    Log.Error("ProfileActivity", "result updated: " + data.GetStringExtra("result"));
+                }
+
+                if (resultCode == Result.Ok)
+                {
+                    Log.Error("ProfileActivity", "cancel update");
+
+                }
             }
         }
     }

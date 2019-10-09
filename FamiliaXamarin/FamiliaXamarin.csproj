@@ -128,6 +128,7 @@
     <Compile Include="Medicatie\MedicineLostFragment.cs" />
     <Compile Include="Medicatie\MedicineServerRecyclerViewOnScrollListener.cs" />
     <Compile Include="Profile\Data\db\DiseaseDataModel.cs" />
+    <Compile Include="Profile\Data\PersonView.cs" />
     <Compile Include="Profile\Data\PersonalData.cs" />
     <Compile Include="Profile\Data\PersonalDisease.cs" />
     <Compile Include="Profile\Data\db\ProfileDataModel.cs" />

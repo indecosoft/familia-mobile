@@ -24,6 +24,8 @@ namespace Familia.Profile.Data
             Cod = cod;
             Name = name;
         }
-        
+
+       
+
     }
 }
