@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -9,6 +11,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -20,6 +23,18 @@ using FamiliaXamarin.Medicatie;
 using Org.Json;
 using Refractored.Controls;
 using Exception = System.Exception;
+using System.Threading.Tasks;
+using Android;
+using Android.Provider;
+using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
+using Familia.Asistentasociala;
+using Java.Text;
+using Java.Util;
+using Newtonsoft.Json;
+using AlertDialog = Android.Support.V7.App.AlertDialog;
+using Environment = Android.OS.Environment;
+using File = Java.IO.File;
 
 namespace Familia.Profile
 {
@@ -35,22 +50,32 @@ namespace Familia.Profile
         private TextView tvName;
         private EditText etName;
         private TextView tvBirthdate;
+        private AppCompatButton btnUploadImage;
+        private AppCompatButton btnChangeDiseases;
+        private TextView btnLabelDiseases;
         private string gender;
         private string name;
         private string birthdate;
+        private File Dir;
+        private Android.Net.Uri _photoUri;
+        private FileInfo _fileInformations;
+        private string _imageExtension, _imagePath;
+        private List<SearchListModel> _selectedDiseases = new List<SearchListModel>();
+        private readonly string[] _permissionsArray =
+        {
+            Manifest.Permission.ReadPhoneState,
+            Manifest.Permission.AccessCoarseLocation,
+            Manifest.Permission.AccessFineLocation,
+            Manifest.Permission.Camera,
+            Manifest.Permission.ReadExternalStorage,
+            Manifest.Permission.WriteExternalStorage
+        };
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_update_profile);
-            FindViewById<Button>(Resource.Id.btn_closeit).SetOnClickListener(this);
-            FindViewById<Button>(Resource.Id.btn_save).SetOnClickListener(this);
-
-            ciwProfileImage = FindViewById<CircleImageView>(Resource.Id.profile_image);
-            tvName = FindViewById<EditText>(Resource.Id.et_name);
-            tvBirthDate = FindViewById<TextView>(Resource.Id.tv_birthdate);
-            tvBirthDate.SetOnClickListener(this);
-            etName = FindViewById<EditText>(Resource.Id.et_name);
+            InitUI();
 
             personView = new PersonView(Intent.GetStringExtra("name"),
                                         Intent.GetStringExtra("email"),
@@ -60,12 +85,51 @@ namespace Familia.Profile
                                         null);
 
             LoadModel();
+        }
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions,
+            Permission[] grantResults)
+        {
 
+            if (grantResults[0] != Permission.Granted)
+            {
+                Toast.MakeText(this, "Permisiuni pentru telefon refuzate", ToastLength.Short).Show();
+               
+            }
+            else if (grantResults[1] != Permission.Granted || grantResults[2] != Permission.Granted)
+            {
+                Toast.MakeText(this, "Permisiuni pentru locatie refuzate", ToastLength.Short).Show();
+
+            }
+            else if (grantResults[3] != Permission.Granted)
+            {
+                Toast.MakeText(this, "Permisiuni pentru camera refuzate", ToastLength.Short).Show();
+            }
+        }
+        private void InitUI()
+        {
+            FindViewById<Button>(Resource.Id.btn_closeit).SetOnClickListener(this);
+            FindViewById<Button>(Resource.Id.btn_save).SetOnClickListener(this);
+            ciwProfileImage = FindViewById<CircleImageView>(Resource.Id.profile_image);
+            tvName = FindViewById<EditText>(Resource.Id.et_name);
+            tvBirthDate = FindViewById<TextView>(Resource.Id.tv_birthdate);
+            tvBirthDate.SetOnClickListener(this);
+            etName = FindViewById<EditText>(Resource.Id.et_name);
+            btnUploadImage = FindViewById<AppCompatButton>(Resource.Id.btn_upload);
+            btnUploadImage.SetOnClickListener(this);
+            btnLabelDiseases = FindViewById<TextView>(Resource.Id.tv_labelDiseases);
+            btnChangeDiseases = FindViewById<AppCompatButton>(Resource.Id.btn_diseases);
+            btnChangeDiseases.SetOnClickListener(this);
+
+            const string permission = Manifest.Permission.ReadPhoneState;
+            if (CheckSelfPermission(permission) != (int)Permission.Granted)
+            {
+                RequestPermissions(_permissionsArray, 0);
+            }
         }
 
         public void OnClick(View v)
         {
-            Intent returnIntent = new Intent();
+            var returnIntent = new Intent();
 
             switch (v.Id)
             {
@@ -76,9 +140,8 @@ namespace Familia.Profile
                     break;
                 case Resource.Id.btn_save:
                     Log.Error("UpdateProfileActivity", "saving..");
-                    // TODO photo
+                    // TODO get image
                     name = tvName.Text;
-                    birthdate = tvBirthDate.Text;
 
                     if (FindViewById<RadioButton>(Resource.Id.rb_female).Checked == true)
                     {
@@ -90,83 +153,319 @@ namespace Familia.Profile
                         gender = "Masculin";
                     }
 
-                    returnIntent = new Intent();
-                    returnIntent.PutExtra("result", "here i am from update");
-                    SetResult(Result.Ok, returnIntent);
-
-//                    CallServerToSendData();
-                    Finish();
+                    if (!name.Equals(""))
+                    {
+                        returnIntent = new Intent();
+                        returnIntent.PutExtra("name", name);
+                        returnIntent.PutExtra("birthdate", birthdate);
+                        returnIntent.PutExtra("gender", gender);
+                        SetResult(Result.Ok, returnIntent);
+                        Finish();
+                    }
                     break;
 
                 case Resource.Id.tv_birthdate:
                     OnDateClick();
                     break;
+                case Resource.Id.btn_diseases:
+                    LoadSelectDiseaseActivity();
+                    break;
+                case Resource.Id.btn_upload:
+                    Toast.MakeText(this, "upload image", ToastLength.Long).Show();
 
+                    ShowPictureDialog();
+
+                    break;
             }
         }
 
-        async void CallServerToSendData()
+
+        private void ShowPictureDialog()
         {
-            try
+            var pictureDialog = new AlertDialog.Builder(this, Resource.Style.AppTheme_Dialog);
+            pictureDialog.SetTitle("Incarcati o imagine");
+            string[] pictureDialogItems =
             {
-                Log.Error("Update Profile data", "start");
-                if (personalData != null && personalData.listOfPersonalDiseases.Count != 0)
+                    "Alegeti din galerie",
+                    "Faceti una acum"
+                };
+            pictureDialog.SetItems(pictureDialogItems,
+                delegate (object sender, DialogClickEventArgs args)
                 {
-
-                    JSONArray jsonArray = new JSONArray();
-
-                    for (int i = 0; i < personalData.listOfPersonalDiseases.Count - 1; i++)
+                    Contract.Requires(sender != null);
+                    switch (args.Which)
                     {
-                        JSONObject disease = new JSONObject().Put("cod", personalData.listOfPersonalDiseases[i].Cod);
-                        jsonArray.Put(disease);
+                        case 0:
+                            ChoosePhotoFromGallary();
+                            break;
+                        case 1:
+                            TakePhotoFromCamera();
+                            break;
                     }
+                });
+            pictureDialog.Show();
+        }
 
-                    JSONObject jsonObject = new JSONObject()
-                        .Put("Base64Image", personalData.Base64Image)
-                        .Put("ImageName", "patricia.mic@indecosoft.ro") //from get: avatar
-                        .Put("nume", "Mic Patriciaa")
-                        .Put("dataNastere", personalData.DateOfBirth)
-                        .Put("sex", "Masculin")
-                        .Put("afectiuni", jsonArray);
+        private void ChoosePhotoFromGallary()
+        {
+            var a = new Intent();
+            a.SetType("image/*");
+            a.SetAction(Intent.ActionGetContent);
+            StartActivityForResult(Intent.CreateChooser(a, "Selectati imagine de profil"),
+                Constants.RequestGallery);
+        }
 
-
-                    if (Utils.CheckNetworkAvailability())
-                    {
-                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/myProfile", jsonObject, Utils.GetDefaults("Token"));
-                        if (result != null)
-                        {
-                            Log.Error("Update Profile data", result);
-                            switch (result)
-                            {
-                                case "Done":
-                                case "done":
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            Log.Error("Update Profile data", "res e null");
-
-                        }
-                    }
-                }
-                else
-                {
-                    Log.Error("Update Profile data", "list is nempty");
-                }
-            }
-            catch (Exception e)
+        private void CreateDirectoryForPictures()
+        {
+            Dir = new File(
+                Environment.GetExternalStoragePublicDirectory(
+                    Environment.DirectoryPictures), "Familia");
+            if (!Dir.Exists())
             {
-                Log.Error("UpdateProfileActivity ERR", e.Message);
+                Dir.Mkdirs();
             }
         }
 
+        private bool IsThereAnAppToTakePictures()
+        {
+            var intent = new Intent(MediaStore.ActionImageCapture);
+            var availableActivities =
+                PackageManager.QueryIntentActivities(intent,
+                    PackageInfoFlags.MatchDefaultOnly);
+            return availableActivities != null && availableActivities.Count > 0;
+        }
 
+        private File CreateImageFile()
+        {
+            // Create an image file name
+            var timeStamp = new SimpleDateFormat("yyyy.MM.dd_HH:mm").Format(new Date());
+            var imageFileName = $"Avatar_" + timeStamp + "";
+            var storageDir = GetExternalFilesDir(Environment.DirectoryPictures);
+            //File storageDir = new File(Environment.GetExternalStoragePublicDirectory(
+            //Environment.DirectoryDcim), "Camera");
+            var image = File.CreateTempFile(
+                imageFileName, /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
+            );
+
+            // Save a file: path for use with ACTION_VIEW intents
+            _imagePath = image.AbsolutePath;
+            return image;
+        }
+
+        private void TakePhotoFromCamera()
+        {
+            if (!IsThereAnAppToTakePictures()) return;
+            CreateDirectoryForPictures();
+
+            var intent = new Intent(MediaStore.ActionImageCapture);
+           
+            _photoUri = FileProvider.GetUriForFile(this,
+                "IndecoSoft.Familia.fileprovider",
+                CreateImageFile());
+
+            intent.PutExtra(MediaStore.ExtraOutput, _photoUri);
+            StartActivityForResult(intent, Constants.RequestCamera);
+        }
+
+        private  string GetPathToImage(Android.Net.Uri uri)
+        {
+            string docId;
+            using (var c1 = ContentResolver.Query(uri,
+                null, null, null, null))
+            {
+                c1.MoveToFirst();
+                var documentId = c1.GetString(0);
+                docId = documentId.Substring(
+                    documentId.LastIndexOf(":", StringComparison.Ordinal) + 1);
+            }
+
+            string path;
+
+            // The projection contains the columns we want to return in our query.
+            const string selection = MediaStore.Images.Media.InterfaceConsts.Id + " =? ";
+            using (var cursor = ContentResolver.Query(
+                MediaStore.Images.Media.ExternalContentUri, null, selection, new[] { docId },
+                null))
+            {
+                if (cursor == null) return null;
+                var columnIndex =
+                    cursor.GetColumnIndexOrThrow(MediaStore.Images.Media.InterfaceConsts.Data);
+                cursor.MoveToFirst();
+                path = cursor.GetString(columnIndex);
+            }
+
+            return path;
+        }
+
+
+
+
+        private async void LoadSelectDiseaseActivity()
+        {
+            var progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se aduc date...", this, false);
+            progressBarDialog.Show();
+
+            if (personalData.listOfPersonalDiseases.Count != 0 )
+            {
+                Log.Error("UpdateProfileActivity", "diseases count: " + personalData.listOfPersonalDiseases.Count);
+                foreach (var element in personalData.listOfPersonalDiseases)
+                {
+                    var slm = new SearchListModel();
+                    slm.Id = element.Cod;
+                    slm.Title = element.Name;
+                    slm.IsSelected = true;
+                    _selectedDiseases.Add(slm);
+                }
+            }
+
+            Intent intent = new Intent(this, typeof(SearchListActivity));
+            intent.PutExtra("Items", JsonConvert.SerializeObject(await GetDiseaseList()));
+            intent.PutExtra("SelectedItems", JsonConvert.SerializeObject(_selectedDiseases));
+            StartActivityForResult(intent, 3);
+            RunOnUiThread(() => progressBarDialog.Dismiss());
+        }
+
+        private  async Task<List<SearchListModel>> GetDiseaseList()
+        {
+            var items = new List<SearchListModel>();
+            await Task.Run(async () =>
+            {
+                var result = await WebServices.Get(Constants.PublicServerAddress + "/api/getDisease", Utils.GetDefaults("Token"));
+                if (result != null)
+                {
+                    var arrayOfDiseases = new JSONArray(result);
+                    
+                    for (var i = 0; i < arrayOfDiseases.Length(); i++)
+                    {
+                        var jsonModel = new JSONObject(arrayOfDiseases.Get(i).ToString());
+
+                        items.Add(new SearchListModel
+                        {
+                            Id = jsonModel.GetInt("cod"),
+                            Title = jsonModel.GetString("denumire")
+                        });
+                    }
+                }
+            });
+            return items;
+        }
+        private void ImageTooLargeWarning()
+        {
+            Toast.MakeText(this,
+                "Fotografie prea mare! Dimensiunea maxima acceptata este de 10 Mb.",
+                ToastLength.Long).Show();
+            var resourcePath =
+                "@drawable/profile"; // where myresource (without the extension) is the file
+
+            var imageResource =
+               Resources.GetIdentifier(resourcePath, null, PackageName);
+
+
+            //Drawable res = Activity.Resources.GetDrawable(imageResource);
+            var res = ContextCompat.GetDrawable(this, imageResource);
+            ciwProfileImage.SetImageDrawable(res);
+        }
+
+        private void GalleryAddPic()
+        {
+            var mediaScanIntent = new Intent(Intent.ActionMediaScannerScanFile);
+            var f = new File(_photoUri.Path);
+            var contentUri = Android.Net.Uri.FromFile(f);
+            mediaScanIntent.SetData(contentUri);
+            SendBroadcast(mediaScanIntent);
+        }
+        protected override async void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            switch (requestCode)
+            {
+                case 1:
+                    if (resultCode == Result.Ok)
+                    {
+
+
+                        //_imagePath = _photoUri.Path;
+                        Glide.With(this).Load(new File(_imagePath)).Into(ciwProfileImage);
+
+                        GalleryAddPic();
+                        _fileInformations = new FileInfo(new File(_imagePath).Path);
+                        Log.Error("Size", _fileInformations.Length.ToString());
+                        if (_fileInformations.Length >= 10485760)
+                        {
+                            ImageTooLargeWarning();
+                        }
+                        _imageExtension =
+                            _imagePath.Substring(_imagePath.LastIndexOf(".", StringComparison.Ordinal) +
+                                                 1);
+                        if (_imageExtension.ToLower().Equals("jpeg"))
+                            _imageExtension = "jpg";
+                        personalData.Base64Image =
+                            "data:image/" + _imageExtension + ";base64," +
+                            Convert.ToBase64String(System.IO.File.ReadAllBytes(_imagePath));
+                        personalData.ImageExtension = _imageExtension;
+                    }
+
+                    break;
+                case 2:
+                    if (resultCode == Result.Ok)
+                    {
+
+                        var uri = data.Data;
+
+
+                        _imagePath = GetPathToImage(uri);
+                        Glide.With(this).Load(new File(_imagePath)).Into(ciwProfileImage);
+                        _fileInformations = new FileInfo(_imagePath);
+                        Log.Error("Size", _fileInformations.Length.ToString());
+                        if (_fileInformations.Length >= 10485760)
+                        {
+
+                            ImageTooLargeWarning();
+                        }
+                        _imageExtension =
+                            _imagePath.Substring(_imagePath.LastIndexOf(".", StringComparison.Ordinal) +
+                                                 1);
+                        if (_imageExtension.ToLower().Equals("jpeg"))
+                            _imageExtension = "jpg";
+                        personalData.Base64Image =
+                            "data:image/" + _imageExtension + ";base64," +
+                            Convert.ToBase64String(System.IO.File.ReadAllBytes(_imagePath));
+                        personalData.ImageExtension = _imageExtension;
+                    }
+
+                    break;
+                case 3:
+                    if (resultCode == Result.Ok)
+                    {
+                        Log.Error("UpdateProfileActivity", "result updated: " + data.GetStringExtra("result"));
+                        _selectedDiseases = JsonConvert.DeserializeObject<List<SearchListModel>>(data.GetStringExtra("result"));
+
+                        var list = new List<PersonalDisease>();
+                        foreach (var item in _selectedDiseases)
+                        {
+                            list.Add(new PersonalDisease(item.Id, item.Title));
+                        }
+
+                        await ProfileStorage.GetInstance().saveDiseases(list);
+
+                        btnLabelDiseases.Text = "Afecțiuni selectate:" + list.Count;
+                    }
+
+                    if (resultCode == Result.Canceled)
+                    {
+                        Log.Error("UpdateProfileActivity", "cancel update");
+                    }
+                    break;
+            }
+        }
+        
         private void OnDateClick()
         {
             var frag = DatePickerMedicine.NewInstance(delegate (DateTime time)
             {
                 tvBirthDate.Text = time.ToString("dd/MM/yyyy");
+                birthdate = time.ToString("MM/dd/yyyy");
             });
             frag.Show(this.SupportFragmentManager, DatePickerMedicine.TAG);
         }
@@ -181,21 +480,18 @@ namespace Familia.Profile
 
                 personalData = await ProfileStorage.GetInstance().read();
                 Log.Error("UpdateProfileActivity", "diseases count: ", personalData.listOfPersonalDiseases.Count);
-
+                btnLabelDiseases.Text = "Afecțiuni curente:" + personalData.listOfPersonalDiseases.Count;
                 Glide.With(this).Load(personView.Avatar).Into(ciwProfileImage);
                 etName.Text = personView.Name;
                 tvBirthDate.Text = personView.Birthdate;
                 SetGender(personView.Gender);
 
                 RunOnUiThread(() => dialog.Dismiss());
-
             }
             catch (Exception e)
             {
                 Log.Error("UpdateProfileActivity ERR", e.Message);
             }
-
-            
         }
 
         private void SetGender(string gender)
@@ -210,5 +506,6 @@ namespace Familia.Profile
                 FindViewById<RadioButton>(Resource.Id.rb_male).Checked = true;
             }
         }
+        
     }
 }

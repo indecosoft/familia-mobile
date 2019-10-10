@@ -70,11 +70,11 @@ namespace Familia.Profile
 
            //TODO hide "afectiuni" for correct type of user
         }
-
+        
 
         private async Task<PersonView> CallServerToGetData()
         {
-            Log.Error("Profile SERVER", "task started");
+            Log.Error("ProfileActivity", "task started");
             PersonView person = null;
             await Task.Run(async () =>
             {
@@ -89,6 +89,10 @@ namespace Familia.Profile
                         {
                             await ProfileStorage.GetInstance().saveDiseases(person.ListOfPersonalDiseases);
                         }
+                    }
+                    else
+                    {
+                        Log.Error("ProfileActivity", "nu se poate conecta la server");
                     }
                 }
                 catch (Exception e)
@@ -179,8 +183,16 @@ namespace Familia.Profile
             tvName.Text = name;
             tvEmail.Text = email;
             SetGender(gender);
-            tvDateOftBirth.Text = convertDateToStringFormat(birthdate);
-            tvAge.Text = getAge(birthdate) + " ani";
+            if (convertDateToStringFormat(birthdate) != null)
+            {
+                tvDateOftBirth.Text = convertDateToStringFormat(birthdate);
+            }
+            else
+            {
+                tvDateOftBirth.Text = birthdate;
+            }
+
+            tvAge.Text = GetAge(birthdate) + " ani";
         }
 
         private void SetGender(string gender)
@@ -192,26 +204,57 @@ namespace Familia.Profile
             }
             else
             {
+                iwGender.SetImageResource(Resource.Drawable.human_male);
                 tvGender.Text = "Masculin";
             }
         }
-
-       
-
-
-        public int getAge(string dateString)
+        
+        public int GetAge(string dateString)
         {
-            var birthdate = DateTime.Parse(dateString);
-            var today = DateTime.Today;
-            var age = today.Year - birthdate.Year;
-            if (birthdate.Date > today.AddYears(-age)) age--;
-            return age;
+            try
+            {
+                DateTime birthdate = Convert.ToDateTime(dateString);
+         
+                var today = DateTime.Today;
+                var age = today.Year - birthdate.Year;
+                if (birthdate.Date > today.AddYears(-age)) age--;
+               
+                return age;
+            }
+            catch (Exception e)
+            {
+                Log.Error("ProfileActivity", "convert date: " + e.Message);
+                return 0;
+            }
         }
 
         public string convertDateToStringFormat(string dateString)
         {
-            var birthdate = DateTime.Parse(dateString);
-            return birthdate.Day + "/" + birthdate.Month + "/" + birthdate.Year;
+            try
+            {
+
+               DateTime birthdate = Convert.ToDateTime(dateString);
+                return birthdate.Day + "/" + birthdate.Month + "/" + birthdate.Year;
+            }
+            catch (Exception e)
+            {
+                Log.Error("ProfileActivity", "birthdate convert: " + e.Message);
+                return null;
+            }
+        }
+
+        public string GetDate(string dateString)
+        {
+            try
+            {
+                DateTime birthdate = Convert.ToDateTime(dateString);
+                return birthdate.Month + "/" + birthdate.Day + "/" + birthdate.Year;
+            }
+            catch (Exception e)
+            {
+                Log.Error("ProfileActivity", "birthdate convert: " + e.Message);
+                return null;
+            }
         }
 
         public void OnClick(View v)
@@ -229,22 +272,112 @@ namespace Familia.Profile
             }
         }
 
-        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        protected override async void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
-            Log.Error("ProfileActivity", "requestCode: " + requestCode);
-
             if (requestCode == 1)
             {
                 if (resultCode == Result.Ok)
                 {
-                    Log.Error("ProfileActivity", "result updated: " + data.GetStringExtra("result"));
+                    ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
+                    dialog.Show();
+
+
+                    Log.Error("ProfileActivity", "birthdate: " + data.GetStringExtra("birthdate"));
+
+                    LoadModelInView(Utils.GetDefaults("Avatar"),
+                                    data.GetStringExtra("name"),
+                                    Utils.GetDefaults("Email"),
+                                    data.GetStringExtra("gender"),
+                                    data.GetStringExtra("birthdate"));
+
+                    personalData = await ProfileStorage.GetInstance().read();
+                    await RefreshAdapter();
+
+                    await CallServerToSendData(personalData.Base64Image,
+                                               personalData.ImageName,
+                                               data.GetStringExtra("name"),
+                                               data.GetStringExtra("birthdate"),
+                                               data.GetStringExtra("gender"),
+                                               personalData.listOfPersonalDiseases);
+
+                    RunOnUiThread(() => dialog.Dismiss());
                 }
 
-                if (resultCode == Result.Ok)
+                if (resultCode == Result.Canceled)
                 {
                     Log.Error("ProfileActivity", "cancel update");
-
                 }
+            }
+        }
+
+        private async Task RefreshAdapter()
+        {
+            DiseasesAdapter adapter = new DiseasesAdapter(this);
+           
+            if (personalData != null)
+            {
+                adapter = new DiseasesAdapter(this, personalData.listOfPersonalDiseases);
+            }
+            rv.SetAdapter(adapter);
+            adapter.NotifyDataSetChanged();
+        }
+
+        async Task CallServerToSendData(string imgBase64, string imageName, string name, string birthdate, string gender, List<PersonalDisease> list)
+        {
+            try
+            {
+                Log.Error("ProfileActivity data", "start");
+                if (personalData != null && personalData.listOfPersonalDiseases.Count != 0)
+                {
+
+                    JSONArray jsonArray = new JSONArray();
+
+
+                    foreach (var item in list)
+                    {
+                        JSONObject disease = new JSONObject().Put("cod", item.Cod);
+                        jsonArray.Put(disease);
+                    }
+
+                    string dt = GetDate(birthdate);
+
+                    Log.Error("ProfileActivity data", "date: " + dt);
+                    JSONObject jsonObject = new JSONObject()
+                        .Put("Base64Image", imgBase64)
+                        .Put("ImageName", imageName)
+                        .Put("nume", name)
+                        .Put("dataNastere", dt)
+                        .Put("sex", gender)
+                        .Put("afectiuni", jsonArray);
+
+
+                    if (Utils.CheckNetworkAvailability())
+                    {
+                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/myProfile", jsonObject, Utils.GetDefaults("Token"));
+                        if (result != null)
+                        {
+                            Log.Error("ProfileActivity data", result);
+                            switch (result)
+                            {
+                                case "Done":
+                                case "done":
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            Log.Error("ProfileActivity data", "res e null");
+                        }
+                    }
+                }
+                else
+                {
+                    Log.Error("ProfileActivity data", "list is nempty");
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error("ProfileActivity ERR", e.Message);
             }
         }
     }

@@ -287,7 +287,7 @@ namespace FamiliaXamarin.Login_System
 
                                 _selectedDiseases = JsonConvert.DeserializeObject<List<SearchListModel>>(data.GetStringExtra("result"));
                                 Log.Error("Avem result", data.GetStringExtra("result"));
-                            _diseasaesButton.Text = $"Ati Selectat {_selectedDiseases.Count} boli";
+                            _diseasaesButton.Text = $"Ati Selectat {_selectedDiseases.Count} afecțiuni";
                    
                             break;
                         default:
