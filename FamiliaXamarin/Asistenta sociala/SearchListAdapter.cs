@@ -40,6 +40,10 @@ namespace Familia.Asistentasociala
             if (viewHolder == null) return;
             viewHolder.Name.Text = benefit.Title;
             viewHolder.IsSelected.Checked = benefit.IsSelected;
+            viewHolder.IsSelected.CheckedChange += delegate (object sender, CompoundButton.CheckedChangeEventArgs e)
+            {
+                benefit.IsSelected = e.IsChecked;
+                };
         }
         void OnClick(BenefitsAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
 
@@ -64,7 +68,9 @@ namespace Familia.Asistentasociala
                 itemView.Click += (sender, e) => clickListener(new BenefitsAdapterClickEventArgs { View = itemView, Position = AdapterPosition});
                 Name = itemView.FindViewById<TextView>(Resource.Id.name);
                 IsSelected = itemView.FindViewById<CheckBox>(Resource.Id.isSelected);
+              
             }
+
         }
         public class BenefitsAdapterClickEventArgs : EventArgs
         {

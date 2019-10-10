@@ -55,7 +55,7 @@ namespace Familia.Asistentasociala
                 {
                     Id = benefit.Id,
                     Title = benefit.Title,
-                    IsSelected = selectedBenefits.Where(el => el.Title == benefit.Title).Count() > 0
+                    IsSelected = selectedBenefits.Where(el => el.Id == benefit.Id).Count() > 0
                 });
             }
             list = list.OrderByDescending(el => el.IsSelected).ToList();
