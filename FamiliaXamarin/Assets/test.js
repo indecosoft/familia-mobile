@@ -12,6 +12,7 @@ let speedY;
 let isOver;
 let isStarted;
 let refreshIntervalId;
+let direction = "default";
 
 $.keyframe.define([
     {
@@ -39,7 +40,7 @@ $.keyframe.define([
     }
 ]);
 
-scene.init = function() {
+scene.init = function () {
     isStarted = false;
     isOver = false;
 
@@ -88,20 +89,35 @@ scene.update = function () {
 
         if (currentX !== 0 && currentY !== 0) {
 
-            if (currentX > 0.3 || currentX < -0.3) {
+            if (currentX > 0.3) {
                 movementX = (speedX * currentX) + player.position.left;
+                direction = "N";
             }
-            if (currentY < -0.3 || currentY > 0.3) {
+
+            if (currentX < -0.3) {
+                movementX = (speedX * currentX) + player.position.left;
+                direction = "S";
+
+            }
+
+            if (currentY < -0.3) {
                 movementY = (speedY * currentY) + player.position.top;
+                direction = "V";
             }
-            if (movementY <= Number($(window).height()) - player.height && movementY >= 0 &&
-                movementX <= Number($(window).width()) - player.width && movementX >= 0) {
+
+            if (currentY > 0.3) {
+                movementY = (speedY * currentY) + player.position.top;
+                direction = "E";
+            }
+
+            if (isInArea(player) === true) {
                 $(".player").css({ left: movementX, top: movementY, position: 'absolute' });
             }
 
-            sendMessage("moveX " + movementX + " speedX: " + (speedX * currentX));
-            sendMessage("moveY " + movementY + " speedY: " + (speedY * currentY));
-            sendMessage("Player position top: " + player.position.top + " left: " + player.position.left);
+            //            sendMessage("moveX " + movementX + " speedX: " + (speedX * currentX));
+            //            sendMessage("moveY " + movementY + " speedY: " + (speedY * currentY));
+            //            sendMessage("Player position top: " + player.position.top + " left: " + player.position.left);
+            sendMessage(direction);
 
             if (speedX < 10) {
                 speedX++;
@@ -109,20 +125,63 @@ scene.update = function () {
             if (speedY < 10) {
                 speedY++;
             }
+
+
         } else {
-            speedX = 0;
-            speedY = 0;
-            sendMessage("not moving");
+           
+            sendMessage("not moving" + direction);
+            let speed;
+            switch (direction) {
+                case "N":
+                    movementX += ++speedX;
+                    if (isInArea(player) === true) {
+                        $(".player").css({ left: movementX, top: movementY, position: 'absolute' });
+                    } else {
+                        speedX = 0;
+                        speedY = 0;
+                    }
+                    break;
+                case "S":
+                    movementX -= ++speedX;
+                    if (isInArea(player) === true) {
+                        $(".player").css({ left: movementX, top: movementY, position: 'absolute' });
+                    } else {
+                        speedX = 0;
+                        speedY = 0;
+                    }
+                    break;
+                case "E":
+                    movementY -= ++speedY;
+                    if (isInArea(player) === true) {
+                        $(".player").css({ left: movementX, top: movementY, position: 'absolute' });
+                    } else {
+                        speedX = 0;
+                        speedY = 0;
+                    }
+                    break;
+                case "V":
+                    movementY += ++speedY;
+                    if (isInArea(player) === true) {
+                        $(".player").css({ left: movementX, top: movementY, position: 'absolute' });
+                    } else {
+                        speedX = 0;
+                        speedY = 0;
+                    }
+                    break;
+                default:
+                    sendMessage("direction none");
+                    
+            }
         }
-        if (checkForFinish() === true) {
-            isOver = true;
-        }
+        //        if (checkForFinish() === true) {
+        //            isOver = true;
+        //        }
     } else {
         scene.finish();
     }
 };
 
-scene.finish = function() {
+scene.finish = function () {
     sendMessage("finish called");
     $("#reset").css({ display: 'block' });
     displayPlayerForFinish();
@@ -130,6 +189,14 @@ scene.finish = function() {
     clearInterval(refreshIntervalId);
 }
 
+
+function isInArea(player) {
+    if (movementY <= Number($(window).height()) - player.height && movementY >= 0 &&
+        movementX <= Number($(window).width()) - player.width && movementX >= 0) {
+        return true;
+    }
+    return false;
+}
 
 function displayPlayerForFinish() {
     const arrivalPlace = {
@@ -168,16 +235,16 @@ function checkForFinish() {
         }
     };
 
-    sendMessage("Center Player XY: " + player.center.x + " / " + player.center.x);
-    sendMessage("Center Arrival XY: " + arrivalPlace.center.x + " / " + arrivalPlace.center.y);
+    //    sendMessage("Center Player XY: " + player.center.x + " / " + player.center.x);
+    //    sendMessage("Center Arrival XY: " + arrivalPlace.center.x + " / " + arrivalPlace.center.y);
 
     if (Math.floor(player.center.x) < Math.floor(arrivalPlace.center.x + (arrivalPlace.width / 2)) &&
         Math.floor(player.center.x) > Math.floor(arrivalPlace.center.x - (arrivalPlace.width / 2)) &&
         Math.floor(player.center.y < Math.floor(arrivalPlace.center.y + (arrivalPlace.height / 2))) &&
         Math.floor(player.center.y) > Math.floor(arrivalPlace.center.y - (arrivalPlace.height / 2))) {
-        sendMessage("Player floor: " + Math.floor(player.center.x) + " / " + Math.floor(player.center.y));
-        sendMessage("Arrival X: " + Math.floor(arrivalPlace.center.x) + " / " + Math.floor(arrivalPlace.center.x - arrivalPlace.width));
-        sendMessage("Arrivale Y: " + Math.floor(arrivalPlace.center.y) + " / " + Math.floor(arrivalPlace.center.y - arrivalPlace.height));
+        //        sendMessage("Player floor: " + Math.floor(player.center.x) + " / " + Math.floor(player.center.y));
+        //        sendMessage("Arrival X: " + Math.floor(arrivalPlace.center.x) + " / " + Math.floor(arrivalPlace.center.x - arrivalPlace.width));
+        //        sendMessage("Arrivale Y: " + Math.floor(arrivalPlace.center.y) + " / " + Math.floor(arrivalPlace.center.y - arrivalPlace.height));
         return true;
     }
 

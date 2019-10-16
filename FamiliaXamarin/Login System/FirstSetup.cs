@@ -287,7 +287,7 @@ namespace FamiliaXamarin.Login_System
 
                                 _selectedDiseases = JsonConvert.DeserializeObject<List<SearchListModel>>(data.GetStringExtra("result"));
                                 Log.Error("Avem result", data.GetStringExtra("result"));
-                            _diseasaesButton.Text = $"Ati Selectat {_selectedDiseases.Count} boli";
+                            _diseasaesButton.Text = $"Ati Selectat {_selectedDiseases.Count} afecțiuni";
                    
                             break;
                         default:
@@ -428,6 +428,15 @@ namespace FamiliaXamarin.Login_System
                             //FragmentContext._firstSetupModel.Disease = new JSONArray();
                             _diseasaesButton.Click += GetDiseaseList;
                             break;
+                            //default:
+                            //rootView = inflater.Inflate(Resource.Layout.fragment_setup1, container,
+                            //    false);
+                            //InitDefaultUi(rootView);
+                            //InitFirstViewUi(rootView);
+                            //_btnUpload.Click += delegate {
+                            //    ShowPictureDialog();
+                            //};
+                            //break;
                     }
 
                     _btnNext.Click += _btnNext_Click;

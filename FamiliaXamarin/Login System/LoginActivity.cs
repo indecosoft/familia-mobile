@@ -411,6 +411,7 @@ namespace Familia.Login_System
                     var response =
                         await WebServices.Post(Constants.PublicServerAddress + "/api/login",
                             dataToSend);
+                    Log.Error("LoginActivity", response);
                     if (response != null)
                     {
                         var responseJson = new JSONObject(response);

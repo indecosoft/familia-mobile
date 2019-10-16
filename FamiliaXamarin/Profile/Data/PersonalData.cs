@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Java.IO;
 
 namespace Familia.Profile.Data
 {
@@ -20,7 +21,9 @@ namespace Familia.Profile.Data
         public string Gender { get; set; }
         public string ImageName { get; set; }
         public string ImageExtension { get; set; }
+
         
+
         public PersonalData(List<PersonalDisease> listOfPersonalDiseases, string base64Image, string dateOfBirth, string gender, string imageName, string imageExtension)
         {
             this.listOfPersonalDiseases = listOfPersonalDiseases;
@@ -33,6 +36,11 @@ namespace Familia.Profile.Data
 
         public PersonalData()
         {
+        }
+
+        public string ToString()
+        {
+            return DateOfBirth + ", " + Gender + ", " + ImageName + ", " + ImageExtension;
         }
     }
 }

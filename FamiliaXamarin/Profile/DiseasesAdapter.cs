@@ -25,6 +25,10 @@ namespace Familia.Profile
             this.list = list;
         }
 
+        public DiseasesAdapter(Context context)
+        {
+            this.context = context;
+        }
 
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
