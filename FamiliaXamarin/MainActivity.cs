@@ -26,6 +26,9 @@ using Android.Locations;
 using Android.Support.V4.Content;
 using Android.Util;
 using Com.Bumptech.Glide;
+using Com.Bumptech.Glide.Load.Engine;
+using Com.Bumptech.Glide.Request;
+using Com.Bumptech.Glide.Signature;
 using Familia.Active_Conversations;
 using Familia.Chat;
 using Familia.DataModels;
@@ -74,6 +77,26 @@ namespace FamiliaXamarin
                 }
                 
             }
+
+            if (resultCode == Result.Ok)
+            {
+                if (requestCode == 466)
+                {
+                    var navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
+                    navigationView.SetNavigationItemSelectedListener(this);
+                    var headerView = navigationView.GetHeaderView(0);
+                    var profileIW = headerView.FindViewById<CircleImageView>(Resource.Id.menu_profile_image);
+                    var avt = Utils.GetDefaults("Avatar");
+
+                    Glide.With(this)
+                        .Load(avt)
+                        .Apply(RequestOptions.SignatureOf(new ObjectKey(ProfileActivity.ImageUpdated)))
+                        .Into(profileIW);
+
+                    var lbName = headerView.FindViewById<TextView>(Resource.Id.lbNume);
+                    lbName.Text = Utils.GetDefaults("Name");
+                }
+            }
         }
             
 
@@ -99,6 +122,7 @@ namespace FamiliaXamarin
                     //
                 });
                 Glide.Get(this).ClearMemory();
+                    
                 StartActivity(typeof(LoginActivity));
                 Finish();
                 return;
@@ -206,15 +230,19 @@ namespace FamiliaXamarin
                 if (int.Parse(Utils.GetDefaults("UserType")) == 4 || int.Parse(Utils.GetDefaults("UserType")) == 3)
                     StartForegroundService(_smartBandServiceIntent);
             }
-            
+
 
             // StartForegroundService(_loacationServiceIntent);
 
-                //StartForegroundService(_smartBandServiceIntent);
-                   // StartForegroundService(_medicationServiceIntent);
+            //StartForegroundService(_smartBandServiceIntent);
+            // StartForegroundService(_medicationServiceIntent);
 
-
-            Glide.With(this).Load(avatar).Into(profileImageView);
+            Log.Error("LoginActivity Glide ImgKey", ProfileActivity.ImageUpdated);
+   
+            Glide.With(this)
+                .Load(avatar)
+                .Apply(RequestOptions.SignatureOf(new ObjectKey(ProfileActivity.ImageUpdated)))
+                .Into(profileImageView);
 
             var lbNume = headerView.FindViewById<TextView>(Resource.Id.lbNume);
             //var lbEmail = headerView.FindViewById<TextView>(Resource.Id.lbEmail);
@@ -222,7 +250,7 @@ namespace FamiliaXamarin
             //lbEmail.Text = Utils.GetDefaults("Email", this);
             profileImageView.Click += delegate
             {
-                StartActivity(new Intent(this, typeof(ProfileActivity)));
+                StartActivityForResult(new Intent(this, typeof(ProfileActivity)), 466);
             };
 
              if (Intent.GetBooleanExtra("FromChat", false))
@@ -413,6 +441,7 @@ namespace FamiliaXamarin
                         //
                     });
                     Glide.Get(this).ClearMemory();
+                    
                     StartActivity(typeof(LoginActivity));
                     Finish();
                     break;

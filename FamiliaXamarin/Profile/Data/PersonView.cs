@@ -20,9 +20,10 @@ namespace Familia.Profile.Data
         public string Birthdate { get; set; }
         public string Gender { get; set; }
         public string Avatar { get; set; }
+        public string LastUpdated { get; set; }
         public List<PersonalDisease> ListOfPersonalDiseases { get; set; }
 
-        public PersonView(string name, string email, string birthdate, string gender, string avatar, List<PersonalDisease> list)
+        public PersonView(string name, string email, string birthdate, string gender, string avatar, List<PersonalDisease> list, string lastUpdated)
         {
             Name = name;
             Email = email;
@@ -30,6 +31,7 @@ namespace Familia.Profile.Data
             Gender = gender;
             Avatar = avatar;
             ListOfPersonalDiseases = list;
+            LastUpdated = lastUpdated;
         }
         
     }

@@ -23,6 +23,10 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Utils = FamiliaXamarin.Helpers.Utils;
 using System.Threading.Tasks;
 using Android.Provider;
+using Android.Support.Design.Widget;
+using Com.Bumptech.Glide.Load.Engine;
+using Com.Bumptech.Glide.Request;
+using Com.Bumptech.Glide.Signature;
 using FamiliaXamarin;
 using Org.Json;
 
@@ -44,6 +48,8 @@ namespace Familia.Profile
         private ImageView iwGender;
         private RecyclerView rv;
 
+        public static string ImageUpdated = "sign";
+
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -51,7 +57,7 @@ namespace Familia.Profile
             SetContentView(Resource.Layout.activity_profile);
             SetToolbar();
             InitView();
-            LoadModel();
+            LoadModel(false);
         }
 
         private void InitView()
@@ -125,7 +131,7 @@ namespace Familia.Profile
 
                     list.Add(new PersonalDisease(cod, nameDisease));
                 }
-                var obj = new PersonView(name, email, birthdate, gender, avatar, list);
+                var obj = new PersonView(name, email, birthdate, gender, avatar, list, "none");
                 return obj;
             }
             return null;
@@ -145,7 +151,15 @@ namespace Familia.Profile
             Title = "Profilul meu";
         }
 
-        public async void LoadModel()
+        public override void OnBackPressed()
+        {
+            var returnIntent = new Intent();
+            SetResult(Result.Ok, returnIntent);
+            base.OnBackPressed();
+
+        }
+
+        public async void LoadModel(bool updated)
         {
             ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
             dialog.Show();
@@ -154,7 +168,7 @@ namespace Familia.Profile
 
             if (person != null)
             {
-                LoadModelInView(person.Avatar, person.Name, person.Email, person.Gender, person.Birthdate);
+                LoadModelInView(person.Avatar, person.Name, person.Email, person.Gender, person.Birthdate, updated);
                 adapter = new DiseasesAdapter(this, person.ListOfPersonalDiseases);
             }
             else
@@ -167,7 +181,7 @@ namespace Familia.Profile
                 }
                 else
                 {
-                    LoadModelInView(Utils.GetDefaults("Avatar"), Utils.GetDefaults("Name"), Utils.GetDefaults("Email"), personalData.Gender, personalData.DateOfBirth);
+                    LoadModelInView(Utils.GetDefaults("Avatar"), Utils.GetDefaults("Name"), Utils.GetDefaults("Email"), personalData.Gender, personalData.DateOfBirth, updated);
                     adapter = new DiseasesAdapter(this, personalData.listOfPersonalDiseases);
                 }
             }
@@ -177,9 +191,22 @@ namespace Familia.Profile
             RunOnUiThread(() => dialog.Dismiss());
         }
 
-        private void LoadModelInView(string avatar, string name, string email, string gender, string birthdate)
+        private void LoadModelInView(string avatar, string name, string email, string gender, string birthdate, bool updated)
         {
-            Glide.With(this).Load(avatar).Into(ciwProfileImage);
+
+            if (updated)
+            {
+                ImageUpdated = DateTime.Now.Millisecond.ToString();
+            }
+       
+            Glide.With(this)
+                .Load(avatar)
+                .Apply(RequestOptions.SignatureOf(new ObjectKey(ImageUpdated)))
+                .Into(ciwProfileImage);
+
+            Log.Error("ProfileActivity Glide ImgKey", ImageUpdated);
+
+
             tvName.Text = name;
             tvEmail.Text = email;
             SetGender(gender);
@@ -223,7 +250,27 @@ namespace Familia.Profile
             }
             catch (Exception e)
             {
-                Log.Error("ProfileActivity", "convert date: " + e.Message);
+                Log.Error("ProfileActivity", "convert date 1: " + e.Message);
+
+                try
+                {
+                    var refactor = dateString.Split("/");
+                    var time = Convert.ToDateTime(refactor[1] + "/" + refactor[0] + "/" + refactor[2]);
+                    dateString = time.ToString("MM/dd/yyyy");
+
+                    DateTime birthdate = Convert.ToDateTime(dateString);
+                    var today = DateTime.Today;
+                    var age = today.Year - birthdate.Year;
+                    if (birthdate.Date > today.AddYears(-age)) age--;
+
+                    return age;
+
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("ProfileActivity", "convert date 2: " + ex.Message);
+                }
+
                 return 0;
             }
         }
@@ -281,25 +328,36 @@ namespace Familia.Profile
                     ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
                     dialog.Show();
 
-
                     Log.Error("ProfileActivity", "birthdate: " + data.GetStringExtra("birthdate"));
-
-                    LoadModelInView(Utils.GetDefaults("Avatar"),
-                                    data.GetStringExtra("name"),
-                                    Utils.GetDefaults("Email"),
-                                    data.GetStringExtra("gender"),
-                                    data.GetStringExtra("birthdate"));
 
                     personalData = await ProfileStorage.GetInstance().read();
                     await RefreshAdapter();
 
-                    await CallServerToSendData(personalData.Base64Image,
-                                               personalData.ImageName,
-                                               data.GetStringExtra("name"),
-                                               data.GetStringExtra("birthdate"),
-                                               data.GetStringExtra("gender"),
-                                               personalData.listOfPersonalDiseases);
+                    if (await CallServerToSendData(personalData.Base64Image,
+                        personalData.ImageName,
+                        data.GetStringExtra("name"),
+                        data.GetStringExtra("birthdate"),
+                        data.GetStringExtra("gender"),
+                        personalData.listOfPersonalDiseases))
+                    {
+                        
+                        LoadModelInView(Utils.GetDefaults("Avatar"),
+                            data.GetStringExtra("name"),
+                            Utils.GetDefaults("Email"),
+                            data.GetStringExtra("gender"),
+                            data.GetStringExtra("birthdate"),
+                            true);
 
+
+                        Utils.SetDefaults("Name", data.GetStringExtra("name"));
+                       
+
+                    }
+                    else
+                    {
+                        Toast.MakeText(this, "S-a intampinat o eroare la salvarea datelor.", ToastLength.Long).Show();
+                    }
+                    
                     RunOnUiThread(() => dialog.Dismiss());
                 }
 
@@ -322,7 +380,7 @@ namespace Familia.Profile
             adapter.NotifyDataSetChanged();
         }
 
-        async Task CallServerToSendData(string imgBase64, string imageName, string name, string birthdate, string gender, List<PersonalDisease> list)
+        async Task<bool> CallServerToSendData(string imgBase64, string imageName, string name, string birthdate, string gender, List<PersonalDisease> list)
         {
             try
             {
@@ -363,22 +421,24 @@ namespace Familia.Profile
                                 case "done":
                                     break;
                             }
+
+                            return true;
                         }
-                        else
-                        {
-                            Log.Error("ProfileActivity data", "res e null");
-                        }
+                        
+                        Log.Error("ProfileActivity data", "res e null");
                     }
                 }
                 else
                 {
-                    Log.Error("ProfileActivity data", "list is nempty");
+                    Log.Error("ProfileActivity data", "list is empty");
+
                 }
             }
             catch (Exception e)
             {
                 Log.Error("ProfileActivity ERR", e.Message);
             }
+            return false;
         }
     }
 }

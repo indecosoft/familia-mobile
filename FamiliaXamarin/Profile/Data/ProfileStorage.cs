@@ -69,39 +69,56 @@ namespace Familia.Profile
 
         public async Task<bool> save()
         {
+            var res = false;
             try
             {
-                if (personalData == null) return false;
+//                await Task.Run(async () =>
+//            {
 
-                logData();
-                Log.Error("ProfileStorage", "saving data ...");
-                _dbProfile = await SqlHelper<ProfileDataModel>.CreateAsync();
-                await _dbProfile.Insert(new ProfileDataModel()
+                if (personalData != null)
                 {
-                    Base64Image = personalData.Base64Image,
-                    DateOfBirth = personalData.DateOfBirth,
-                    Gender = personalData.Gender,
-                    ImageExtension = personalData.ImageExtension,
-                    ImageName = personalData.ImageName
-                });
+//                    logData();
 
-                foreach (var item in personalData.listOfPersonalDiseases)
-                {
-                    _dbProfileDisease = await SqlHelper<DiseaseDataModel>.CreateAsync();
-                    await _dbProfileDisease.Insert(new DiseaseDataModel()
+                    if (await DropProfileDataTableTask())
                     {
-                       Name = item.Name,
-                       Cod = item.Cod
-                    });
+                        Log.Error("ProfileStorage", "saving data ...");
+                        _dbProfile = await SqlHelper<ProfileDataModel>.CreateAsync();
+
+                        await _dbProfile.Insert(new ProfileDataModel()
+                        {
+                            Base64Image = personalData.Base64Image,
+                            DateOfBirth = personalData.DateOfBirth,
+                            Gender = personalData.Gender,
+                            ImageExtension = personalData.ImageExtension,
+                            ImageName = personalData.ImageName
+                        });
+
+                        if (await DropDiseasesTableTask())
+                        {
+                            foreach (var item in personalData.listOfPersonalDiseases)
+                            {
+                                _dbProfileDisease = await SqlHelper<DiseaseDataModel>.CreateAsync();
+                                await _dbProfileDisease.Insert(new DiseaseDataModel()
+                                {
+                                    Name = item.Name,
+                                    Cod = item.Cod
+                                });
+                            }
+                        }
+
+                        Log.Error("ProfileStorage", "saved");
+                        res =  true;
+                    }
                 }
-                Log.Error("ProfileStorage", "saved");
-                return true;
-            }
-            catch (Exception ex)
+                
+//            });
+                }
+                catch (Exception ex)
             {
                 Log.Error("ERR", ex.Message);
-                return false;
             }
+
+            return res;
         }
 
         public async Task<bool> saveDiseases(List<PersonalDisease> list)
@@ -153,20 +170,43 @@ namespace Familia.Profile
                 Log.Error("ProfileStorage Err", e.Message);
                 return false;
             }
+        }
 
+        private async Task<bool> DropProfileDataTableTask()
+        {
+            try
+            {
+                var sqlHelper = await SqlHelper<ProfileDataModel>.CreateAsync();
+                sqlHelper.DropTables(typeof(ProfileDataModel));
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Error("ProfileStorage Err", e.Message);
+                return false;
+            }
         }
 
 
         public async Task<bool> SearchDiseaseInDbTask(int cod)
         {
             var found = false;
-            _dbProfileDisease = await SqlHelper<DiseaseDataModel>.CreateAsync();
-            var c = await _dbProfileDisease.QueryValuations($"SELECT * from DiseaseDataModel WHERE Cod ='{cod}'");
-            if (c.Count() != 0)
+            try
             {
-                found = true;
-                Log.Error("ProfileStorage", "item exists");
+                _dbProfileDisease = await SqlHelper<DiseaseDataModel>.CreateAsync();
+                var c = await _dbProfileDisease.QueryValuations($"SELECT * from DiseaseDataModel WHERE Cod ='{cod}'");
+                if (c.Count() != 0)
+                {
+                    found = true;
+                    Log.Error("ProfileStorage", "item exists");
+                }
             }
+            catch (Exception e)
+            {
+                Log.Error("ProfileStorage ERR", e.Message);
+                
+            }
+            
             return found;
         }
 
@@ -176,6 +216,8 @@ namespace Familia.Profile
             Log.Error("ProfileStorage", "reading...");
             var list = await GetDiseasesFromDb();
             var listDiseases = new List<PersonalDisease>();
+            if (list == null) return null;
+
             foreach (var item in list)
             {
                 var obj = new PersonalDisease(item.Cod, item.Name);
@@ -184,6 +226,8 @@ namespace Familia.Profile
             }
             
             var listProfile = await GetProfileInfoFromDb();
+            if (listProfile == null) return null; 
+
             foreach (var item in listProfile)
             {
                 personalData = new PersonalData(
@@ -196,30 +240,38 @@ namespace Familia.Profile
                 );
             }
 
-           
-            Log.Error("ProfileStorage", "read");
-
-            if (listDiseases.Count > 0 )
-            {
-                logData();
-                return personalData;
-            }
-
-            return null;
+            return personalData;
         }
 
         private async Task<IEnumerable<DiseaseDataModel>> GetDiseasesFromDb()
         {
-            _dbProfileDisease = await SqlHelper<DiseaseDataModel>.CreateAsync();
-            var list = await _dbProfileDisease.QueryValuations("select * from DiseaseDataModel");
-            return list;
+            try
+            {
+                _dbProfileDisease = await SqlHelper<DiseaseDataModel>.CreateAsync();
+               var  list = await _dbProfileDisease.QueryValuations("select * from DiseaseDataModel");
+                return list;
+            }
+            catch (Exception e)
+            {
+                Log.Error("ProfileStorage ERR", e.Message);
+                return null;
+            }
+            
         }
 
         private async Task<IEnumerable<ProfileDataModel>> GetProfileInfoFromDb()
         {
-            _dbProfile = await SqlHelper<ProfileDataModel>.CreateAsync();
-            var list = await _dbProfile.QueryValuations("select * from ProfileDataModel");
-            return list;
+            try
+            {
+                _dbProfile = await SqlHelper<ProfileDataModel>.CreateAsync();
+                var list = await _dbProfile.QueryValuations("select * from ProfileDataModel");
+                return list;
+            }
+            catch (Exception e)
+            {
+                Log.Error("ProfileStorage ERR", e.Message);
+                return null;
+            }
         }
 
 
