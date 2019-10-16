@@ -428,15 +428,6 @@ namespace FamiliaXamarin.Login_System
                             //FragmentContext._firstSetupModel.Disease = new JSONArray();
                             _diseasaesButton.Click += GetDiseaseList;
                             break;
-                            //default:
-                            //rootView = inflater.Inflate(Resource.Layout.fragment_setup1, container,
-                            //    false);
-                            //InitDefaultUi(rootView);
-                            //InitFirstViewUi(rootView);
-                            //_btnUpload.Click += delegate {
-                            //    ShowPictureDialog();
-                            //};
-                            //break;
                     }
 
                     _btnNext.Click += _btnNext_Click;
