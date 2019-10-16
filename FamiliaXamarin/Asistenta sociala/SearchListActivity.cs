@@ -18,6 +18,7 @@ using FamiliaXamarin;
 using Org.Json;
 using Android.Support.Design.Widget;
 using Newtonsoft.Json;
+using Android.Graphics.Drawables;
 
 namespace Familia.Asistentasociala
 {
@@ -58,7 +59,7 @@ namespace Familia.Asistentasociala
                     IsSelected = selectedBenefits.Where(el => el.Id == benefit.Id).Count() > 0
                 });
             }
-            list = list.OrderByDescending(el => el.IsSelected).ToList();
+            list = list.OrderBy(c => c.Title).OrderByDescending(el => el.IsSelected).ToList();
             mAdapter = new SearchListAdapter(this, list);
             mAdapter.ItemClick += ItemClick;
 
@@ -72,6 +73,7 @@ namespace Familia.Asistentasociala
             etSearch.TextChanged += EtSearch_TextChanged;
             recyclerView.SetLayoutManager(layoutManager);
             recyclerView.SetAdapter(mAdapter);
+            recyclerView.AddItemDecoration(new DividerItemDecoration(recyclerView.Context, DividerItemDecoration.Vertical));
         }
 
         private void EtSearch_TextChanged(object sender, Android.Text.TextChangedEventArgs e)
@@ -81,6 +83,7 @@ namespace Familia.Asistentasociala
 
         private void ItemClick(object sender, SearchListAdapter.BenefitsAdapterClickEventArgs e)
         {
+            
             mAdapter.GetItem(e.Position).IsSelected = !mAdapter.GetItem(e.Position).IsSelected;
             mAdapter.NotifyItemChanged(e.Position);
         }

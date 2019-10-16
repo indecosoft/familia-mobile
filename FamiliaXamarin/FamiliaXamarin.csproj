@@ -193,6 +193,7 @@
     <Compile Include="Helpers\Encryption.cs" />
     <Compile Include="Asistenta sociala\SearchListActivity.cs" />
     <Compile Include="Asistenta sociala\SearchListAdapter.cs" />
+    <Compile Include="WebSocket\WebSocketLocation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

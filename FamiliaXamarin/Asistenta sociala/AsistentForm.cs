@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 using Android;
 using Familia;
 using Android.App;
@@ -161,7 +162,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                     if (jsonResponse.GetInt("status") == 2)
                     {
                         var dataArray = jsonResponse.GetJSONArray("data");
-                        var items = new List<SearchListModel>();
+                        List<SearchListModel> items = new List<SearchListModel>();
                         for (int i = 0; i < dataArray.Length(); i++)
                         {
                             items.Add(new SearchListModel{
@@ -169,6 +170,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                             Title = dataArray.GetJSONObject(i).GetString("benefit")
                             } );
                         }
+                        
                         Intent intent = new Intent(Activity, typeof(SearchListActivity));
                         intent.PutExtra("Items", JsonConvert.SerializeObject(items));
                         intent.PutExtra("SelectedItems", JsonConvert.SerializeObject(SelectedBenefits)); 
@@ -429,6 +431,8 @@ namespace FamiliaXamarin.Asistenta_sociala
             } else
             {
                 Log.Error("Nu avem result", "User-ul a zis CANCEL");
+                _btnBenefits.Text = "Selectati beneficii";
+                SelectedBenefits.Clear();
             }
         }
     }

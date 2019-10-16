@@ -6,6 +6,9 @@ using Android.Views;
 using Android.Widget;
 using FamiliaXamarin;
 using System.Linq;
+using Android.Graphics.Drawables;
+using Android.Content.Res;
+using Android.Support.V4.Content;
 
 namespace Familia.Asistentasociala
 {
@@ -14,9 +17,11 @@ namespace Familia.Asistentasociala
         public event EventHandler<BenefitsAdapterClickEventArgs> ItemClick;
         private List<SearchListModel> _benefits, _benefitsCopy;
         private LayoutInflater mInflater;
+        private Context Context;
 
         public SearchListAdapter(Context context, List<SearchListModel> benefits)
         {
+            Context = context;
             mInflater = LayoutInflater.From(context);
             _benefits = benefits;
             _benefitsCopy = benefits;
@@ -38,12 +43,28 @@ namespace Familia.Asistentasociala
 
             var benefit = _benefits[position];
             if (viewHolder == null) return;
-            viewHolder.Name.Text = benefit.Title;
-            viewHolder.IsSelected.Checked = benefit.IsSelected;
-            viewHolder.IsSelected.CheckedChange += delegate (object sender, CompoundButton.CheckedChangeEventArgs e)
+            viewHolder.Name.Text = benefit.Title.Substring(0, 1).ToUpper() + benefit.Title.Substring(1);
+            if (!benefit.IsSelected)
             {
-                benefit.IsSelected = e.IsChecked;
-                };
+                viewHolder.IsSelected.Text = benefit.Title.Substring(0,1).ToUpper();
+
+                viewHolder.IsSelected.SetCompoundDrawables(null, null, null, null);
+                viewHolder.IsSelected.TextSize = 20;
+                viewHolder.IsSelected.BackgroundTintList = Context.Resources.GetColorStateList(Resource.Color.colorPrimaryDark, Context.Theme);
+            }
+            else
+            {
+                Drawable img = Context.Resources.GetDrawable(Resource.Drawable.check, Context.Theme);
+                img.SetBounds(0, 0, 75, 75);
+                viewHolder.IsSelected.SetCompoundDrawables(img, null, null, null);
+                viewHolder.IsSelected.Text = string.Empty;
+                viewHolder.IsSelected.BackgroundTintList = Context.Resources.GetColorStateList(Resource.Color.colorAccent, Context.Theme);
+
+
+                viewHolder.IsSelected.TextSize = 12;
+                
+            }
+            
         }
         void OnClick(BenefitsAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
 
@@ -62,13 +83,15 @@ namespace Familia.Asistentasociala
         class SucHolder : RecyclerView.ViewHolder
         {
             public TextView Name { get; set; }
-            public CheckBox IsSelected { get; set; }
+            public TextView IsSelected { get; set; }
             public SucHolder(View itemView, Action<BenefitsAdapterClickEventArgs> clickListener) : base(itemView)
             {
                 itemView.Click += (sender, e) => clickListener(new BenefitsAdapterClickEventArgs { View = itemView, Position = AdapterPosition});
                 Name = itemView.FindViewById<TextView>(Resource.Id.name);
-                IsSelected = itemView.FindViewById<CheckBox>(Resource.Id.isSelected);
-              
+                IsSelected = itemView.FindViewById<TextView>(Resource.Id.isSelected);
+
+                Name.JustificationMode = Android.Text.JustificationMode.InterWord;
+
             }
 
         }

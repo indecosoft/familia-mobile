@@ -44,6 +44,7 @@ using FamiliaXamarin.Sharing;
 using Org.Json;
 using AlertDialog = Android.App.AlertDialog;
 using Resource = Familia.Resource;
+using Familia.WebSocket;
 
 namespace FamiliaXamarin
 {
@@ -182,6 +183,7 @@ namespace FamiliaXamarin
                         .Replace(Resource.Id.fragment_container, new AsistentForm())
                         .AddToBackStack(null).Commit();
                     Title = "Asistenta sociala";
+                    StartForegroundService(_webSocketServiceIntent);
                     break;
                 case 3:
                     Toast.MakeText(this, "3", ToastLength.Long).Show();

@@ -5,6 +5,7 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
+using Familia.WebSocket;
 using FamiliaXamarin;
 using FamiliaXamarin.Helpers;
 using Org.Json;
@@ -16,6 +17,7 @@ namespace Familia.Services
     {
         //private NotificationManager _notificationManager;
         readonly IWebSocketClient _socketClient = new WebSocketClient();
+        readonly IWebSocketClient webSocketLocation = new WebSocketLocation();
         private const int ServiceRunningNotificationId = 10000;
 
         public override IBinder OnBind(Intent intent)
@@ -51,9 +53,13 @@ namespace Familia.Services
                 }
                 var charger = new ChargerReceiver();
                 RegisterReceiver(charger, new IntentFilter(Intent.ActionHeadsetPlug));
-
-                _socketClient.Connect(Constants.WebSocketAddress, Constants.WebSocketPort, this);
-
+                bool ok = int.TryParse(Utils.GetDefaults("UserType"), out var type);
+                if (ok)
+                {
+                    if(type != 2)
+                        await _socketClient.Connect(Constants.WebSocketAddress, Constants.WebSocketPort, this);
+                }
+                await webSocketLocation.Connect(Constants.WebSocketLocationAddress, Constants.WebSocketPort, this);
                 await Task.Run(async () =>
                 {
                     try
