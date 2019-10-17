@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -67,6 +68,10 @@ namespace Familia.Profile
             Manifest.Permission.ReadExternalStorage,
             Manifest.Permission.WriteExternalStorage
         };
+        private List<PersonalDisease> listToBeSaved;
+        private string tempImgBase64;
+
+        private bool isSavedClick;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -90,7 +95,7 @@ namespace Familia.Profile
             if (grantResults[0] != Permission.Granted)
             {
                 Toast.MakeText(this, "Permisiuni pentru telefon refuzate", ToastLength.Short).Show();
-               
+
             }
             else if (grantResults[1] != Permission.Granted || grantResults[2] != Permission.Granted)
             {
@@ -123,6 +128,8 @@ namespace Familia.Profile
             {
                 RequestPermissions(_permissionsArray, 0);
             }
+
+            isSavedClick = false;
         }
 
         public async void OnClick(View v)
@@ -137,6 +144,11 @@ namespace Familia.Profile
                     Finish();
                     break;
                 case Resource.Id.btn_save:
+
+                    if (isSavedClick == false)
+                    {
+                        isSavedClick = true;
+
                     name = tvName.Text;
 
                     if (FindViewById<RadioButton>(Resource.Id.rb_female).Checked == true)
@@ -149,26 +161,41 @@ namespace Familia.Profile
                         gender = "Masculin";
                     }
 
-                    if (!name.Equals(""))
+                    if (listToBeSaved == null)
                     {
-                        var pd = new PersonalData(
-                            personalData.listOfPersonalDiseases,
-                            personalData.Base64Image,
-                            tvBirthDate.Text,
-                            gender,
-                            Utils.GetDefaults("Email"),
-                            ".jpg"
-                            );
-
-                        await SaveProfileData(pd);
-
-                        returnIntent = new Intent();
-                        returnIntent.PutExtra("name", name);
-                        returnIntent.PutExtra("birthdate", birthdate);
-                        returnIntent.PutExtra("gender", gender);
-                        SetResult(Result.Ok, returnIntent);
-                        Finish();
+                        listToBeSaved = personalData.listOfPersonalDiseases;
                     }
+
+                    if (!name.Equals(""))
+                        {
+
+                            if (tempImgBase64 == null)
+                            {
+                                tempImgBase64 = personalData.Base64Image;
+                            }
+
+                            var pd = new PersonalData(
+                                listToBeSaved,
+                                tempImgBase64,
+                                tvBirthDate.Text,
+                                gender,
+                                Utils.GetDefaults("Email"),
+                                ".jpg"
+                                );
+
+                            await SaveProfileData(pd);
+
+                            returnIntent = new Intent();
+                            returnIntent.PutExtra("name", name);
+                            returnIntent.PutExtra("birthdate", birthdate);
+                            returnIntent.PutExtra("gender", gender);
+                            SetResult(Result.Ok, returnIntent);
+                            Finish();
+                        }
+
+                    }
+
+
                     break;
                 case Resource.Id.tv_birthdate:
                     OnDateClick();
@@ -181,22 +208,38 @@ namespace Familia.Profile
                     break;
             }
         }
-        
+
         private async void LoadSelectDiseaseActivity()
         {
             var progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se aduc date...", this, false);
             progressBarDialog.Show();
             var list = new List<SearchListModel>();
-            if (personalData.listOfPersonalDiseases.Count != 0 )
+
+            if (listToBeSaved != null)
             {
-                Log.Error("UpdateProfileActivity", "diseases count: " + personalData.listOfPersonalDiseases.Count);
-                foreach (var element in personalData.listOfPersonalDiseases)
+                Log.Error("UpdateProfileActivity", "diseases count: " + listToBeSaved.Count);
+                foreach (var element in listToBeSaved)
                 {
                     var slm = new SearchListModel();
                     slm.Id = element.Cod;
                     slm.Title = element.Name;
                     slm.IsSelected = true;
                     list.Add(slm);
+                }
+            }
+            else
+            {
+                if (personalData.listOfPersonalDiseases.Count != 0)
+                {
+                    Log.Error("UpdateProfileActivity", "diseases count: " + personalData.listOfPersonalDiseases.Count);
+                    foreach (var element in personalData.listOfPersonalDiseases)
+                    {
+                        var slm = new SearchListModel();
+                        slm.Id = element.Cod;
+                        slm.Title = element.Name;
+                        slm.IsSelected = true;
+                        list.Add(slm);
+                    }
                 }
             }
 
@@ -207,7 +250,7 @@ namespace Familia.Profile
             RunOnUiThread(() => progressBarDialog.Dismiss());
         }
 
-        private  async Task<List<SearchListModel>> GetDiseaseList()
+        private async Task<List<SearchListModel>> GetDiseaseList()
         {
             var items = new List<SearchListModel>();
             await Task.Run(async () =>
@@ -215,8 +258,9 @@ namespace Familia.Profile
                 var result = await WebServices.Get(Constants.PublicServerAddress + "/api/getDisease", Utils.GetDefaults("Token"));
                 if (result != null)
                 {
+                    Log.Error("UpdateProfileActivity", "RESULT " + result);
                     var arrayOfDiseases = new JSONArray(result);
-                    
+
                     for (var i = 0; i < arrayOfDiseases.Length(); i++)
                     {
                         var jsonModel = new JSONObject(arrayOfDiseases.Get(i).ToString());
@@ -227,11 +271,17 @@ namespace Familia.Profile
                             Title = jsonModel.GetString("denumire")
                         });
                     }
+                    Log.Error("UpdateProfileActivity", "RESULT" + items.Count);
+                }
+                else
+                {
+                    Log.Error("UpdateProfileActivity", "RESULT is null ");
                 }
             });
+
             return items;
         }
-  
+
         protected override async void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
 
@@ -254,14 +304,15 @@ namespace Familia.Profile
                                                  1);
                         if (_imageExtension.ToLower().Equals("jpeg"))
                             _imageExtension = "jpg";
-                        personalData.Base64Image =
+                        tempImgBase64 =
                             "data:image/" + _imageExtension + ";base64," +
                             Convert.ToBase64String(System.IO.File.ReadAllBytes(_imagePath));
                         personalData.ImageExtension = _imageExtension;
 
                         break;
                     case 2:
-
+                        try
+                        {
                         var uri = data.Data;
                         _imagePath = GetPathToImage(uri);
                         Glide.With(this).Load(new File(_imagePath)).Into(ciwProfileImage);
@@ -271,28 +322,34 @@ namespace Familia.Profile
                         {
                             ImageTooLargeWarning();
                         }
+
                         _imageExtension =
                             _imagePath.Substring(_imagePath.LastIndexOf(".", StringComparison.Ordinal) +
                                                  1);
                         if (_imageExtension.ToLower().Equals("jpeg"))
                             _imageExtension = "jpg";
-                        personalData.Base64Image =
+                        tempImgBase64 =
                             "data:image/" + _imageExtension + ";base64," +
                             Convert.ToBase64String(System.IO.File.ReadAllBytes(_imagePath));
                         personalData.ImageExtension = _imageExtension;
+
+                        }
+                        catch (Exception e)
+                        {
+                            Toast.MakeText(this, "Nu este permisa incarcarea imaginilor din cloud", ToastLength.Long).Show();
+                        }
 
                         break;
                     case 3:
 
                         Log.Error("UpdateProfileActivity", "result updated: " + data.GetStringExtra("result"));
                         _selectedDiseases = JsonConvert.DeserializeObject<List<SearchListModel>>(data.GetStringExtra("result"));
-                        var list = new List<PersonalDisease>();
+                        listToBeSaved = new List<PersonalDisease>();
                         foreach (var item in _selectedDiseases)
                         {
-                            list.Add(new PersonalDisease(item.Id, item.Title));
+                            listToBeSaved.Add(new PersonalDisease(item.Id, item.Title));
                         }
-                        await ProfileStorage.GetInstance().saveDiseases(list);
-                        btnLabelDiseases.Text = "Afecțiuni selectate:" + list.Count;
+                        btnLabelDiseases.Text = "Afecțiuni selectate:" + listToBeSaved.Count;
 
                         break;
                 }
@@ -301,10 +358,15 @@ namespace Familia.Profile
             if (resultCode == Result.Canceled)
             {
                 Log.Error("UpdateProfileActivity", "cancel result");
+                if (requestCode == 3)
+                {
+                    listToBeSaved = new List<PersonalDisease>();
+                    btnLabelDiseases.Text = "Afecțiuni selectate:" + listToBeSaved.Count;
+                }
             }
 
         }
-        
+
         private void OnDateClick()
         {
             var frag = DatePickerMedicine.NewInstance(delegate (DateTime time)
@@ -335,7 +397,7 @@ namespace Familia.Profile
                 var refactor = personView.Birthdate.Split("/");
                 var time = Convert.ToDateTime(refactor[1] + "/" + refactor[0] + "/" + refactor[2]);
                 birthdate = time.ToString("MM/dd/yyyy");
-                
+
                 tvBirthDate.Text = personView.Birthdate;
                 SetGender(personView.Gender);
 
@@ -373,11 +435,11 @@ namespace Familia.Profile
                     pd.ImageExtension
                 );
 
-                    ProfileStorage.GetInstance().personalData = data;
-                    if (!(await ProfileStorage.GetInstance().save()))
-                    {
-                        Log.Error("UpdateProfileActivity", "Error saving profile data ..");
-                    }
+                ProfileStorage.GetInstance().personalData = data;
+                if (!(await ProfileStorage.GetInstance().save()))
+                {
+                    Log.Error("UpdateProfileActivity", "Error saving profile data ..");
+                }
             }
             catch (Exception e)
             {

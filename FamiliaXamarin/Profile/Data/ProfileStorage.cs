@@ -72,12 +72,9 @@ namespace Familia.Profile
             var res = false;
             try
             {
-//                await Task.Run(async () =>
-//            {
 
                 if (personalData != null)
                 {
-//                    logData();
 
                     if (await DropProfileDataTableTask())
                     {
@@ -131,18 +128,15 @@ namespace Familia.Profile
                 if (await DropDiseasesTableTask())
                 {
                     _dbProfileDisease = await SqlHelper<DiseaseDataModel>.CreateAsync();
+                    
                     foreach (var item in list)
                     {
-
-                        if (!(await SearchDiseaseInDbTask(item.Cod)))
-                        {
                             Log.Error("ProfileStorage", "inserting in db..");
                             await _dbProfileDisease.Insert(new DiseaseDataModel()
                             {
                                 Name = item.Name,
                                 Cod = item.Cod
                             });
-                        }
                     }
 
                     Log.Error("ProfileStorage", "saved");

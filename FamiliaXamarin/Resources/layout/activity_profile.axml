@@ -4,7 +4,7 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-	android:padding="16dp">
+	>
 
 	    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -91,26 +91,30 @@
     android:id="@+id/rl_line"
     android:layout_width="fill_parent"
     android:layout_height="2dp"
-	android:layout_marginTop="20dp"
-	android:layout_marginBottom="20dp"
+	android:layout_marginTop="10dp"
+	android:layout_marginBottom="10dp"
     android:layout_below="@+id/tv_email"
-    android:background="@color/colorSecondary" />
+    android:background="@color/colorSecondary" 
+	android:layout_marginLeft="16dp"
+	android:layout_marginRight="16dp"/>
 
 	<ScrollView 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-	android:layout_marginTop="10px"
 	android:layout_below="@id/rl_line"
+	android:paddingLeft="16dp"
+	android:paddingRight="16dp"
+	android:scrollbars="none"
     >
 
 <RelativeLayout
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:layout_below="@id/rl_line">
+	android:layout_below="@id/rl_line"
+    >
 
 	<android.support.constraint.ConstraintLayout
 		android:id="@+id/cl_cw"
-		android:paddingTop="5dp"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_below="@id/rl_line"
@@ -132,13 +136,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
-        <ImageView
-            android:id="@+id/iw_icon"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/calendar_age"
-            android:layout_centerHorizontal="true"/>
+	    android:padding="16dp"
+        >
+      
 		 <TextView
             android:id="@+id/tv_labelDateOfBirth"
             android:layout_width="wrap_content"
@@ -146,9 +146,8 @@
             android:layout_marginStart="5dp"
             android:text="Data nașterii"
 			android:layout_centerHorizontal="true"
-            android:layout_below="@+id/iw_icon"
-            
             android:textStyle="bold"/>
+
         <TextView
             android:id="@+id/tv_labelDate"
             android:layout_width="wrap_content"
@@ -201,7 +200,8 @@
     <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:padding="16dp">
+      android:padding="16dp"
+	>
       <ImageView
         android:id="@+id/iw_gender"
         android:layout_width="30dp"
@@ -241,7 +241,7 @@
 		android:layout_height="match_parent"
 		android:layout_below="@id/cl_cw"
 		android:background="@color/colorPrimaryDark"
-		android:layout_marginTop="5dp"
+		android:layout_marginTop="4dp"
 		android:padding="16dp"
 		>
 		 <ImageView
@@ -250,7 +250,6 @@
             android:layout_height="30dp"
             android:src="@drawable/disease_bag"
             android:layout_centerHorizontal="true"
-			
 		/>
           <TextView
             android:id="@+id/tv_labelDiseases"
@@ -263,6 +262,19 @@
             android:textSize="15sp"
             android:textStyle="bold"/>
           />
+
+
+			<TextView
+            android:id="@+id/tv_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+            android:text="Nu aveți"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/tv_labelDiseases"
+            android:textSize="18sp"
+            android:textStyle="bold"
+		    android:textColor="@color/colorSecondary"/>
 
           <RelativeLayout
             android:layout_width="match_parent"

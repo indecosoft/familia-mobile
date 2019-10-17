@@ -4,7 +4,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-	android:padding="16px">
+	android:layout_marginLeft="16dp"
+	android:layout_marginRight="16dp"
+	>
 
 	<RelativeLayout
 	android:id="@+id/rl_bar"
@@ -78,7 +80,7 @@
         android:layout_centerHorizontal="true"
         android:textAllCaps="false"
         android:layout_marginTop="10dp"
-        android:text="Schimbați imaginea"
+        android:text="Schimbă imaginea"
         android:layout_below="@id/profile_image"
 		android:layout_marginLeft="16dp"
 		android:layout_marginRight="16dp"
@@ -179,7 +181,7 @@
     android:layout_height="2dp"
     android:layout_below="@+id/gender_selector"
     android:background="@color/colorSecondary"
-	android:layout_marginTop="15dp"/>
+	android:layout_marginTop="10dp"/>
 
 	
 		<ImageView

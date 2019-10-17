@@ -91,7 +91,7 @@ namespace Familia.Profile
                     {
                         Log.Error("ProfileActivity", res);
                         person = parseResultFromUrl(res);
-                        if (person != null && person.ListOfPersonalDiseases.Count !=0)
+                        if (person != null && person.ListOfPersonalDiseases != null)
                         {
                             await ProfileStorage.GetInstance().saveDiseases(person.ListOfPersonalDiseases);
                         }
@@ -170,6 +170,9 @@ namespace Familia.Profile
             {
                 LoadModelInView(person.Avatar, person.Name, person.Email, person.Gender, person.Birthdate, updated);
                 adapter = new DiseasesAdapter(this, person.ListOfPersonalDiseases);
+//                FindViewById<TextView>(Resource.Id.tv_empty).Visibility = person.ListOfPersonalDiseases.Count == 0
+//                    ? ViewStates.Visible
+//                    : ViewStates.Gone;
             }
             else
             {
@@ -183,9 +186,16 @@ namespace Familia.Profile
                 {
                     LoadModelInView(Utils.GetDefaults("Avatar"), Utils.GetDefaults("Name"), Utils.GetDefaults("Email"), personalData.Gender, personalData.DateOfBirth, updated);
                     adapter = new DiseasesAdapter(this, personalData.listOfPersonalDiseases);
+//                    FindViewById<TextView>(Resource.Id.tv_empty).Visibility = person.ListOfPersonalDiseases.Count == 0
+//                        ? ViewStates.Visible
+//                        : ViewStates.Gone;
                 }
             }
 
+            FindViewById<TextView>(Resource.Id.tv_empty).Visibility = adapter.ItemCount == 0
+                ? ViewStates.Visible
+                : ViewStates.Gone;
+            
             rv.SetAdapter(adapter);
             adapter.NotifyDataSetChanged();
             RunOnUiThread(() => dialog.Dismiss());
@@ -347,11 +357,8 @@ namespace Familia.Profile
                             data.GetStringExtra("gender"),
                             data.GetStringExtra("birthdate"),
                             true);
-
-
+                        
                         Utils.SetDefaults("Name", data.GetStringExtra("name"));
-                       
-
                     }
                     else
                     {
@@ -376,6 +383,11 @@ namespace Familia.Profile
             {
                 adapter = new DiseasesAdapter(this, personalData.listOfPersonalDiseases);
             }
+            
+            FindViewById<TextView>(Resource.Id.tv_empty).Visibility = personalData.listOfPersonalDiseases.Count == 0
+                ? ViewStates.Visible
+                : ViewStates.Gone;
+
             rv.SetAdapter(adapter);
             adapter.NotifyDataSetChanged();
         }
@@ -385,7 +397,7 @@ namespace Familia.Profile
             try
             {
                 Log.Error("ProfileActivity data", "start");
-                if (personalData != null && personalData.listOfPersonalDiseases.Count != 0)
+                if (personalData != null && personalData.listOfPersonalDiseases != null)
                 {
 
                     JSONArray jsonArray = new JSONArray();
