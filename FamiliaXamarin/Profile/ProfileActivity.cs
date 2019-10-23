@@ -170,9 +170,6 @@ namespace Familia.Profile
             {
                 LoadModelInView(person.Avatar, person.Name, person.Email, person.Gender, person.Birthdate, updated);
                 adapter = new DiseasesAdapter(this, person.ListOfPersonalDiseases);
-//                FindViewById<TextView>(Resource.Id.tv_empty).Visibility = person.ListOfPersonalDiseases.Count == 0
-//                    ? ViewStates.Visible
-//                    : ViewStates.Gone;
             }
             else
             {
@@ -186,9 +183,6 @@ namespace Familia.Profile
                 {
                     LoadModelInView(Utils.GetDefaults("Avatar"), Utils.GetDefaults("Name"), Utils.GetDefaults("Email"), personalData.Gender, personalData.DateOfBirth, updated);
                     adapter = new DiseasesAdapter(this, personalData.listOfPersonalDiseases);
-//                    FindViewById<TextView>(Resource.Id.tv_empty).Visibility = person.ListOfPersonalDiseases.Count == 0
-//                        ? ViewStates.Visible
-//                        : ViewStates.Gone;
                 }
             }
 

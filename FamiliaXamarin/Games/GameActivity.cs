@@ -24,6 +24,7 @@ namespace Familia.Games
     {
         public static float currentX;
         public static float currentY;
+        public static int score = 0;
 
         public static RelativeLayout rlGame;
 
@@ -32,7 +33,7 @@ namespace Familia.Games
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_game);
             Window.AddFlags(WindowManagerFlags.Fullscreen);
-
+            Window.SetFlags(WindowManagerFlags.KeepScreenOn, WindowManagerFlags.KeepScreenOn);
             rlGame = FindViewById<RelativeLayout>(Resource.Id.rl_game);
 
             WebView webView = FindViewById<WebView>(Resource.Id.wv_game);
@@ -99,7 +100,17 @@ namespace Familia.Games
         [JavascriptInterface]
         public void saveScore(Java.Lang.String score)
         {
-            Log.Error("GameActivity", "score: " + score);
+           
+            GameActivity.score = int.Parse((string)score);
+            Log.Error("GameActivity", "score: " + GameActivity.score);
+        }
+
+        [Export]
+        [JavascriptInterface]
+        public string getScore()
+        {
+            
+            return GameActivity.score + "";
         }
 
         [Export]

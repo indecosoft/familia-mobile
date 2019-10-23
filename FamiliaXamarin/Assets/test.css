@@ -57,14 +57,14 @@ html {
 
 
 .player {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     position: absolute;
 }
 
 .arrival {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     position: absolute;
     background-color: red;
     top: 0px;
@@ -72,10 +72,10 @@ html {
 }
 
 .brick {
-    width: 35px;
-    height: 35px;
+    width: 20px;
+    height: 20px;
     position: absolute;
-    background: green;
+    background: black;
 }
 
 
