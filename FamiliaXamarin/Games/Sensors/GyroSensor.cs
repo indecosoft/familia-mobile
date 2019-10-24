@@ -19,12 +19,13 @@ namespace Familia.Games.Sensors
 
 
 
-    class GyroSensor: Java.Lang.Object, ISensorEventListener
+    class GyroSensor : Java.Lang.Object, ISensorEventListener
     {
         private SensorManager sensorManager;
         private Sensor gyroscopeSensor;
         private Context context;
         private IGyroSensorChangedListener gyroSensorChangedListener;
+
 
         public GyroSensor(Context context)
         {
@@ -37,10 +38,10 @@ namespace Familia.Games.Sensors
             gyroSensorChangedListener = listener;
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
-            Log.Error("GyroSenso", "dispose");
-            base.Dispose();
+            Log.Error("GYRO SENSOR", "dispose");
+            sensorManager.UnregisterListener(this);
         }
 
         public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
@@ -49,17 +50,27 @@ namespace Familia.Games.Sensors
 
         public void OnSensorChanged(SensorEvent e)
         {
-            gyroSensorChangedListener.OnGyroSensorChanged(e.Values[1], e.Values[0]);
+            try
+            {
+                gyroSensorChangedListener.OnGyroSensorChanged(e.Values[1], e.Values[0], e.Values[2]);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("GYRO SENSOR Error", ex.Message);
+            }
         }
+
 
         private void SetSettings()
         {
             sensorManager = (SensorManager)context.GetSystemService(Context.SensorService);
-            gyroscopeSensor = sensorManager.GetDefaultSensor(SensorType.Gyroscope);
+//            gyroscopeSensor = sensorManager.GetDefaultSensor(SensorType.Gyroscope);
+            gyroscopeSensor = sensorManager.GetDefaultSensor(SensorType.Accelerometer);
 
             if (gyroscopeSensor == null)
             {
-                Log.Error("GyroSenso", "gyroscope not found");
+                Log.Error("GYRO SENSOR", "gyroscope not found");
+                return;
             }
 
             sensorManager.RegisterListener(this, gyroscopeSensor, SensorDelay.Game);
@@ -70,6 +81,6 @@ namespace Familia.Games.Sensors
 
     public interface IGyroSensorChangedListener
     {
-        void OnGyroSensorChanged(float x, float y);
+        void OnGyroSensorChanged(float x, float y, float z);
     }
 }

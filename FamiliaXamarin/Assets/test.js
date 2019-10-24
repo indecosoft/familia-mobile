@@ -17,8 +17,9 @@ let speedY;
 let isOver;
 let isStarted;
 let refreshIntervalId;
-let direction = "Down";
-let lastDirection = "Down";
+let direction;
+let lastDirection;
+let complexDirection;
 let collectableItems = [];
 let bigScore;
 let currentScore;
@@ -72,9 +73,12 @@ scene.init = function () {
             isStarted = true;
             sendMessage("Animation is completed. Starting the game .... ");
             sendMessage("Loop started..");
+            direction = "Down";
+            lastDirection = "Down";
+            complexDirection = "Down";
             dimensionsString = JSHandler.getScreenDimension();
             scene.physics.velocity = 0;
-            refreshIntervalId = setInterval(scene.update, 10);
+            refreshIntervalId = setInterval(scene.update, 5);
         }
     });
     sendMessage("game loaded");
@@ -85,6 +89,10 @@ scene.update = function () {
         let values = JSHandler.getXYFromGyro();
         let currentX = Number(values.split("/")[0]);
         let currentY = Number(values.split("/")[1]);
+        let rotationOZ = Number(values.split("/")[2]);
+
+        sendMessage("OZ: " + rotationOZ + " x " + currentX + " y " + currentY);
+
 
         $(".player").parent().css({ position: 'relative' });
         $(".arrival").css({ position: 'absolute' });
@@ -113,32 +121,98 @@ scene.update = function () {
 
         movementY = player.position.top;
         movementX = player.position.left;
+//
+//        lastDirection = direction;
+//        direction = getDirection(currentX, currentY);
+//        complexDirection = direction;
+      
 
-        lastDirection = direction;
-        direction = getDirection(currentX, currentY);
+//        if (rotationOZ > 0.05 || rotationOZ < -0.05) {
+//            if (lastDirection !== direction) {
+//                if (lastDirection === "Down" || lastDirection === "UP") {
+//                    if (direction === "Right" || direction === "Left") {
+//                        sendMessage("go to " + lastDirection + " " + direction);
+//                        complexDirection = lastDirection + "-" + direction;
+//                    }
+//                }
+//                if (lastDirection === "Right" || lastDirection === "Left") {
+//                    if (direction === "Down" || direction === "UP") {
+//                        sendMessage("go to " + lastDirection + " " + direction);
+//
+//                        complexDirection = direction + "-" + lastDirection;
+//                    }
+//                }
+//
+//            }
+//        }
+
+
+
+//
+//        if (lastDirection === "Down" || direction === "Down") {
+//            movementY += scene.physics.velocity;
+//        }
+//
+//        if (lastDirection === "Up" || direction === "Up") {
+//            movementY -= scene.physics.velocity;
+//        }
+//
+//        if (lastDirection === "Right" || direction === "Right") {
+//            movementX += scene.physics.velocity;
+//        }
+//
+//        if (lastDirection === "Left" || direction === "Left") {
+//            movementX -= scene.physics.velocity;
+//        }
+
+        sendMessage("VELOCITY : " + scene.physics.velocity);
+       
         setVelocity();
 
-        switch (direction) {
-            case "Right":
-                sendMessage("GO Right");
-                movementX += scene.physics.velocity;
-                break;
-            case "Left":
-                sendMessage("GO Left");
-                movementX -= scene.physics.velocity;
-                break;
-            case "Down":
-                sendMessage("GO Down");
-                movementY += scene.physics.velocity;
-                break;
-            case "Up":
-                sendMessage("GO Up");
-                movementY -= scene.physics.velocity;
-                break;
-            default:
-                sendMessage("none");
-        }
+        let dirX = Math.ceil(currentX * 1.5);
+        let dirY = Math.ceil(currentY * 1.5);
+        sendMessage("dirx: " + dirX + " , dirY: " + dirY);
+        movementX += dirX;
+        movementY += dirY;
+        sendMessage("movementX: " + movementX + " , movementY: " + movementY);
 
+//
+//        switch (complexDirection) {
+//            case "Right":
+//                sendMessage("GO Right");
+//                movementX += scene.physics.velocity;
+//                break;
+//            case "Left":
+//                sendMessage("GO Left");
+//                movementX -= scene.physics.velocity;
+//                break;
+//            case "Down":
+//                sendMessage("GO Down");
+//                movementY += scene.physics.velocity;
+//                break;
+//            case "Up":
+//                sendMessage("GO Up");
+//                movementY -= scene.physics.velocity;
+//                break;
+//            case "Down-Right":
+//                movementY += scene.physics.velocity;
+//                movementX += scene.physics.velocity;
+//                break;
+//            case "Down-Left":
+//                movementY += scene.physics.velocity;
+//                movementX -= scene.physics.velocity;
+//                break;
+//            case "Up-Right":
+//                movementY -= scene.physics.velocity;
+//                movementX += scene.physics.velocity;
+//                break;
+//            case "Up-Left":
+//                movementY -= scene.physics.velocity;
+//                movementX -= scene.physics.velocity;
+//                break;
+//            default:
+//                sendMessage("none");
+//        }
 
         if (isInArea(player) === true) {
             $(".player").css({ left: movementX, top: movementY, position: 'absolute' });
@@ -148,10 +222,10 @@ scene.update = function () {
         }
 
         collect(player);
-        
-        if (checkForFinish(player, arrivalPlace) === true) {
-            isOver = true;
-        }
+
+//        if (checkForFinish(player, arrivalPlace) === true) {
+//            isOver = true;
+//        }
 
     } else {
         scene.finish();
@@ -191,7 +265,7 @@ function getDirection(currentX, currentY) {
 
 function setVelocity() {
     if (lastDirection !== direction) {
-        scene.physics.velocity= 0;
+        scene.physics.velocity = 0;
     }
     else {
         scene.physics.velocity += scene.physics.gravity;
@@ -210,7 +284,7 @@ function collect(player) {
                     y: collectableItems[i].offset().top + (collectableItems[i].outerHeight() / 2)
                 }
             };
-         
+
             if (Math.floor(player.center.x) < Math.floor(brick.center.x + (brick.width / 2)) &&
                 Math.floor(player.center.x) > Math.floor(brick.center.x - (brick.width / 2)) &&
                 Math.floor(player.center.y < Math.floor(brick.center.y + (brick.height / 2))) &&
