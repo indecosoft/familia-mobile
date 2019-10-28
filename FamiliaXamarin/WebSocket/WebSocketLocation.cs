@@ -91,7 +91,7 @@ namespace Familia.WebSocket
 
         private async void OnGetLocation(Object[] obj)
         {
-            _socket.Emit("send-location", new JSONObject($"{{latitude: '{Utils.GetDefaults("Latitude")}', longitude: '{Utils.GetDefaults("Longitude")}'}}"));
+            _socket.Emit("send-location", new JSONObject($"{{latitude: '{Utils.GetDefaults("Latitude").Replace(',','.')}', longitude: '{Utils.GetDefaults("Longitude").Replace(',', '.')}'}}"));
         }
     }
 }
