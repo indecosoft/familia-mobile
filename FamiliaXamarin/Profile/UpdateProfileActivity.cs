@@ -379,33 +379,78 @@ namespace Familia.Profile
 
         public async void LoadModel()
         {
-            try
+            ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
+            dialog.Show(); try
             {
-                ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
-                dialog.Show();
-
                 personalData = await ProfileStorage.GetInstance().read();
+                if (personalData == null)
+                {
+                    Toast.MakeText(this, "S-a intampinat o eroare.", ToastLength.Long).Show();
+                    return;
+                }
+
+
                 btnLabelDiseases.Text = "Afecțiuni curente:" + personalData.listOfPersonalDiseases.Count;
 
                 Glide.With(this)
                     .Load(personView.Avatar)
                     .Apply(RequestOptions.SignatureOf(new ObjectKey(ProfileActivity.ImageUpdated)))
                     .Into(ciwProfileImage);
-
+          
                 etName.Text = personView.Name;
+                SetGender(personView.Gender);
 
                 var refactor = personView.Birthdate.Split("/");
-                var time = Convert.ToDateTime(refactor[1] + "/" + refactor[0] + "/" + refactor[2]);
-                birthdate = time.ToString("MM/dd/yyyy");
+                DateTime time;// = Convert.ToDateTime(refactor[1] + "/" + refactor[0] + "/" + refactor[2]);
+
+                try
+                {
+                    time = new DateTime(int.Parse(refactor[2]), int.Parse(refactor[1]), int.Parse(refactor[0]));
+                    birthdate = time.ToString("MM/dd/yyyy");
+
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("UpdateProfileActivity ERR", ex.Message);
+                    RunOnUiThread(() => dialog.Dismiss());
+                }
+
+
+                try
+                {
+                    //format datetime de pe server
+                    DateTime birthdt = Convert.ToDateTime(personView.Birthdate);
+                    birthdate =  birthdt.Day + "/" + birthdt.Month + "/" + birthdt.Year;
+                }
+                catch (Exception e)
+                {
+                    Log.Error("ProfileActivity", "birthdate convert: " + e.Message);
+
+                    try
+                    {   //format zi/luna/an
+                        var refact = personView.Birthdate.Split("/");
+                        string dt;
+                        DateTime mytime;
+                        mytime = new DateTime(int.Parse(refact[2]), int.Parse(refact[1]), int.Parse(refact[0]));
+                        dt = mytime.ToString("MM/dd/yyyy");
+                        birthdate =  mytime.Day + "/" + mytime.Month + "/" + mytime.Year;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("ProfileActivity ERR", ex.Message);
+                    }
+                }
+
 
                 tvBirthDate.Text = personView.Birthdate;
-                SetGender(personView.Gender);
 
                 RunOnUiThread(() => dialog.Dismiss());
             }
             catch (Exception e)
             {
                 Log.Error("UpdateProfileActivity ERR", e.Message);
+                RunOnUiThread(() => dialog.Dismiss());
             }
         }
 

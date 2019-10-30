@@ -31,6 +31,7 @@ using FamiliaXamarin.Services;
 using Orientation = Android.Media.Orientation;
 using Resource = Familia.Resource;
 using Familia.Helpers;
+using Java.Security;
 
 namespace FamiliaXamarin.Helpers
 {
@@ -101,6 +102,23 @@ namespace FamiliaXamarin.Helpers
             TelephonyManager mgr = ctx.GetSystemService(Context.TelephonyService) as TelephonyManager;
             return mgr?.Imei;
         }
+
+        public static void SetImei(string imei, Context context)
+        {
+            if (Build.VERSION.SdkInt > BuildVersionCodes.P)
+            {
+                Log.Error("UTILS IMEI", "hello android 10");
+                var android_id = Android.Provider.Settings.Secure.GetString(Android.App.Application.Context.ContentResolver, Android.Provider.Settings.Secure.AndroidId);
+                Log.Error("UTILS IMEI", android_id);
+                
+            }
+            else
+            {
+                Log.Error("UTILS IMEI", "hello android below 10");
+            }
+
+        }
+
         public static Bitmap CheckRotation(string photoPath, Bitmap bitmap)
         {
             var ei = new ExifInterface(photoPath);

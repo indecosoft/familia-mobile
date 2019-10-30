@@ -42,7 +42,11 @@
 			android:layout_alignParentRight="true"
 			android:layout_centerVertical="true"/>
 
+
 	</RelativeLayout>
+
+
+	
 
 
 	<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -56,6 +60,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+	
+
 
 	  <refractored.controls.CircleImageView
         android:id="@+id/profile_image"
@@ -72,6 +79,8 @@
         app:layout_constraintVertical_bias="0.4" 
 	   />
 
+		
+
 	    <android.support.v7.widget.AppCompatButton
         android:id="@+id/btn_upload"
         android:background="@drawable/full_secondary_button_style"
@@ -85,6 +94,7 @@
 		android:layout_marginLeft="16dp"
 		android:layout_marginRight="16dp"
         />
+
 
         <EditText
             android:id="@+id/et_name"

@@ -242,6 +242,7 @@ namespace Familia.Profile
         
         public int GetAge(string dateString)
         {
+            
             try
             {
                 DateTime birthdate = Convert.ToDateTime(dateString);
@@ -283,15 +284,31 @@ namespace Familia.Profile
         {
             try
             {
-
-               DateTime birthdate = Convert.ToDateTime(dateString);
+                //format datetime de pe server
+                DateTime birthdate = Convert.ToDateTime(dateString);
                 return birthdate.Day + "/" + birthdate.Month + "/" + birthdate.Year;
             }
             catch (Exception e)
             {
                 Log.Error("ProfileActivity", "birthdate convert: " + e.Message);
+
+                try
+                {   //format zi/luna/an
+                    var refactor = dateString.Split("/");
+                    string dt;
+                    DateTime time;
+                    time = new DateTime(int.Parse(refactor[2]), int.Parse(refactor[1]), int.Parse(refactor[0]));
+                    dt = time.ToString("MM/dd/yyyy");
+                    return time.Day + "/" + time.Month + "/" + time.Year;
+
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("ProfileActivity ERR", ex.Message);
+                }
                 return null;
             }
+
         }
 
         public string GetDate(string dateString)

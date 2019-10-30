@@ -24,6 +24,7 @@ using Android.Content.PM;
 using Android.Gms.Location;
 using Android.Locations;
 using Android.Support.V4.Content;
+using Android.Telephony;
 using Android.Util;
 using Com.Bumptech.Glide;
 using Com.Bumptech.Glide.Load.Engine;
@@ -105,7 +106,7 @@ namespace FamiliaXamarin
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
-
+            
             if (string.IsNullOrEmpty(Utils.GetDefaults("Token")) || string.IsNullOrEmpty(Utils.GetDefaults("UserType")))
             {    var intent = new Intent(this, typeof(LoginActivity));
                 StartActivity(intent);
@@ -150,7 +151,7 @@ namespace FamiliaXamarin
 
 
 //            make it hidden for release bc is not done yet
-//            menuNav.FindItem(Resource.Id.games).SetVisible(false);
+            menuNav.FindItem(Resource.Id.games).SetVisible(false);
 
 
             switch (type)
