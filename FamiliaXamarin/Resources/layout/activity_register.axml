@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tv_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Inregistrare"
+        android:textColor="#fff"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/tv_header">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_last_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:text="Nume"
+                android:textColor="@drawable/tv_tint_selector"
+                android:textSize="18sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.49" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/et_last_name_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:hint=" "
+                app:layout_constrainedWidth="true"
+                app:layout_constraintTop_toBottomOf="@+id/tv_last_name"
+                app:layout_constraintWidth_percent="0.49"
+                app:passwordToggleEnabled="true">
+
+                <EditText
+                    android:id="@+id/et_last_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text_layout"
+                    android:drawableStart="@drawable/account"
+                    android:drawablePadding="5dp"
+                    android:drawableTint="@drawable/drawable_tint_selector"
+                    android:hint="Nume"
+                    android:paddingStart="10dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="16dp"
+                    android:textColor="#fff"
+                    android:textColorHint="@color/colorSecondary" />
+
+
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tv_first_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="45dp"
+                android:text="Prenume"
+                android:textColor="@drawable/tv_tint_selector"
+                android:textSize="18sp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintLeft_toRightOf="@+id/tv_last_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_header"
+                app:layout_constraintWidth_percent="0.49" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/et_first_name_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="5dp"
+                android:hint=" "
+                app:layout_constrainedWidth="true"
+                app:layout_constraintLeft_toRightOf="@+id/et_last_name_layout"
+                app:layout_constraintTop_toBottomOf="@+id/tv_first_name"
+                app:layout_constraintWidth_percent="0.49"
+                app:passwordToggleEnabled="true">
+
+                <EditText
+                    android:id="@+id/et_first_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text_layout"
+                    android:drawableStart="@drawable/account"
+                    android:drawablePadding="5dp"
+                    android:drawableTint="@drawable/drawable_tint_selector"
+                    android:hint="Prenume"
+                    android:paddingStart="10dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="16dp"
+                    android:textColor="#fff"
+                    android:textColorHint="@color/colorSecondary" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tv_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Adresa de email"
+                android:textColor="@drawable/tv_tint_selector"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/et_first_name_layout" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/et_email_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:hint=" "
+                app:layout_constraintTop_toBottomOf="@+id/tv_email"
+                app:passwordToggleEnabled="true">
+
+                <EditText
+                    android:id="@+id/et_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text_layout"
+                    android:drawableStart="@drawable/at"
+                    android:drawablePadding="5dp"
+                    android:drawableTint="@drawable/drawable_tint_selector"
+                    android:hint="Adresa de Email"
+                    android:paddingStart="10dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="16dp"
+                    android:textColor="#fff"
+                    android:textColorHint="@color/colorSecondary"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_email" />
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tv_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Parola"
+                android:textColor="@drawable/tv_tint_selector"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/et_email_layout" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/et_password_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint=" "
+                app:layout_constraintTop_toBottomOf="@+id/tv_password"
+                app:passwordToggleEnabled="true">
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/et_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/edit_text_layout"
+                    android:drawableStart="@drawable/lock_outline"
+                    android:drawablePadding="5dp"
+                    android:drawableTint="@drawable/drawable_tint_selector"
+                    android:hint="Parola"
+                    android:inputType="textPassword"
+                    android:paddingStart="10dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="16dp"
+                    android:textColor="#fff"
+                    android:textColorHint="@color/colorSecondary"
+
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tv_retype_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Reintroduceti parola"
+                android:textColor="@drawable/tv_tint_selector"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/et_password_layout" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/et_retype_password_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint=" "
+                app:layout_constraintTop_toBottomOf="@+id/tv_retype_password"
+                app:passwordToggleEnabled="true">
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/et_retype_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/edit_text_layout"
+                    android:drawableStart="@drawable/lock_outline"
+                    android:drawablePadding="5dp"
+                    android:drawableTint="@drawable/drawable_tint_selector"
+                    android:hint="Reintroduceti parola"
+                    android:inputType="textPassword"
+                    android:paddingStart="10dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="16dp"
+                    android:textColor="#fff"
+                    android:textColorHint="@color/colorSecondary"
+
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/secondary_button_style"
+                android:padding="16dp"
+                android:text="Anulare"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintTop_toBottomOf="@+id/et_retype_password_layout"
+                app:layout_constraintWidth_percent="0.49" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_register"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/main_button_style"
+                android:padding="16dp"
+                android:text="Inregistrare"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintLeft_toRightOf="@+id/btn_cancel"
+                app:layout_constraintTop_toBottomOf="@+id/et_retype_password_layout"
+                app:layout_constraintWidth_percent="0.49" />
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+</RelativeLayout>

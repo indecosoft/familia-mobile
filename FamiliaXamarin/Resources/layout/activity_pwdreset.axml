@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fitsSystemWindows="true"
+    android:padding="16dp">
+    
+    <TextView
+      android:id="@+id/tv_header"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Resetare Parola"
+      android:textColor="#fff"
+      android:textSize="32sp"
+      android:layout_marginTop="55dp"
+      android:textStyle="bold"
+      app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+      android:id="@+id/tv_email"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="45dp"
+      android:text="Adresa de Email"
+      android:textColor="@drawable/tv_tint_selector"
+      android:textSize="18sp"
+      app:layout_constraintTop_toBottomOf="@+id/tv_header" />
+    
+    <android.support.design.widget.TextInputLayout
+      android:id="@+id/EmailInputLayout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:hint=" "
+      app:layout_constraintTop_toBottomOf="@+id/tv_email"
+      app:passwordToggleEnabled="true">
+    <EditText
+      android:id="@+id/etEmail"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:hint="Adresa de Email"
+      android:textColor="#fff"
+      android:textColorHint="@color/colorSecondary"
+      android:layout_marginTop="5dp"
+      android:drawableStart="@drawable/at"
+      android:drawableTint="@drawable/drawable_tint_selector"
+      android:drawablePadding="5dp"
+      android:paddingStart="10dp"
+      android:paddingTop="16dp"
+      android:paddingBottom="16dp"
+      android:paddingEnd="10dp"
+      android:background="@drawable/edit_text_layout" />
+    </android.support.design.widget.TextInputLayout>
+    <TextView
+      android:id="@+id/tv_password"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:text="Parola noua"
+      android:textColor="@drawable/tv_tint_selector"
+      android:textSize="18sp"
+      app:layout_constraintTop_toBottomOf="@+id/EmailInputLayout" />
+
+    <android.support.design.widget.TextInputLayout
+      android:id="@+id/PasswordInputLayout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:hint=" "
+      app:layout_constraintTop_toBottomOf="@+id/tv_password"
+      app:passwordToggleEnabled="true">
+
+      <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/etPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Parola noua"
+        android:inputType="textPassword"
+        android:textColor="#fff"
+        android:textColorHint="@color/colorSecondary"
+        android:layout_marginTop="5dp"
+        android:drawableStart="@drawable/lock_outline"
+        android:drawableTint="@drawable/drawable_tint_selector"
+        android:drawablePadding="5dp"
+        android:paddingStart="10dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:paddingEnd="10dp"
+        android:background="@drawable/edit_text_layout"
+
+      />
+    </android.support.design.widget.TextInputLayout>
+      <TextView
+        android:id="@+id/tv_password_retype"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Reintroduceti parola"
+        android:textColor="@drawable/tv_tint_selector"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/PasswordInputLayout" />
+
+      <android.support.design.widget.TextInputLayout
+        android:id="@+id/PasswordRetypeInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint=" "
+        app:layout_constraintTop_toBottomOf="@+id/tv_password_retype"
+        app:passwordToggleEnabled="true">
+
+        <android.support.v7.widget.AppCompatEditText
+          android:id="@+id/etPasswordRetype"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:hint="Reintroduceti parola"
+          android:inputType="textPassword"
+          android:textColor="#fff"
+          android:textColorHint="@color/colorSecondary"
+          android:layout_marginTop="5dp"
+          android:drawableStart="@drawable/lock_outline"
+          android:drawableTint="@drawable/drawable_tint_selector"
+          android:drawablePadding="5dp"
+          android:paddingStart="10dp"
+          android:paddingTop="16dp"
+          android:paddingBottom="16dp"
+          android:paddingEnd="10dp"
+          android:background="@drawable/edit_text_layout"
+
+        />
+    </android.support.design.widget.TextInputLayout>
+    <android.support.v7.widget.AppCompatButton
+      android:id="@+id/btnCancel"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:text="Anulare"
+      android:padding="16dp"
+      android:layout_marginTop="40dp"
+      android:layout_marginEnd="5dp"
+      android:background="@drawable/secondary_button_style"
+      app:layout_constrainedWidth="true"
+      app:layout_constraintTop_toBottomOf="@+id/PasswordRetypeInputLayout"
+      app:layout_constraintWidth_percent="0.49" />
+
+
+    <android.support.v7.widget.AppCompatButton
+      android:id="@+id/btnReset"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:text="Resetare"
+      android:padding="16dp"
+      android:layout_marginTop="40dp"
+      android:layout_marginStart="5dp"
+      android:background="@drawable/main_button_style"
+      app:layout_constrainedWidth="true"
+      app:layout_constraintLeft_toRightOf="@+id/btnCancel"
+      app:layout_constraintTop_toBottomOf="@+id/PasswordRetypeInputLayout"
+      app:layout_constraintWidth_percent="0.49" />
+
+</android.support.constraint.ConstraintLayout>

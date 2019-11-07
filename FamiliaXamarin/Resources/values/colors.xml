@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--<color name="colorPrimary">#19303F</color>-->
+  <color name="colorPrimary">#2C3051</color>
+
+  <!--<color name="colorSecondary">#42535F</color>-->
+  <color name="colorSecondary">#5A618E</color>
+  <!--<color name="colorPrimaryDark">#122836</color>-->
+  <color name="colorPrimaryDark">#262946</color>
+  <!--<color name="colorAccent">#FBC02D</color>-->
+  <color name="colorAccent">#95C5B3</color>
+  <!--<color name="colorAccent">#1AB188</color>-->
+  <color name="colorDanger">#F02B4C</color>
+  <!--<color name="colorDanger">#FE3267</color>-->
+  <color name="accent">#FF783F</color>
+  <!--<color name="accent">#FF783F</color>-->
+
+  <color name="whited5">#F5F5F5</color>
+  
+  <color name="primary">#9F0E20</color>
+  <color name="primary_dark">#E12929</color>
+  <color name="primary_darker">#CC1D1D</color>
+
+  <color name="customBG">#F5F7FA</color>
+  <color name="customDark">#3c3c3c</color>
+  <color name="black">#000000</color>
+  <color name="jet">#222222</color>
+  <color name="oil">#333333</color>
+  <color name="monsoon">#777777</color>
+  <color name="jumbo">#888888</color>
+  <color name="aluminum">#999999</color>
+  <color name="base">#AAAAAA</color>
+  <color name="iron">#CCCCCC</color>
+  <color name="white">#FFFFFF</color>
+  <color name="SharingAppBarForeground">#5A618E</color>
+
+  <color name="highHealthValue">#E85571</color>
+  <color name="normalHealthValue">#95E33E</color>
+
+  <color name="username0">#e21400</color>
+  <color name="username1">#91580f</color>
+  <color name="username2">#f8a700</color>
+  <color name="username3">#f78b00</color>
+  <color name="username4">#58dc00</color>
+  <color name="username5">#287b00</color>
+  <color name="username6">#a8f07a</color>
+  <color name="username7">#4ae8c4</color>
+  <color name="username8">#3b88eb</color>
+  <color name="username9">#3824aa</color>
+  <color name="username10">#a700ff</color>
+  <color name="username11">#d300e7</color>
+</resources>

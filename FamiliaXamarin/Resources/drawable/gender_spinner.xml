@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+
+        <layer-list>
+
+            <item android:top="-6dp"
+        android:left="-6dp"
+        android:right="-6dp"
+        android:bottom="0dp">
+
+                <shape>
+                    <gradient android:angle="90" android:endColor="#F5F7FA" android:startColor="#F5F7FA" android:type="linear" />
+
+                    <stroke  android:width="1dp" android:color="#3c3c3c" />
+
+                    <corners android:radius="0dp" />
+
+                    <padding android:bottom="3dp" android:left="0dp" android:right="3dp" android:top="3dp" />
+                </shape>
+            </item>
+
+            <item android:right="5dp"
+                android:gravity="center_vertical|right">
+
+                <!--<bitmap android:gravity="center_vertical|right" android:src="@drawable/arrow_down" />-->
+                <vector xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:height="24dp"
+                    android:width="24dp"
+                    android:viewportWidth="24"
+                    android:viewportHeight="24"
+                    >
+                    <path android:fillColor="#3c3c3c" android:pathData="M7,10L12,15L17,10H7Z" />
+                </vector>
+            </item>
+            <item android:right="29dp"
+                android:gravity="center_vertical|left">
+
+                <!--<bitmap android:gravity="center_vertical|right" android:src="@drawable/arrow_down" />-->
+                <vector xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:height="24dp"
+                    android:width="24dp"
+                    android:viewportWidth="24"
+                    android:viewportHeight="24"
+                    >
+                    <path android:fillColor="#3c3c3c" android:pathData="M17.58,4H14V2H21V9H19V5.41L15.17,9.24C15.69,10.03 16,11 16,12C16,14.42 14.28,16.44 12,16.9V19H14V21H12V23H10V21H8V19H10V16.9C7.72,16.44 6,14.42 6,12A5,5 0 0,1 11,7C12,7 12.96,7.3 13.75,7.83L17.58,4M11,9A3,3 0 0,0 8,12A3,3 0 0,0 11,15A3,3 0 0,0 14,12A3,3 0 0,0 11,9Z" />
+                </vector>
+            </item>
+
+        </layer-list>
+
+    </item>
+
+</selector>

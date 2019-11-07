@@ -1,0 +1,98 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/colorAccent</item>
+        <item name="colorSwitchThumbNormal">@color/colorAccent</item>
+
+        <item name="android:windowBackground">@color/colorPrimary</item>
+
+        <item name="colorControlNormal">@color/customDark</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="android:textColorHint">@color/iron</item>
+
+        <item name="colorButtonNormal">@color/primary</item>
+        <item name="android:colorButtonNormal">@color/primary</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="AppTheme.Dialog" parent="Theme.AppCompat.Dialog">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+    <style name="AppTheme.Dark.Dialog" parent="Theme.AppCompat.Dialog">
+        <item name="colorAccent">@color/primary</item>
+        <item name="android:textColorPrimary">@color/primary</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:textColor">#000</item>
+    </style>
+
+    <style name="ActionBarPopupThemeOverlayDark" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:textColor">#000</item>
+    </style>
+
+    <style name="ActionBarThemeOverlay" parent="">
+        <item name="android:textColorPrimary">@color/customDark</item>
+        <item name="colorControlNormal">@color/customDark</item>
+        <item name="colorControlHighlight">@color/customDark</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="ActionBarThemeOverlayDark" parent="">
+        <item name="android:textColorPrimary">@color/SharingAppBarForeground</item>
+        <item name="colorControlNormal">@color/SharingAppBarForeground</item>
+        <item name="colorControlHighlight">@color/SharingAppBarForeground</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="HeaderBar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="SharingBar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:colorForeground">@color/colorSecondary</item>
+
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="DevicesBar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="GenderSpinnerTheme" parent="android:Widget.Spinner">
+        <item name="android:background">@drawable/gender_spinner</item>
+    </style>
+
+    <style name="DiseaseSpinnerTheme" parent="android:Widget.Spinner">
+        <item name="android:background">@drawable/disease_spinner</item>
+    </style>
+
+</resources>

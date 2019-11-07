@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rv_boala_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp">
+
+
+    <TextView
+        android:id="@+id/tv_boala"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/btn_delete_boala"
+        android:layout_centerVertical="true"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/btn_delete_boala"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:drawableTop="@drawable/trash"
+        android:padding="8dp"
+        android:drawableTint="@color/white"
+        android:backgroundTint="@color/colorDanger"
+        android:background="@drawable/round_button" />
+
+
+</RelativeLayout>
