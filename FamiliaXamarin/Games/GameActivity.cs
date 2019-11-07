@@ -22,20 +22,25 @@ namespace Familia.Games
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class GameActivity : AppCompatActivity, IGyroSensorChangedListener
     {
-        public static float currentX;
-        public static float currentY;
+        public float rotationOY;
+        public float rotationOX;
+        public float rotationOZ;
+        public int score = 0;
 
-        public static RelativeLayout rlGame;
+        public RelativeLayout rlGame;
+        private GyroSensor gyroSensor;
+        private WebView webView;
+
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_game);
             Window.AddFlags(WindowManagerFlags.Fullscreen);
-
+            Window.SetFlags(WindowManagerFlags.KeepScreenOn, WindowManagerFlags.KeepScreenOn);
             rlGame = FindViewById<RelativeLayout>(Resource.Id.rl_game);
 
-            WebView webView = FindViewById<WebView>(Resource.Id.wv_game);
+            webView = FindViewById<WebView>(Resource.Id.wv_game);
             
             webView.Settings.JavaScriptEnabled = true;
             webView.SetWebChromeClient(new WebChromeClient());
@@ -47,24 +52,29 @@ namespace Familia.Games
             webView.AddJavascriptInterface(new WebViewJavascriptInterface(this), "JSHandler");
 
             webView.LoadUrl("file:///android_asset/test.html");
-
-            var gyroSensor = new GyroSensor(this);
+            gyroSensor = new GyroSensor(this);
             gyroSensor.SetGyroListener(this);
-
+            
         }
 
-        public void OnGyroSensorChanged(float x, float y)
+        public void OnGyroSensorChanged(float rotOY, float rotOX, float rotOZ)
         {
-
-//            Log.Error("GameActivity", " x " + x + " y " + y);
-            currentX = x;
-            currentY = y;
+            rotationOY = rotOY;
+            rotationOX = rotOX;
+            rotationOZ = rotOZ;
         }
 
-
+        public override void OnBackPressed()
+        {
+            base.OnBackPressed();
+            gyroSensor.Dispose();
+            Finish();
+        }
     }
 
-    public class WebViewJavascriptInterface: Java.Lang.Object
+  
+
+    public class WebViewJavascriptInterface: Java.Lang.Object, IDisposable
     {
 
         private Context context;
@@ -82,9 +92,6 @@ namespace Familia.Games
         public void receiveMessageFromJS(Java.Lang.String message)
         {
             Log.Error("WebViewJavascriptInterface", "receiving from html.." + message);
-
-//            Toast.MakeText(context, message, ToastLength.Long).Show();
-
         }
 
         [Export]
@@ -99,21 +106,31 @@ namespace Familia.Games
         [JavascriptInterface]
         public void saveScore(Java.Lang.String score)
         {
-            Log.Error("GameActivity", "score: " + score);
+
+            ((GameActivity)context).score = int.Parse((string)score);
+            Log.Error("GameActivity", "score: " + ((GameActivity)context).score);
+        }
+
+        [Export]
+        [JavascriptInterface]
+        public string getScore()
+        {
+            
+            return ((GameActivity)context).score + "";
         }
 
         [Export]
         [JavascriptInterface]
         public string getScreenDimension()
         {
-            return GameActivity.rlGame.Width + "/" + GameActivity.rlGame.Height;
+            return ((GameActivity)context).rlGame.Width + "/" + ((GameActivity)context).rlGame.Height;
         }
 
         [Export]
         [JavascriptInterface]
         public string getXYFromGyro()
         {
-            return GameActivity.currentX + "/" + GameActivity.currentY;
+            return ((GameActivity) context).rotationOY + "/" + ((GameActivity)context).rotationOX + "/" + ((GameActivity)context).rotationOZ;
         }
 
     }

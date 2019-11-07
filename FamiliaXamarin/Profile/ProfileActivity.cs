@@ -91,7 +91,7 @@ namespace Familia.Profile
                     {
                         Log.Error("ProfileActivity", res);
                         person = parseResultFromUrl(res);
-                        if (person != null && person.ListOfPersonalDiseases.Count !=0)
+                        if (person != null && person.ListOfPersonalDiseases != null)
                         {
                             await ProfileStorage.GetInstance().saveDiseases(person.ListOfPersonalDiseases);
                         }
@@ -186,6 +186,10 @@ namespace Familia.Profile
                 }
             }
 
+            FindViewById<TextView>(Resource.Id.tv_empty).Visibility = adapter.ItemCount == 0
+                ? ViewStates.Visible
+                : ViewStates.Gone;
+            
             rv.SetAdapter(adapter);
             adapter.NotifyDataSetChanged();
             RunOnUiThread(() => dialog.Dismiss());
@@ -238,6 +242,7 @@ namespace Familia.Profile
         
         public int GetAge(string dateString)
         {
+            
             try
             {
                 DateTime birthdate = Convert.ToDateTime(dateString);
@@ -279,15 +284,31 @@ namespace Familia.Profile
         {
             try
             {
-
-               DateTime birthdate = Convert.ToDateTime(dateString);
+                //format datetime de pe server
+                DateTime birthdate = Convert.ToDateTime(dateString);
                 return birthdate.Day + "/" + birthdate.Month + "/" + birthdate.Year;
             }
             catch (Exception e)
             {
                 Log.Error("ProfileActivity", "birthdate convert: " + e.Message);
+
+                try
+                {   //format zi/luna/an
+                    var refactor = dateString.Split("/");
+                    string dt;
+                    DateTime time;
+                    time = new DateTime(int.Parse(refactor[2]), int.Parse(refactor[1]), int.Parse(refactor[0]));
+                    dt = time.ToString("MM/dd/yyyy");
+                    return time.Day + "/" + time.Month + "/" + time.Year;
+
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("ProfileActivity ERR", ex.Message);
+                }
                 return null;
             }
+
         }
 
         public string GetDate(string dateString)
@@ -347,11 +368,8 @@ namespace Familia.Profile
                             data.GetStringExtra("gender"),
                             data.GetStringExtra("birthdate"),
                             true);
-
-
+                        
                         Utils.SetDefaults("Name", data.GetStringExtra("name"));
-                       
-
                     }
                     else
                     {
@@ -376,6 +394,11 @@ namespace Familia.Profile
             {
                 adapter = new DiseasesAdapter(this, personalData.listOfPersonalDiseases);
             }
+            
+            FindViewById<TextView>(Resource.Id.tv_empty).Visibility = personalData.listOfPersonalDiseases.Count == 0
+                ? ViewStates.Visible
+                : ViewStates.Gone;
+
             rv.SetAdapter(adapter);
             adapter.NotifyDataSetChanged();
         }
@@ -385,7 +408,7 @@ namespace Familia.Profile
             try
             {
                 Log.Error("ProfileActivity data", "start");
-                if (personalData != null && personalData.listOfPersonalDiseases.Count != 0)
+                if (personalData != null && personalData.listOfPersonalDiseases != null)
                 {
 
                     JSONArray jsonArray = new JSONArray();

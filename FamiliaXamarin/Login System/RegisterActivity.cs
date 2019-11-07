@@ -198,6 +198,8 @@ namespace FamiliaXamarin
         {
             _progressBarDialog.Show();
 
+            Utils.SetImei("aaaa");
+
             await Task.Run(async () => {
 
                 var dataToSend = new JSONObject().Put("name", $"{_nameEditText.Text} {_firstNameEditText.Text}").Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text).Put("type", 4).Put("imei", Utils.GetImei(this));
