@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.Widget;
-using Android.Text;
-using Android.Util;
 using Android.Views;
-using Android.Widget;
-using Com.Bumptech.Glide;
+using FamiliaXamarin;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
+using FamiliaXamarin.Sharing;
 using Newtonsoft.Json;
 using Org.Json;
 
-namespace FamiliaXamarin.Sharing
+namespace Familia.Sharing
 {
     public class MonitoringFragment : Android.Support.V4.App.Fragment
     {
@@ -34,14 +28,15 @@ namespace FamiliaXamarin.Sharing
         {
             try
             {
-
+                ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
+                dialog.Show();
                 // Initialize contacts
                 List<SharingModel> contacts = null;
                 await Task.Run(async () =>
                 {
                     var response = await WebServices.Post($"{Constants.PublicServerAddress}/api/getSharingPeople",
-                        new JSONObject().Put("email", Utils.GetDefaults("Email", Activity)),
-                            Utils.GetDefaults("Token", Activity));
+                        new JSONObject().Put("email", Utils.GetDefaults("Email")),
+                            Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(response))
                     {
 
@@ -67,10 +62,15 @@ namespace FamiliaXamarin.Sharing
                         intent.PutExtra("Email", email);
                         intent.PutExtra("Imei", imei);
                         StartActivity(intent);
-
                     };
                    
                 }
+
+                Activity.RunOnUiThread(() =>
+                {
+                    dialog.Dismiss();
+                });
+
 
             }
             catch (Java.Lang.Exception e)

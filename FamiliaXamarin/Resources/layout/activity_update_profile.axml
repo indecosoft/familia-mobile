@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:layout_marginLeft="16dp"
+	android:layout_marginRight="16dp"
+	>
+
+	<RelativeLayout
+	android:id="@+id/rl_bar"
+	android:layout_width="match_parent"
+    android:layout_height="90px">
+
+			<Button
+            android:id="@+id/btn_closeit"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+			android:layout_marginLeft="5dp"
+            android:background="@drawable/close_notsaved"
+			android:layout_alignParentLeft="true"
+			android:layout_centerVertical="true"/>
+
+			<TextView
+	        android:id="@+id/tv_edit_profile"
+	        android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+	        android:text="Editează profil"
+	        android:layout_centerHorizontal="true"
+	        android:layout_centerVertical="true"
+	        android:textSize="18sp"
+            android:textStyle="bold"
+	        android:textColor="@color/colorSecondary"/>
+
+		   <Button
+		    android:id="@+id/btn_save"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/save_check"
+			android:layout_marginRight="5dp"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"/>
+
+
+	</RelativeLayout>
+
+
+	
+
+
+	<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:layout_below="@id/rl_bar"
+    android:padding="16dp"
+	android:scrollbars="none">
+
+		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+	
+
+
+	  <refractored.controls.CircleImageView
+        android:id="@+id/profile_image"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/profile"
+		android:layout_centerHorizontal="true"
+        app:civ_border_color="@color/colorPrimaryDark"
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.4" 
+	   />
+
+		
+
+	    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_upload"
+        android:background="@drawable/full_secondary_button_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textAllCaps="false"
+        android:layout_marginTop="10dp"
+        android:text="Schimbă imaginea"
+        android:layout_below="@id/profile_image"
+		android:layout_marginLeft="16dp"
+		android:layout_marginRight="16dp"
+        />
+
+
+        <EditText
+            android:id="@+id/et_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nume Prenume"
+            android:textColor="@color/white"
+            android:textColorHint="@color/colorSecondary"
+            android:layout_marginTop="30dp"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
+            android:drawableStart="@drawable/account"
+            android:drawableTint="@drawable/drawable_tint_selector"
+            android:drawablePadding="5dp"
+            android:paddingStart="10dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:paddingEnd="10dp"
+            android:inputType="text"
+            android:background="@drawable/edit_text_layout"
+            android:layout_below="@+id/btn_upload" />
+
+		
+       
+
+
+		  <TextView
+            android:id="@+id/tv_label_birthdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/et_name"
+			android:layout_marginLeft="16dp"
+            android:layout_marginTop="30dp"
+            android:text="Data nașterii:"
+			android:textSize="18dp"/>
+
+        <TextView
+            android:id="@+id/tv_birthdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/et_name"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="30dp"
+            android:layout_toEndOf="@+id/tv_label_birthdate"
+            android:layout_toRightOf="@+id/tv_label_birthdate"
+            android:text="19/12/1997"
+            android:textColor="@color/colorAccent"
+            android:textSize="18dp" />
+
+
+
+		<TextView
+            android:id="@+id/tv_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_birthdate"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:text="Gen:"
+			android:textSize="18dp"/>
+
+        <RadioGroup
+            android:id="@+id/gender_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_gender"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+				android:layout_centerHorizontal="true">
+
+            <RadioButton
+                android:id="@+id/rb_male"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/colorAccent"
+                android:text="Masculin"
+			/>
+
+            <RadioButton
+                android:id="@+id/rb_female"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="60dp"
+                android:buttonTint="@color/colorAccent"
+                android:text="Feminin" />
+
+        </RadioGroup>
+
+	
+
+	<View
+    android:id="@+id/dividerView"
+    android:layout_width="fill_parent"
+    android:layout_height="2dp"
+    android:layout_below="@+id/gender_selector"
+    android:background="@color/colorSecondary"
+	android:layout_marginTop="10dp"/>
+
+	
+		<ImageView
+            android:id="@+id/iw_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+			android:layout_marginTop="10dp"
+            android:src="@drawable/secondary_disease_bag"
+            android:layout_centerHorizontal="true"
+			android:layout_below="@+id/dividerView"
+		/>
+          <TextView
+            android:id="@+id/tv_labelDiseases"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="Afecțiuni curente: 0"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/iw_icon"
+			android:layout_marginTop="10dp"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+          />
+
+		<android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_diseases"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/full_secondary_button_style"
+            android:text="Schimbă afecțiuni"
+			android:layout_below="@+id/tv_labelDiseases"
+            android:padding="12dp"
+			android:layout_marginTop="10dp"
+            android:textAllCaps="false"
+			android:layout_marginStart="16dp"
+			android:layout_marginEnd="16dp"
+            android:layout_centerInParent="true"/>
+
+
+	</RelativeLayout>
+	</ScrollView>
+
+</RelativeLayout>

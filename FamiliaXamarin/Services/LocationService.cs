@@ -5,17 +5,22 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Location;
+using Android.Locations;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Util;
+using Android.Widget;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Location;
+using Java.Lang;
+using Exception = System.Exception;
+using Resource = Familia.Resource;
 
 namespace FamiliaXamarin.Services
 {
     [Service]
-    internal class LocationService : Service 
+    internal class LocationService : Service
     {
         private FusedLocationProviderClient _fusedLocationProviderClient;
         private LocationCallback _locationCallback;
@@ -46,9 +51,10 @@ namespace FamiliaXamarin.Services
                 {
                     string CHANNEL_ID = "my_channel_01";
                     NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel human readable title",
-                        NotificationImportance.Default);
+                        NotificationImportance.Default)
+                        { Importance = NotificationImportance.Low };
 
-                    ((NotificationManager)GetSystemService(Context.NotificationService)).CreateNotificationChannel(channel);
+                    ((NotificationManager)GetSystemService(NotificationService)).CreateNotificationChannel(channel);
 
                     Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                         .SetContentTitle("Familia")
@@ -60,13 +66,20 @@ namespace FamiliaXamarin.Services
                     StartForeground(ServiceRunningNotificationId, notification);
                 }
 
+                if (!Utils.CheckIfLocationIsEnabled())
+                {
+                    Toast.MakeText(Application.Context, "Nu aveti locatia activata", ToastLength.Long).Show();
+                    StopSelf();
+                }
+
+
                 _isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(this);
 
                 if (!_isGooglePlayServicesInstalled) return;
                 _locationRequest = new LocationRequest()
-                    .SetPriority(LocationRequest.PriorityHighAccuracy)
-                    .SetInterval(1000 * 60 * 30)
-                    .SetFastestInterval(1000 * 60 * 30);
+                    .SetPriority(LocationRequest.PriorityBalancedPowerAccuracy)
+                    .SetInterval(1000 * 60)
+                    .SetMaxWaitTime(1000 * 60 * 2);
                 _locationCallback = new FusedLocationProviderCallback(this);
 
                 _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(this);
@@ -77,19 +90,6 @@ namespace FamiliaXamarin.Services
                 Console.WriteLine(e);
                 //throw;
             }
-            //
-            //
-            //            var notification = new NotificationCompat.Builder(ApplicationContext)
-            //                .SetContentTitle("Familia")
-            //                .SetContentText("Ruleaza in fundal")
-            //                .SetSmallIcon(Resource.Drawable.logo)
-            //                .SetOngoing(true)
-            //                .Build();
-            //
-            //            // Enlist this instance of the service as a foreground service
-            //            StartForeground(ServiceRunningNotificationId, notification);
-
-
         }
 
         private async void RequestLocationUpdatesButtonOnClick()

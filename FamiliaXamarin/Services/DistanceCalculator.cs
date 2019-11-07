@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
 using Android.Widget;
+using Familia;
 using FamiliaXamarin.Helpers;
 using Java.Lang;
 using Exception = System.Exception;
@@ -23,7 +25,7 @@ namespace FamiliaXamarin.Services
         private int _verifications;
         private int _refreshTime = 1000;
         private static DistanceCalculator _ctx;
-        private const int ServiceRunningNotificationId = 10000;
+        private const int ServiceRunningNotificationId = 10001;
 
         public override IBinder OnBind(Intent intent)
         {
@@ -33,8 +35,8 @@ namespace FamiliaXamarin.Services
         public override void OnCreate()
         {
             CreateChannels();
-            _longitude = double.Parse(Utils.GetDefaults("ConsultLong", this));
-            _latitude = double.Parse(Utils.GetDefaults("ConsultLat", this));
+            _longitude = double.Parse(Utils.GetDefaults("ConsultLong"));
+            _latitude = double.Parse(Utils.GetDefaults("ConsultLat"));
             _started = true;
             _handler.PostDelayed(_runnable, 0);
             _ctx = this;
@@ -54,7 +56,7 @@ namespace FamiliaXamarin.Services
 
                     Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                         .SetContentTitle("Familia")
-                        .SetContentText("Ruleaza in fundal")
+                        .SetContentText("Asistenta la domiciliu in curs de desfasurare")
                         .SetSmallIcon(Resource.Drawable.logo)
                         .SetOngoing(true)
                         .Build();
@@ -111,63 +113,75 @@ namespace FamiliaXamarin.Services
 
         private readonly Runnable _runnable = new Runnable(() =>
         {
-            if (!Utils.GetDefaults("ActivityStart", _ctx).Equals(""))
+            try
             {
-                _ctx._currentLongitude = double.Parse(Utils.GetDefaults("Longitude", _ctx));
-                _ctx._currentLatitude = double.Parse(Utils.GetDefaults("Latitude", _ctx));
-
-
-                double distance = Utils.HaversineFormula(_ctx._latitude, _ctx._longitude, _ctx._currentLatitude, _ctx._currentLongitude);
-                Log.Error("Distance", "" + distance);
-                //Toast.MakeText(_ctx, "" + distance + " metri", ToastLength.Short).Show();
-                if (distance > 180 && distance < 220)
+                if (!Utils.GetDefaults("ActivityStart").Equals(""))
                 {
-                    Log.Warn("Distance warning", "mai mult de 200 metri.Esti la " + Math.Round(distance) + " metrii distanta");
-                    //Toast.makeText(DistanceCalculator.this, "" + distance, Toast.LENGTH_SHORT).show();
-                    _ctx._verifications = 0;
-                    NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment", "Ai plecat de la pacient? Esti la " + Math.Round(distance) + " metrii distanta");
+                    _ctx._currentLongitude = double.Parse(Utils.GetDefaults("Longitude"));
+                    _ctx._currentLatitude = double.Parse(Utils.GetDefaults("Latitude"));
+                    Log.Error("consultLog", _ctx._longitude.ToString());
+                    Log.Error("consultLat", _ctx._latitude.ToString());
 
-                    _ctx.GetManager().Notify(100, nb.Build());
-                    _ctx._refreshTime = 15000;
-                }
-                else if (distance > 220)
-                {
-                    _ctx._refreshTime = 60000;
-                    //Toast.MakeText(_ctx, "" + distance + " metri " + _ctx._verifications, ToastLength.Short).Show();
-
-                    if (_ctx._verifications == 15)
+                    var distance = Utils.HaversineFormula(_ctx._latitude, _ctx._longitude, _ctx._currentLatitude, _ctx._currentLongitude);
+                    Log.Error("Distance", "" + distance);
+//                    Toast.MakeText(_ctx, "" + distance + " metri", ToastLength.Short).Show();
+                    if (distance > 180 && distance < 220)
                     {
-                        NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment", "Vizita a fost anulata automat!");
-                        _ctx.GetManager().Notify(1000, nb.Build());
+                        Log.Warn("Distance warning", "mai mult de 200 metri.Esti la " + Math.Round(distance) + " metrii distanta");
+                        //Toast.makeText(DistanceCalculator.this, "" + distance, Toast.LENGTH_SHORT).show();
                         _ctx._verifications = 0;
+                        NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment", "Ai plecat de la pacient? Esti la " + Math.Round(distance) + " metrii distanta");
 
-                        //trimitere date la server
-                        Utils.SetDefaults("ActivityStart", "", _ctx);
-                        _ctx.StopService(new Intent(_ctx, typeof(MedicalAsistanceService)));
-                        _ctx.StopSelf();
+                        _ctx.GetManager().Notify(100, nb.Build());
+                        _ctx._refreshTime = 15000;
+                    }
+                    else if (distance > 220)
+                    {
+                        _ctx._refreshTime = 60000;
+                        //Toast.MakeText(_ctx, "" + distance + " metri " + _ctx._verifications, ToastLength.Short).Show();
 
+                        if (_ctx._verifications == 15)
+                        {
+                            NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment", "Vizita a fost anulata automat!");
+                            _ctx.GetManager().Notify(1000, nb.Build());
+                            _ctx._verifications = 0;
+
+                            //trimitere date la server
+                            Utils.SetDefaults("ActivityStart", "");
+                            _ctx.StopService(new Intent(_ctx, typeof(MedicalAsistanceService)));
+                            _ctx.StopSelf();
+
+                        }
+                        else
+                        {
+                            NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment", "Vizita va fi anulata automat deoarece te afli la " + Math.Round(distance) + " metrii distanta de pacient! Mai ai " + (15 - _ctx._verifications) + " minute sa te intorci!");
+                            _ctx.GetManager().Notify(1000, nb.Build());
+                            _ctx._verifications++;
+                        }
                     }
                     else
                     {
-                        NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment", "Vizita va fi anulata automat deoarece te afli la " + Math.Round(distance) + " metrii distanta de pacient! Mai ai " + (15 - _ctx._verifications) + " minute sa te intorci!");
-                        _ctx.GetManager().Notify(1000, nb.Build());
-                        _ctx._verifications++;
+                        //                    //Toast.makeText(DistanceCalculator.this, Math.round(distance) + " metri. Inca esti bine ;)", Toast.LENGTH_SHORT).show();
+                        _ctx._verifications = 0;
+                    }
+                    if (_ctx._started)
+                    {
+                        _ctx._handler.PostDelayed(_ctx._runnable, _ctx._refreshTime);
                     }
                 }
                 else
                 {
-                    //                    //Toast.makeText(DistanceCalculator.this, Math.round(distance) + " metri. Inca esti bine ;)", Toast.LENGTH_SHORT).show();
-                    _ctx._verifications = 0;
-                }
-                if (_ctx._started)
-                {
-                    _ctx._handler.PostDelayed(_ctx._runnable, _ctx._refreshTime);
+                    _ctx._started = false;
                 }
             }
-            else
+            catch (Exception e)
             {
+                Log.Error($"Error occurred in {nameof(DistanceCalculator)} service: ", e.Message);
                 _ctx._started = false;
+                _ctx.StopSelf();
+
             }
+          
         });
 
     }

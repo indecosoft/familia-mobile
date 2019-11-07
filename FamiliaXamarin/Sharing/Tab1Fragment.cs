@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Familia;
 using Android.Support.V4.App;
 using Android.Content;
 using Android.OS;
@@ -17,6 +17,7 @@ using Android.App;
 using Com.Bumptech.Glide;
 using FamiliaXamarin.Helpers;
 using Org.Json;
+using Resource = Familia.Resource;
 
 namespace FamiliaXamarin.Sharing
 {
@@ -50,7 +51,7 @@ namespace FamiliaXamarin.Sharing
                     ZXing.BarcodeFormat.QR_CODE
                 },
                 UseNativeScanning = true,
-                AutoRotate = true,
+                AutoRotate = false,
                 TryHarder = true
 
             };
@@ -104,7 +105,7 @@ namespace FamiliaXamarin.Sharing
                     Task.Run(async () =>
                     {
                         var response = await WebServices.Post($"{Constants.PublicServerAddress}/api/newSharingPeople",
-                            new JSONObject().Put("from", qrJsonData.GetString("Id")).Put("dest", Utils.GetDefaults("IdClient", Application.Context)), Utils.GetDefaults("Token", Activity));
+                            new JSONObject().Put("from", qrJsonData.GetString("Id")).Put("dest", Utils.GetDefaults("IdClient")), Utils.GetDefaults("Token"));
                         if (!string.IsNullOrEmpty(response))
                         {
                             Activity.RunOnUiThread(() => Toast.MakeText(Activity, response, ToastLength.Long).Show());

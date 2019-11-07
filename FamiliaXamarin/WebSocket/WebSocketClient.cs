@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
-using Android.Support.V4.App;
 using Android.Util;
+using EngineIO;
+using EngineIO.Client;
+using Familia.DataModels;
 using FamiliaXamarin.Chat;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
@@ -10,21 +14,25 @@ using Java.Lang;
 using Newtonsoft.Json;
 using Org.Json;
 using SocketIO.Client;
+using static EngineIO.Emitter;
 using Exception = System.Exception;
 using Object = Java.Lang.Object;
 using Socket = SocketIO.Client.Socket;
 
 namespace FamiliaXamarin
 {
-    public class WebSocketClient : IWebSocketClient
+    public class WebSocketClient : Object, IWebSocketClient, IListener
     {
         Socket _socket;
         public static Socket Client;
 
         Context _context;
-        public void Connect(string hostname, int port, Context context)
+        private SqlHelper<ConversationsRecords> _conversationsRecords;
+
+
+        public async Task Connect(string hostname, int port, Context context)
         {
-            
+            _conversationsRecords = await SqlHelper<ConversationsRecords>.CreateAsync();
             _context = context;
             try
             {
@@ -33,15 +41,18 @@ namespace FamiliaXamarin
                 {
                     ForceNew = true,
                     Reconnection = true,
-                    Query = $"token={Utils.GetDefaults("Token", Application.Context)}&imei={Utils.GetImei(Application.Context)}"
+                    //Secure = false,
+                    //Transports = new string[] { EngineIO.Client.Transports.PollingXHR.TransportName},
+                    Query = $"token={Utils.GetDefaults("Token")}&imei={Utils.GetImei(Application.Context)}"
                     
                 };
-                _socket = IO.Socket(Constants.WebSocketAddress, options);
+                _socket = IO.Socket(hostname,options);
 
                 _socket.On(Socket.EventConnect, OnConnect);
                 _socket.On(Socket.EventDisconnect, OnDisconnect);
                 _socket.On(Socket.EventConnectError, OnConnectError);
                 _socket.On(Socket.EventConnectTimeout, OnConnectTimeout);
+                //_socket.On(Manager.EventTransport, OnTransport);
 
                 _socket.On("conversation", OnConversation);
                 _socket.On("chat request", OnChatRequest);
@@ -54,8 +65,6 @@ namespace FamiliaXamarin
             }
             catch (Exception e)
             {     
-
-
                 Log.Error("WSConnectionError: ", e.ToString());
             }
         }
@@ -76,27 +85,33 @@ namespace FamiliaXamarin
             _socket?.Emit(eventName, value);
         }
 
-        private static void OnConnect(Object[] obj)
-        {
+        private  void OnConnect(Object[] obj)
+        { 
             Log.Error("WebSocket", "Client Connected");
         }
 
-        private static void OnDisconnect(Object[] obj)
+        private  void OnDisconnect(Object[] obj)
         {
             Log.Error("WebSocket", "Client Diconnected");
         }
 
-        private static void OnConnectError(Object[] obj)
+        private  void OnConnectError(Object[] obj)
         {
             Log.Error("WebSocket", "Connection Error" + obj[0]);
         }
 
-        private static void OnConnectTimeout(Object[] obj)
+        private  void OnConnectTimeout(Object[] obj)
         {
             Log.Error("WebSocket", "Connection Timeout");
         }
+        private void OnTransport(Object[] obj)
+        {
+            Transport transport = (Transport)obj[0];
+            transport.On(Transport.EventRequestHeaders, this);
 
-        private void OnConversation(Object[] obj)
+        }
+
+        private async void OnConversation(Object[] obj)
         {
             Log.Error("WebSocket", "OnConversation");
             var data = (JSONObject)obj[0];
@@ -117,16 +132,23 @@ namespace FamiliaXamarin
 
             try
             {
+                if (!string.IsNullOrEmpty(message))
+                {
+                    await _conversationsRecords.Insert(new ConversationsRecords
+                    {
+                        Message = message,
+                        Room = room,
+                        MessageDateTime = DateTime.Now,
+                        MessageType = 1
 
+                    });
+                }
                 Utils.CreateChannels("1", "1");
                 //CAZUL 1 chat simplu intre 2 useri
-                //var c = Utils.isRunning(ChatActivity.Ctx);
                 var c = Utils.IsActivityRunning(Class.FromType(typeof(ChatActivity)));
-                //var c =   typeof(ChatActivity).;
                 if (c && ChatActivity.RoomName.Equals(room))
                 {
                     Log.Error("Caz 1", "*********************");
-                    //Utils.CreateChannels("Caz 1", "Caz 1");
                     ChatActivity.AddMessage(message, ChatModel.TypeMessage);
                 }
                 //CAZUL 2 user offline primeste chat
@@ -137,7 +159,7 @@ namespace FamiliaXamarin
                     var nb = Utils.CreateChatNotification(username, message, username, room, _context,3, "Vizualizare");
                     
                     var ids = room.Split(':');
-                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient", _context)? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
+                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient")? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
                 }
                 //CAZUL 3 user 1, user 2 converseaza, al3lea se baga in seama
                 else if (!ChatActivity.RoomName.Equals(room))
@@ -146,7 +168,7 @@ namespace FamiliaXamarin
                     Log.Error("Caz 3", "*********************");
                     var nb = Utils.CreateChatNotification(username, message, username, room, _context,3, "Vizualizare");
                     var ids = room.Split(':');
-                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient", _context)? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
+                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient")? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
                 }
 
             }
@@ -176,7 +198,7 @@ namespace FamiliaXamarin
             // aici adaugi in array-ul de room-uri
             try
             {
-                string SharedRooms = Utils.GetDefaults("Rooms", _context);
+                string SharedRooms = Utils.GetDefaults("Rooms");
                 if (SharedRooms != null)
                 {
                     var model = JsonConvert.DeserializeObject<List<ConverstionsModel>>(SharedRooms);
@@ -197,7 +219,7 @@ namespace FamiliaXamarin
                   
 
                     string serialized = JsonConvert.SerializeObject(model);
-                    Utils.SetDefaults("Rooms", serialized, _context);
+                    Utils.SetDefaults("Rooms", serialized);
                 }
                 else
                 {
@@ -207,7 +229,7 @@ namespace FamiliaXamarin
                    
 
                     string serialized = JsonConvert.SerializeObject(model);
-                    Utils.SetDefaults("Rooms", serialized, _context);
+                    Utils.SetDefaults("Rooms", serialized);
                 }
             }
             catch (Exception e)
@@ -216,7 +238,7 @@ namespace FamiliaXamarin
             }
             var nb = Utils.CreateChatNotification("Cerere acceptata", $"{email} ti-a acceptat cererea de chat!", email, room, _context, 2);
             var ids = room.Split(':');
-            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient", _context)? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
+            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient")? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
         }
 
         private void OnChatRequest(Object[] obj)
@@ -242,7 +264,7 @@ namespace FamiliaXamarin
             //var nb = Utils.GetAndroidChannelNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
             var nb = Utils.CreateChatNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", email, room, _context);
             var ids = room.Split(':');
-            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient", _context)? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
+            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient")? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
         }
         private void OnChatRejected(Object[] obj)
         {
@@ -265,6 +287,13 @@ namespace FamiliaXamarin
             //var nb = Utils.GetAndroidChannelNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
             var nb = Utils.CreateChatNotification(email, "Ti-a respins cererea de convorbire!", email, null, _context, 1);
             Utils.GetManager().Notify(1000, nb);
+        }
+
+        public void Call(params Object[] p0)
+        {
+            Log.Error("Call", "Caught EVENT_REQUEST_HEADERS after EVENT_TRANSPORT, adding headers");
+            //Dictionary<string, List<string>> mHeaders = (Dictionary<string, List<string>>)p0[0];
+            //mHeaders.Add("Authorization", new List<string>{"Basic bXl1c2VyOm15cGFzczEyMw=="});
         }
     }
 }

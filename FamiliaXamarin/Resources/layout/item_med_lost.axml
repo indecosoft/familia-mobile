@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	 xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+	 android:id="@+id/rl_medser"
+>
+
+
+
+	<android.support.v7.widget.CardView
+    android:id="@+id/card_view"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="4dp"
+	android:layout_marginTop="10dp"
+	app:cardBackgroundColor="@color/colorPrimaryDark"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/pill_lost"
+            android:layout_centerHorizontal="true"/>
+        <TextView
+            android:id="@+id/tv_medser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="Algocalmin"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/icon"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+
+			 <TextView
+                android:id="@+id/info_date_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4/7/2019 12:00"
+                
+                android:textSize="16sp"
+				android:textColor="@color/colorDanger"
+	            android:layout_below="@id/tv_medser"
+				android:layout_centerHorizontal="true"
+	/>
+			
+
+			 
+      
+        <TextView
+            android:id="@+id/info_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/info_date_time"
+            android:ellipsize="none"
+            android:scrollHorizontally="false"
+            android:layout_weight="1"
+            android:maxLines="100"
+            android:text="Acest text excesiv de lung a fost scris cu scopul testarii acestui minunat TextView care va trebui sa contina toate detaliile despre administrarea medicamentului scris in titlul cardului asta frumos si nemaipomenit. dfa sunt idiot chiar am stat sa scriu tot cacatul asta! :)"
+            android:textSize="16sp"/>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
+</RelativeLayout>

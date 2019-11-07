@@ -9,6 +9,7 @@ using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Text;
 using Android.Widget;
+using Familia;
 using FamiliaXamarin.Helpers;
 using Org.Json;
 
@@ -197,6 +198,8 @@ namespace FamiliaXamarin
         {
             _progressBarDialog.Show();
 
+            Utils.SetImei("aaaa");
+
             await Task.Run(async () => {
 
                 var dataToSend = new JSONObject().Put("name", $"{_nameEditText.Text} {_firstNameEditText.Text}").Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text).Put("type", 4).Put("imei", Utils.GetImei(this));
@@ -217,9 +220,11 @@ namespace FamiliaXamarin
                             snack.Show();
                             break;
                         case 2:
-                            snack = Snackbar.Make(_layout, "Account created", Snackbar.LengthLong);
+                            snack = Snackbar.Make(_layout, "Account created", Snackbar.LengthIndefinite).SetAction("Ok", (v) =>
+                            {
+                                Finish();
+                            });
                             snack.Show();
-                            Finish();
                             break;
                     }
                 }

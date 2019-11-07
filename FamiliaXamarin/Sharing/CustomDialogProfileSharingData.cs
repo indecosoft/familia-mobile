@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Familia;
 using Android.App;
 using Android.Content;
 using Android.Graphics.Drawables;
@@ -22,15 +22,12 @@ namespace FamiliaXamarin.Sharing
         public CircleImageView Image;
         public Button ButtonConfirm;
         public Button ButtonCancel;
-
+        private string conflict = "aaa";
        
         public CustomDialogProfileSharingData(Context context) : base(context)
         {
             _activity = (Activity)context;
         }
-
-       
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -46,13 +43,6 @@ namespace FamiliaXamarin.Sharing
             {
                 Dismiss();
             };
-
-
-            // setupViews();
-
         }
-
-
-       
     }
 }

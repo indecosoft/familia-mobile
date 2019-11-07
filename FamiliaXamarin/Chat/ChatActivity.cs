@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Familia;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -13,6 +14,9 @@ using FamiliaXamarin.JsonModels;
 using Newtonsoft.Json;
 using Org.Json;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
+using System.Threading.Tasks;
+using System;
+using Familia.DataModels;
 
 namespace FamiliaXamarin.Chat
 {
@@ -22,8 +26,7 @@ namespace FamiliaXamarin.Chat
         public string Message { get; set; }
     }
     
-    [Activity(Label = "ChatActivity", Theme = "@style/AppTheme.Dark",
-        ScreenOrientation = ScreenOrientation.Portrait)]
+    [Activity(Label = "ChatActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class ChatActivity : AppCompatActivity
     {
         private Button send;
@@ -37,6 +40,7 @@ namespace FamiliaXamarin.Chat
         private static LinearLayoutManager layoutManager;
         private static string mUsername;
         private static ChatActivity Ctx;
+        private SqlHelper<ConversationsRecords> _conversationsRecords;
 
         protected override void OnUserLeaveHint()
         {
@@ -51,6 +55,28 @@ namespace FamiliaXamarin.Chat
             intent.AddFlags(ActivityFlags.ClearTop);
             intent.PutExtra("FromChat", true);
             StartActivity(intent);
+        }
+
+        private void Send_Click(object sender, EventArgs e)
+        {
+            Task.Run(async () =>
+            {
+                if (!string.IsNullOrEmpty(mInputMessageView.Text))
+                {
+                    await _conversationsRecords.Insert(new ConversationsRecords
+                    {
+                        Message = mInputMessageView.Text,
+                        Room = RoomName,
+                        MessageDateTime = DateTime.Now,
+                        MessageType = 0
+
+                    });
+                }
+                Ctx.RunOnUiThread(() =>
+                {
+                    AttemptSend();
+                });
+            });
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -78,9 +104,9 @@ namespace FamiliaXamarin.Chat
             Ctx = this;
             mInputMessageView = (EditText) FindViewById(Resource.Id.tbMessage);
             send = FindViewById<Button>(Resource.Id.Send);
-            send.Click += delegate { AttemptSend(); };
+            send.Click += Send_Click; // delegate async {
 
-            mAdapter.Clear();
+        mAdapter.Clear();
             
             if (savedInstanceState == null)
             {
@@ -88,7 +114,10 @@ namespace FamiliaXamarin.Chat
                 RoomName = Intent.GetStringExtra("Room");
                 mUsername = Intent.GetStringExtra("EmailFrom");
                 var ids = RoomName.Split(':');
-                NotificationManagerCompat.From(this).Cancel(ids[0] == Utils.GetDefaults("IdClient", this)? int.Parse(ids[1]) : int.Parse(ids[0]));
+                NotificationManagerCompat.From(this).Cancel(
+                    ids[0] == Utils.GetDefaults("IdClient")
+                        ? int.Parse(ids[1])
+                        : int.Parse(ids[0]));
                 //Active = Intent.GetBooleanExtra("Active", false);
                 if (extras == null)
                 {
@@ -100,7 +129,7 @@ namespace FamiliaXamarin.Chat
                     try
                     {
                         //adaugare la lista de prieteni
-                        var sharedRooms = Utils.GetDefaults("Rooms", this);
+                        var sharedRooms = Utils.GetDefaults("Rooms");
                         if (sharedRooms != null)
                         {
                             var model =
@@ -122,7 +151,7 @@ namespace FamiliaXamarin.Chat
                             }
 
                             var serialized = JsonConvert.SerializeObject(model);
-                            Utils.SetDefaults("Rooms", serialized, this);
+                            Utils.SetDefaults("Rooms", serialized);
                         }
                         else
                         {
@@ -133,15 +162,15 @@ namespace FamiliaXamarin.Chat
                             model.Add(currentModel);
 
                             var serialized = JsonConvert.SerializeObject(model);
-                            Utils.SetDefaults("Rooms", serialized, this);
+                            Utils.SetDefaults("Rooms", serialized);
                         }
                     }
-                    catch (System.Exception e)
+                    catch (Exception e)
                     {
                         Log.Error("Error", e.Message);
                     }
 
-                    var emailFrom = Utils.GetDefaults("Email", this);
+                    var emailFrom = Utils.GetDefaults("Email");
                     try
                     {
                         var dest = extras.GetString("EmailFrom");
@@ -159,12 +188,15 @@ namespace FamiliaXamarin.Chat
 
                 //NotificationManagerCompat.From(this).Cancel(400);
 
-                for (var i = 0; i < Messages.Count; i++)
+                Task.Run(async () =>
                 {
-                    if (Messages[i].Room != RoomName) continue;
-                    AddMessage(Messages[i].Message, ChatModel.TypeMessage);
-                    Messages.RemoveAt(i--);
-                }
+                    _conversationsRecords = await SqlHelper<ConversationsRecords>.CreateAsync();
+                    var conversations = await _conversationsRecords.QueryValuations($"SELECT * FROM ConversationsRecords WHERE Room = '{RoomName}'");
+                    foreach (var message in conversations)
+                    {
+                        AddMessage(message.Message, message.MessageType == 0 ? 3 : 0);
+                    }
+                });
             }
 
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
@@ -183,7 +215,7 @@ namespace FamiliaXamarin.Chat
             try
             {
                 messageToSend = new JSONObject().Put("message", message)
-                    .Put("username", Utils.GetDefaults("Email", this))
+                    .Put("username", Utils.GetDefaults("Email"))
                     .Put("room", RoomName);
             }
             catch (JSONException e)

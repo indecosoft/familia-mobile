@@ -1,4 +1,5 @@
-﻿using Org.Json;
+﻿using System.Collections.Generic;
+using Org.Json;
 
 namespace FamiliaXamarin.JsonModels
 {
@@ -7,7 +8,7 @@ namespace FamiliaXamarin.JsonModels
         public string Base64Image { get; set; }
         public string DateOfBirth { get; set; }
         public string Gender { get; set; }
-        public int[] Disease { get; set; }
+        public List<int> Disease = new List<int>();
         public string ImageName { get; set; }
         public string ImageExtension { get; set; }
     }

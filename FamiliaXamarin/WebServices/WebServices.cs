@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Android.Util;
 using Org.Json;
 
 namespace FamiliaXamarin
@@ -55,7 +56,9 @@ namespace FamiliaXamarin
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+//                    Console.WriteLine(ex);
+                    Log.Error("WEB SERVE ERR", ex.Message);
+
                     return null;
                 }
             }

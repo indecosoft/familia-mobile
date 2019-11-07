@@ -1,0 +1,81 @@
+﻿body {
+    background: linear-gradient(135deg, rgb(144, 187, 109) 0%,rgb(135, 193, 87) 100%);
+}
+
+.wrapper {
+    position: absolute;
+    top: 15%;
+    left: 25%;
+}
+
+.ball {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: -5px -5px 5px red;
+    /* left: 50%; */
+    /* top: 50%; */
+    box-shadow: -3px 3px 15px rgba(0,0,0,0.35), 0px 0px 100px rgba(0,0,0,0.25), 0px 0px 5px rgba(255,255,255,0.5);
+    z-index: 1;
+}
+
+    .ball:before {
+        position: absolute;
+        content: '';
+        height: 100%;
+        width: 100%;
+        background-image: linear-gradient(transparent 0%, rgba(0,0,0,0.2) 50%);
+        transform: rotate(-125deg);
+    }
+
+
+.texture {
+    position: relative;
+    animation: translateBackground 40s infinite linear;
+    background: url(http://thumbs.dreamstime.com/x/golf-ball-texture-17926947.jpg) 0% 0 repeat-x;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-radius: 50%;
+}
+
+@keyframes translateBackground {
+    0% {
+        background-position-x: 0;
+    }
+
+    100% {
+        background-position-x: -600px;
+    }
+}
+
+html {
+    overflow: hidden !important;
+}
+
+
+.player {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+}
+
+.arrival {
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    background-color: red;
+    top: 0px;
+    left: 50px
+}
+
+.brick {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background: black;
+}
+
+

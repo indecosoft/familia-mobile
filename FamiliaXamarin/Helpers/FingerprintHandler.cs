@@ -1,10 +1,12 @@
 ﻿using System;
+using Android;
 using Android.Hardware.Fingerprints;
 using Android.Content;
 using Android.OS;
 using Android.Widget;
-using Android;
+using Familia;
 using Android.Support.V4.Content;
+using Familia.Login_System;
 using FamiliaXamarin.Login_System;
 
 namespace FamiliaXamarin.Helpers

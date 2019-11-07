@@ -21,6 +21,7 @@ using Android.Widget;
 using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
+using Familia;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
 using Java.IO;
@@ -41,7 +42,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
         private BluetoothAdapter _bluetoothAdapter;
         private BluetoothLeScanner _bluetoothScanner;
         private BluetoothManager _bluetoothManager;
-        private SQLiteAsyncConnection _db;
+        //private SQLiteAsyncConnection _db;
 
         private Handler _handler;
         private bool _send;
@@ -58,12 +59,13 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
         private GlucoseDeviceActivity _context;
         private BluetoothScanCallback _scanCallback;
         private GattCallBack _gattCallback;
+        private SqlHelper<DevicesRecords> _bleDevicesDataRecords;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.blood_glucose_device);
-            Toolbar toolbar = (Toolbar)FindViewById(Resource.Id.toolbar);
+            var toolbar = (Toolbar)FindViewById(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             Title ="Glicemie";
 
@@ -74,16 +76,17 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
                 Finish();
             };
 
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            const string numeDb = "devices_data.db";
-             _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
+//            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+//            const string numeDb = "devices_data.db";
+//             _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
             
-
+            _bleDevicesDataRecords = await SqlHelper<DevicesRecords>.CreateAsync();
+            
             _lbStatus = FindViewById<TextView>(Resource.Id.status);
             _dataContainer = FindViewById<ConstraintLayout>(Resource.Id.dataContainer);
             _bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
             _context = this;
-
+            
             _scanCallback = new BluetoothScanCallback(_context);
             _gattCallback = new GattCallBack(_context);
 
@@ -191,19 +194,29 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
 
         class BluetoothScanCallback : ScanCallback
         {
-            Context Context;
+            private readonly Context Context;
+            private SqlHelper<BluetoothDeviceRecords> _bleDevicesRecords;
             public BluetoothScanCallback(Context context)
             {
                 Context = context;
             }
 
-            public override void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result)
+            public override async void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result)
             {
                 base.OnScanResult(callbackType, result);
-                if (result.Device.Address == null ||
-                    !result.Device.Address.Equals(
-                        Utils.GetDefaults(Context.GetString(Resource.String.blood_glucose_device),
-                            Context))) return;
+//                var jsonDevice = new JSONObject(Utils.GetDefaults(Context.GetString(Resource.String.blood_glucose_device),
+//                    Context));
+
+                _bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                var list = await _bleDevicesRecords.QueryValuations("select * from BluetoothDeviceRecords");
+                
+                if(!(from c in list where c.Address == result.Device.Address 
+                    select new {c.Name, c.Address, c.DeviceType}).Any()) 
+                    return;
+                
+//                if (result.Device.Address == null ||
+//                    !result.Device.Address.Equals(
+//                       jsonDevice.GetString("Address"))) return;
                 result.Device.ConnectGatt(Context, false,
                     ((GlucoseDeviceActivity) Context)._gattCallback);
                 ((GlucoseDeviceActivity) Context)._bluetoothScanner.StopScan(
@@ -215,7 +228,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
 
         private class GattCallBack : BluetoothGattCallback
         {
-            Context Context;
+            private readonly Context Context;
             public GattCallBack(Context context)
             {
                 Context = context;
@@ -328,14 +341,22 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
             if (!_send)
             {
                 var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
-                await _db.CreateTableAsync<DevicesRecords>();
+                //await _db.CreateTableAsync<DevicesRecords>();
                 if (!Utils.CheckNetworkAvailability())
-                    AddGlucoseRecord(_db, (int) g);
+                {
+                    await _bleDevicesDataRecords.Insert(new DevicesRecords()
+                    {
+                        Imei = Utils.GetImei(this),
+                        DateTime = ft.Format(new Date()),
+                        BloodGlucose = (int) g
+                    });
+                }
+                    //AddGlucoseRecord(_db, (int) g);
                 else
                 {
                     JSONObject jsonObject;
                     var jsonArray = new JSONArray();
-                    var list = await QueryValuations(_db, "select * from DevicesRecords");
+                    var list = await _bleDevicesDataRecords.QueryValuations( "select * from DevicesRecords");
 
                     foreach (var el in list)
                     {
@@ -379,11 +400,11 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
                         .Put("oxygenSaturation", string.Empty)
                         .Put("extension", string.Empty);
                     jsonArray.Put(jsonObject);
-                    string result = await WebServices.Post(Constants.SaveDeviceDataUrl, jsonArray);
+                    var result = await WebServices.Post(Constants.SaveDeviceDataUrl, jsonArray);
                     if (result == "Succes!")
                     {
                          Toast.MakeText(this, "Succes", ToastLength.Long).Show();
-                        await _db.DropTableAsync<DevicesRecords>();
+                        await _bleDevicesDataRecords.DropTable();
                     }
                     else
                     {
@@ -401,75 +422,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
             _glucose.Text = gl;
             ActivateScanButton();
         }
-        private async Task<IEnumerable<DevicesRecords>> QueryValuations(SQLiteAsyncConnection db, string query)
-        {
-            return await db.QueryAsync<DevicesRecords>(query);
-        }
-        private async void AddGlucoseRecord(SQLiteAsyncConnection db, int glucoseValue)
-        {
-            var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
-            await db.InsertAsync(new DevicesRecords()
-            {
-                Imei = Utils.GetImei(this),
-                DateTime = ft.Format(new Date()),
-                BloodGlucose = glucoseValue
-            });
-        }
-        public void WriteBloodGlucoseData(JSONObject jsonObject)
-        {
-            try
-            {
-                File file = new File(_context.FilesDir, Constants.BloodGlucoseFile);
-                FileWriter fileWriter = new FileWriter(file, true);
-                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-                bufferedWriter.Write(jsonObject + ";");
-                bufferedWriter.Close();
-            }
-            catch (IOException e)
-            {
-                e.PrintStackTrace();
-            }
-        }
 
-        public string ReadBloodGlucoseData()
-        {
-            Stream fis;
-            try
-            {
-                fis = _context.OpenFileInput(Constants.BloodGlucoseFile);
-                var isr = new InputStreamReader(fis);
-                var bufferedReader = new BufferedReader(isr);
-                var sb = new StringBuilder();
-                string line;
-                while ((line = bufferedReader.ReadLine()) != null)
-                {
-                    sb.Append(line);
-                }
-                fis.Close();
-                return sb.ToString();
-            }
-            catch (Java.Lang.Exception e)
-            {
-                e.PrintStackTrace();
-            }
-            return null;
-        }
-
-        public void ClearBloodGlucoseData()
-        {
-//            Stream fileOutputStream;
-//
-//            try
-//            {
-//                fileOutputStream = Application.Context.OpenFileOutput(Constants.BloodGlucoseFile, FileCreationMode.Private);
-//                fileOutputStream.Write("".getBytes());
-//                fileOutputStream.Close();
-//            }
-//            catch (Exception e)
-//            {
-//                e.PrintStackTrace();
-//            }
-        }
         void ActivateScanButton()
         {
             _scanButton.Enabled = true;

@@ -13,8 +13,12 @@ using Android.Widget;
 using System.Diagnostics.Contracts;
 using Android.Preferences;
 using Android.Support.V4.Hardware.Fingerprint;
+using Familia;
+using Familia.Devices;
+using FamiliaXamarin.Devices;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.Medicatie;
+using Familia.Settings;
 
 namespace FamiliaXamarin.Settings
 {
@@ -24,6 +28,13 @@ namespace FamiliaXamarin.Settings
         private int optionOfSnooze;
 //        private string key;
         private Switch enablefingerprint;
+        private Switch enablePin;
+        private TextView _tvDevicesManagement;
+        private TextView _version;
+        private TextView _tvMedicineTitle;
+        private RelativeLayout _rlMedicineTitle;
+
+        private TextView _tvDeviceTitle;
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -32,29 +43,61 @@ namespace FamiliaXamarin.Settings
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View v =  inflater.Inflate(Resource.Layout.fragment_settings, container, false);
-
+            var v =  inflater.Inflate(Resource.Layout.fragment_settings, container, false);
+            spinner = (Spinner)v.FindViewById(Resource.Id.alarmSpinner);
             SetupSpinner(v);
             enablefingerprint = v.FindViewById<Switch>(Resource.Id.fingerPrintSwitch);
+            enablePin = v.FindViewById<Switch>(Resource.Id.pin_switch);
+            _version = v.FindViewById<TextView>(Resource.Id.tv_version);
+            var ver  = Context.PackageManager.GetPackageInfo(Context.PackageName, 0).VersionName;
+            _version.Text = "Versiunea " + ver;
+            _tvDevicesManagement = v.FindViewById<TextView>(Resource.Id.devices);
+            _rlMedicineTitle = v.FindViewById<RelativeLayout>(Resource.Id.medicine_relative);
+            _tvDeviceTitle = v.FindViewById<TextView>(Resource.Id.tv_devices);
+            _tvMedicineTitle = v.FindViewById<TextView>(Resource.Id.tv_medicine);
+            _tvDevicesManagement.Click += (sender, args) =>
+                Activity.StartActivity(typeof(DevicesManagementActivity));
             FingerprintManagerCompat checkHardware;
 
             checkHardware = FingerprintManagerCompat.From(Activity);
 
 
-            bool fingerprint = Convert.ToBoolean(Utils.GetDefaults("fingerprint", Activity));
+            bool fingerprint = Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
 
             if (!checkHardware.IsHardwareDetected)
                 enablefingerprint.Enabled = false;
 
-            enablefingerprint.Checked = fingerprint ? true : false;
-
+            enablefingerprint.Checked = fingerprint;
+            enablePin.Checked = !string.IsNullOrEmpty(Utils.GetDefaults("UserPin"));
             enablefingerprint.CheckedChange += Enablefingerprint_CheckedChange;
+            enablePin.CheckedChange += EnablePin_CheckedChange;
+            if (int.Parse(Utils.GetDefaults("UserType")) == 2 || int.Parse(Utils.GetDefaults("UserType")) == 1)
+            {
+                _tvDevicesManagement.Visibility = ViewStates.Gone;
+                _tvDeviceTitle.Visibility = ViewStates.Gone;
+
+            }
+            if (int.Parse(Utils.GetDefaults("UserType")) == 2)
+            {
+                spinner.Visibility = ViewStates.Gone;
+                _rlMedicineTitle.Visibility = ViewStates.Gone;
+                _tvMedicineTitle.Visibility = ViewStates.Gone;
+            }
             return v;
         }
 
+        void EnablePin_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            if (enablePin.Checked)
+                Activity.StartActivity(typeof(ActivitySetPin));
+            else
+                Utils.SetDefaults("UserPin", string.Empty);
+        }
+
+
         private void SetupSpinner(View v)
         {
-            spinner = (Spinner) v.FindViewById(Resource.Id.alarmSpinner);
+           
             spinner.ItemSelected += delegate (object sender, AdapterView.ItemSelectedEventArgs args)
                 {
                     Contract.Requires(sender != null);
@@ -64,16 +107,16 @@ namespace FamiliaXamarin.Settings
                     switch (optionOfSnooze)
                     {
                         case 0:
-                            Utils.SetDefaults("snooze", "5", Activity);
+                            Utils.SetDefaults("snooze", "5");
                             break;
                         case 1:
-                            Utils.SetDefaults("snooze", "10", Activity);
+                            Utils.SetDefaults("snooze", "10");
                             break;
                         case 2:
-                            Utils.SetDefaults("snooze", "15", Activity);
+                            Utils.SetDefaults("snooze", "15");
                             break;
                         case 3:
-                            Utils.SetDefaults("snooze", "30", Activity);
+                            Utils.SetDefaults("snooze", "30");
                             break;
                     }
                 };
@@ -88,16 +131,12 @@ namespace FamiliaXamarin.Settings
         private void Enablefingerprint_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
             // this is an Activity
-            if (enablefingerprint.Checked)
+            Utils.SetDefaults("fingerprint",
+                enablefingerprint.Checked ? true.ToString() : false.ToString());
+            if(enablefingerprint.Checked && !enablePin.Checked)
             {
-                Utils.SetDefaults("fingerprint", true.ToString(), Activity);
-
+                enablePin.Checked = true;
             }
-            else
-            {
-                Utils.SetDefaults("fingerprint", false.ToString(), Activity);
-            }
-
         }
     }
 }

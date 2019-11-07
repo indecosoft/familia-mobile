@@ -5,6 +5,7 @@ using Android.App;
 using Android.Content;
 using Android.Gms.Common;
 using Android.Graphics;
+using Android.Locations;
 using Android.Media;
 using Android.Net;
 using Android.OS;
@@ -14,6 +15,7 @@ using Android.Telephony;
 using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
+using Android.Widget;
 using FamiliaXamarin.Chat;
 using Java.Lang;
 using Java.Text;
@@ -24,7 +26,12 @@ using ZXing.Common;
 using ZXing.Mobile;
 using Exception = System.Exception;
 using Math = System.Math;
-
+using Familia;
+using FamiliaXamarin.Services;
+using Orientation = Android.Media.Orientation;
+using Resource = Familia.Resource;
+using Familia.Helpers;
+using Java.Security;
 
 namespace FamiliaXamarin.Helpers
 {
@@ -59,9 +66,9 @@ namespace FamiliaXamarin.Helpers
             }
         }
 
-        public static void SetDefaults(string key, string value, Context context)
+        public static void SetDefaults(string key, string value)
         {
-            var preferences = PreferenceManager.GetDefaultSharedPreferences(context);
+            var preferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
             var editor = preferences.Edit();
             editor.PutString(key, value);
             editor.Apply();
@@ -71,9 +78,9 @@ namespace FamiliaXamarin.Helpers
             Application.Context.GetSharedPreferences(PreferenceManager.GetDefaultSharedPreferencesName(Application.Context), 0).Edit().Clear().Commit();
         }
 
-        public static string GetDefaults(string key, Context context)
+        public static string GetDefaults(string key)
         {
-            var preferences = PreferenceManager.GetDefaultSharedPreferences(context);
+            var preferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
             return preferences.GetString(key, null);
         }
 
@@ -95,6 +102,23 @@ namespace FamiliaXamarin.Helpers
             TelephonyManager mgr = ctx.GetSystemService(Context.TelephonyService) as TelephonyManager;
             return mgr?.Imei;
         }
+
+        public static void SetImei(string imei, Context context)
+        {
+            if (Build.VERSION.SdkInt > BuildVersionCodes.P)
+            {
+                Log.Error("UTILS IMEI", "hello android 10");
+                var android_id = Android.Provider.Settings.Secure.GetString(Android.App.Application.Context.ContentResolver, Android.Provider.Settings.Secure.AndroidId);
+                Log.Error("UTILS IMEI", android_id);
+                
+            }
+            else
+            {
+                Log.Error("UTILS IMEI", "hello android below 10");
+            }
+
+        }
+
         public static Bitmap CheckRotation(string photoPath, Bitmap bitmap)
         {
             var ei = new ExifInterface(photoPath);
@@ -153,8 +177,8 @@ namespace FamiliaXamarin.Helpers
             try
             {
 
-                string token = GetDefaults("Token", ctx);
-                string email = GetDefaults("Email", ctx);
+                string token = GetDefaults("Token");
+                string email = GetDefaults("Email");
 
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -167,7 +191,7 @@ namespace FamiliaXamarin.Helpers
                 string expDateTime = sdf.Format(cal.Time);
                 //Log.e("newTime", expDateTime);
 
-                JSONObject qrCodeData = new JSONObject().Put("clientToken", token).Put("generationDateTime", genDateTime).Put("expirationDateTime", expDateTime).Put("email", email).Put("Name", GetDefaults("Name", Application.Context)).Put("Avatar", GetDefaults("Avatar", Application.Context)).Put("Id", GetDefaults("IdClient", Application.Context));
+                JSONObject qrCodeData = new JSONObject().Put("clientToken", token).Put("generationDateTime", genDateTime).Put("expirationDateTime", expDateTime).Put("email", email).Put("Name", GetDefaults("Name")).Put("Avatar", GetDefaults("Avatar")).Put("Id", GetDefaults("IdClient"));
 
 
                 var writer = new BarcodeWriter
@@ -176,7 +200,7 @@ namespace FamiliaXamarin.Helpers
                     Options = new EncodingOptions { Height = 1000, Width = 1000 }
 
                 };
-                var bitmap = writer.Write(qrCodeData.ToString());
+                var bitmap = writer.Write(Encryption.Encrypt(qrCodeData.ToString()));
 
                 return bitmap;
             }
@@ -288,12 +312,7 @@ namespace FamiliaXamarin.Helpers
                     var acceptIntent = stackBuilderAccept.GetPendingIntent(DateTime.Now.Millisecond, (int)PendingIntentFlags.OneShot);
 
                      var rejectIntent = PendingIntent.GetBroadcast(Application.Context, DateTime.Now.Millisecond, chatActivityRejectedIntent, PendingIntentFlags.OneShot);
-                    //var rejectIntent = stackBuilderReject.Get(2, (int)PendingIntentFlags.OneShot);
 
-//                    var stackBuilderReject = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
-//                    stackBuilderReject.AddNextIntentWithParentStack(chatActivityRejectedIntent);
-
-                   // var rejectIntent = stackBuilderReject.GetPendingIntent(1, (int)PendingIntentFlags.OneShot);
                     return new NotificationCompat.Builder(Application.Context, email)
                         .SetContentTitle(title)
                         .SetContentText(body)
@@ -365,6 +384,33 @@ namespace FamiliaXamarin.Helpers
             return null;
         }
 
+        public static bool CheckIfLocationIsEnabled()
+        {
+            LocationManager lm = (LocationManager)(Application.Context.GetSystemService(Context.LocationService));
+            bool gpsEnabled = false;
+            bool networkEnabled = false;
+
+            try
+            {
+                gpsEnabled = lm.IsProviderEnabled(LocationManager.GpsProvider);
+            }
+            catch
+            {
+                // ignored
+            }
+
+            try
+            {
+                networkEnabled = lm.IsProviderEnabled(LocationManager.NetworkProvider);
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return gpsEnabled && networkEnabled;
+
+        }
         public static bool CheckNetworkAvailability()
         {
             ConnectivityManager cm = (ConnectivityManager)Application.Context.GetSystemService(Context.ConnectivityService);

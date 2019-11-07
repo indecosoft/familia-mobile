@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
-using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Constraints;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
@@ -15,11 +9,12 @@ using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Familia;
 using FamiliaXamarin.Helpers;
-using V7Widget = Android.Support.V7.Widget;
 using Org.Json;
+using V7Widget = Android.Support.V7.Widget;
 
-namespace FamiliaXamarin
+namespace FamiliaXamarin.Login_System
 {
     [Activity(Label = "PwdResetActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class PwdResetActivity : AppCompatActivity, View.IOnClickListener
@@ -31,7 +26,7 @@ namespace FamiliaXamarin
         private EditText _emailEditText;
         private EditText _passwordEditText;
         private EditText _pwdRetypeEditText;
-        private TextView _signInTextView;
+        private Button _signInTextView;
         private ConstraintLayout _layout;
         //private readonly IWebServices _webServices = new WebServices();
 
@@ -62,7 +57,8 @@ namespace FamiliaXamarin
             _pwdRetypeEditText = FindViewById<EditText>(Resource.Id.etPasswordRetype);
 
             _resetButton = FindViewById<Button>(Resource.Id.btnReset);
-            _signInTextView = FindViewById<TextView>(Resource.Id.tvSignIn);
+            _signInTextView = FindViewById<Button>(Resource.Id.btnCancel);
+            _resetButton.Enabled = FormValidator();
         }
 
         private void InitListeners()
@@ -136,7 +132,7 @@ namespace FamiliaXamarin
 
                     }
                     break;
-                case Resource.Id.tvSignIn:
+                case Resource.Id.btnCancel:
                     Finish();
                     break;
             }

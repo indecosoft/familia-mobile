@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using Familia;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.Gms.Location;
+using Android.Media;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Familia.Medicatie;
 using FamiliaXamarin.Medicatie.Alarm;
 using FamiliaXamarin.Medicatie.Data;
 using FamiliaXamarin.Medicatie.Entities;
@@ -18,7 +23,7 @@ using Calendar = Java.Util.Calendar;
 
 namespace FamiliaXamarin.Medicatie
 {
-    [Activity(Label = "BoalaActivity", Theme = "@style/AppTheme.Dark")]
+    [Activity(Label = "BoalaActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class DiseaseActivity : AppCompatActivity, View.IOnClickListener, CustomDialogMedicamentDetails.IMedSaveListener, OnMedicamentClickListener, CustomDialogDeleteMedicament.ICustomDialogDeleteMedicamentListener
     {
         public static readonly string MED_ID = "medId";
@@ -45,13 +50,8 @@ namespace FamiliaXamarin.Medicatie
 
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
-            toolbar.NavigationClick += delegate
-            {
-                var intent = new Intent(this, typeof(MainActivity));
-                intent.AddFlags(ActivityFlags.ClearTop);
-                StartActivity(intent);
-            };
-
+            toolbar.NavigationClick += delegate { OnBackPressed(); };
+            Log.Error("AAAAAAAAAAAA","DISEASE ACTIVITY CREATED");
             Title = "Tratament";
 
             SetupViews();
@@ -91,7 +91,11 @@ namespace FamiliaXamarin.Medicatie
             }
             else
             {
-                base.OnBackPressed();
+                //base.OnBackPressed();
+                var intent = new Intent(this, typeof(MedicineBaseActivity));
+                intent.AddFlags(ActivityFlags.ClearTop);
+                intent.PutExtra("FromMedicine", true);
+                StartActivity(intent);
             }
             
         }
@@ -178,27 +182,37 @@ namespace FamiliaXamarin.Medicatie
             disease.ListOfMedicines = medicamentAdapter.GetMedicaments();
             disease.DiseaseName = numeBoala;
             Storage.GetInstance().updateBoala(this, disease);
-
+            
             SetupAlarm();
 
-            Finish();
+//            Finish();
+            OnBackPressed();
         }
 
         private void AddNewBoala()
         {
             string numeBoala = etNumeBoala.Text;
+            Log.Error("AAAA", "ADD NEW BOALA");
             if (numeBoala.Equals(string.Empty))
             {
                 Toast.MakeText(this, "Introduceti denumirea afectiunii!", ToastLength.Long).Show();
+                Log.Error("AAAA", "if");
+
                 return;
             }
             disease.ListOfMedicines = medicamentAdapter.GetMedicaments();
             disease.DiseaseName = numeBoala;
+            Log.Error("AAAA", "if");
+
             Storage.GetInstance().AddDisease(this, disease);
 
             SetupAlarm();
-
-            Finish();
+            
+//            Finish();
+            
+            OnBackPressed();
+            
+        
         }
 
         private void SetupAlarm()
@@ -210,11 +224,13 @@ namespace FamiliaXamarin.Medicatie
                 List<int> alarms = new List<int>();
                 for (int i = 0; i < hours.Count; i++)
                 {
+                    Log.Error("AAAAA", "inainte de setupt alarm");
                     SetAlarm(hours[i], med, disease, ref alarms, i);
+                    Log.Error("AAAAAAAAAAAA", "setupd alarm " + med.Name + " hour: " +  hours[i].HourName);
                 }
 
                 med.Alarms = alarms;
-
+                Log.Error("AAAA", "dupa alarms");
             }
         }
         private readonly DateTime Jan1st1970 = new DateTime
@@ -227,6 +243,7 @@ namespace FamiliaXamarin.Medicatie
         private void SetAlarm(Hour hour, Medicine med, Disease boala, ref List<int> alarms, int position)
         {
             var am = (AlarmManager)GetSystemService(AlarmService);
+            
             var idAlarm = DateTime.Now.Millisecond ;
             var id = 0;
             var days = 0;
@@ -240,19 +257,23 @@ namespace FamiliaXamarin.Medicatie
             }
             alarms.Add(id);
             i.PutExtra(ALARM_ID, id);
-           // Log.Error("MEDICAMENT", med.Name);
+           Log.Error("AAAAAaA", med.Name);
             var pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
-
             if (am == null) return;
 
             var hourString = hour.HourName;
             var parts = hourString.Split(':');
             var timeHour = Convert.ToInt32(parts[0]);
             var timeMinute = Convert.ToInt32(parts[1]);
+            Log.Error("inainte de date", med.Date.ToString());
 
-            var date = DateTime.Parse(med.Date);
-            var setDt = new DateTime(date.Year, date.Month, date.Day,timeHour,timeMinute,0);
+            if (timeHour == 24)
+            {
+                timeHour = 0;
+            }
 
+            var setDt = new DateTime(med.Date.Year, med.Date.Month, med.Date.Day ,timeHour,timeMinute,0);
+            Log.Error("AAAA", setDt.ToString());
             var calendar = Calendar.Instance;
             var setCalendar = Calendar.Instance;
 //            setCalendar.Set(CalendarField.Year, setDt.Year);
@@ -283,6 +304,7 @@ namespace FamiliaXamarin.Medicatie
                         .TotalMilliseconds;
                     
                         am.SetInexactRepeating(AlarmType.RtcWakeup, mili, 0, pi);
+                       
                 }
             }
             else
@@ -291,6 +313,8 @@ namespace FamiliaXamarin.Medicatie
                     .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
                     .TotalMilliseconds;
                 am.SetInexactRepeating(AlarmType.RtcWakeup, mili, AlarmManager.IntervalDay, pi);
+               
+
             }
         }
 
@@ -303,6 +327,10 @@ namespace FamiliaXamarin.Medicatie
         {
             medicamentAdapter.UpdateMedicament(medicament, medicament.IdMed);
             medicamentAdapter.NotifyDataSetChanged();
+
+            //delete disease-med from local storage for MedicationSchedule
+
+
         }
 
         public void OnMedicamentClick(Medicine medicament)

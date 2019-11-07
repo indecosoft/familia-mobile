@@ -13,6 +13,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
+using Familia;
 using FamiliaXamarin.Active_Conversations;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
@@ -38,20 +39,30 @@ namespace FamiliaXamarin.Sharing
         {
             try
             {
-
+                ProgressBarDialog progressBarDialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
+                progressBarDialog.Show();
                 // Initialize contacts
                 List<SharingModel> contacts = null;
                 await Task.Run(async () =>
                 {
                     var response = await WebServices.Post($"{Constants.PublicServerAddress}/api/getSharedPeople",
-                        new JSONObject().Put("id", Utils.GetDefaults("IdClient", Activity)),
-                            Utils.GetDefaults("Token", Activity));
+                        new JSONObject().Put("id", Utils.GetDefaults("IdClient")),
+                            Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(response))
                     {
 
                         contacts = JsonConvert.DeserializeObject<List<SharingModel>>(response);
                     }
                 });
+
+
+                Activity.RunOnUiThread(() =>
+                {
+                    progressBarDialog.Dismiss();
+                });
+
+
+
                 if (contacts != null)
                 {
 
@@ -79,9 +90,9 @@ namespace FamiliaXamarin.Sharing
                         dialog.ButtonCancel.Click += delegate(object o, EventArgs eventArgs)
                         {
 
-                            var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
-                            alertDialog.SetTitle(Html.FromHtml("<p style = 'text-align: center; color: #F47445;'>Avertisment</p>", FromHtmlOptions.ModeLegacy));
-                            alertDialog.SetMessage(Html.FromHtml("<br/><p style = 'text-align: center; color: #000000;'>Doriti sa stergeti aceasta conexiune?</p>", FromHtmlOptions.ModeLegacy));
+                            var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dialog).Create();
+                            alertDialog.SetTitle("Avertisment");
+                            alertDialog.SetMessage("Doriti sa stergeti aceasta conexiune?");
                             alertDialog.SetButton("Da", delegate
                             {
                                 adapter.DeleteItemAt(args.Position);
@@ -100,9 +111,9 @@ namespace FamiliaXamarin.Sharing
 
                         if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                         {
-                            var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
-                            alertDialog.SetTitle(Html.FromHtml("<p style = 'text-align: center; color: #F47445;'>Avertisment</p>", FromHtmlOptions.ModeLegacy));
-                            alertDialog.SetMessage(Html.FromHtml("<br/><p style = 'text-align: center; color: #000000;'>Doriti sa stergeti aceasta conexiune?</p>", FromHtmlOptions.ModeLegacy));
+                            var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dialog).Create();
+                            alertDialog.SetTitle("Avertisment");
+                            alertDialog.SetMessage("Doriti sa stergeti aceasta conexiune?");
                             alertDialog.SetButton("Da", delegate
                             {
                                 adapter.DeleteItemAt(args.Position);
@@ -115,7 +126,7 @@ namespace FamiliaXamarin.Sharing
                         }
                         else
                         {
-                            var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dark_Dialog).Create();
+                            var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dialog).Create();
                             alertDialog.SetTitle("Avertisment");
                             alertDialog.SetMessage("Doriti sa stergeti aceasta conexiune?");
                             alertDialog.SetButton("Da", delegate

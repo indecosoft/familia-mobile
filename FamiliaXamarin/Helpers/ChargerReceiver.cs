@@ -32,19 +32,29 @@ namespace FamiliaXamarin.Helpers
 
             await Task.Run(async () =>
             {
-                var data = await GetData();
-                var obj = new JSONObject(data);
-                var bloodPressure = obj.GetJSONObject("bloodPressureSystolic");
-                var intervalBloodPressure = bloodPressure.GetString("interval");
-                var bloodGlucose = obj.GetJSONObject("bloodGlucose");
-                var intervalGlucose = bloodGlucose.GetString("interval");
-               // Log.Error("INTERVAL_BLOOD_PRESSURE", intervalBloodPressure);
-               // Log.Error("INTERVAL_GLUCOSE", intervalGlucose);
+                try
+                {
+                    var data = await GetData();
+                    var obj = new JSONObject(data);
+                    var bloodPressure = obj.GetJSONObject("bloodPressureSystolic");
+                    var intervalBloodPressure = bloodPressure.GetString("interval");
+                    var bloodGlucose = obj.GetJSONObject("bloodGlucose");
+                    var intervalGlucose = bloodGlucose.GetString("interval");
+                    var idPersoana = obj.GetInt("idPersoana");
+                    Utils.SetDefaults("IdPersoana", idPersoana.ToString());
+                    // Log.Error("INTERVAL_BLOOD_PRESSURE", intervalBloodPressure);
+                    // Log.Error("INTERVAL_GLUCOSE", intervalGlucose);
 
-                AddDeviceConfig(_db, intervalBloodPressure, intervalGlucose);
+                    AddDeviceConfig(_db, intervalBloodPressure, intervalGlucose);
 
-                LaunchAlarm(context, intervalGlucose, Constants.IntervalGlucose);
-                LaunchAlarm(context, intervalBloodPressure, Constants.IntervalBloodPressure);
+                    LaunchAlarm(context, intervalGlucose, Constants.IntervalGlucose);
+                    LaunchAlarm(context, intervalBloodPressure, Constants.IntervalBloodPressure);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Error la parsarea Jsonului", ex.Message);
+                }
+
             });
         }
 
@@ -88,7 +98,7 @@ namespace FamiliaXamarin.Helpers
             if (!Utils.CheckNetworkAvailability()) return null;
             var result =
                 await WebServices.Get(
-                    "https://gis.indecosoft.net/devices/get-device-config/864190030936193");
+                    $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetImei(Application.Context)}");
 //               var result = await WebServices.Get(
 //                   $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetImei(Application.Context)}",
 //                   Utils.GetDefaults("Token", context));

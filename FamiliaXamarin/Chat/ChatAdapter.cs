@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Familia;
 using Android.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
@@ -61,14 +62,8 @@ namespace FamiliaXamarin.Chat
         {
             var holder = viewHolder as SucHolder;
 
-            //            var currentCrewMember = _messages[position];
-            //
-            //            //Bind our data from our data source to our View References
-            //            viewHolder.UsernameView.Text = currentCrewMember.Username;
-            //            viewHolder.MessageView.Text = currentCrewMember.Message;
-            //viewHolder._image.Text = currentCrewMember.Username;
-
             var message = _messages[position];
+            if (holder == null) return;
             holder.Time.Text = DateTime.Now.ToShortTimeString();
             holder.MessageView.Text = message.Message;
 

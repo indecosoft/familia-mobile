@@ -1,30 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
+using Familia.DataModels;
+using FamiliaXamarin;
 using FamiliaXamarin.DataModels;
+using FamiliaXamarin.Devices.SmartBand;
 using FamiliaXamarin.Helpers;
+using Java.IO;
 using Java.Lang;
 using Java.Text;
 using Java.Util;
-using Java.Util.Concurrent;
 using Org.Json;
 using SQLite;
+using Console = System.Console;
 using Environment = System.Environment;
 using Exception = System.Exception;
-using Math = System.Math;
+using Object = System.Object;
 
-namespace FamiliaXamarin.Services
+namespace Familia.Services
 {
     [Service]
     internal class SmartBandService : Service
@@ -35,18 +34,29 @@ namespace FamiliaXamarin.Services
         private int _refreshTime = 1000;
         private bool _started;
         private readonly Runnable _runnable;
+        private SqlHelper<SmartBandRecords> _sqlHelper;
 
-        private void HandlerRunnable()
+
+
+
+        private async void HandlerRunnable()
         {
-            RefreshToken();
-            SentData();
-            if (_started)
+            if (Utils.CheckIfLocationIsEnabled() && Utils.CheckNetworkAvailability())
             {
-                _handler.PostDelayed(_runnable, _refreshTime*5);
-            }
-        }
 
-        private SQLiteAsyncConnection _db;
+                await RefreshToken();
+                SentData();
+                _handler.PostDelayed(_runnable, _refreshTime * 3600 * 6);
+
+            }
+            else
+            {
+
+                Log.Error("SmartBand Service", "Operation Aborted because Location or Network is disabled");
+                _handler.PostDelayed(_runnable, _refreshTime * 3600 * 3);
+            }
+
+        }
 
         public SmartBandService()
         {
@@ -61,307 +71,265 @@ namespace FamiliaXamarin.Services
         public override void OnCreate()
         {
             base.OnCreate();
-            Log.Error("Service:", "WebSocketService STARTED");
+            Log.Error("Service:", "SmartBandService STARTED");
             try
             {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
+                const string channelId = "my_channel_01";
+                var channel = new NotificationChannel(channelId, "Channel human readable title",
+                    NotificationImportance.Default)
+                { Importance = NotificationImportance.Low };
+                ((NotificationManager)GetSystemService(NotificationService)).CreateNotificationChannel(channel);
 
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                {
-                    string CHANNEL_ID = "my_channel_01";
-                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel human readable title",
-                        NotificationImportance.Default);
+                var notification = new NotificationCompat.Builder(this, channelId)
+                    .SetContentTitle("Familia")
+                    .SetContentText("Ruleaza in fundal")
+                    .SetSmallIcon(Resource.Drawable.logo)
+                    .SetOngoing(true)
+                    .Build();
 
-                    ((NotificationManager)GetSystemService(Context.NotificationService)).CreateNotificationChannel(channel);
 
-                    Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .SetContentTitle("")
-                        .SetContentText("").Build();
-
-                    StartForeground(1, notification);
-                }
-
+                StartForeground(ServiceRunningNotificationId, notification);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                //throw;
+                Log.Error("SmartBand Service Error occurred", e.Message);
             }
         }
 
-        public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
+        public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags,
+            int startId)
+        {
+            StartCommands();
+            return StartCommandResult.Sticky;
+        }
+        private async void StartCommands()
         {
             Log.Error("SmartBand Service", "Started");
 
-            RefreshToken();
-            _started = true;
-            _handler.PostDelayed(_runnable, _refreshTime*10);
+            if (string.IsNullOrEmpty(Utils.GetDefaults(GetString(Resource.String.smartband_device))))
+            {
+                StopSelf();
+            }
+            else
+            {
+                _sqlHelper = await SqlHelper<SmartBandRecords>.CreateAsync();
+                await RefreshToken();
+                _token = Utils.GetDefaults(GetString(Resource.String.smartband_device));
 
-
-
-            return StartCommandResult.Sticky;
+                _started = true;
+                _handler.PostDelayed(_runnable, _refreshTime * 5);
+            }
         }
-
-        private void RefreshToken()
+        private async Task RefreshToken()
         {
-            string refreshToken = Utils.GetDefaults("FitbitRefreshToken", this);
-            Task.Run(async () =>
+            var refreshToken = Utils.GetDefaults("FitbitRefreshToken");
+            await Task.Run(async () =>
             {
                 try
                 {
-                    string storedToken = Utils.GetDefaults("FitbitToken", this);
+                    var storedToken = Utils.GetDefaults(GetString(Resource.String.smartband_device));
                     if (!string.IsNullOrEmpty(storedToken))
                     {
-                        //  var tokenStateDict = new Dictionary<string, string>
-                        // {
-                        //     {"token", storedToken}
-                        // };
-                        _token = storedToken;
-                        //var responseTokenState = await WebServices.Post("https://api.fitbit.com/1.1/oauth2/introspect", tokenStateDict);
-                        //if (responseTokenState != null && new JSONObject(responseTokenState).GetBoolean("active") == false)
-                        //{
+
                         var dict = new Dictionary<string, string>
-                            {
-                                {"grant_type", "refresh_token"}, {"refresh_token", refreshToken}
-                            };
-                        var response = await WebServices.Post("https://api.fitbit.com/oauth2/token", dict);
+                        {
+                            {"grant_type", "refresh_token"}, {"refresh_token", refreshToken}
+                        };
+                        var response = await WebServices.Post("https://api.fitbit.com/oauth2/token",
+                            dict);
                         if (response != null)
                         {
                             var obj = new JSONObject(response);
-                            _token = obj.GetString("access_token");
+                            var token = obj.GetString("access_token");
                             var newRefreshToken = obj.GetString("refresh_token");
                             var userId = obj.GetString("user_id");
-                            Utils.SetDefaults(GetString(Resource.String.smartband_device), _token, this);
-                            Utils.SetDefaults("FitbitToken", _token, this);
-                            Utils.SetDefaults("RitbitRefreshToken", newRefreshToken, this);
-                            Utils.SetDefaults("FitbitUserId", userId, this);
+                            Utils.SetDefaults(GetString(Resource.String.smartband_device),
+                                token);
+                            Utils.SetDefaults("FitbitToken", token);
+                            Utils.SetDefaults("FitbitRefreshToken", newRefreshToken);
+                            Utils.SetDefaults("FitbitUserId", userId);
                         }
-                        // }
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.Error("FitbitServiceError", e.Message);
+                    Log.Error("SmartBand Service Error occurred", e.Message);
+                    StopSelf();
                 }
 
-                //SentData();
-                //var a  = await GetSleepData();
-
             });
         }
-
-
-
-        private async Task<IEnumerable<DevicesRecords>> QueryValuations(SQLiteAsyncConnection db, string query)
-        {
-            return await db.QueryAsync<DevicesRecords>(query);
-        }
-        private async void AddGlucoseRecord(SQLiteAsyncConnection db, Dictionary<string,int> activity, string sleep, string pulse)
-        {
-            var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
-            await db.InsertAsync(new DevicesRecords()
-            {
-                Imei = Utils.GetImei(this),
-                DateTime = ft.Format(new Date()),
-                SecondsOfSleep = sleep,
-                MinutesOfActivity = activity["Activity"].ToString(),
-                StepCounter = activity["Steps"]
-            });
-
-        }
-        private async Task<Dictionary<string, int>> GetSteps()
+        private async Task GetSteps()
         {
             try
             {
-                var data = await WebServices.Get("https://api.fitbit.com/1/user/-/activities/date/today.json", _token);
-                if (!string.IsNullOrEmpty(data))
-                {
-                    Log.Error("Steps Result", data);
-
-                    try
+                await Task.Run(async () =>
                     {
-                        var fairlyActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("fairlyActiveMinutes");
-                        var veryActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("veryActiveMinutes");
-                        var activeMinutes = fairlyActiveMinutes + veryActiveMinutes;
+                        var data =
+                        await WebServices.Get(
+                            "https://api.fitbit.com/1/user/-/activities/date/today.json", _token);
+                        if (!string.IsNullOrEmpty(data))
+                        {
+                            Log.Error("Steps Result", data);
 
-                        var steps = new JSONObject(data).GetJSONObject("summary").GetInt("steps");
+                            try
+                            {
+                                var fairlyActiveMinutes = new JSONObject(data).GetJSONObject("summary")
+                                    .GetInt("fairlyActiveMinutes");
+                                var veryActiveMinutes = new JSONObject(data).GetJSONObject("summary")
+                                    .GetInt("veryActiveMinutes");
+                                var activeMinutes = fairlyActiveMinutes + veryActiveMinutes;
 
-                        return new Dictionary<string, int>
-                    {
-                        {"Steps", steps},
-                        {"Activity", activeMinutes},
-                    };
+                                var steps = new JSONObject(data).GetJSONObject("summary").GetInt("steps");
 
-                    }
-                    catch (JSONException e)
-                    {
-                        e.PrintStackTrace();
-                    }
-                }
+                                var jsonObject = new JSONObject();
+                                var date = DateTime.Now.ToString("yyyy-MM-dd");
+                                jsonObject.Put("steps", steps).Put("activity", activeMinutes).Put("dateTime", date);
+  
+                                if (!Utils.CheckNetworkAvailability())
+                                {
+                                    await _sqlHelper.Insert(new SmartBandRecords { DataObject = jsonObject.ToString(), Type = "Activity" });
+                                }
+                                else
+                                {
+                                    var recordEnumerable =
+                                        await _sqlHelper.QueryValuations($"SELECT * FROM SmartBandRecords WHERE Type  = 'Activity'");
+                                    var jsonArray = new JSONArray();
+                                    foreach (var element in recordEnumerable)
+                                    {
+                                        jsonArray.Put(new JSONObject(element.DataObject));
+                                        await _sqlHelper.Delete(element);
+                                    }
+                                    jsonArray.Put(jsonObject);
+                                    var obj = new JSONObject();
+                                    obj.Put("imei", Utils.GetImei(this)).Put("idClient", Utils.GetDefaults("IdClientPentruFitbit")).Put("idPersoana", Utils.GetDefaults("IdPersoana")).Put("data", jsonArray).Put("latitude", Utils.GetDefaults("Latitude").Replace(',', '.')).Put("longitude", Utils.GetDefaults("Longitude").Replace(',', '.'));
+
+                                    var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/smartband/activity", obj, Utils.GetDefaults("Token"));
+
+                                    if (!string.IsNullOrEmpty(result))
+                                    {
+                                        try
+                                        {
+                                            var obj1 = new JSONObject(result);
+                                            if (obj1.GetString("data") != "done")
+                                            {
+                                                await _sqlHelper.Insert(new SmartBandRecords { DataObject = jsonObject.ToString(), Type = "Activity" });
+                                            }
+                                            else
+                                            {
+                                                await _sqlHelper.QueryValuations($"DELETE FROM SmartBandRecords WHERE Type = 'Activity'");
+                                            }
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Log.Error("SmartBand Service Error occurred", e.Message);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        try
+                                        {
+                                            await _sqlHelper.Insert(new SmartBandRecords { DataObject = jsonObject.ToString(), Type = "Activity" });
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Log.Error("SmartBand Service Error occurred", e.Message);
+                                        }
+                                    }
+                                }
+                            }
+                            catch (JSONException e)
+                            {
+                                Log.Error("SmartBand Service Error occurred", e.Message);
+                                StopSelf();
+                            }
+                        }
+                    });
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error("SmartBand Service Error occurred", e.Message);
             }
-
-            return null;
-
         }
 
-        private async Task<string> GetSleepData()
+        private async Task GetSleepData()
         {
-            var data = await WebServices.Get("https://api.fitbit.com/1.2/user/-/sleep/date/today.json", _token);
-            Log.Error("Sleep Result", data);
-            if (!string.IsNullOrEmpty(data))
+            await Task.Run(async () =>
             {
+                var data =
+                await WebServices.Get("https://api.fitbit.com/1.2/user/-/sleep/date/today.json",
+                    _token);
+
+                if (string.IsNullOrEmpty(data)) return;
                 try
                 {
-                    var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
-                    JSONObject jsonObject;
-                    var jsonArray = new JSONArray();
-                    var array = new JSONObject(data).GetJSONArray("sleep").GetJSONObject(0);
-                    var listOfSleepTypes = array.GetJSONObject("levels").GetJSONArray("data");
-                    for (int i = 0; i < listOfSleepTypes.Length(); i++)
+                    var jsonObject = new JSONObject(data);
+                    if (!Utils.CheckNetworkAvailability())
                     {
-                        var a = listOfSleepTypes.GetJSONObject(i);
-                      
-                            jsonObject = new JSONObject();
-                            jsonObject
-                                .Put( "imei", Utils.GetImei(this))
-                                .Put("dateTimeISO", ft.Format(new Date()))
-                                .Put("geolocation", string.Empty)
-                                .Put("lastLocation", string.Empty)
-                                .Put("sendPanicAlerts", string.Empty)
-                                .Put("stepCounter", string.Empty)
-                                .Put("bloodPressureSystolic", string.Empty)
-                                .Put("bloodPressureDiastolic", string.Empty)
-                                .Put("bloodPressurePulseRate", string.Empty)
-                                .Put("bloodGlucose", string.Empty)
-                                .Put("oxygenSaturation", string.Empty)
-                                .Put("sleepType", a.GetString("level"))
-                                .Put("sleepSeconds", a.GetInt("seconds"))
-                                .Put("dailyActivity", string.Empty)
-                                .Put("extension", string.Empty);
-                            jsonArray.Put(jsonObject);
+                        await _sqlHelper.Insert(new SmartBandRecords { DataObject = jsonObject.ToString(), Type = "Sleep" });
+                    }
+                    else
+                    {
+                        var recordEnumerable =
+                            await _sqlHelper.QueryValuations($"SELECT * FROM SmartBandRecords WHERE Type  = 'Sleep'");
+                        var jsonArray = new JSONArray();
+                        foreach (var element in recordEnumerable)
+                        {
+                            jsonArray.Put(new JSONObject(element.DataObject));
+                            await _sqlHelper.Delete(element);
+                        }
+                        jsonArray.Put(jsonObject);
+                        var obj = new JSONObject();
+                        obj.Put("imei", Utils.GetImei(this)).Put("idClient", Utils.GetDefaults("IdClientPentruFitbit")).Put("idPersoana", Utils.GetDefaults("IdPersoana")).Put("data", jsonArray).Put("latitude", Utils.GetDefaults("Latitude").Replace(',', '.')).Put("longitude", Utils.GetDefaults("Longitude").Replace(',', '.'));
+                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/smartband/sleep", obj, Utils.GetDefaults("Token"));
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                            try
+                            {
+                                var obj1 = new JSONObject(result);
+                                if (obj1.GetString("data") != "done")
+                                {
+                                    await _sqlHelper.Insert(new SmartBandRecords { DataObject = jsonObject.ToString(), Type = "Sleep" });
+                                }
+                                else
+                                {
+                                    await _sqlHelper.QueryValuations($"DELETE FROM SmartBandRecords WHERE Type = 'Sleep'");
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Error("SmartBand Service Error occurred", e.Message);
+                            }
+                        }
+                        else
+                        {
+                            try
+                            {
+                                await _sqlHelper.Insert(new SmartBandRecords { DataObject = jsonObject.ToString(), Type = "Sleep" });
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Error("SmartBand Service Error occurred", e.Message);
+                            }
+                        }
                     }
 
-                    await Task.Run(async () =>
-                    {
-                        var response = await WebServices.Post(Constants.SaveDeviceDataUrl, jsonArray);
-                    });
-
-//                    var h = (int)TimeUnit.Minutes.ToHours(totalMinutesAsleep);
-//                    var min = (int)(((float)totalMinutesAsleep / 60 - h) * 100) * 60 / 100;
-//                    return $"{h} hr {min} min";
                 }
                 catch (JSONException e)
                 {
-                    e.PrintStackTrace();
+                    Log.Error("SmartBand Service Error occurred", e.Message);
+                    StopSelf();
                 }
-            }
-
-            return null;
+            });
+            
         }
 
-        private async Task<string> GetHeartRatePulse()
-        {
-            var data = await WebServices.Get("https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json", _token);
-            if (!string.IsNullOrEmpty(data))
-            {
-                Log.Error("Heartrate Result", data);
-                try
-                {
-                    var bpm = ((JSONObject)new JSONObject(data).GetJSONArray("activities-heart").Get(0)).GetJSONObject("value").GetInt("restingHeartRate");
-                    var bmpText = $"{bpm} bpm";
-
-                        return bmpText;
-                }
-                catch (JSONException e)
-                {
-                    e.PrintStackTrace();
-                }
-            }
-
-            return null;
-        }
         private async void SentData()
         {
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            const string numeDb = "devices_data.db";
-            _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
-
-            var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
-            var sleep = await GetSleepData();
-            await _db.CreateTableAsync<DevicesRecords>();
-            var activity = await GetSteps();
-           
-            var pulse = await GetHeartRatePulse();
-            if (!Utils.CheckNetworkAvailability())
-                AddGlucoseRecord(_db, activity, sleep, pulse);
-            else
-            {
-                JSONObject jsonObject;
-                var jsonArray = new JSONArray();
-                var list = await QueryValuations(_db, "select * from DevicesRecords");
-
-                foreach (var el in list)
-                {
-                    //adaugare campuri suplimentare
-                    try
-                    {
-                        jsonObject = new JSONObject();
-                        jsonObject
-                            .Put("imei", el.Imei)
-                            .Put("dateTimeISO", el.DateTime)
-                            .Put("geolocation", new JSONObject().Put("latitude", $"{el.Latitude}").Put("longitude", $"{el.Longitude}"))
-                            .Put("lastLocation", el.LastLocation)
-                            .Put("sendPanicAlerts", el.SendPanicAlerts)
-                            .Put("stepCounter", el.StepCounter)
-                            .Put("bloodPressureSystolic", el.BloodPresureSystolic)
-                            .Put("bloodPressureDiastolic", el.BloodPresureDiastolic)
-                            .Put("bloodPressurePulseRate", el.BloodPresurePulsRate)
-                            .Put("bloodGlucose", "" + el.BloodGlucose)
-                            .Put("oxygenSaturation", el.OxygenSaturation)
-                            .Put("sleepType", el.SleepType)
-                            .Put("sleepSeconds", el.SecondsOfSleep)
-                            .Put("dailyActivity", el.MinutesOfActivity)
-                            .Put("extension", el.Extension);
-                        jsonArray.Put(jsonObject);
-                    }
-                    catch (JSONException e)
-                    {
-                        e.PrintStackTrace();
-                    }
-                }
-                jsonObject = new JSONObject();
-                jsonObject
-                    .Put("imei", Utils.GetImei(this))
-                    .Put("dateTimeISO", ft.Format(new Date()))
-                    .Put("geolocation", string.Empty)
-                    .Put("lastLocation", string.Empty)
-                    .Put("sendPanicAlerts", string.Empty)
-                    .Put("stepCounter", activity["Steps"])
-                    .Put("bloodPressureSystolic", string.Empty)
-                    .Put("bloodPressureDiastolic", string.Empty)
-                    .Put("bloodPressurePulseRate", string.Empty)
-                    .Put("bloodGlucose", string.Empty)
-                    .Put("oxygenSaturation", string.Empty)
-                    .Put("sleepType", string.Empty)
-                    .Put("sleepSeconds", string.Empty)
-                    .Put("dailyActivity", activity["Activity"].ToString())
-                    .Put("extension", string.Empty);
-                jsonArray.Put(jsonObject);
-                string result = await WebServices.Post(Constants.SaveDeviceDataUrl, jsonArray);
-                if (result == "Succes!")
-                {
-                    //Toast.MakeText(this, "Succes", ToastLength.Long).Show();
-                    await _db.DropTableAsync<DevicesRecords>();
-                }
-                else
-                {
-                    //Toast.MakeText(this, "" + result, ToastLength.Long).Show();
-                }
-
-            }
+            if (!Utils.CheckNetworkAvailability()) return;
+            await GetSleepData();
+            await GetSteps();
 
         }
     }

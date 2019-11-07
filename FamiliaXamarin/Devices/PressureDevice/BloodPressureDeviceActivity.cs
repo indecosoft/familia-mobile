@@ -20,6 +20,7 @@ using Android.Widget;
 using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
+using Familia;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
 using Java.Lang;
@@ -56,9 +57,9 @@ namespace FamiliaXamarin.Devices.PressureDevice
 
         private BluetoothScanCallback _scanCallback;
         private GattCallBack _gattCallback;
-        private SQLiteAsyncConnection _db;
+        private SqlHelper<DevicesRecords> _bleDevicesDataRecords;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_blood_pressure_device);
@@ -72,9 +73,10 @@ namespace FamiliaXamarin.Devices.PressureDevice
             {
                 Finish();
             };
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            var numeDb = "devices_data.db";
-            _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
+//            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+//            var numeDb = "devices_data.db";
+//            _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
+            _bleDevicesDataRecords = await SqlHelper<DevicesRecords>.CreateAsync();
             _lbStatus = FindViewById<TextView>(Resource.Id.status);
             _dataContainer = FindViewById<ConstraintLayout>(Resource.Id.dataContainer);
             _bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
@@ -182,17 +184,21 @@ namespace FamiliaXamarin.Devices.PressureDevice
         private class BluetoothScanCallback : ScanCallback
         {
             private readonly Context _context;
+            private SqlHelper<BluetoothDeviceRecords> _bleDevicesRecords;
             public BluetoothScanCallback(Context context)
             {
                 _context = context;
             }
 
-            public override void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result)
+            public override async void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result)
             {
                 base.OnScanResult(callbackType, result);
-                if (result.Device.Address == null || !result.Device.Address.Equals(
-                        Utils.GetDefaults(_context.GetString(Resource.String.blood_pressure_device),
-                            _context))) return;
+                _bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                var list = await _bleDevicesRecords.QueryValuations( "select * from BluetoothDeviceRecords");
+                
+                if(!(from c in list where c.Address == result.Device.Address 
+                    select new {c.Name, c.Address, c.DeviceType}).Any()) 
+                    return;
                 result.Device.ConnectGatt(_context, false,
                     (_context as BloodPressureDeviceActivity)?._gattCallback);
                 (_context as BloodPressureDeviceActivity)?._bluetoothScanner.StopScan(
@@ -364,14 +370,24 @@ namespace FamiliaXamarin.Devices.PressureDevice
             {
                 var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
 
-                await _db.CreateTableAsync<DevicesRecords>();
+                //await _db.CreateTableAsync<DevicesRecords>();
                 if (!Utils.CheckNetworkAvailability())
-                    AddBloodPressureRecord(_db, data.Sys, data.Dia,data.Pul);
+                {
+                    await _bleDevicesDataRecords.Insert(new DevicesRecords()
+                    {
+                        Imei = Utils.GetImei(this),
+                        DateTime = ft.Format(new Date()),
+                        BloodPresureSystolic = data.Sys,
+                        BloodPresureDiastolic = data.Dia,
+                        BloodPresurePulsRate = data.Pul
+                    });
+                }
+                    //AddBloodPressureRecord(_db, data.Sys, data.Dia,data.Pul);
                 else
                 {
                     JSONObject jsonObject;
                     var jsonArray = new JSONArray();
-                    var list = await QueryValuations(_db, "select * from DevicesRecords");
+                    var list = await _bleDevicesDataRecords.QueryValuations("select * from DevicesRecords");
 
                     foreach (var el in list)
                     {
@@ -419,7 +435,7 @@ namespace FamiliaXamarin.Devices.PressureDevice
                     if (result == "Succes!")
                     {
                         Toast.MakeText(this, "Succes", ToastLength.Long).Show();
-                        await _db.DropTableAsync<DevicesRecords>();
+                        await _bleDevicesDataRecords.DropTable();
                     }
                     else
                     {
@@ -440,22 +456,19 @@ namespace FamiliaXamarin.Devices.PressureDevice
             ActivateScanButton();
         }
 
-        private async Task<IEnumerable<DevicesRecords>> QueryValuations(SQLiteAsyncConnection db, string query)
-        {
-            return await db.QueryAsync<DevicesRecords>(query);
-        }
-        private async void AddBloodPressureRecord(SQLiteAsyncConnection db, float systolic, float diastolic, float pulsRate)
-        {
-            var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
-            await db.InsertAsync(new DevicesRecords()
-            {
-                Imei = Utils.GetImei(this),
-                DateTime = ft.Format(new Date()),
-                BloodPresureSystolic = systolic,
-                BloodPresureDiastolic = diastolic,
-                BloodPresurePulsRate = pulsRate
-            });
-        }
+        
+//        private async void AddBloodPressureRecord(SQLiteAsyncConnection db, float systolic, float diastolic, float pulsRate)
+//        {
+//            var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
+//            await db.InsertAsync(new DevicesRecords()
+//            {
+//                Imei = Utils.GetImei(this),
+//                DateTime = ft.Format(new Date()),
+//                BloodPresureSystolic = systolic,
+//                BloodPresureDiastolic = diastolic,
+//                BloodPresurePulsRate = pulsRate
+//            });
+//        }
 
         private void ActivateScanButton()
         {

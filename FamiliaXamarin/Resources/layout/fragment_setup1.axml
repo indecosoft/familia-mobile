@@ -8,7 +8,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F5F7FA"
+        android:background="@color/colorPrimary"
         android:enabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="1"
@@ -22,7 +22,7 @@
         android:src="@drawable/profile"
 
 
-        app:civ_border_color="#FF000000"
+        app:civ_border_color="@color/colorAccent"
         app:civ_border_width="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -32,13 +32,12 @@
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btnUpload"
-        android:background="@drawable/button_style"
+        android:background="@drawable/main_button_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="80dp"
         android:layout_marginEnd="80dp"
-        android:padding="12dp"
-        android:textColor="@color/white"
+        android:padding="16dp"
         android:textAllCaps="false"
         android:layout_marginTop="16dp"
         android:text="Incarcati o imagine"
@@ -51,12 +50,12 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:textColor="@color/white"
         android:background="@drawable/setup_button"
         android:textAllCaps="false"
         android:text="Urmatorul"
         android:textAlignment="textEnd"
         android:drawableEnd="@drawable/chevron_right"
+        android:drawableTint="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintLeft_toLeftOf="parent"

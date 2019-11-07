@@ -46,6 +46,7 @@
             android:layout_below="@+id/fingerPrint" />
 
         <Switch
+            android:id="@+id/pin_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -56,6 +57,7 @@
     </RelativeLayout>
 
     <TextView
+		android:id="@+id/tv_medicine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Medicatie"
@@ -68,6 +70,7 @@
         android:layout_marginTop="3dp" />
 
     <RelativeLayout
+					android:id="@+id/medicine_relative"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -91,6 +94,7 @@
 
     </RelativeLayout>
     <TextView
+		android:id="@+id/tv_devices"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Dispozitive medicale"
@@ -117,4 +121,18 @@
             android:layout_marginTop="16dp" />
 
     </RelativeLayout>
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+        android:layout_height="match_parent">
+	 <TextView
+            android:id="@+id/tv_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Versiunea"
+			android:layout_alignParentBottom="true"
+            android:textSize="16sp" />
+
+		    </RelativeLayout>
+
 </LinearLayout>

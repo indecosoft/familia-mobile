@@ -10,32 +10,31 @@
     <TemplateGuid>{d0238942-4dcf-4d08-b23a-81159ca3b345}</TemplateGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FamiliaXamarin</RootNamespace>
+    <RootNamespace>Familia</RootNamespace>
     <AssemblyName>FamiliaXamarin</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
-    <DebugType>portable</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AndroidLinkMode>Full</AndroidLinkMode>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -47,11 +46,24 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
-    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
+    <Debugger>Xamarin</Debugger>
+    <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev.Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\dev.Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>portable</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Android.Export" />
     <Reference Include="System" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
@@ -60,9 +72,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="DataModels\BluetoothDeviceRecords.cs" />
     <Compile Include="DataModels\DeviceConfigRecords.cs" />
     <Compile Include="DataModels\DevicesRecords.cs" />
     <Compile Include="DataModels\MedicineRecords.cs" />
+    <Compile Include="DataModels\MedicineServerRecords.cs" />
+    <Compile Include="DataModels\SmartBandRecords.cs" />
+    <Compile Include="Devices\AddNewDeviceDialog.cs" />
+    <Compile Include="Devices\DeleteDeviceDialog.cs" />
+    <Compile Include="Devices\DeviceManagementDialog.cs" />
+    <Compile Include="Devices\DevicesManagementActivity.cs" />
+    <Compile Include="Devices\DevicesManagementAdapter.cs" />
+    <Compile Include="Devices\DevicesManagementModel.cs" />
+    <Compile Include="Devices\DevicesManagementRecyclerViewAdapter.cs" />
+    <Compile Include="Games\GameActivity.cs" />
+    <Compile Include="Games\GameCenterActivity.cs" />
+    <Compile Include="Games\Sensors\GyroSensor.cs" />
     <Compile Include="Helpers\AlarmDeviceReceiver.cs" />
     <Compile Include="Helpers\BiometricUtils.cs" />
     <Compile Include="Helpers\ChargerReceiver.cs" />
@@ -70,6 +95,7 @@
     <Compile Include="Helpers\ProgressBarDialog.cs" />
     <Compile Include="Helpers\RejectChatBroadcastReceiver.cs" />
     <Compile Include="Helpers\SharingDatePickerFragment.cs" />
+    <Compile Include="Helpers\SqlHelper.cs" />
     <Compile Include="JsonModels\ConverstionsModel.cs" />
     <Compile Include="JsonModels\DiseaseModel.cs" />
     <Compile Include="JsonModels\FirstSetupModel.cs" />
@@ -81,6 +107,7 @@
     <Compile Include="Medicatie\Alarm\App.cs" />
     <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiverServer.cs" />
     <Compile Include="Medicatie\CustomDialogDeleteDisease.cs" />
+    <Compile Include="Medicatie\Data\NetworkingData.cs" />
     <Compile Include="Medicatie\DiseaseActivity.cs" />
     <Compile Include="Medicatie\DiseaseAdapter.cs" />
     <Compile Include="Medicatie\CustomDialogDeleteMedicament.cs" />
@@ -93,12 +120,28 @@
     <Compile Include="Medicatie\Entities\MedicationSchedule.cs" />
     <Compile Include="Medicatie\HourAdapter.cs" />
     <Compile Include="Medicatie\MedicineAdapter.cs" />
+    <Compile Include="Medicatie\MedicineBaseActivity.cs" />
     <Compile Include="Medicatie\MedicineFragment.cs" />
+    <Compile Include="Medicatie\MedicineLostAdapter.cs" />
+    <Compile Include="Medicatie\MedicineServerAdapter.cs" />
+    <Compile Include="Medicatie\MedicineServerFragment.cs" />
+    <Compile Include="Medicatie\MedicineLostFragment.cs" />
+    <Compile Include="Medicatie\MedicineServerRecyclerViewOnScrollListener.cs" />
+    <Compile Include="Profile\Data\db\DiseaseDataModel.cs" />
+    <Compile Include="Profile\Data\PersonView.cs" />
+    <Compile Include="Profile\Data\PersonalData.cs" />
+    <Compile Include="Profile\Data\PersonalDisease.cs" />
+    <Compile Include="Profile\Data\db\ProfileDataModel.cs" />
+    <Compile Include="Profile\Data\ProfileStorage.cs" />
+    <Compile Include="Profile\DiseasesAdapter.cs" />
+    <Compile Include="Profile\ProfileActivity.cs" />
+    <Compile Include="Profile\UpdateProfileActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Chat\ChatActivity.cs" />
     <Compile Include="Chat\ChatAdapter.cs" />
     <Compile Include="Chat\ChatModel.cs" />
+    <Compile Include="Services\MedicationServerService.cs" />
     <Compile Include="Services\MedicationService.cs" />
     <Compile Include="Services\MedicalAsistanceService.cs" />
     <Compile Include="Sharing\CustomDialogProfileSharingData.cs" />
@@ -109,6 +152,7 @@
     <Compile Include="Services\SmartBandService.cs" />
     <Compile Include="Settings\SettingsFragment.cs" />
     <Compile Include="Sharing\SharingMenuActivity.cs" />
+    <Compile Include="Sharing\SharingPagerAdapter.cs" />
     <Compile Include="Sharing\Tab1Fragment.cs" />
     <Compile Include="Sharing\Tab2Fragment.cs" />
     <Compile Include="WebSocket\WebSocketClient.cs" />
@@ -133,7 +177,7 @@
     <Compile Include="Active Conversations\ConversationsFragment.cs" />
     <Compile Include="Asistenta sociala\AsistentForm.cs" />
     <Compile Include="Asistenta sociala\BenefitAdapter.cs" />
-    <Compile Include="Asistenta sociala\BenefitSpinnerState.cs" />
+    <Compile Include="Asistenta sociala\SearchListModel.cs" />
     <Compile Include="Asistenta sociala\QrCodeGenerator.cs" />
     <Compile Include="Login System\FirstSetup.cs" />
     <Compile Include="Login System\FirstSetupViewPager.cs" />
@@ -143,6 +187,13 @@
     <Compile Include="Helpers\DatePickerFragment.cs" />
     <Compile Include="Helpers\Utils.cs" />
     <Compile Include="WebServices\WebServices.cs" />
+    <Compile Include="Login System\PinActivity.cs" />
+    <Compile Include="Settings\ActivitySetPin.cs" />
+    <Compile Include="DataModels\ConversationsRecord.cs" />
+    <Compile Include="Helpers\Encryption.cs" />
+    <Compile Include="Asistenta sociala\SearchListActivity.cs" />
+    <Compile Include="Asistenta sociala\SearchListAdapter.cs" />
+    <Compile Include="WebSocket\WebSocketLocation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -162,6 +213,26 @@
     <AndroidResource Include="Resources\raw\bell.json" />
     <AndroidResource Include="Resources\raw\fingerprint.json" />
     <AndroidResource Include="Resources\raw\devices_data.db" />
+    <AndroidResource Include="Resources\layout\activity_pin_lockscreen.axml" />
+    <AndroidResource Include="Resources\drawable\pin_background.xml" />
+    <AndroidResource Include="Resources\layout\activity_diseases.axml">
+      <SubType>
+      </SubType>
+      <Generator>
+      </Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable\magnify.xml">
+      <SubType>
+      </SubType>
+      <Generator>
+      </Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable\check.xml">
+      <SubType>
+      </SubType>
+      <Generator>
+      </Generator>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -212,7 +283,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Com.Airbnb.Android.Lottie">
-      <Version>2.7.0</Version>
+      <Version>3.0.3</Version>
     </PackageReference>
     <PackageReference Include="Glide.Xamarin">
       <Version>4.1.1</Version>
@@ -224,7 +295,7 @@
       <Version>3.0.3</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.1</Version>
+      <Version>12.0.2</Version>
     </PackageReference>
     <PackageReference Include="Refractored.Controls.CircleImageView">
       <Version>1.0.1</Version>
@@ -239,20 +310,20 @@
       <Version>1.1.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.CustomTabs">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0" />
+    <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.1" />
     <PackageReference Include="Xamarin.Android.Support.v4">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.CardView">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.RecyclerView">
-      <Version>28.0.0</Version>
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.GooglePlayServices.Location">
       <Version>60.1142.1</Version>
@@ -265,6 +336,9 @@
     </PackageReference>
     <PackageReference Include="ZXing.Net.Mobile">
       <Version>2.4.1</Version>
+    </PackageReference>
+    <PackageReference Include="Pinview">
+      <Version>1.0.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -624,7 +698,7 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\progress_dialog_layout.axml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
@@ -658,7 +732,7 @@
     <AndroidResource Include="Resources\drawable\view_list.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\profile_sharing_data.xml" />
+    <AndroidResource Include="Resources\layout\profile_sharing_data.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\test_Sharing.axml">
@@ -794,6 +868,186 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\card.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\gender_female.xml" />
+    <AndroidResource Include="Resources\drawable\gender_male.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\gender_toggle.xml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\gender_tint.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\bluetooth.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_devices_management.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_device_type.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\logo_familia.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dialog_devices_management.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dialog_add_new_device.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\dialog_delete_device.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\MedicineFragmentBase.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\menu_medication.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_medicine_server.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_medser.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\doctor.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_medicine_lost.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_med_lost.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\pill_lost.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\menu_medication_tip4.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_med_lost_pers.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\pill_lost_pers.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\raw\alarm.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_profile.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\calendar_age.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\human_female.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\human_male.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_profile_disease.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\bottle_tonic_plus.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\disease_bag.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\gamepad_variant.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_game_center.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\test.html">
+      <SubType>Designer</SubType>
+    </AndroidAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_game.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\images\layer1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\images\layer2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\images\layer3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\images\layer4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\images\layer5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\images\layer6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\interactive.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\test.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\test.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\jquery.keyframes.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\circle_edit_outline.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_update_profile.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\close_notsaved.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\save_check.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\full_secondary_button_style.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\secondary_disease_bag.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\p5.js" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

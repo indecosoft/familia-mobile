@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -14,10 +15,13 @@ using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
 using Com.Bumptech.Glide;
+using Familia;
+using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
 using Java.Util.Concurrent;
 using Org.Json;
 using Refractored.Controls;
+using SQLite;
 using Task = System.Threading.Tasks.Task;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
@@ -41,15 +45,14 @@ namespace FamiliaXamarin.Devices.SmartBand
         private CircleImageView _avatarImage;
         private ConstraintLayout _loadingScreen;
 
-
         private void RefreshToken()
         {
-            var refreshToken = Utils.GetDefaults("FitbitRefreshToken", this);
+            var refreshToken = Utils.GetDefaults("FitbitRefreshToken");
             Task.Run(async () =>
             {
                 try
                 {
-                    string storedToken = Utils.GetDefaults("FitbitToken", this);
+                    string storedToken = Utils.GetDefaults("FitbitToken");
                     if (!string.IsNullOrEmpty(storedToken))
                     {
                         _token = storedToken;
@@ -64,16 +67,35 @@ namespace FamiliaXamarin.Devices.SmartBand
                             _token = obj.GetString("access_token");
                             var newRefreshToken = obj.GetString("refresh_token");
                             var userId = obj.GetString("user_id");
-                            Utils.SetDefaults(GetString(Resource.String.smartband_device), _token, this);
-                            Utils.SetDefaults("FitbitToken", _token, this);
-                            Utils.SetDefaults("RitbitRefreshToken", newRefreshToken, this);
-                            Utils.SetDefaults("FitbitUserId", userId, this);
+                            Utils.SetDefaults(GetString(Resource.String.smartband_device), _token);
+                            Utils.SetDefaults("FitbitToken", _token);
+                            Utils.SetDefaults("RitbitRefreshToken", newRefreshToken);
+                            Utils.SetDefaults("FitbitUserId", userId);
                         }
+                    }
+                    else
+                    {
+                        Utils.SetDefaults(GetString(Resource.String.smartband_device), null);
+                        Utils.SetDefaults("FitbitToken", null);
+                        Utils.SetDefaults("RitbitRefreshToken", null);
+                        Utils.SetDefaults("FitbitUserId", null);
+                        var sqlHelper =
+                       await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                        await sqlHelper.QueryValuations($"DELETE FROM BluetoothDeviceRecords WHERE DeviceType ='{GetString(Resource.String.smartband_device)}'");
+                        Finish();
                     }
                 }
                 catch (Exception e)
                 {
                     Log.Error("FitbitServiceError", e.Message);
+                    Utils.SetDefaults(GetString(Resource.String.smartband_device), null);
+                    Utils.SetDefaults("FitbitToken", null);
+                    Utils.SetDefaults("RitbitRefreshToken", null);
+                    Utils.SetDefaults("FitbitUserId", null);
+                    var sqlHelper =
+                   await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                    await sqlHelper.QueryValuations($"DELETE FROM BluetoothDeviceRecords WHERE DeviceType ='{GetString(Resource.String.smartband_device)}'");
+                    Finish();
                 }
 
             });
@@ -101,12 +123,7 @@ namespace FamiliaXamarin.Devices.SmartBand
                 new LottieValueCallback(filter));
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
-            toolbar.NavigationClick += delegate
-            {
-                var intent = new Intent(this, typeof(MainActivity));
-                intent.AddFlags(ActivityFlags.ClearTop);
-                StartActivity(intent);
-            };
+            toolbar.NavigationClick += delegate { OnBackPressed(); };
             Title = "Profil de sanatate";
 
             OnNewIntent(Intent);
@@ -128,11 +145,19 @@ namespace FamiliaXamarin.Devices.SmartBand
                         _token = obj.GetString("access_token");
                         var refreshToken = obj.GetString("refresh_token");
                         var userId = obj.GetString("user_id");
-                        Utils.SetDefaults(GetString(Resource.String.smartband_device), _token, this);
-                        Utils.SetDefaults("FitbitToken", _token, this);
-                        Utils.SetDefaults("FitbitRefreshToken", refreshToken, this);
-                        Utils.SetDefaults("FitbitUserId", userId, this);
-                        Utils.SetDefaults("FitbitAuthCode", code, this);
+                        var bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                        await bleDevicesRecords.Insert(
+                            new BluetoothDeviceRecords
+                            {
+                                Name = "SmartBand", 
+                                Address = _token,
+                                DeviceType = GetString(Resource.String.smartband_device)
+                            });
+                        Utils.SetDefaults(GetString(Resource.String.smartband_device), _token);
+                        Utils.SetDefaults("FitbitToken", _token);
+                        Utils.SetDefaults("FitbitRefreshToken", refreshToken);
+                        Utils.SetDefaults("FitbitUserId", userId);
+                        Utils.SetDefaults("FitbitAuthCode", code);
                     }
 
                 });
@@ -140,11 +165,11 @@ namespace FamiliaXamarin.Devices.SmartBand
             else
             {
                 RefreshToken();
-                _token = Utils.GetDefaults(GetString(Resource.String.smartband_device), this);
-                Log.Error("TokenFromShared", _token);
+                _token = Utils.GetDefaults(GetString(Resource.String.smartband_device));
+               // Log.Error("TokenFromShared", _token);
             }
             _loadingScreen.Visibility = ViewStates.Visible;
-            await Task.Run(function: async () => await PopulateFields());
+            await Task.Run(async () => await PopulateFields());
             _loadingScreen.Visibility = ViewStates.Gone;
         }
 
@@ -178,7 +203,15 @@ namespace FamiliaXamarin.Devices.SmartBand
                     {
                         _lbDisplayName.Text = displayName;
                         _lbFullName.Text = fullName;
-                        Glide.With(this).Load(avatarUrl).Into(_avatarImage);
+                        try
+                        {
+                            Glide.With(this).Load(avatarUrl).Into(_avatarImage);
+                        }
+                        catch
+                        {
+                            //ignored
+                        }
+
                     });
 
                 }
@@ -207,7 +240,7 @@ namespace FamiliaXamarin.Devices.SmartBand
                     RunOnUiThread(() =>
                     {
                         _lbSteps.Text = $"{steps}";
-                        _lbActivity.Text = $"{activeMinutes}";
+                        _lbActivity.Text = $"{activeMinutes} min";
                     });
                 }
                 catch (JSONException e)
@@ -274,6 +307,7 @@ namespace FamiliaXamarin.Devices.SmartBand
             base.OnBackPressed();
             var intent = new Intent(this, typeof(MainActivity));
             intent.AddFlags(ActivityFlags.ClearTop);
+            intent.PutExtra("FromSmartband", true);
             StartActivity(intent);
         }
     }

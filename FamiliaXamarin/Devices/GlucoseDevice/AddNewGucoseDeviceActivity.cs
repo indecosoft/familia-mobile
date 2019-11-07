@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.IO;
 using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
@@ -10,7 +11,11 @@ using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Widget;
+using Familia;
+using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
+using Org.Json;
+using SQLite;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.Devices.GlucoseDevice
@@ -29,8 +34,9 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
 
         private DevicesRecyclerViewAdapter _adapter;
         private BluetoothScanCallback _scanCallback;
+        private SqlHelper<BluetoothDeviceRecords> _bleDevicesRecords;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
@@ -56,19 +62,37 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
             _devices = new List<string>();
             _devicesAddress = new List<string>();
 
+//            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+//            var numeDb = "devices_data.db";
+//            _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
+//            await _db.CreateTableAsync<BluetoothDeviceRecords>();
+            
             _adapter = new DevicesRecyclerViewAdapter(this, _devices);
-            _adapter.ItemClick += delegate(object sender, int i)
+            _adapter.ItemClick += async delegate(object sender, int i)
             {
-                Contract.Requires(sender != null);
-                Utils.SetDefaults(GetString(Resource.String.blood_glucose_device), _devicesAddress[i], this);
-                StartActivity(typeof(GlucoseDeviceActivity));
+//                var devices = new JSONObject().Put("Name", $"Glucometru - {_devices[i]}")
+//                    .Put("Address", _devicesAddress[i]);
+//                Utils.SetDefaults(GetString(Resource.String.blood_glucose_device), devices.ToString(), this);
+//                
+                _bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                await _bleDevicesRecords.Insert(
+                    new BluetoothDeviceRecords
+                    {
+                        Name = _devices[i], Address = _devicesAddress[i],
+                        DeviceType = GetString(Resource.String.blood_glucose_device)
+                    });
+
+                if (!Intent.GetBooleanExtra("RegisterOnly", false))
+                {
+                    StartActivity(typeof(GlucoseDeviceActivity));
+                }
                 Finish();
             };
             _recyclerView = FindViewById<RecyclerView>(Resource.Id.addNewDeviceRecyclerView);
             _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
             _recyclerView.SetAdapter(_adapter);
 
-            BluetoothManager bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
+            var bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
             if (bluetoothManager != null)
             {
                 _bluetoothAdapter = bluetoothManager.Adapter;
