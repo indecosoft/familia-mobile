@@ -151,7 +151,7 @@ namespace FamiliaXamarin
 
 
 //            make it hidden for release bc is not done yet
-            menuNav.FindItem(Resource.Id.games).SetVisible(false);
+//            menuNav.FindItem(Resource.Id.games).SetVisible(false);
 
 
             switch (type)

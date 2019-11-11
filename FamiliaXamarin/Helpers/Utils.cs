@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.Gms.Common;
 using Android.Graphics;
@@ -15,23 +12,22 @@ using Android.Telephony;
 using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
-using Android.Widget;
+using Familia.Helpers;
 using FamiliaXamarin.Chat;
 using Java.Lang;
 using Java.Text;
 using Java.Util;
 using Org.Json;
+using System;
+using System.Text.RegularExpressions;
+using Android.Widget;
 using ZXing;
 using ZXing.Common;
 using ZXing.Mobile;
 using Exception = System.Exception;
 using Math = System.Math;
-using Familia;
-using FamiliaXamarin.Services;
 using Orientation = Android.Media.Orientation;
 using Resource = Familia.Resource;
-using Familia.Helpers;
-using Java.Security;
 
 namespace FamiliaXamarin.Helpers
 {
@@ -97,26 +93,40 @@ namespace FamiliaXamarin.Helpers
             var match = regex.Match(s);
             return match.Success;
         }
+
+
+      
         public static string GetImei(Context ctx)
         {
+
+        /**
+         * return imei if android version is 9 or below
+         * return android_id if android version is bigger than 9*
+         */
             TelephonyManager mgr = ctx.GetSystemService(Context.TelephonyService) as TelephonyManager;
+            if (mgr.Imei == null)
+            {
+                var android_id = testAndroidIdForAndroid10("android10imei", ctx);
+                if (android_id != null)
+                {
+                    return android_id;
+                }
+            }
+
             return mgr?.Imei;
         }
 
-        public static void SetImei(string imei, Context context)
+        public static string testAndroidIdForAndroid10(string imei, Context ctx)
         {
             if (Build.VERSION.SdkInt > BuildVersionCodes.P)
             {
                 Log.Error("UTILS IMEI", "hello android 10");
                 var android_id = Android.Provider.Settings.Secure.GetString(Android.App.Application.Context.ContentResolver, Android.Provider.Settings.Secure.AndroidId);
                 Log.Error("UTILS IMEI", android_id);
-                
-            }
-            else
-            {
-                Log.Error("UTILS IMEI", "hello android below 10");
+                return android_id;
             }
 
+            return null;
         }
 
         public static Bitmap CheckRotation(string photoPath, Bitmap bitmap)

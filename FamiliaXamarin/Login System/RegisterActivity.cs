@@ -198,7 +198,12 @@ namespace FamiliaXamarin
         {
             _progressBarDialog.Show();
 
-            Utils.SetImei("aaaa");
+            //TODO if getImei is null, do something
+            /**
+             * return imei if android version is 9 or below
+             * return android_id if android version is bigger than 9*
+             */
+
 
             await Task.Run(async () => {
 
