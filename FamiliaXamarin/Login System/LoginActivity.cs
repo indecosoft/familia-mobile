@@ -406,7 +406,7 @@ namespace Familia.Login_System
                 {
                     var dataToSend = new JSONObject().Put("email", _usernameEditText.Text)
                     .Put("password", _passwordEditText.Text).Put("imei",
-                        Utils.GetImei(this));
+                        Utils.GetDeviceIdentificator(this));
 
                     var response =
                         await WebServices.Post(Constants.PublicServerAddress + "/api/login",
@@ -436,7 +436,7 @@ namespace Familia.Login_System
                                 var type = new JSONObject(response).GetString("tip");
 
                                 Utils.SetDefaults("Token", token);
-                                Utils.SetDefaults("Imei", Utils.GetImei(this));
+                                Utils.SetDefaults("Imei", Utils.GetDeviceIdentificator(this));
                                 Utils.SetDefaults("Email", _usernameEditText.Text);
                                 Utils.SetDefaults("Logins", logins.ToString());
                                 Utils.SetDefaults("Name", nume);

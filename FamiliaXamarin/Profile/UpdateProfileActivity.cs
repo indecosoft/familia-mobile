@@ -400,47 +400,26 @@ namespace Familia.Profile
                 etName.Text = personView.Name;
                 SetGender(personView.Gender);
 
-                var refactor = personView.Birthdate.Split("/");
-                DateTime time;// = Convert.ToDateTime(refactor[1] + "/" + refactor[0] + "/" + refactor[2]);
+//                var refactor = personView.Birthdate.Split("/");
+//                DateTime time;// = Convert.ToDateTime(refactor[1] + "/" + refactor[0] + "/" + refactor[2]);
+//
+//                try
+//                {
+//                    time = new DateTime(int.Parse(refactor[2]), int.Parse(refactor[1]), int.Parse(refactor[0]));
+//                    birthdate = time.ToString("MM/dd/yyyy");
+//
+//                }
+//                catch (Exception ex)
+//                {
+//                    Log.Error("UpdateProfileActivity ERR", ex.Message);
+//                    RunOnUiThread(() => dialog.Dismiss());
+//                }
 
-                try
-                {
-                    time = new DateTime(int.Parse(refactor[2]), int.Parse(refactor[1]), int.Parse(refactor[0]));
-                    birthdate = time.ToString("MM/dd/yyyy");
+                
 
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("UpdateProfileActivity ERR", ex.Message);
-                    RunOnUiThread(() => dialog.Dismiss());
-                }
-
-
-                try
-                {
-                    //format datetime de pe server
-                    DateTime birthdt = Convert.ToDateTime(personView.Birthdate);
-                    birthdate =  birthdt.Day + "/" + birthdt.Month + "/" + birthdt.Year;
-                }
-                catch (Exception e)
-                {
-                    Log.Error("ProfileActivity", "birthdate convert: " + e.Message);
-
-                    try
-                    {   //format zi/luna/an
-                        var refact = personView.Birthdate.Split("/");
-                        string dt;
-                        DateTime mytime;
-                        mytime = new DateTime(int.Parse(refact[2]), int.Parse(refact[1]), int.Parse(refact[0]));
-                        dt = mytime.ToString("MM/dd/yyyy");
-                        birthdate =  mytime.Day + "/" + mytime.Month + "/" + mytime.Year;
-
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error("ProfileActivity ERR", ex.Message);
-                    }
-                }
+                birthdate = getDateString(personView.Birthdate);
+                personView.Birthdate = getDateString(personView.Birthdate);
+                
 
 
                 tvBirthDate.Text = personView.Birthdate;
@@ -452,6 +431,37 @@ namespace Familia.Profile
                 Log.Error("UpdateProfileActivity ERR", e.Message);
                 RunOnUiThread(() => dialog.Dismiss());
             }
+        }
+
+        private string getDateString(string dateString)
+        {
+            try
+            {
+                //format datetime de pe server
+                DateTime birthdate = Convert.ToDateTime(dateString);
+                return birthdate.Day + "/" + birthdate.Month + "/" + birthdate.Year;
+            }
+            catch (Exception e)
+            {
+                Log.Error("UpdateProfileActivity", "birthdate convert: " + e.Message);
+
+                try
+                {   //format zi/luna/an
+                    var refact = personView.Birthdate.Split("/");
+                    string dt;
+                    DateTime mytime;
+                    mytime = new DateTime(int.Parse(refact[2]), int.Parse(refact[1]), int.Parse(refact[0]));
+                    dt = mytime.ToString("MM/dd/yyyy");
+                    return mytime.Day + "/" + mytime.Month + "/" + mytime.Year;
+
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("UpdateProfileActivity ERR", ex.Message);
+                }
+                return null;
+            }
+           
         }
 
         private void SetGender(string gender)

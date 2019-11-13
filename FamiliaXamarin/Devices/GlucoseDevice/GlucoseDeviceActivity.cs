@@ -346,7 +346,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
                 {
                     await _bleDevicesDataRecords.Insert(new DevicesRecords()
                     {
-                        Imei = Utils.GetImei(this),
+                        Imei = Utils.GetDeviceIdentificator(this),
                         DateTime = ft.Format(new Date()),
                         BloodGlucose = (int) g
                     });
@@ -387,7 +387,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice
                     }
                     jsonObject = new JSONObject();
                     jsonObject
-                        .Put("imei", Utils.GetImei(this))
+                        .Put("imei", Utils.GetDeviceIdentificator(this))
                         .Put("dateTimeISO", ft.Format(new Date()))
                         .Put("geolocation", string.Empty)
                         .Put("lastLocation", string.Empty)

@@ -427,13 +427,13 @@ namespace FamiliaXamarin
                     break;
                 case Resource.Id.logout:
 
-                    Utils.RemoveDefaults();
+                     Utils.RemoveDefaults();
                     WebSocketClient.Disconect();
                     //Process.KillProcess(Process.MyPid());
-                        StopService(_loacationServiceIntent);
-                        StopService(_webSocketServiceIntent);
-                        StopService(_medicationServerServiceIntent);
-                        StopService(_smartBandServiceIntent);
+//                        StopService(_loacationServiceIntent);
+//                        StopService(_webSocketServiceIntent);
+//                        StopService(_medicationServerServiceIntent);
+//                        StopService(_smartBandServiceIntent);
                        // StopService(_medicationServiceIntent);
                     ClearBluetoothDevices();
                     ClearMedicationStorages();

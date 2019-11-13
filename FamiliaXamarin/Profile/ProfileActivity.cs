@@ -74,7 +74,14 @@ namespace Familia.Profile
             var layoutManager = new LinearLayoutManager(this);
             rv.SetLayoutManager(layoutManager);
 
-           //TODO hide "afectiuni" for correct type of user
+            TextView tvDeviceId = FindViewById<TextView>(Resource.Id.tv_device_id_value);
+            string deviceId = Utils.GetDeviceIdentificator(this);
+            if (!string.IsNullOrEmpty(deviceId))
+            {
+                tvDeviceId.Text = deviceId;
+            }
+
+            //TODO hide "afectiuni" for correct type of user
         }
         
 
@@ -313,17 +320,50 @@ namespace Familia.Profile
 
         public string GetDate(string dateString)
         {
+
+            //here is the problem
+
+
+//            try
+//            {
+//                DateTime birthdate = Convert.ToDateTime(dateString);
+//                return birthdate.Month + "/" + birthdate.Day + "/" + birthdate.Year;
+//            }
+//            catch (Exception e)
+//            {
+//                Log.Error("ProfileActivity", "birthdate convert: " + e.Message);
+//                return null;
+//            }
+
             try
             {
+                //format datetime de pe server
                 DateTime birthdate = Convert.ToDateTime(dateString);
                 return birthdate.Month + "/" + birthdate.Day + "/" + birthdate.Year;
             }
             catch (Exception e)
             {
                 Log.Error("ProfileActivity", "birthdate convert: " + e.Message);
+
+                try
+                {   //format zi/luna/an
+                    var refact = dateString.Split("/");
+                    string dt;
+                    DateTime mytime;
+                    mytime = new DateTime(int.Parse(refact[2]), int.Parse(refact[1]), int.Parse(refact[0]));
+                    dt = mytime.ToString("MM/dd/yyyy");
+                    return mytime.Month + "/" + mytime.Day + "/" + mytime.Year;
+
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("eProfileActivity ERR", ex.Message);
+                }
                 return null;
             }
         }
+
+     
 
         public void OnClick(View v)
         {

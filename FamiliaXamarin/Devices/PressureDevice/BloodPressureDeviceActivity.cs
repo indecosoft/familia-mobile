@@ -375,7 +375,7 @@ namespace FamiliaXamarin.Devices.PressureDevice
                 {
                     await _bleDevicesDataRecords.Insert(new DevicesRecords()
                     {
-                        Imei = Utils.GetImei(this),
+                        Imei = Utils.GetDeviceIdentificator(this),
                         DateTime = ft.Format(new Date()),
                         BloodPresureSystolic = data.Sys,
                         BloodPresureDiastolic = data.Dia,
@@ -418,7 +418,7 @@ namespace FamiliaXamarin.Devices.PressureDevice
                     }
                     jsonObject = new JSONObject();
                     jsonObject
-                        .Put("imei", Utils.GetImei(this))
+                        .Put("imei", Utils.GetDeviceIdentificator(this))
                         .Put("dateTimeISO", ft.Format(new Date()))
                         .Put("geolocation", string.Empty)
                         .Put("lastLocation", string.Empty)
@@ -462,7 +462,7 @@ namespace FamiliaXamarin.Devices.PressureDevice
 //            var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
 //            await db.InsertAsync(new DevicesRecords()
 //            {
-//                Imei = Utils.GetImei(this),
+//                Imei = Utils.GetDeviceIdentificator(this),
 //                DateTime = ft.Format(new Date()),
 //                BloodPresureSystolic = systolic,
 //                BloodPresureDiastolic = diastolic,

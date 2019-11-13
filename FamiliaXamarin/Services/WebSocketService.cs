@@ -19,10 +19,16 @@ namespace Familia.Services
         readonly IWebSocketClient _socketClient = new WebSocketClient();
         readonly IWebSocketClient webSocketLocation = new WebSocketLocation();
         private const int ServiceRunningNotificationId = 10000;
-
+        private readonly ChargerReceiver charger = new ChargerReceiver();
         public override IBinder OnBind(Intent intent)
         {
             throw new NotImplementedException();
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            UnregisterReceiver(charger);
         }
 
         public override async void OnCreate()
@@ -51,7 +57,6 @@ namespace Familia.Services
 
                     StartForeground(ServiceRunningNotificationId, notification);
                 }
-                var charger = new ChargerReceiver();
                 RegisterReceiver(charger, new IntentFilter(Intent.ActionHeadsetPlug));
                 bool ok = int.TryParse(Utils.GetDefaults("UserType"), out var type);
                 if (ok)
@@ -92,9 +97,9 @@ namespace Familia.Services
             if (!Utils.CheckNetworkAvailability()) return null;
             var result =
                 await WebServices.Get(
-                    $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetImei(Application.Context)}");
+                    $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetDeviceIdentificator(Application.Context)}");
             //               var result = await WebServices.Get(
-            //                   $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetImei(Application.Context)}",
+            //                   $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetDeviceIdentificator(Application.Context)}",
             //                   Utils.GetDefaults("Token", context));
             return result ?? null;
         }

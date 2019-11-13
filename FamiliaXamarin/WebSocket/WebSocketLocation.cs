@@ -38,7 +38,7 @@ namespace Familia.WebSocket
                     ForceNew = true,
                     Reconnection = true,
                     Secure = false,
-                    Query = $"token={Utils.GetDefaults("Token")}&imei={Utils.GetImei(Application.Context)}"
+                    Query = $"token={Utils.GetDefaults("Token")}&imei={Utils.GetDeviceIdentificator(Application.Context)}"
 
                 };
                 _socket = IO.Socket(hostname, options);

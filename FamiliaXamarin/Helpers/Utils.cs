@@ -28,6 +28,7 @@ using Exception = System.Exception;
 using Math = System.Math;
 using Orientation = Android.Media.Orientation;
 using Resource = Familia.Resource;
+using String = Java.Lang.String;
 
 namespace FamiliaXamarin.Helpers
 {
@@ -48,7 +49,7 @@ namespace FamiliaXamarin.Helpers
 
             return false;
         }
-        
+
         public static void CloseRunningActivity(Type activityType)
         {
             ActivityManager activityManager = (ActivityManager)Application.Context.GetSystemService(Context.ActivityService);
@@ -95,40 +96,51 @@ namespace FamiliaXamarin.Helpers
         }
 
 
-      
-        public static string GetImei(Context ctx)
+
+        public static string GetDeviceIdentificator(Context ctx)
         {
 
-        /**
-         * return imei if android version is 9 or below
-         * return android_id if android version is bigger than 9*
-         */
-            TelephonyManager mgr = ctx.GetSystemService(Context.TelephonyService) as TelephonyManager;
-            if (mgr.Imei == null)
+            /**
+             * return imei if android version is 9 or below
+             * return android_id if android version is bigger than 9*
+             */
+            string deviceIdentificator = GetDefaults("DeviceId");
+            if (string.IsNullOrEmpty(deviceIdentificator))
             {
-                var android_id = testAndroidIdForAndroid10("android10imei", ctx);
-                if (android_id != null)
+                try
                 {
-                    return android_id;
+                    if (CheckIfIsQ())
+                    {
+                        string ANDROID_ID = Android.Provider.Settings.Secure.GetString(
+                            Application.Context.ContentResolver, Android.Provider.Settings.Secure.AndroidId);
+                        SetDefaults("DeviceId", ANDROID_ID);
+                        return ANDROID_ID;
+                    }
+                    TelephonyManager mgr = ctx.GetSystemService(Context.TelephonyService) as TelephonyManager;
+                    string IMEI = mgr.Imei;
+                    if (mgr != null)
+                    {
+                        SetDefaults("DeviceId", IMEI);
+                    }
+
+                    return mgr == null ? string.Empty : mgr.Imei;
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Utils Error getting device identificator", e.Message);
+                    return null;
                 }
             }
 
-            return mgr?.Imei;
+            return deviceIdentificator;
+
         }
 
-        public static string testAndroidIdForAndroid10(string imei, Context ctx)
+        public static bool CheckIfIsQ()
         {
-            if (Build.VERSION.SdkInt > BuildVersionCodes.P)
-            {
-                Log.Error("UTILS IMEI", "hello android 10");
-                var android_id = Android.Provider.Settings.Secure.GetString(Android.App.Application.Context.ContentResolver, Android.Provider.Settings.Secure.AndroidId);
-                Log.Error("UTILS IMEI", android_id);
-                return android_id;
-            }
-
-            return null;
+            return Build.VERSION.SdkInt > BuildVersionCodes.P;
         }
-
+    
         public static Bitmap CheckRotation(string photoPath, Bitmap bitmap)
         {
             var ei = new ExifInterface(photoPath);
@@ -264,7 +276,7 @@ namespace FamiliaXamarin.Helpers
             //(d)
             return r * c;
         }
-        public static void CreateChannels(string channelId,string channel)
+        public static void CreateChannels(string channelId, string channel)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
             var androidChannel = new NotificationChannel(channelId, channel, NotificationImportance.High);
@@ -315,13 +327,13 @@ namespace FamiliaXamarin.Helpers
                     chatActivityAcceptedIntent.PutExtra("AcceptClick", true);
                     chatActivityRejectedIntent.PutExtra("RejectClick", true);
                     var stackBuilderAccept = Android.Support.V4.App.TaskStackBuilder.Create(Application.Context);
-                   
+
                     stackBuilderAccept.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
-                   
+
                     // Get the PendingIntent containing the entire back stack
                     var acceptIntent = stackBuilderAccept.GetPendingIntent(DateTime.Now.Millisecond, (int)PendingIntentFlags.OneShot);
 
-                     var rejectIntent = PendingIntent.GetBroadcast(Application.Context, DateTime.Now.Millisecond, chatActivityRejectedIntent, PendingIntentFlags.OneShot);
+                    var rejectIntent = PendingIntent.GetBroadcast(Application.Context, DateTime.Now.Millisecond, chatActivityRejectedIntent, PendingIntentFlags.OneShot);
 
                     return new NotificationCompat.Builder(Application.Context, email)
                         .SetContentTitle(title)
@@ -335,7 +347,7 @@ namespace FamiliaXamarin.Helpers
                         .SetAutoCancel(true)
                         .SetOngoing(false)
                         .Build();
-                        
+
                 case 1:
                     //Notificare daca NU i-a acceptat cererea de chat
                     return new NotificationCompat.Builder(Application.Context, email)
@@ -350,7 +362,7 @@ namespace FamiliaXamarin.Helpers
                     var stackBuilder = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
                     stackBuilder.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
 
-                   // var acceptIntent1 = PendingIntent.GetActivity(Application.Context, 3, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+                    // var acceptIntent1 = PendingIntent.GetActivity(Application.Context, 3, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
                     var acceptIntent1 = stackBuilder.GetPendingIntent(DateTime.Now.Millisecond, (int)PendingIntentFlags.OneShot);
 
 
@@ -369,11 +381,11 @@ namespace FamiliaXamarin.Helpers
                 case 3:
                     //Notificare pentru mesaj
                     //chatActivityAcceptedIntent.PutExtra("NewMessage", body);
-                    ChatActivity.Messages.Add(new MessagesModel(){Room = room, Message = body});
+                    ChatActivity.Messages.Add(new MessagesModel() { Room = room, Message = body });
                     var stackBuilderIntent2 = Android.Support.V4.App.TaskStackBuilder.Create(ctx);
                     stackBuilderIntent2.AddNextIntentWithParentStack(chatActivityAcceptedIntent);
 
-                   // var acceptIntent2 = PendingIntent.GetActivity(Application.Context, 4, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
+                    // var acceptIntent2 = PendingIntent.GetActivity(Application.Context, 4, chatActivityAcceptedIntent, PendingIntentFlags.OneShot);
                     var acceptIntent2 = stackBuilderIntent2.GetPendingIntent(DateTime.Now.Millisecond, (int)PendingIntentFlags.OneShot);
 
                     return new NotificationCompat.Builder(Application.Context, title)
@@ -388,7 +400,7 @@ namespace FamiliaXamarin.Helpers
                             .SetAutoCancel(true)
                             .AddAction(Resource.Drawable.logo, buttonTitle, acceptIntent2)
                             .Build();
-                    
+
             }
 
             return null;
