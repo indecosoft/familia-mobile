@@ -53,7 +53,7 @@ $.keyframe.define([
 scene.init = function () {
     isStarted = false;
     isOver = false;
-    bigScore = Number(JSHandler.getScore());
+//    bigScore = Number(JSHandler.getScore());
     currentScore = 0;
     sendMessage("SCORE " + score);
     $("#reset").css({ display: 'none' });
@@ -69,7 +69,7 @@ scene.init = function () {
         'fill-mode': 'forwards',
         complete: function () {
             $(".player").css({ top: '0px', left: '0px', position: 'absolute', display: 'block', animation: 'none' });
-            collectableItems = appendCollectableItem(getRandomr(3, 10));
+//            collectableItems = appendCollectableItem(getRandomr(3, 10));
             isStarted = true;
             sendMessage("Animation is completed. Starting the game .... ");
             sendMessage("Loop started..");
@@ -92,7 +92,6 @@ scene.update = function () {
         let rotationOZ = Number(values.split("/")[2]);
 
         sendMessage("OZ: " + rotationOZ + " x " + currentX + " y " + currentY);
-
 
         $(".player").parent().css({ position: 'relative' });
         $(".arrival").css({ position: 'absolute' });
@@ -121,98 +120,15 @@ scene.update = function () {
 
         movementY = player.position.top;
         movementX = player.position.left;
-//
-//        lastDirection = direction;
-//        direction = getDirection(currentX, currentY);
-//        complexDirection = direction;
-      
-
-//        if (rotationOZ > 0.05 || rotationOZ < -0.05) {
-//            if (lastDirection !== direction) {
-//                if (lastDirection === "Down" || lastDirection === "UP") {
-//                    if (direction === "Right" || direction === "Left") {
-//                        sendMessage("go to " + lastDirection + " " + direction);
-//                        complexDirection = lastDirection + "-" + direction;
-//                    }
-//                }
-//                if (lastDirection === "Right" || lastDirection === "Left") {
-//                    if (direction === "Down" || direction === "UP") {
-//                        sendMessage("go to " + lastDirection + " " + direction);
-//
-//                        complexDirection = direction + "-" + lastDirection;
-//                    }
-//                }
-//
-//            }
-//        }
-
-
-
-//
-//        if (lastDirection === "Down" || direction === "Down") {
-//            movementY += scene.physics.velocity;
-//        }
-//
-//        if (lastDirection === "Up" || direction === "Up") {
-//            movementY -= scene.physics.velocity;
-//        }
-//
-//        if (lastDirection === "Right" || direction === "Right") {
-//            movementX += scene.physics.velocity;
-//        }
-//
-//        if (lastDirection === "Left" || direction === "Left") {
-//            movementX -= scene.physics.velocity;
-//        }
-
-        sendMessage("VELOCITY : " + scene.physics.velocity);
        
-        setVelocity();
+//        setVelocity();
 
-        let dirX = Math.ceil(currentX * 1.5);
-        let dirY = Math.ceil(currentY * 1.5);
+        let dirY = Math.ceil(currentX  * 1.5);
+        let dirX = Math.ceil(currentY * ( -1 ) * 1.5);
         sendMessage("dirx: " + dirX + " , dirY: " + dirY);
         movementX += dirX;
         movementY += dirY;
         sendMessage("movementX: " + movementX + " , movementY: " + movementY);
-
-//
-//        switch (complexDirection) {
-//            case "Right":
-//                sendMessage("GO Right");
-//                movementX += scene.physics.velocity;
-//                break;
-//            case "Left":
-//                sendMessage("GO Left");
-//                movementX -= scene.physics.velocity;
-//                break;
-//            case "Down":
-//                sendMessage("GO Down");
-//                movementY += scene.physics.velocity;
-//                break;
-//            case "Up":
-//                sendMessage("GO Up");
-//                movementY -= scene.physics.velocity;
-//                break;
-//            case "Down-Right":
-//                movementY += scene.physics.velocity;
-//                movementX += scene.physics.velocity;
-//                break;
-//            case "Down-Left":
-//                movementY += scene.physics.velocity;
-//                movementX -= scene.physics.velocity;
-//                break;
-//            case "Up-Right":
-//                movementY -= scene.physics.velocity;
-//                movementX += scene.physics.velocity;
-//                break;
-//            case "Up-Left":
-//                movementY -= scene.physics.velocity;
-//                movementX -= scene.physics.velocity;
-//                break;
-//            default:
-//                sendMessage("none");
-//        }
 
         if (isInArea(player) === true) {
             $(".player").css({ left: movementX, top: movementY, position: 'absolute' });
@@ -221,11 +137,11 @@ scene.update = function () {
             scene.physics.velocity = 0;
         }
 
-        collect(player);
+//        collect(player);
 
-//        if (checkForFinish(player, arrivalPlace) === true) {
-//            isOver = true;
-//        }
+        if (checkForFinish(player, arrivalPlace) === true) {
+            isOver = true;
+        }
 
     } else {
         scene.finish();
@@ -235,14 +151,14 @@ scene.update = function () {
 scene.finish = function () {
     sendMessage("finish called");
     displaySceneForFinish();
-    JSHandler.saveScore(bigScore + "");
+//    JSHandler.saveScore(bigScore + "");
     clearInterval(refreshIntervalId);
 }
 
 function displaySceneForFinish() {
     $("#reset").css({ display: 'block' });
-    $("#score").text("Scor: " + bigScore).css({ display: 'block' });
-    $("#itemsCollected").text("Obiecte colectate: " + currentScore).css({ display: 'block' });
+//    $("#score").text("Scor: " + bigScore).css({ display: 'block' });
+//    $("#itemsCollected").text("Obiecte colectate: " + currentScore).css({ display: 'block' });
     displayPlayerForFinish();
 }
 
@@ -291,7 +207,7 @@ function collect(player) {
                 Math.floor(player.center.y) > Math.floor(brick.center.y - (brick.height / 2))) {
                 collectableItems[i].remove();
                 currentScore++;
-                bigScore++;
+//                bigScore++;
             }
         }
     }

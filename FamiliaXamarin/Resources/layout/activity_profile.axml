@@ -160,7 +160,7 @@
     android:id="@+id/cw_years"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="4dp"
+    app:cardCornerRadius="0dp"
 	app:cardBackgroundColor="@color/colorPrimaryDark"
 	app:layout_constraintWidth_percent="0.48"
 	app:layout_constraintTop_toTopOf="parent"
@@ -223,7 +223,7 @@
     android:id="@+id/cw_gender"
     android:layout_width="0dp"
     android:layout_height="0dp"
-    app:cardCornerRadius="4dp"
+    app:cardCornerRadius="0dp"
     app:cardBackgroundColor="@color/colorPrimaryDark"
 	app:layout_constraintHorizontal_chainStyle="spread"
 	app:layout_constraintWidth_percent="0.48"
@@ -278,7 +278,7 @@
 		android:layout_below="@id/cl_cw"
 		android:background="@color/colorPrimaryDark"
 		android:layout_marginTop="4dp"
-		android:padding="16dp"
+		android:padding="17dp"
 		>
 		 <ImageView
             android:id="@+id/iw_icon"
