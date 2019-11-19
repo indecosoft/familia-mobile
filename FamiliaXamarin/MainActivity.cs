@@ -203,7 +203,7 @@ namespace FamiliaXamarin
                     Toast.MakeText(this, "4", ToastLength.Long).Show();
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_monitorizare)?.SetVisible(false);
-                    menuNav.FindItem(Resource.Id.nav_QRCode)?.SetVisible(false);
+//                    menuNav.FindItem(Resource.Id.nav_QRCode)?.SetVisible(false);
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new FindUsersFragment())
                         .AddToBackStack(null).Commit();

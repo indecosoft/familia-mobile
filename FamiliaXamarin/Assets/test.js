@@ -53,12 +53,12 @@ $.keyframe.define([
 scene.init = function () {
     isStarted = false;
     isOver = false;
-//    bigScore = Number(JSHandler.getScore());
+    bigScore = Number(JSHandler.getScore());
     currentScore = 0;
     sendMessage("SCORE " + score);
     $("#reset").css({ display: 'none' });
     $("#score").css({ display: 'none' });
-    $("#itemsCollected").css({ display: 'none' });
+    $("#itemsCollected").css({ display: 'none' }); //for collectable items
     $(".player").css({ display: 'none' });
     $(".arrival").css({ top: '0px', left: '50px', position: 'absolute' });
 
@@ -69,7 +69,7 @@ scene.init = function () {
         'fill-mode': 'forwards',
         complete: function () {
             $(".player").css({ top: '0px', left: '0px', position: 'absolute', display: 'block', animation: 'none' });
-//            collectableItems = appendCollectableItem(getRandomr(3, 10));
+//            collectableItems = appendCollectableItem(getRandomr(3, 10)); //for collectable items
             isStarted = true;
             sendMessage("Animation is completed. Starting the game .... ");
             sendMessage("Loop started..");
@@ -137,7 +137,7 @@ scene.update = function () {
             scene.physics.velocity = 0;
         }
 
-//        collect(player);
+//        collect(player);//for collectable items
 
         if (checkForFinish(player, arrivalPlace) === true) {
             isOver = true;
@@ -151,14 +151,14 @@ scene.update = function () {
 scene.finish = function () {
     sendMessage("finish called");
     displaySceneForFinish();
-//    JSHandler.saveScore(bigScore + "");
+    JSHandler.saveScore(bigScore + "");
     clearInterval(refreshIntervalId);
 }
 
 function displaySceneForFinish() {
     $("#reset").css({ display: 'block' });
-//    $("#score").text("Scor: " + bigScore).css({ display: 'block' });
-//    $("#itemsCollected").text("Obiecte colectate: " + currentScore).css({ display: 'block' });
+    $("#score").text("Scor: " + bigScore).css({ display: 'block' });
+//    $("#itemsCollected").text("Obiecte colectate: " + currentScore).css({ display: 'block' });//for collectable items
     displayPlayerForFinish();
 }
 
@@ -206,8 +206,8 @@ function collect(player) {
                 Math.floor(player.center.y < Math.floor(brick.center.y + (brick.height / 2))) &&
                 Math.floor(player.center.y) > Math.floor(brick.center.y - (brick.height / 2))) {
                 collectableItems[i].remove();
-                currentScore++;
-//                bigScore++;
+               // currentScore++;//for collectable items
+//                bigScore++;//for collectable items
             }
         }
     }
@@ -246,6 +246,7 @@ function checkForFinish(player, arrivalPlace) {
         Math.floor(player.center.x) > Math.floor(arrivalPlace.center.x - (arrivalPlace.width / 2)) &&
         Math.floor(player.center.y < Math.floor(arrivalPlace.center.y + (arrivalPlace.height / 2))) &&
         Math.floor(player.center.y) > Math.floor(arrivalPlace.center.y - (arrivalPlace.height / 2))) {
+        bigScore += 1;
         return true;
     }
     return false;

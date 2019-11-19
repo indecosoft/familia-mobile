@@ -199,6 +199,9 @@ namespace Familia.Profile
             
             rv.SetAdapter(adapter);
             adapter.NotifyDataSetChanged();
+
+          
+
             RunOnUiThread(() => dialog.Dismiss());
         }
 
@@ -231,6 +234,14 @@ namespace Familia.Profile
             }
 
             tvAge.Text = GetAge(birthdate) + " ani";
+
+
+            if (int.Parse(Utils.GetDefaults("UserType")) == 2)
+            {
+                RelativeLayout rlCWAfectiuni = FindViewById<RelativeLayout>(Resource.Id.cw_diseases);
+                rlCWAfectiuni.Visibility = ViewStates.Gone;
+            }
+
         }
 
         private void SetGender(string gender)

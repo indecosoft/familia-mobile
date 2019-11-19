@@ -400,29 +400,21 @@ namespace Familia.Profile
                 etName.Text = personView.Name;
                 SetGender(personView.Gender);
 
-//                var refactor = personView.Birthdate.Split("/");
-//                DateTime time;// = Convert.ToDateTime(refactor[1] + "/" + refactor[0] + "/" + refactor[2]);
-//
-//                try
-//                {
-//                    time = new DateTime(int.Parse(refactor[2]), int.Parse(refactor[1]), int.Parse(refactor[0]));
-//                    birthdate = time.ToString("MM/dd/yyyy");
-//
-//                }
-//                catch (Exception ex)
-//                {
-//                    Log.Error("UpdateProfileActivity ERR", ex.Message);
-//                    RunOnUiThread(() => dialog.Dismiss());
-//                }
-
-                
-
                 birthdate = getDateString(personView.Birthdate);
                 personView.Birthdate = getDateString(personView.Birthdate);
                 
 
 
                 tvBirthDate.Text = personView.Birthdate;
+
+
+                if (int.Parse(Utils.GetDefaults("UserType")) == 2)
+                {
+                   FindViewById<ImageView>(Resource.Id.iw_icon).Visibility = ViewStates.Gone;
+                   FindViewById<TextView>(Resource.Id.tv_labelDiseases).Visibility = ViewStates.Gone;
+                   FindViewById<AppCompatButton>(Resource.Id.btn_diseases).Visibility = ViewStates.Gone;
+                }
+
 
                 RunOnUiThread(() => dialog.Dismiss());
             }
