@@ -22,8 +22,8 @@ namespace FamiliaXamarin.Helpers
     public class AlarmDeviceReceiver : BroadcastReceiver
     {
         public static readonly string INTERVAL_CONTENT = "INTERVAL_CONTENT";
-        public static readonly string CHANNEL_NAME_ALARM_DEVICE= "Channel for alarm device";
-        public static readonly string CHANNEL_NAME_BLOODPRESSURE = "Channel bloodpressure";
+        public static readonly string CHANNEL_NAME_ALARM_DEVICE= "Alarm device channel";
+        public static readonly string CHANNEL_NAME_BLOODPRESSURE = "BloodPressure Channel";
         public static readonly string TITLE_BLOODPRESSURE = "Tensiune";
         public static readonly string TITLE_GLUCOSE = "Glicemie";
         public static readonly string CONTENT_GLUCOSE = "Vă rugăm să vă măsurați glicemia.";

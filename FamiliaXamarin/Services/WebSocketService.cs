@@ -42,7 +42,7 @@ namespace Familia.Services
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
                     const string channelId = "my_channel_01";
-                    var channel = new NotificationChannel(channelId, "Channel human readable title",
+                    var channel = new NotificationChannel(channelId, "WebSocket",
                         NotificationImportance.Default)
                         { Importance = NotificationImportance.Low };
 

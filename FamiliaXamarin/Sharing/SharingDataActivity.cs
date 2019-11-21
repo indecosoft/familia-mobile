@@ -32,6 +32,7 @@ namespace FamiliaXamarin.Services
                     .bottom_navigation);
 
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
+            
 
             viewPager = (ViewPager) FindViewById(Resource.Id.pager);
             SharingPagerAdapter myPagerAdapter = new SharingPagerAdapter(SupportFragmentManager);
@@ -61,20 +62,9 @@ namespace FamiliaXamarin.Services
             SupportActionBar.SetDisplayShowHomeEnabled(true);
             toolbar.NavigationClick += delegate
             {
-//                var intent = new Intent(this, typeof(MainActivity));
-//                intent.AddFlags(ActivityFlags.ClearTop);
-//                StartActivity(intent);
                 OnBackPressed();
             };
             Title = "Partajare date";
-        }
-
-        public override void OnBackPressed()
-        {
-            base.OnBackPressed();
-            //var intent = new Intent(this, typeof(MainActivity));
-            //intent.AddFlags(ActivityFlags.ClearTop);
-            //StartActivity(intent);
         }
 
         private void BottomNavigation_NavigationItemSelected(object sender,

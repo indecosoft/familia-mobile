@@ -50,7 +50,7 @@ namespace FamiliaXamarin.Services
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
                     string CHANNEL_ID = "my_channel_01";
-                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel human readable title",
+                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Location",
                         NotificationImportance.Default)
                         { Importance = NotificationImportance.Low };
 

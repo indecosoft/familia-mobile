@@ -14,6 +14,7 @@ using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
 using Familia;
+using Familia.Sharing;
 using FamiliaXamarin.Active_Conversations;
 using FamiliaXamarin.Helpers;
 using FamiliaXamarin.JsonModels;
@@ -27,6 +28,7 @@ namespace FamiliaXamarin.Sharing
     public class Tab2Fragment : Fragment
     {
         private RecyclerView _sharingRecyclerView;
+        private RecyclerView _sharingRecyclerViewReceived;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -52,6 +54,7 @@ namespace FamiliaXamarin.Sharing
                     {
 
                         contacts = JsonConvert.DeserializeObject<List<SharingModel>>(response);
+                        Log.Error("ListaConexiuni", "No. of contacts: " + contacts.Count);
                     }
                 });
 
@@ -86,7 +89,8 @@ namespace FamiliaXamarin.Sharing
 //                            .CenterCrop()
 //                            .Into(dialog.Image);
                         dialog.ButtonConfirm.Visibility = ViewStates.Gone;
-                        dialog.ButtonCancel.Text = "Anuleaza partajarea";
+                        dialog.ButtonCancel.Text = "Sterge";
+                        dialog.ButtonCancel.SetPadding(5,5,5,5);
                         dialog.ButtonCancel.Click += delegate(object o, EventArgs eventArgs)
                         {
 
@@ -154,13 +158,72 @@ namespace FamiliaXamarin.Sharing
             }
         }
 
+
+
+        private async void LoadDataReceived()
+        {
+            try
+            {
+                ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
+                dialog.Show();
+                // Initialize contacts
+                List<SharingModel> contacts = null;
+                await Task.Run(async () =>
+                {
+                    var response = await WebServices.Post($"{Constants.PublicServerAddress}/api/getSharingPeople",
+                        new JSONObject().Put("email", Utils.GetDefaults("Email")),
+                            Utils.GetDefaults("Token"));
+                    if (!string.IsNullOrEmpty(response))
+                    {
+
+                        contacts = JsonConvert.DeserializeObject<List<SharingModel>>(response);
+                    }
+                });
+                if (contacts != null)
+                {
+
+                    // Create adapter passing in the sample user data
+                    var adapter = new SharingAdapter(contacts);
+                    // Attach the adapter to the recyclerview to populate items
+                    _sharingRecyclerViewReceived.SetAdapter(adapter);
+                    // Set layout manager to position the items
+                    _sharingRecyclerViewReceived.SetLayoutManager(new LinearLayoutManager(Activity));
+                    adapter.ItemClick += delegate (object sender, SharingAdapterClickEventArgs args)
+                    {
+                        var name = contacts[args.Position].Name;
+                        var email = contacts[args.Position].Email;
+                        var imei = contacts[args.Position].Imei;
+                        var intent = new Intent(Activity, typeof(SharingMenuActivity));
+                        intent.PutExtra("Name", name);
+                        intent.PutExtra("Email", email);
+                        intent.PutExtra("Imei", imei);
+                        StartActivity(intent);
+                    };
+
+                }
+
+                Activity.RunOnUiThread(() =>
+                {
+                    dialog.Dismiss();
+                });
+
+
+            }
+            catch (Java.Lang.Exception e)
+            {
+                e.PrintStackTrace();
+            }
+        }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
 
             View view = inflater.Inflate(Resource.Layout.layout_tab2, container, false);
 
             _sharingRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.rv_persons);
+            _sharingRecyclerViewReceived = view.FindViewById<RecyclerView>(Resource.Id.rv_persons_received);
             LoadData();
+           LoadDataReceived();
 
             return view;
         }

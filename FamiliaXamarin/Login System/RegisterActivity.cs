@@ -68,7 +68,7 @@ namespace FamiliaXamarin
             _passwordRetypeEditText = FindViewById<EditText>(Resource.Id.et_retype_password);
             _btnRegister = FindViewById<AppCompatButton>(Resource.Id.btn_register);
             _bntCancel = FindViewById<AppCompatButton>(Resource.Id.btn_cancel);
-
+            
 
             TextView tvDeviceId = FindViewById<TextView>(Resource.Id.tv_device_id_value);
             string deviceId = Utils.GetDeviceIdentificator(this);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
@@ -11,6 +12,7 @@ using Android.Views;
 using Android.Widget;
 using Familia;
 using FamiliaXamarin.Helpers;
+using FamiliaXamarin.Medicatie.Entities;
 using Org.Json;
 using V7Widget = Android.Support.V7.Widget;
 
@@ -93,49 +95,72 @@ namespace FamiliaXamarin.Login_System
             return Utils.EmailValidator(_emailEditText.Text) && Utils.PasswordValidator(_passwordEditText.Text) &&
                    _passwordEditText.Text.Equals(_pwdRetypeEditText.Text);
         }
-        public async void OnClick(View v)
+        public void OnClick(View v)
         {
             switch (v.Id)
             {
                 case Resource.Id.btnReset:
                     if (FormValidator())
                     {
-                        var dataToSent = new JSONObject().Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text);
-                        var response = new JSONObject(await WebServices.Post(Constants.PublicServerAddress + "/api/passwordReset", dataToSent));
-                        
-                        try
-                        {
-                            Log.Error("Response", response.ToString());
-                            switch (response.GetInt("status"))
-                            {
-                                case 0:
-                                    Snackbar.Make(_layout, "Email inexistent", Snackbar.LengthShort).Show();
-
-                                    break;
-                                case 1:
-                                    Snackbar.Make(_layout, "Eroare de comunicare cu server-ul!", Snackbar.LengthShort).Show();
-
-                                    break;
-                                case 2:
-                                    Snackbar.Make(_layout, "Un email de validare a fost trimis catre " + _emailEditText.Text, Snackbar.LengthShort).Show();
-                                    break;
-                                default:
-                                    Snackbar.Make(_layout, "Eroare " + response, Snackbar.LengthShort).Show();
-                                    break;
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            var snack = Snackbar.Make(_layout, "Eroare " + e.Message, Snackbar.LengthShort);
-                            snack.Show();
-                        }
-
+                         sendData();
                     }
                     break;
                 case Resource.Id.btnCancel:
                     Finish();
                     break;
             }
+        }
+
+        private async void sendData()
+        {
+            ProgressBarDialog dialog = new ProgressBarDialog("Va rugam asteptati", "Resetare...", this, false);
+            dialog.Show();
+
+            var dataToSent = new JSONObject().Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text);
+            var res = await WebServices.Post(Constants.PublicServerAddress + "/api/passwordReset", dataToSent);
+
+            if (res != null)
+            {
+                Log.Error("PwdResetActivity", res);
+
+                try
+                {
+                    var response = new JSONObject(res);
+                    Log.Error("Response", response.ToString());
+                    switch (response.GetInt("status"))
+                    {
+                        case 0:
+                            Snackbar.Make(_layout, "Email inexistent", Snackbar.LengthShort).Show();
+                            break;
+                        case 1:
+                            Snackbar.Make(_layout, "Eroare de comunicare cu server-ul!", Snackbar.LengthShort).Show();
+                            break;
+                        case 2:
+                            Snackbar.Make(_layout, "Un email de validare a fost trimis catre " + _emailEditText.Text, Snackbar.LengthShort).Show();
+                            break;
+                        default:
+                            Snackbar.Make(_layout, "Eroare " + response, Snackbar.LengthShort).Show();
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    var snack = Snackbar.Make(_layout, "Eroare " + e.Message, Snackbar.LengthShort);
+                    snack.Show();
+                }
+
+            }
+            else
+            {
+                Log.Error("PwdResetActivity", "res is null");
+                var snack = Snackbar.Make(_layout, "Eroare preluare date de pe server", Snackbar.LengthShort);
+                snack.Show();
+            }
+
+            RunOnUiThread(() =>
+            {
+                dialog.Dismiss();
+            });
         }
     }
 }
