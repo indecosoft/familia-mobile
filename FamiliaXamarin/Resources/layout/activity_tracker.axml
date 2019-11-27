@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+  <android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:fitsSystemWindows="false">
+
+    <android.support.design.widget.AppBarLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:theme="@style/AppTheme.AppBarOverlay">
+
+      <android.support.v7.widget.Toolbar
+
+        android:id="@+id/toolbar"
+        style="@style/SharingBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:popupTheme="@style/ActionBarPopupThemeOverlayDark"
+        app:theme="@style/ActionBarThemeOverlayDark" />
+
+    </android.support.design.widget.AppBarLayout>
+  </android.support.constraint.ConstraintLayout>
+
+
+<TextView
+    android:id="@+id/tv_label_steps_from_sensor"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Total pasi"
+	android:textSize="30sp"
+    android:layout_centerInParent="true"
+	android:layout_above="@+id/tv_steps_from_sensor"
+    />
+
+  <TextView
+    android:id="@+id/tv_steps_from_sensor"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="..."
+	android:textSize="30sp"
+    android:layout_centerInParent="true"
+    />
+
+</RelativeLayout>
