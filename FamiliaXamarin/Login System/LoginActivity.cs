@@ -406,7 +406,7 @@ namespace Familia.Login_System
                 {
                     var dataToSend = new JSONObject().Put("email", _usernameEditText.Text)
                     .Put("password", _passwordEditText.Text).Put("imei",
-                        Utils.GetImei(this));
+                        Utils.GetDeviceIdentificator(this));
 
                     var response =
                         await WebServices.Post(Constants.PublicServerAddress + "/api/login",
@@ -436,7 +436,7 @@ namespace Familia.Login_System
                                 var type = new JSONObject(response).GetString("tip");
 
                                 Utils.SetDefaults("Token", token);
-                                Utils.SetDefaults("Imei", Utils.GetImei(this));
+                                Utils.SetDefaults("Imei", Utils.GetDeviceIdentificator(this));
                                 Utils.SetDefaults("Email", _usernameEditText.Text);
                                 Utils.SetDefaults("Logins", logins.ToString());
                                 Utils.SetDefaults("Name", nume);
@@ -458,6 +458,9 @@ namespace Familia.Login_System
                                 Snackbar.Make(_layout, "Nume de utilizator sau parola incorecte!",
                                     Snackbar.LengthLong).Show();
                                 break;
+                            case 5:
+                                ShowInactiveUserDialog();
+                                break;
                         }
                     }
                     else
@@ -474,6 +477,21 @@ namespace Familia.Login_System
 
             });
             _progressBarDialog.Dismiss();
+        }
+
+        private void ShowInactiveUserDialog()
+        {
+            RunOnUiThread(() =>
+            {
+                var alert = new Android.Support.V7.App.AlertDialog.Builder(this);
+                alert.SetMessage(
+                    "Nu puteti utiliza aplicatia in momentul de fata pentru ca dispozitivul este asignat unui alt cont." +
+                    "Verificati setarile din Sistemul de Monitorizare Pacienti - id: < cod > ");
+                alert.SetPositiveButton("Ok",
+                    (senderAlert, args) => { Log.Error("LoginActivity", "Ok"); });
+                Dialog dialog = alert.Create();
+                dialog.Show();
+            });
         }
     }
 }

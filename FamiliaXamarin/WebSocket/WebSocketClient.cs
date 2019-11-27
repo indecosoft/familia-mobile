@@ -43,7 +43,7 @@ namespace FamiliaXamarin
                     Reconnection = true,
                     //Secure = false,
                     //Transports = new string[] { EngineIO.Client.Transports.PollingXHR.TransportName},
-                    Query = $"token={Utils.GetDefaults("Token")}&imei={Utils.GetImei(Application.Context)}"
+                    Query = $"token={Utils.GetDefaults("Token")}&imei={Utils.GetDeviceIdentificator(Application.Context)}"
                     
                 };
                 _socket = IO.Socket(hostname,options);

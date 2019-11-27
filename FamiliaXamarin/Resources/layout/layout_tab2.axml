@@ -1,13 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/sv_top"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:fillViewport="true"
+    >
+
+<RelativeLayout 
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
+
+	<RelativeLayout
+	android:id="@+id/rv_partajare"
+	android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+	android:layout_marginTop="?attr/actionBarSize"
+	>
+		<TextView 
+		android:id="@+id/tv_partajare"
+		android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:text="Date partajate cu:"
+		android:textSize="18sp"
+		android:layout_marginLeft="16dp"
+		android:textColor="@color/colorSecondary" 
+	/>
+
+	<View
+    android:id="@+id/rl_line_partajare"
+    android:layout_width="fill_parent"
+    android:layout_height="2dp"
+	android:layout_marginTop="10dp"
+	android:layout_marginBottom="10dp"
+    android:layout_below="@+id/tv_partajare"
+    android:background="@color/colorSecondary" 
+	android:layout_marginLeft="16dp"
+	android:layout_marginRight="16dp"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_persons"
-        android:layout_marginTop="?attr/actionBarSize"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+		android:layout_below="@+id/rl_line_partajare"
         android:scrollbars="vertical" />
+	
+	</RelativeLayout>
+
+<RelativeLayout
+	android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+	android:layout_below="@+id/rv_partajare"
+	android:layout_marginTop="25dp"
+	android:layout_marginBottom="50dp"
+	>
+		<TextView 
+		android:id="@+id/tv_partajare"
+		android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:text="Date primite de la:"
+		android:textSize="18sp"
+		android:layout_marginLeft="16dp"
+		android:textColor="@color/colorSecondary" 
+	/>
+
+	<View
+    android:id="@+id/rl_line_partajare"
+    android:layout_width="fill_parent"
+    android:layout_height="2dp"
+	android:layout_marginTop="10dp"
+	android:layout_marginBottom="10dp"
+    android:layout_below="@+id/tv_partajare"
+    android:background="@color/colorSecondary" 
+	android:layout_marginLeft="16dp"
+	android:layout_marginRight="16dp"/>
+
+		<android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_persons_received"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:layout_below="@+id/rl_line_partajare"
+        android:scrollbars="vertical" />
+
 </RelativeLayout>
+
+</RelativeLayout>
+</ScrollView>
+
+

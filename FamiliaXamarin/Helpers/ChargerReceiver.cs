@@ -98,9 +98,9 @@ namespace FamiliaXamarin.Helpers
             if (!Utils.CheckNetworkAvailability()) return null;
             var result =
                 await WebServices.Get(
-                    $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetImei(Application.Context)}");
+                    $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetDeviceIdentificator(Application.Context)}");
 //               var result = await WebServices.Get(
-//                   $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetImei(Application.Context)}",
+//                   $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetDeviceIdentificator(Application.Context)}",
 //                   Utils.GetDefaults("Token", context));
             if (result == null) return null;
             Log.Error("RESULT_FROM_GIS", result);

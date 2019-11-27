@@ -68,8 +68,16 @@ namespace FamiliaXamarin
             _passwordRetypeEditText = FindViewById<EditText>(Resource.Id.et_retype_password);
             _btnRegister = FindViewById<AppCompatButton>(Resource.Id.btn_register);
             _bntCancel = FindViewById<AppCompatButton>(Resource.Id.btn_cancel);
+            
 
+            TextView tvDeviceId = FindViewById<TextView>(Resource.Id.tv_device_id_value);
+            string deviceId = Utils.GetDeviceIdentificator(this);
+            if (!string.IsNullOrEmpty(deviceId))
+            {
+                tvDeviceId.Text = deviceId;
+            }
 
+          
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Inregistrare...", this, false);
 
             _btnRegister.Enabled = false;
@@ -198,11 +206,16 @@ namespace FamiliaXamarin
         {
             _progressBarDialog.Show();
 
-            Utils.SetImei("aaaa");
+            //TODO if getImei is null, do something
+            /**
+             * return imei if android version is 9 or below
+             * return android_id if android version is bigger than 9*
+             */
+
 
             await Task.Run(async () => {
 
-                var dataToSend = new JSONObject().Put("name", $"{_nameEditText.Text} {_firstNameEditText.Text}").Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text).Put("type", 4).Put("imei", Utils.GetImei(this));
+                var dataToSend = new JSONObject().Put("name", $"{_nameEditText.Text} {_firstNameEditText.Text}").Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text).Put("type", 4).Put("imei", Utils.GetDeviceIdentificator(this));
 
                 var response = await WebServices.Post(Constants.PublicServerAddress + "/api/register", dataToSend);
                 if (response != null)

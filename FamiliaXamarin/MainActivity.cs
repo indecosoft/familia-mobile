@@ -151,7 +151,7 @@ namespace FamiliaXamarin
 
 
 //            make it hidden for release bc is not done yet
-            menuNav.FindItem(Resource.Id.games).SetVisible(false);
+//            menuNav.FindItem(Resource.Id.games).SetVisible(false);
 
 
             switch (type)
@@ -203,7 +203,7 @@ namespace FamiliaXamarin
                     Toast.MakeText(this, "4", ToastLength.Long).Show();
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_monitorizare)?.SetVisible(false);
-                    menuNav.FindItem(Resource.Id.nav_QRCode)?.SetVisible(false);
+//                    menuNav.FindItem(Resource.Id.nav_QRCode)?.SetVisible(false);
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new FindUsersFragment())
                         .AddToBackStack(null).Commit();
@@ -427,13 +427,13 @@ namespace FamiliaXamarin
                     break;
                 case Resource.Id.logout:
 
-                    Utils.RemoveDefaults();
+                     Utils.RemoveDefaults();
                     WebSocketClient.Disconect();
                     //Process.KillProcess(Process.MyPid());
-                        StopService(_loacationServiceIntent);
-                        StopService(_webSocketServiceIntent);
-                        StopService(_medicationServerServiceIntent);
-                        StopService(_smartBandServiceIntent);
+//                        StopService(_loacationServiceIntent);
+//                        StopService(_webSocketServiceIntent);
+//                        StopService(_medicationServerServiceIntent);
+//                        StopService(_smartBandServiceIntent);
                        // StopService(_medicationServiceIntent);
                     ClearBluetoothDevices();
                     ClearMedicationStorages();

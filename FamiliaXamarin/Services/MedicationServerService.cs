@@ -223,7 +223,7 @@ namespace Familia.Services
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
                 const string channelId = "my_channel_01";
-                var channel = new NotificationChannel(channelId, "Channel human readable title",
+                var channel = new NotificationChannel(channelId, "Medication",
                     NotificationImportance.Low);
                 ((NotificationManager)GetSystemService(NotificationService)).CreateNotificationChannel(channel);
 

@@ -94,8 +94,42 @@
     android:layout_width="fill_parent"
     android:layout_height="2dp"
 	android:layout_marginTop="10dp"
-	android:layout_marginBottom="10dp"
+	android:layout_marginBottom="15dp"
     android:layout_below="@+id/tv_email"
+    android:background="@color/colorSecondary" 
+	android:layout_marginLeft="16dp"
+	android:layout_marginRight="16dp"/>
+
+	<TextView
+	android:id="@+id/tv_device_id"
+	android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Cod de identificare:"
+	android:textSize="15sp"
+	android:layout_marginStart="25dp"
+    android:layout_below="@+id/rl_line"
+	android:textStyle="bold"
+	/>
+
+	<TextView
+	android:id="@+id/tv_device_id_value"
+	android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="-"
+	android:textSize="15sp"
+    android:layout_below="@+id/rl_line"
+    android:layout_marginRight="25dp"
+	android:layout_alignParentRight="true"
+	/>
+
+
+	<View
+    android:id="@+id/rl_line_bottom"
+    android:layout_width="fill_parent"
+    android:layout_height="2dp"
+	android:layout_marginTop="15dp"
+	android:layout_marginBottom="10dp"
+    android:layout_below="@+id/tv_device_id"
     android:background="@color/colorSecondary" 
 	android:layout_marginLeft="16dp"
 	android:layout_marginRight="16dp"/>
@@ -103,7 +137,7 @@
 	<ScrollView 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-	android:layout_below="@id/rl_line"
+	android:layout_below="@id/rl_line_bottom"
 	android:paddingLeft="16dp"
 	android:paddingRight="16dp"
 	android:scrollbars="none"
@@ -126,7 +160,7 @@
     android:id="@+id/cw_years"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="4dp"
+    app:cardCornerRadius="0dp"
 	app:cardBackgroundColor="@color/colorPrimaryDark"
 	app:layout_constraintWidth_percent="0.48"
 	app:layout_constraintTop_toTopOf="parent"
@@ -159,7 +193,7 @@
 			android:layout_centerHorizontal="true"
             android:layout_below="@+id/tv_labelDateOfBirth"
             android:textSize="15sp"
-            android:textStyle="bold"/>
+           />
 		 <TextView
             android:id="@+id/tv_labelAge"
             android:layout_width="wrap_content"
@@ -180,7 +214,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/tv_labelAge"
         android:textSize="15sp"
-        android:textStyle="bold"/>
+        />
 	/>
     </RelativeLayout>
 	</android.support.v7.widget.CardView>
@@ -189,7 +223,7 @@
     android:id="@+id/cw_gender"
     android:layout_width="0dp"
     android:layout_height="0dp"
-    app:cardCornerRadius="4dp"
+    app:cardCornerRadius="0dp"
     app:cardBackgroundColor="@color/colorPrimaryDark"
 	app:layout_constraintHorizontal_chainStyle="spread"
 	app:layout_constraintWidth_percent="0.48"
@@ -230,7 +264,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/tv_labelGender"
         android:textSize="15sp"
-        android:textStyle="bold"/>
+       />
       />
     </RelativeLayout>
   </android.support.v7.widget.CardView>
@@ -244,7 +278,7 @@
 		android:layout_below="@id/cl_cw"
 		android:background="@color/colorPrimaryDark"
 		android:layout_marginTop="4dp"
-		android:padding="16dp"
+		android:padding="17dp"
 		>
 		 <ImageView
             android:id="@+id/iw_icon"
