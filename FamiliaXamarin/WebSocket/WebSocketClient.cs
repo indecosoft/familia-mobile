@@ -19,10 +19,8 @@ using Exception = System.Exception;
 using Object = Java.Lang.Object;
 using Socket = SocketIO.Client.Socket;
 
-namespace FamiliaXamarin
-{
-    public class WebSocketClient : Object, IWebSocketClient, IListener
-    {
+namespace FamiliaXamarin {
+    public class WebSocketClient : Object, IWebSocketClient, IListener {
         Socket _socket;
         public static Socket Client;
 
@@ -30,23 +28,20 @@ namespace FamiliaXamarin
         private SqlHelper<ConversationsRecords> _conversationsRecords;
 
 
-        public async Task Connect(string hostname, int port, Context context)
-        {
+        public async Task ConnectAsync(string hostname, int port, Context context) {
             _conversationsRecords = await SqlHelper<ConversationsRecords>.CreateAsync();
             _context = context;
-            try
-            {
+            try {
 
-                var options = new IO.Options
-                {
+                var options = new IO.Options {
                     ForceNew = true,
                     Reconnection = true,
                     //Secure = false,
                     //Transports = new string[] { EngineIO.Client.Transports.PollingXHR.TransportName},
                     Query = $"token={Utils.GetDefaults("Token")}&imei={Utils.GetDeviceIdentificator(Application.Context)}"
-                    
+
                 };
-                _socket = IO.Socket(hostname,options);
+                _socket = IO.Socket(hostname, options);
 
                 _socket.On(Socket.EventConnect, OnConnect);
                 _socket.On(Socket.EventDisconnect, OnDisconnect);
@@ -62,80 +57,63 @@ namespace FamiliaXamarin
 
                 _socket.Connect();
                 Client = _socket;
-            }
-            catch (Exception e)
-            {     
+            } catch (Exception e) {
                 Log.Error("WSConnectionError: ", e.ToString());
             }
         }
 
-        private void OnError(Object[] obj)
-        {
+        private void OnError(Object[] obj) {
 
         }
 
 
-        public static void Disconect()
-        {      
+        public static void Disconect() {
             Client?.Disconnect();
         }
 
-        public void Emit(string eventName, JSONObject value)
-        {
+        public void Emit(string eventName, JSONObject value) {
             _socket?.Emit(eventName, value);
         }
 
-        private  void OnConnect(Object[] obj)
-        { 
+        private void OnConnect(Object[] obj) {
             Log.Error("WebSocket", "Client Connected");
         }
 
-        private  void OnDisconnect(Object[] obj)
-        {
+        private void OnDisconnect(Object[] obj) {
             Log.Error("WebSocket", "Client Diconnected");
         }
 
-        private  void OnConnectError(Object[] obj)
-        {
+        private void OnConnectError(Object[] obj) {
             Log.Error("WebSocket", "Connection Error" + obj[0]);
         }
 
-        private  void OnConnectTimeout(Object[] obj)
-        {
+        private void OnConnectTimeout(Object[] obj) {
             Log.Error("WebSocket", "Connection Timeout");
         }
-        private void OnTransport(Object[] obj)
-        {
+        private void OnTransport(Object[] obj) {
             Transport transport = (Transport)obj[0];
             transport.On(Transport.EventRequestHeaders, this);
 
         }
 
-        private async void OnConversation(Object[] obj)
-        {
+        private async void OnConversation(Object[] obj) {
             Log.Error("WebSocket", "OnConversation");
             var data = (JSONObject)obj[0];
             string room;
             string message;
             string username;
-            try
-            {
+            try {
                 username = data.GetString("username");
                 message = data.GetString("message");
                 room = data.GetString("room");
-            }
-            catch (JSONException e)
-            {
+            } catch (JSONException e) {
                 Log.Error("message send error: ", e.Message);
                 return;
             }
 
-            try
-            {
-                if (!string.IsNullOrEmpty(message))
-                {
-                    await _conversationsRecords.Insert(new ConversationsRecords
-                    {
+            try {
+                if (!string.IsNullOrEmpty(message)) {
+                    await _conversationsRecords.Insert(new ConversationsRecords {
                         Message = message,
                         Room = room,
                         MessageDateTime = DateTime.Now,
@@ -146,115 +124,93 @@ namespace FamiliaXamarin
                 Utils.CreateChannels("1", "1");
                 //CAZUL 1 chat simplu intre 2 useri
                 var c = Utils.IsActivityRunning(Class.FromType(typeof(ChatActivity)));
-                if (c && ChatActivity.RoomName.Equals(room))
-                {
+                if (c && ChatActivity.RoomName.Equals(room)) {
                     Log.Error("Caz 1", "*********************");
                     ChatActivity.AddMessage(message, ChatModel.TypeMessage);
                 }
                 //CAZUL 2 user offline primeste chat
-                else if (!c && ChatActivity.RoomName.Equals(room))
-                {
+                else if (!c && ChatActivity.RoomName.Equals(room)) {
                     Log.Error("Caz 2", "*********************");
 
-                    var nb = Utils.CreateChatNotification(username, message, username, room, _context,3, "Vizualizare");
-                    
+                    var nb = Utils.CreateChatNotification(username, message, username, room, _context, 3, "Vizualizare");
+
                     var ids = room.Split(':');
-                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient")? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
+                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
                 }
                 //CAZUL 3 user 1, user 2 converseaza, al3lea se baga in seama
-                else if (!ChatActivity.RoomName.Equals(room))
-                {
+                else if (!ChatActivity.RoomName.Equals(room)) {
 
                     Log.Error("Caz 3", "*********************");
-                    var nb = Utils.CreateChatNotification(username, message, username, room, _context,3, "Vizualizare");
+                    var nb = Utils.CreateChatNotification(username, message, username, room, _context, 3, "Vizualizare");
                     var ids = room.Split(':');
-                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient")? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
+                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
                 }
 
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Log.Error("Eroare da nu ii bai", ex.ToString());
             }
         }
-        void OnChatAccepted(Object[] obj)
-        {
+        void OnChatAccepted(Object[] obj) {
             Log.Error("WebSocket", "Chat Accepted");
             var data = (JSONObject)obj[0];
             string email;
             string room;
-            try
-            {
+            try {
                 //username = data.getString("username");
                 email = data.GetString("from");
                 room = data.GetString("room");
-            }
-            catch (JSONException e)
-            {
+            } catch (JSONException e) {
                 Log.Error("on Join: ", e.Message);
                 return;
             }
             Utils.CreateChannels(email, email);
             // aici adaugi in array-ul de room-uri
-            try
-            {
+            try {
                 string SharedRooms = Utils.GetDefaults("Rooms");
-                if (SharedRooms != null)
-                {
+                if (SharedRooms != null) {
                     var model = JsonConvert.DeserializeObject<List<ConverstionsModel>>(SharedRooms);
                     var currentModel = new ConverstionsModel { Username = email, Room = room };
                     bool existingElement = false;
-                    foreach (var conversation in model)
-                    {
-                        if (conversation.Username.Equals(currentModel.Username))
-                        {
+                    foreach (var conversation in model) {
+                        if (conversation.Username.Equals(currentModel.Username)) {
                             existingElement = true;
                             break;
                         }
                     }
-                    if (!existingElement)
-                    {
+                    if (!existingElement) {
                         model.Add(currentModel);
                     }
-                  
+
 
                     string serialized = JsonConvert.SerializeObject(model);
                     Utils.SetDefaults("Rooms", serialized);
-                }
-                else
-                {
+                } else {
                     List<ConverstionsModel> model = new List<ConverstionsModel>();
                     var currentModel = new ConverstionsModel { Username = email, Room = room };
                     model.Add(currentModel);
-                   
+
 
                     string serialized = JsonConvert.SerializeObject(model);
                     Utils.SetDefaults("Rooms", serialized);
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.Error("Error OnConversation", e.Message);
             }
             var nb = Utils.CreateChatNotification("Cerere acceptata", $"{email} ti-a acceptat cererea de chat!", email, room, _context, 2);
             var ids = room.Split(':');
-            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient")? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
+            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
         }
 
-        private void OnChatRequest(Object[] obj)
-        {
+        private void OnChatRequest(Object[] obj) {
             Log.Error("WebSocket", "Chat Request");
-            
+
             var data = (JSONObject)obj[0];
             string email;
             string room;
-            try
-            {
+            try {
                 email = data.GetString("from");
                 room = data.GetString("room");
-            }
-            catch (JSONException e)
-            {
+            } catch (JSONException e) {
                 Log.Error("onStartChat: ", e.Message);
                 return;
             }
@@ -264,20 +220,16 @@ namespace FamiliaXamarin
             //var nb = Utils.GetAndroidChannelNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
             var nb = Utils.CreateChatNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", email, room, _context);
             var ids = room.Split(':');
-            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient")? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
+            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
         }
-        private void OnChatRejected(Object[] obj)
-        {
+        private void OnChatRejected(Object[] obj) {
             Log.Error("WebSocket", "Chat Rejected");
 
             var data = (JSONObject)obj[0];
             string email;
-            try
-            {
+            try {
                 email = data.GetString("from");
-            }
-            catch (JSONException e)
-            {
+            } catch (JSONException e) {
                 Log.Error("onChatRejected: ", e.Message);
                 return;
             }
@@ -289,8 +241,7 @@ namespace FamiliaXamarin
             Utils.GetManager().Notify(1000, nb);
         }
 
-        public void Call(params Object[] p0)
-        {
+        public void Call(params Object[] p0) {
             Log.Error("Call", "Caught EVENT_REQUEST_HEADERS after EVENT_TRANSPORT, adding headers");
             //Dictionary<string, List<string>> mHeaders = (Dictionary<string, List<string>>)p0[0];
             //mHeaders.Add("Authorization", new List<string>{"Basic bXl1c2VyOm15cGFzczEyMw=="});

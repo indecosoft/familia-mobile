@@ -2,11 +2,13 @@
 using Android.Content;
 using Org.Json;
 
-namespace FamiliaXamarin
-{
-    public interface IWebSocketClient
-    {
-        Task Connect(string hostname, int port, Context context);
+namespace FamiliaXamarin {
+    public interface IWebSocketClient {
+        Task ConnectAsync(string hostname, int port, Context context) {
+            return null;
+        }
+        void Connect(string hostname, int port, Context context) {
+        }
 
         void Emit(string eventName, JSONObject value);
     }
