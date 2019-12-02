@@ -21,6 +21,7 @@ using Com.Bumptech.Glide;
 using Com.Bumptech.Glide.Request;
 using Com.Bumptech.Glide.Signature;
 using Familia.Active_Conversations;
+using Familia.Activity_Tracker;
 using Familia.Chat;
 using Familia.DataModels;
 using Familia.Games;
@@ -277,6 +278,9 @@ namespace FamiliaXamarin {
                     break;
                 case Resource.Id.games:
                     StartActivity(new Intent(this, typeof(GameCenterActivity)));
+                    break;
+                case Resource.Id.activity_tracker:
+                    StartActivity(new Intent(this, typeof(TrackerActivity)));
                     break;
                 case Resource.Id.nav_asistenta:
                     SupportFragmentManager.BeginTransaction()

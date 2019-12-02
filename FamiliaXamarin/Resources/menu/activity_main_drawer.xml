@@ -40,6 +40,10 @@
         android:id="@+id/games"
         android:icon="@drawable/gamepad_variant"
         android:title="Jocuri" />
+      <item
+        android:id="@+id/activity_tracker"
+        android:icon="@drawable/shoe_print"
+        android:title="Consiliere Activitate" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
