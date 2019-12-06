@@ -146,6 +146,7 @@
     <Compile Include="Services\MedicationServerService.cs" />
     <Compile Include="Services\MedicationService.cs" />
     <Compile Include="Services\MedicalAsistanceService.cs" />
+    <Compile Include="Services\TrackerActivityService.cs" />
     <Compile Include="Sharing\CustomDialogProfileSharingData.cs" />
     <Compile Include="Sharing\MonitoringFragment.cs" />
     <Compile Include="Sharing\PressureAndGlucoseActivity.cs" />
@@ -235,6 +236,9 @@
       <Generator>
       </Generator>
     </AndroidResource>
+    <AndroidResource Include="Resources\raw\walking_animation.json" />
+    <AndroidResource Include="Resources\raw\walk.json" />
+    <AndroidResource Include="Resources\raw\steps_progress.json" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -1058,6 +1062,9 @@
     <AndroidResource Include="Resources\layout\activity_tracker.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\pencil.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

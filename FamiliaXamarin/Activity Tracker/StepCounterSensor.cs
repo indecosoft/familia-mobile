@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using Android.Hardware;
+using Android.Util;
 
 namespace Familia.Activity_Tracker
 {
@@ -39,6 +40,12 @@ namespace Familia.Activity_Tracker
         public void OnSensorChanged(SensorEvent e)
         {
            listener.OnStepCounterSensorChanged((long)e.Values[0]);
+        }
+
+        public void CloseListener()
+        {
+            sensorManager.UnregisterListener(this);
+            Log.Error("StepCounterListener", "unregistred");
         }
 
         public interface IStepCounterSensorChangedListener

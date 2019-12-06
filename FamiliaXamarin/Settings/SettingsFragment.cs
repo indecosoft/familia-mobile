@@ -22,7 +22,7 @@ using Familia.Settings;
 
 namespace FamiliaXamarin.Settings
 {
-    public class SettingsFragment : Android.Support.V4.App.Fragment
+    public class SettingsFragment : Android.Support.V4.App.Fragment, View.IOnClickListener
     {
         private Spinner spinner;
         private int optionOfSnooze;
@@ -35,6 +35,13 @@ namespace FamiliaXamarin.Settings
         private RelativeLayout _rlMedicineTitle;
 
         private TextView _tvDeviceTitle;
+        private Button _btnDailyTargetEdit;
+        private Button _btnDailyTargetSave;
+        private TextView _tvDailyTargetValue;
+        private EditText _etDailyTargetValue;
+        private TextView _tvDailyTargetLabel;
+
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -43,13 +50,13 @@ namespace FamiliaXamarin.Settings
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var v =  inflater.Inflate(Resource.Layout.fragment_settings, container, false);
+            var v = inflater.Inflate(Resource.Layout.fragment_settings, container, false);
             spinner = (Spinner)v.FindViewById(Resource.Id.alarmSpinner);
             SetupSpinner(v);
             enablefingerprint = v.FindViewById<Switch>(Resource.Id.fingerPrintSwitch);
             enablePin = v.FindViewById<Switch>(Resource.Id.pin_switch);
             _version = v.FindViewById<TextView>(Resource.Id.tv_version);
-            var ver  = Context.PackageManager.GetPackageInfo(Context.PackageName, 0).VersionName;
+            var ver = Context.PackageManager.GetPackageInfo(Context.PackageName, 0).VersionName;
             _version.Text = "Versiunea " + ver;
             _tvDevicesManagement = v.FindViewById<TextView>(Resource.Id.devices);
             _rlMedicineTitle = v.FindViewById<RelativeLayout>(Resource.Id.medicine_relative);
@@ -83,7 +90,43 @@ namespace FamiliaXamarin.Settings
                 _rlMedicineTitle.Visibility = ViewStates.Gone;
                 _tvMedicineTitle.Visibility = ViewStates.Gone;
             }
+
+            SetViewSettingsForTrackerActivity(v);
+
             return v;
+        }
+
+        private void SetViewSettingsForTrackerActivity(View v)
+        {
+            _tvDailyTargetLabel = v.FindViewById<TextView>(Resource.Id.tv_daily_target_label);
+            _btnDailyTargetEdit = v.FindViewById<Button>(Resource.Id.btn_daily_target_edit);
+            _btnDailyTargetSave = v.FindViewById<Button>(Resource.Id.btn_daily_target_save);
+            _btnDailyTargetEdit.SetOnClickListener(this);
+            _btnDailyTargetSave.SetOnClickListener(this);
+            _tvDailyTargetValue = v.FindViewById<TextView>(Resource.Id.tv_daily_target_value_displayed);
+
+            var storedValue = Utils.GetDefaults("ActivityTrackerDailyTarget");
+            if (storedValue == null)
+            {
+                storedValue = 5000 + "";
+                Utils.SetDefaults("ActivityTrackerDailyTarget", storedValue);
+            }
+
+            _tvDailyTargetValue.Text = storedValue;
+
+            _etDailyTargetValue = v.FindViewById<EditText>(Resource.Id.et_daily_target_value_editable);
+            SetVisibilityForTrackerActivity(false);
+        }
+
+        private void SetVisibilityForTrackerActivity(bool show)
+        {
+            _btnDailyTargetSave.Visibility = show ? ViewStates.Visible : ViewStates.Gone;
+            _etDailyTargetValue.Visibility = show ? ViewStates.Visible : ViewStates.Gone;
+
+
+            _tvDailyTargetLabel.Visibility = !show ? ViewStates.Visible : ViewStates.Gone;
+            _tvDailyTargetValue.Visibility = !show ? ViewStates.Visible : ViewStates.Gone;
+            _btnDailyTargetEdit.Visibility = !show ? ViewStates.Visible : ViewStates.Gone;
         }
 
         void EnablePin_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
@@ -136,6 +179,32 @@ namespace FamiliaXamarin.Settings
             if(enablefingerprint.Checked && !enablePin.Checked)
             {
                 enablePin.Checked = true;
+            }
+        }
+
+        public void OnClick(View v)
+        {
+            switch (v.Id)
+            {
+                case Resource.Id.btn_daily_target_edit:
+                    SetVisibilityForTrackerActivity(true);
+                    _etDailyTargetValue.Text = _tvDailyTargetValue.Text;
+                    break;
+                case Resource.Id.btn_daily_target_save:
+                    var newValue = _etDailyTargetValue.Text;
+                    if (newValue != null)
+                    {
+                        _tvDailyTargetValue.Text = newValue;
+                        SetVisibilityForTrackerActivity(false);
+
+                        Utils.SetDefaults("ActivityTrackerDailyTarget", newValue);
+                    }
+                    else
+                    {
+                        Toast.MakeText(Context, "Campul este gol.", ToastLength.Long).Show();
+                    }
+
+                    break;
             }
         }
     }

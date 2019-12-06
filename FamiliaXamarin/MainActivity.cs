@@ -58,6 +58,8 @@ namespace FamiliaXamarin
         Intent _medicationServiceIntent;
         Intent _smartBandServiceIntent;
         Intent _medicationServerServiceIntent;
+        Intent _stepCounterService;
+
         private IMenu _menu;
         private FusedLocationProviderClient _fusedLocationProviderClient;
         //public static bool FromDisease;
@@ -113,6 +115,9 @@ namespace FamiliaXamarin
                 StartActivity(intent);
                 
             }
+
+
+
             bool ok = int.TryParse(Utils.GetDefaults("UserType"), out var type);
             if (!ok)
             {
@@ -148,6 +153,12 @@ namespace FamiliaXamarin
             _smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
             _medicationServerServiceIntent = new Intent(this, typeof(MedicationServerService));
             _medicationServiceIntent = new Intent(this, typeof(MedicationService));
+
+            TrackerActivityService.RestartService = true;
+            _stepCounterService = new Intent(this, typeof(TrackerActivityService));
+            StartForegroundService(_stepCounterService);
+
+
             var menuNav = navigationView.Menu;
 
 
@@ -439,6 +450,9 @@ namespace FamiliaXamarin
 //                        StopService(_medicationServerServiceIntent);
 //                        StopService(_smartBandServiceIntent);
                        // StopService(_medicationServiceIntent);
+                    TrackerActivityService.RestartService = false;
+                    StopService(_stepCounterService);
+
                     ClearBluetoothDevices();
                     ClearMedicationStorages();
                     ClearConversationsStorages();

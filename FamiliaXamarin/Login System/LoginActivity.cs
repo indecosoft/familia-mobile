@@ -415,6 +415,7 @@ namespace Familia.Login_System
                     if (response != null)
                     {
                         var responseJson = new JSONObject(response);
+                        Log.Error("LoginActivity", "req response: " + responseJson.ToString());
                         switch (responseJson.GetInt("status"))
                         {
                             case 0:
@@ -459,7 +460,8 @@ namespace Familia.Login_System
                                     Snackbar.LengthLong).Show();
                                 break;
                             case 5:
-                                ShowInactiveUserDialog();
+                                var cod = new JSONObject(response).GetString("codActiv");
+                                ShowInactiveUserDialog(cod);
                                 break;
                         }
                     }
@@ -479,14 +481,14 @@ namespace Familia.Login_System
             _progressBarDialog.Dismiss();
         }
 
-        private void ShowInactiveUserDialog()
+        private void ShowInactiveUserDialog(string cod)
         {
             RunOnUiThread(() =>
             {
                 var alert = new Android.Support.V7.App.AlertDialog.Builder(this);
                 alert.SetMessage(
                     "Nu puteti utiliza aplicatia in momentul de fata pentru ca dispozitivul este asignat unui alt cont." +
-                    "Verificati setarile din Sistemul de Monitorizare Pacienti - id: < cod > ");
+                    "Verificati setarile din Sistemul de Monitorizare Pacienti - id:  " + cod);
                 alert.SetPositiveButton("Ok",
                     (senderAlert, args) => { Log.Error("LoginActivity", "Ok"); });
                 Dialog dialog = alert.Create();
