@@ -31,7 +31,7 @@ using Newtonsoft.Json;
 
 namespace FamiliaXamarin.Asistenta_sociala
 {
-    public class AsistentForm : Android.Support.V4.App.Fragment
+    public class AsistentForm : Android.Support.V4.App.Fragment, ILocationEvents
     {
         private FusedLocationProviderClient _fusedLocationProviderClient;
         private bool _isGooglePlayServicesInstalled;
@@ -48,12 +48,12 @@ namespace FamiliaXamarin.Asistenta_sociala
 
         private void IntiUi(View v)
         {
-            
+
             _tbDetails = v.FindViewById<EditText>(Resource.Id.input_details);
             _btnScan = v.FindViewById<Button>(Resource.Id.btnScan);
             _btnAnulare = v.FindViewById<Button>(Resource.Id.btnAnulare);
-            _btnBenefits = v.FindViewById<Button>(Resource.Id.benefits_button); 
-             _formContainer = v.FindViewById<ConstraintLayout>(Resource.Id.container);
+            _btnBenefits = v.FindViewById<Button>(Resource.Id.benefits_button);
+            _formContainer = v.FindViewById<ConstraintLayout>(Resource.Id.container);
 
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Datele sunt procesate...", Activity, false);
             _progressBarDialog.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimary);
@@ -80,7 +80,7 @@ namespace FamiliaXamarin.Asistenta_sociala
 
                 _btnScan.Enabled = FieldsValidation();
             };
-            _btnAnulare.Click += delegate(object sender, EventArgs args)
+            _btnAnulare.Click += delegate (object sender, EventArgs args)
             {
                 Utils.SetDefaults("ActivityStart", "");
                 Utils.SetDefaults("QrId", "");
@@ -136,11 +136,11 @@ namespace FamiliaXamarin.Asistenta_sociala
 
 
             if (!_isGooglePlayServicesInstalled) return view;
-            new LocationRequest()
-                .SetPriority(LocationRequest.PriorityHighAccuracy)
-                .SetInterval(1000)
-                .SetFastestInterval(1000);
-            _ = new FusedLocationProviderCallback(Activity);
+            var locationRequest = new LocationRequest();
+            locationRequest.SetPriority(LocationRequest.PriorityHighAccuracy);
+            locationRequest.SetInterval(1000);
+            locationRequest.SetFastestInterval(1000);
+            _ = new FusedLocationProviderCallback(this);
 
             _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Activity);
 
@@ -151,7 +151,8 @@ namespace FamiliaXamarin.Asistenta_sociala
         private async void OpenDiseaseList(object sender, EventArgs e)
         {
             _progressBarDialog.Show();
-            await Task.Run(async () => {
+            await Task.Run(async () =>
+            {
                 try
                 {
                     //Utils.GetDefaults("QrId")
@@ -165,15 +166,16 @@ namespace FamiliaXamarin.Asistenta_sociala
                         List<SearchListModel> items = new List<SearchListModel>();
                         for (int i = 0; i < dataArray.Length(); i++)
                         {
-                            items.Add(new SearchListModel{
-                            Id= dataArray.GetJSONObject(i).GetInt("id"),
-                            Title = dataArray.GetJSONObject(i).GetString("benefit")
-                            } );
+                            items.Add(new SearchListModel
+                            {
+                                Id = dataArray.GetJSONObject(i).GetInt("id"),
+                                Title = dataArray.GetJSONObject(i).GetString("benefit")
+                            });
                         }
-                        
+
                         Intent intent = new Intent(Activity, typeof(SearchListActivity));
                         intent.PutExtra("Items", JsonConvert.SerializeObject(items));
-                        intent.PutExtra("SelectedItems", JsonConvert.SerializeObject(SelectedBenefits)); 
+                        intent.PutExtra("SelectedItems", JsonConvert.SerializeObject(SelectedBenefits));
                         StartActivityForResult(intent, 1);
 
                     }
@@ -228,9 +230,9 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 _dateTimeStart = currentDateandTime;
                                 _dateTimeEnd = null;
                                 Activity.StartForegroundService(_medicalAsistanceService);
-          
 
-                        
+
+
                                 _latitude = double.Parse(Utils.GetDefaults("Latitude"));
                                 _longitude = double.Parse(Utils.GetDefaults("Longitude"));
                                 Log.Error("Latitude12", _latitude.ToString());
@@ -265,7 +267,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                             _formContainer.Visibility = ViewStates.Gone;
                             _btnScan.Text = "Incepe activitatea";
                             _btnAnulare.Visibility = ViewStates.Gone;
-                            Utils.SetDefaults("QrId","");
+                            Utils.SetDefaults("QrId", "");
 
                             try
                             {
@@ -287,7 +289,7 @@ namespace FamiliaXamarin.Asistenta_sociala
                                 Log.Error("Details", _details.ToString());
 
                                 //Activity.StopService(_distanceCalculatorService);
-                                
+
                                 await Task.Run(async () =>
                                 {
                                     //GetLastLocationButtonOnClick();
@@ -346,7 +348,7 @@ namespace FamiliaXamarin.Asistenta_sociala
 
                 }
 
-                
+
             }
             catch (Exception)
             {
@@ -374,23 +376,23 @@ namespace FamiliaXamarin.Asistenta_sociala
             //var result = await scanner.scan(options);
             // Start thread to adjust focus at 1-sec intervals
             var result = await scanner.Scan(options);
-//            new Thread(new ThreadStart(delegate
-//            {
-//                while (result == null)
-//                {
-//                    try
-//                    {
-//                        scanner.AutoFocus();
-//                        Thread.Sleep(3000);
-//                    }
-//                    catch
-//                    {
-//                        //Ignored
-//                    }
-//                    
-//                }
-//            })).Start();
-            
+            //            new Thread(new ThreadStart(delegate
+            //            {
+            //                while (result == null)
+            //                {
+            //                    try
+            //                    {
+            //                        scanner.AutoFocus();
+            //                        Thread.Sleep(3000);
+            //                    }
+            //                    catch
+            //                    {
+            //                        //Ignored
+            //                    }
+            //                    
+            //                }
+            //            })).Start();
+
             Activity.Window.ClearFlags(flags);
             return result;
 
@@ -428,12 +430,18 @@ namespace FamiliaXamarin.Asistenta_sociala
                 Log.Error("Avem result", data.GetStringExtra("result"));
                 _btnScan.Enabled = FieldsValidation();
                 _btnBenefits.Text = $"Ati Selectat {SelectedBenefits.Count} beneficii";
-            } else
+            }
+            else
             {
                 Log.Error("Nu avem result", "User-ul a zis CANCEL");
                 _btnBenefits.Text = "Selectati beneficii";
                 SelectedBenefits.Clear();
             }
+        }
+
+        public void OnLocationRequested(object source, EventArgs args)
+        {
+            // throw new NotImplementedException();
         }
     }
 

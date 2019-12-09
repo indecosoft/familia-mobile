@@ -36,6 +36,7 @@
     <AndroidLinkMode>Full</AndroidLinkMode>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -51,6 +52,7 @@
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <Debugger>Xamarin</Debugger>
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev.Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -61,6 +63,7 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android.Export" />
@@ -197,6 +200,9 @@
     <Compile Include="Asistenta sociala\SearchListActivity.cs" />
     <Compile Include="Asistenta sociala\SearchListAdapter.cs" />
     <Compile Include="WebSocket\WebSocketLocation.cs" />
+    <Compile Include="Location\LocationManager.cs" />
+    <Compile Include="Location\LocationEventArgs.cs" />
+    <Compile Include="Location\ILocationEvents.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

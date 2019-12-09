@@ -1,52 +1,29 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Android.Content;
+﻿using System.Linq;
 using Android.Gms.Location;
 using Android.Util;
-using FamiliaXamarin.Helpers;
-using Org.Json;
+using Familia.Helpers;
 
 namespace FamiliaXamarin.Location
 {
     public class FusedLocationProviderCallback : LocationCallback
     {
-        readonly Context _activity;
-
-        public FusedLocationProviderCallback(Context activity)
+        private readonly ILocationEvents locationEvents;
+        public FusedLocationProviderCallback(ILocationEvents listener)
         {
-            _activity = activity;
+            locationEvents = listener;
         }
-
         public override void OnLocationAvailability(LocationAvailability locationAvailability)
         {
             Log.Debug("FusedLocationProviderSample", "IsLocationAvailable: {0}", locationAvailability.IsLocationAvailable);
         }
-
-
-        public override async void OnLocationResult(LocationResult result)
+        public override void OnLocationResult(LocationResult result)
         {
             if (!result.Locations.Any() || result.Locations == null) return;
             var location = result.Locations.First();
-            Utils.SetDefaults("Latitude", location.Latitude.ToString());
-            Utils.SetDefaults("Longitude", location.Longitude.ToString());
-            if (!Utils.CheckNetworkAvailability()) return;
-            var obj = new JSONObject().Put("latitude", location.Latitude).Put("longitude", location.Longitude);
-            var finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("IdClient")).Put("location", obj);
-            try
+            locationEvents.OnLocationRequested(this, new Familia.Location.LocationEventArgs
             {
-                await Task.Run(async () =>
-                {
-                    await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token"));
-                    Log.Debug("Latitude ", location.Latitude.ToString());
-                    Log.Debug("Longitude", location.Longitude.ToString());
-                });
-            }
-            catch (Exception e)
-            {
-                Log.Error("****************************", e.Message);
-            }
-
+                Location = location
+            });
         }
     }
 }

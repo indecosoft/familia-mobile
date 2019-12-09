@@ -38,7 +38,7 @@ namespace Familia.Services
 
             try
             {
-
+                
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
                     const string channelId = "my_channel_01";
@@ -62,9 +62,9 @@ namespace Familia.Services
                 if (ok)
                 {
                     if(type != 2)
-                        await _socketClient.Connect(Constants.WebSocketAddress, Constants.WebSocketPort, this);
+                        await _socketClient.ConnectAsync(Constants.WebSocketAddress, Constants.WebSocketPort, this);
                 }
-                await webSocketLocation.Connect(Constants.WebSocketLocationAddress, Constants.WebSocketPort, this);
+                webSocketLocation.Connect(Constants.WebSocketLocationAddress, Constants.WebSocketPort, this);
                 await Task.Run(async () =>
                 {
                     try
