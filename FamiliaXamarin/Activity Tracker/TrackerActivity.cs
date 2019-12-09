@@ -10,6 +10,7 @@ using Android.Widget;
 using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
+using Familia.Services;
 using FamiliaXamarin.Helpers;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
@@ -84,8 +85,7 @@ namespace Familia.Activity_Tracker
         {
             walkingLottieAnimationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view_walking);
             walkingLottieAnimationView.AddAnimatorListener(this);
-            var filter =
-                new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
+            var filter = new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
             walkingLottieAnimationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter,
                 new LottieValueCallback(filter));
             isAnimating = false;
@@ -104,8 +104,8 @@ namespace Familia.Activity_Tracker
 
         public void OnStepCounterSensorChanged(long count)
         {
-            tvSteps.Text = count + "";
-            var progress = getProgressInPercent(dailyTarget, (int) count);
+            tvSteps.Text = TrackerActivityService.TotalDailySteps + "";
+            var progress = getProgressInPercent(dailyTarget, (int)TrackerActivityService.TotalDailySteps);//count
 
             if (currentProgres != progress)
             {
@@ -113,13 +113,7 @@ namespace Familia.Activity_Tracker
                 {
                     currentProgres = 0;
                     progress = 100;
-                    progressLottieAnimationView.SetMinAndMaxProgress(1.0f, 1.0f);
-                    var filter =
-                        new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
-                    progressLottieAnimationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter,
-                        new LottieValueCallback(filter));
-                    progressLottieAnimationView.PlayAnimation();
-                    
+                    SetUIForProgress100();
                 }
                 else
                 {
@@ -137,17 +131,22 @@ namespace Familia.Activity_Tracker
                 walkingLottieAnimationView.PlayAnimation();
             }
         }
-    
-    public override void OnBackPressed()
+
+        private void SetUIForProgress100()
+        {
+            progressLottieAnimationView.SetMinAndMaxProgress(1.0f, 1.0f);
+            var filter = new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
+            progressLottieAnimationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter, new LottieValueCallback(filter));
+            progressLottieAnimationView.PlayAnimation();
+        }
+
+        public override void OnBackPressed()
         {
             base.OnBackPressed();
             sensor.CloseListener();
         }
 
-        public void OnAnimationCancel(Animator animation)
-        {
-            Log.Error("TrackerActivity", "animation cancel");
-        }
+        public void OnAnimationCancel(Animator animation){}
 
         public void OnAnimationEnd(Animator animation)
         {
@@ -155,10 +154,7 @@ namespace Familia.Activity_Tracker
             isAnimating = false;
         }
 
-        public void OnAnimationRepeat(Animator animation)
-        {
-            Log.Error("TrackerActivity", "animation repeat");
-        }
+        public void OnAnimationRepeat(Animator animation){}
 
         public void OnAnimationStart(Animator animation)
         {

@@ -14,62 +14,42 @@ namespace Familia.Services
     [Service]
     class TrackerActivityService: Service, StepCounterSensor.IStepCounterSensorChangedListener
     {
-        public static readonly int TRACKER_ACTIVITY_SERVICE_NOTIFICATION_ID = 4;
         public static readonly int TRACKER_ACTIVITY_SERVICE_NOTIFICATION_ID_USER = 7;
         public static bool RestartService = true;
         string CHANNEL_ID = "my_channel_01";
-        int ServiceRunningNotificationId = 2000;
-        private bool isRestarting = true;
+//        int ServiceRunningNotificationId = 2000; //for test on another id
+        private const int ServiceRunningNotificationId = 10000;
+        private bool _isRestarting = true;
 
-        private long stepsFromSensor = -1;
-        private static int DailyTarget;// = 6000;
-        private static int HalfHourTarget;// = DailyTarget / 15;
-        private long stepsHH;
-
-        private readonly Timer handler = new Timer(1000);
+        private long _stepsFromSensor = -1;
+        private static int _dailyTarget;
+        private static int _halfHourTarget;
+        private long _currentStepsHh;
+        public static long TotalDailySteps;
+        private readonly Timer _handler = new Timer(1000);
         
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-
-            DailyTarget = int.Parse(Utils.GetDefaults("ActivityTrackerDailyTarget"));
-            HalfHourTarget = DailyTarget / 15;
-
-            Log.Error("TrackerActivityService", "DT: " + DailyTarget + " hht: " + HalfHourTarget);
+            _dailyTarget = int.Parse(Utils.GetDefaults("ActivityTrackerDailyTarget"));
+            _halfHourTarget = _dailyTarget / 15;
                 
             string content;
-            var now = DateTime.Now;
-            int hour = now.Hour;
-            Log.Error("TrackerActivityService", "hour: " + now.Hour);
-
+            var hour = DateTime.Now.Hour;
             switch (hour)
             {
                 case 16: // launch notification for hour 4 pm
-                    if (DailyTarget <= stepsFromSensor)
-                    {
-                        content = "Felicitari! Target zilnic atins.";
-                    }
-                    else
-                    {
-                        long dif = DailyTarget - stepsFromSensor;
-                        content = "Pasi necesari pana la target: " + dif;
-                    }
+                    content = GetContentFor4pm();
                     LaunchNotification(content, false);
                     break;
                 case 20:// launch notification for hour 8 am
-                    if (DailyTarget <= stepsFromSensor)
-                    {
-                        content = "Ziua s-a incheiat cu bine.";
-                    }
-                    else
-                    {
-                        content = "Nu ati atins target-ul azi.";
-                    }
+                    content = GetContentFor8pm();
                     LaunchNotification(content, false);
                     break;
                 default:
+                    bool continueChecking = false;
                     if (hour >= 8)
                     {
-                        if (DailyTarget <= stepsFromSensor)// DailyTarget achieved
+                        if (_dailyTarget <= TotalDailySteps)//stepsFromSensor)// DailyTarget achieved
                         {  
                             content = "Felicitari! Target zilnic atins.";
                             LaunchNotification(content, false);
@@ -78,84 +58,113 @@ namespace Familia.Services
                         {
                             if (hour < 16)
                             {
-                                string hhT;
-                                if (stepsHH < HalfHourTarget)
+                                if (_currentStepsHh < _halfHourTarget)
                                 {
-                                    hhT = " mai mic decat " + HalfHourTarget;
-                                    if (stepsHH == 0)
-                                    {
-                                        content = "Nu ati facut pasi in ultima jumatate de ora.";
-                                    }
-                                    else
-                                    {
-                                        content = "Numar de pasi facuti in ultima jumatate de ora: " + stepsHH;
-                                    }
+                                    Log.Error("TrackerActivityService", "1. currentHHT: " + _currentStepsHh + " HHT: " + _halfHourTarget);
+                                    content = GetContentFor30minsTarget();
                                     LaunchNotification(content, true);
                                 }
                                 else
                                 {
-                                    hhT = " mai mare decat " + HalfHourTarget;
+                                    Log.Error("TrackerActivityService", "2. currentHHT: " + _currentStepsHh + " HHT: " + _halfHourTarget);
+                                    continueChecking = true; // continue checking 
                                 }
-
-                                Log.Error("TrackerActivityService", "hht: " + hhT);
                             }
                             else
                             {
                                 if (hour > 20 || hour < 20)
                                 {
-                                    long minutesTillNextCheck = 60000 * 5; // continue checking before or after 8 pm
-                                    handler.Interval = minutesTillNextCheck;
+                                    Log.Error("TrackerActivityService", "3. currentHHT: " + _currentStepsHh + " HHT: " + _halfHourTarget);
+                                    continueChecking = true; // continue checking before or after 8 pm
                                 }
                             }
                         }
                     }
                     else
                     {
-                        long minutesTillNextCheck = 60000 * 5; // check til hour is 8 am
-                        handler.Interval = minutesTillNextCheck;
+                        Log.Error("TrackerActivityService", "4. currentHHT: " + _currentStepsHh + " HHT: " + _halfHourTarget);
+                        continueChecking = true; // check til hour is 8 am
+                    }
+
+                    if (continueChecking)
+                    {
+                        long minutesTillNextCheck = 60000 * 5;
+                        _handler.Interval = minutesTillNextCheck;
                     }
                     break;
             }
         }
 
+        private string GetContentFor30minsTarget()
+        {
+            string content;
+            if (_currentStepsHh == 0)
+            {
+                content = "Nu ati facut pasi in ultima jumatate de ora.";
+            }
+            else
+            {
+                content = "Numar de pasi facuti in ultima jumatate de ora: " + _currentStepsHh;
+            }
+            return content;
+        }
+
+        private static string GetContentFor8pm()
+        {
+            string content;
+            if (_dailyTarget <= TotalDailySteps) // stepsFromSensor)
+            {
+                content = "Ziua s-a incheiat cu bine.";
+            }
+            else
+            {
+                content = "Nu ati atins target-ul azi.";
+            }
+
+            return content;
+        }
+
+        private static string GetContentFor4pm()
+        {
+            string content;
+            if (_dailyTarget <= TotalDailySteps) //stepsFromSensor)
+            {
+                content = "Felicitari! Target zilnic atins.";
+            }
+            else
+            {
+                long dif = _dailyTarget - TotalDailySteps; //stepsFromSensor;
+                content = "Pasi necesari pana la target: " + dif;
+            }
+
+            return content;
+        }
+
         public void LaunchNotification(string content, bool checkAtEvery30Min)
         {
-            
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .SetSmallIcon(Resource.Drawable.logo)
                 .SetContentTitle("TrackerActivityService Notify User")
                 .SetContentText(content)
                 .SetPriority(NotificationCompat.PriorityHigh);
+               
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
             notificationManager.Notify(TRACKER_ACTIVITY_SERVICE_NOTIFICATION_ID_USER, builder.Build());
 
             if (!checkAtEvery30Min)
             {
-                //delay 120 minutes
-                long hoursTillNextCheck = 3600000 * 2;
+                long hoursTillNextCheck = 3600000 * 2; //delay 120 minutes
                 Log.Error("TrackerActivityService", "interval: " + hoursTillNextCheck);
-                handler.Interval = hoursTillNextCheck;
+                _handler.Interval = hoursTillNextCheck;
             }
             else
             {
-                // reset
-                stepsHH = 0;
+                _currentStepsHh = 0; // reset
                 //delay 30 mins ( 5 for test )
                 long minutesTillNextCheck = 60000 * 5; // here will be * 30
                 Log.Error("TrackerActivityService", "interval: " + minutesTillNextCheck);
-                handler.Interval = minutesTillNextCheck;
-            }
-        }
-        
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-            Log.Error("TrackerActivityService", "destroyed");
-            if (RestartService)
-            {
-                Log.Error("TrackerActivityService", "restarting..");
-                StartService(new Intent(this, typeof(TrackerActivityService)));
+                _handler.Interval = minutesTillNextCheck;
             }
         }
 
@@ -165,29 +174,14 @@ namespace Familia.Services
         {
             base.OnCreate();
             Log.Error("TrackerActivityService", "started");
-
             StepCounterSensor sensor = new StepCounterSensor(this);
             sensor.SetListener(this);
-            try
-            {
-                DailyTarget = int.Parse(Utils.GetDefaults("ActivityTrackerDailyTarget"));
-            }
-            catch (Exception e)
-            {
-                //daily target not setted, default is 5000
-                DailyTarget = 5000;
-                Utils.SetDefaults("ActivityTrackerDailyTarget", DailyTarget+"");
-            }
-            
-            HalfHourTarget = DailyTarget / 15;
-            stepsHH = 0;
+            InitStepsTarget();
 
-            handler.Elapsed += OnTimedEvent;
-           
+            _handler.Elapsed += OnTimedEvent;
 
             try
             {
-
                 NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Step Counter",
                     NotificationImportance.High);
 
@@ -198,10 +192,10 @@ namespace Familia.Services
                     .SetContentText("Step counter Ruleaza in fundal")
                     .SetSmallIcon(Resource.Drawable.logo)
                     .SetOngoing(true)
+                    .SetPriority(NotificationCompat.PriorityHigh)
                     .Build();
 
                 StartForeground(ServiceRunningNotificationId, notification);
-
             }
             catch (Exception e)
             {
@@ -209,27 +203,55 @@ namespace Familia.Services
             }
         }
 
+        private void InitStepsTarget()
+        {
+            try
+            {
+                _dailyTarget = int.Parse(Utils.GetDefaults("ActivityTrackerDailyTarget"));
+            }
+            catch (Exception e) //daily target not setted, default is 5000
+            {
+                _dailyTarget = 5000;
+                Utils.SetDefaults("ActivityTrackerDailyTarget", _dailyTarget + "");
+            }
+            _halfHourTarget = _dailyTarget / 15;
+            _currentStepsHh = 0;
+        }
+
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-
             if(intent == null)
             {
                 OnCreate();
             }
-            Log.Error("TrackerActivityService", "start command " + startId);
-            handler.Start();
-            
+            _handler.Start();
             return StartCommandResult.RedeliverIntent;
         }
 
         public void OnStepCounterSensorChanged(long count)
         {
-            Log.Error("TrackerActivityService", "steps: " + count);
-            if (stepsFromSensor != count)
+            Log.Error("TrackerActivityService", "stepsFromSensor: " + count);
+            var hour = DateTime.Now.Hour;
+            KeepCountingInRange(count, hour);
+            Log.Error("TrackerActivityService", "TotalDailySteps: " + TotalDailySteps);
+            _stepsFromSensor = count;
+        }
+
+        private void KeepCountingInRange(long count, int hour)
+        {
+            if (hour >= 1)
             {
-                stepsHH++;
+                if (_stepsFromSensor != count)
+                {
+                    _currentStepsHh++;
+                    TotalDailySteps++;
+                }
             }
-            stepsFromSensor = count;
+
+            if (hour >= 23)
+            {
+                TotalDailySteps = 0;
+            }
         }
     }
 }
