@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="Activity Tracker\StepCounterSensor.cs" />
     <Compile Include="Activity Tracker\TrackerActivity.cs" />
+    <Compile Include="Activity Tracker\TrackerActivityReceiver.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataModels\BluetoothDeviceRecords.cs" />
     <Compile Include="DataModels\DeviceConfigRecords.cs" />
