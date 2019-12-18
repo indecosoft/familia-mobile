@@ -19,7 +19,7 @@ using Java.Interop;
 namespace Familia.Games
 {
     [Activity( Theme = "@style/AppTheme.Dark",
-        ScreenOrientation = ScreenOrientation.Portrait)]
+        ScreenOrientation = ScreenOrientation.Landscape)]
     public class GameActivity : AppCompatActivity, IGyroSensorChangedListener
     {
         public float rotationOY;
@@ -48,6 +48,8 @@ namespace Familia.Games
             WebSettings webSettings = webView.Settings;
             webSettings.JavaScriptEnabled = true;
             webSettings.DomStorageEnabled = true;
+            webSettings.LoadWithOverviewMode = true;
+            webSettings.UseWideViewPort = true;
 
             webView.AddJavascriptInterface(new WebViewJavascriptInterface(this), "JSHandler");
 
@@ -128,7 +130,7 @@ namespace Familia.Games
 
         [Export]
         [JavascriptInterface]
-        public string getXYFromGyro()
+        public string getXYFromSensor()
         {
             return ((GameActivity) context).rotationOY + "/" + ((GameActivity)context).rotationOX + "/" + ((GameActivity)context).rotationOZ;
         }

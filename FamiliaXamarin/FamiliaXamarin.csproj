@@ -1073,6 +1073,15 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\pencil.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\planet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\background2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\background.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.

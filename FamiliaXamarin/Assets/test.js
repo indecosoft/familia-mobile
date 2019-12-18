@@ -20,20 +20,17 @@ let refreshIntervalId;
 let direction;
 let lastDirection;
 let complexDirection;
-let collectableItems = [];
-let bigScore;
-let currentScore;
 
 $.keyframe.define([
     {
         name: 'home-move',
         '0%': {
             'margin-left': 50 + 'px',
-            'margin-top': 0 + 'px'
+            'margin-top': 50 + 'px'
         },
         '100%': {
-            'margin-left': 50 + 'px',
-            'margin-top': 200 + 'px'
+            'margin-left': 100 + 'px',
+            'margin-top': 150 + 'px'
         }
     },
     {
@@ -53,23 +50,19 @@ $.keyframe.define([
 scene.init = function () {
     isStarted = false;
     isOver = false;
-    bigScore = Number(JSHandler.getScore());
-    currentScore = 0;
-    sendMessage("SCORE " + score);
     $("#reset").css({ display: 'none' });
     $("#score").css({ display: 'none' });
-    $("#itemsCollected").css({ display: 'none' }); //for collectable items
+    $("#itemsCollected").css({ display: 'none' });
     $(".player").css({ display: 'none' });
     $(".arrival").css({ top: '0px', left: '50px', position: 'absolute' });
 
     $('.arrival').playKeyframe({
         name: 'home-move',
-        duration: '2s',
+        duration: '1s',
         timingFunction: 'ease-out',
         'fill-mode': 'forwards',
         complete: function () {
             $(".player").css({ top: '0px', left: '0px', position: 'absolute', display: 'block', animation: 'none' });
-//            collectableItems = appendCollectableItem(getRandomr(3, 10)); //for collectable items
             isStarted = true;
             sendMessage("Animation is completed. Starting the game .... ");
             sendMessage("Loop started..");
@@ -86,12 +79,11 @@ scene.init = function () {
 
 scene.update = function () {
     if (isOver === false && isStarted === true) {
-        let values = JSHandler.getXYFromGyro();
-        let currentX = Number(values.split("/")[0]);
-        let currentY = Number(values.split("/")[1]);
+        let values = JSHandler.getXYFromSensor();
+        //landscape orientation
+        let currentX = Number(values.split("/")[1]); //Number(values.split("/")[0]);  // portrait orientation
+        let currentY = Number(values.split("/")[0]); //Number(values.split("/")[1]);
         let rotationOZ = Number(values.split("/")[2]);
-
-        sendMessage("OZ: " + rotationOZ + " x " + currentX + " y " + currentY);
 
         $(".player").parent().css({ position: 'relative' });
         $(".arrival").css({ position: 'absolute' });
@@ -120,15 +112,12 @@ scene.update = function () {
 
         movementY = player.position.top;
         movementX = player.position.left;
-       
-//        setVelocity();
 
-        let dirY = Math.ceil(currentX  * 1.5);
-        let dirX = Math.ceil(currentY * ( -1 ) * 1.5);
-        sendMessage("dirx: " + dirX + " , dirY: " + dirY);
+        //landscape
+        let dirY = Math.ceil(currentX *  1.5); // Math.ceil(currentX * 1.5); //portrait
+        let dirX = Math.ceil(currentY *  1.5); // Math.ceil(currentY * (-1) * 1.5);
         movementX += dirX;
         movementY += dirY;
-        sendMessage("movementX: " + movementX + " , movementY: " + movementY);
 
         if (isInArea(player) === true) {
             $(".player").css({ left: movementX, top: movementY, position: 'absolute' });
@@ -136,8 +125,6 @@ scene.update = function () {
         else {
             scene.physics.velocity = 0;
         }
-
-//        collect(player);//for collectable items
 
         if (checkForFinish(player, arrivalPlace) === true) {
             isOver = true;
@@ -151,69 +138,12 @@ scene.update = function () {
 scene.finish = function () {
     sendMessage("finish called");
     displaySceneForFinish();
-    JSHandler.saveScore(bigScore + "");
     clearInterval(refreshIntervalId);
 }
 
 function displaySceneForFinish() {
     $("#reset").css({ display: 'block' });
-    $("#score").text("Scor: " + bigScore).css({ display: 'block' });
-//    $("#itemsCollected").text("Obiecte colectate: " + currentScore).css({ display: 'block' });//for collectable items
     displayPlayerForFinish();
-}
-
-function getDirection(currentX, currentY) {
-    if (currentX > 0.2) {
-        direction = "Right";
-    }
-    if (currentX < -0.2) {
-        direction = "Left";
-    }
-    if (currentY < -0.2) {
-        direction = "Up";
-    }
-    if (currentY > 0.2) {
-        direction = "Down";
-    }
-
-    return direction;
-}
-
-function setVelocity() {
-    if (lastDirection !== direction) {
-        scene.physics.velocity = 0;
-    }
-    else {
-        scene.physics.velocity += scene.physics.gravity;
-    }
-}
-
-function collect(player) {
-
-    if ($(".brick").length > 0) {
-        for (let i = 0; i < collectableItems.length; i++) {
-            const brick = {
-                width: collectableItems[i].outerWidth(),
-                height: collectableItems[i].outerHeight(),
-                center: {
-                    x: collectableItems[i].offset().left + (collectableItems[i].outerWidth() / 2),
-                    y: collectableItems[i].offset().top + (collectableItems[i].outerHeight() / 2)
-                }
-            };
-
-            if (Math.floor(player.center.x) < Math.floor(brick.center.x + (brick.width / 2)) &&
-                Math.floor(player.center.x) > Math.floor(brick.center.x - (brick.width / 2)) &&
-                Math.floor(player.center.y < Math.floor(brick.center.y + (brick.height / 2))) &&
-                Math.floor(player.center.y) > Math.floor(brick.center.y - (brick.height / 2))) {
-                collectableItems[i].remove();
-               // currentScore++;//for collectable items
-//                bigScore++;//for collectable items
-            }
-        }
-    }
-    else {
-        collectableItems = [];
-    }
 }
 
 function isInArea(player) {
@@ -246,59 +176,14 @@ function checkForFinish(player, arrivalPlace) {
         Math.floor(player.center.x) > Math.floor(arrivalPlace.center.x - (arrivalPlace.width / 2)) &&
         Math.floor(player.center.y < Math.floor(arrivalPlace.center.y + (arrivalPlace.height / 2))) &&
         Math.floor(player.center.y) > Math.floor(arrivalPlace.center.y - (arrivalPlace.height / 2))) {
-        bigScore += 1;
         return true;
     }
     return false;
 }
 
-function appendCollectableItem(noOfItems) {
-    let items = [];
-    let count = 0;
-    while (count < noOfItems) {
-        let height = getRandomr(50, Number($(window).height() - 80));
-        let width = getRandomr(50, Number($(window).width() - 80));
-        sendMessage("RANDOM H:" + height + " W:" + width);
-        if (checkCollider(width, height) == false) {
-            let item = $('<div class="brick"></div>');
-            item.css({ left: width, top: height, position: 'absolute' });
-            items.push(item);
-            $("body").append(item);
-            count++;
-        }
-    }
-
-    return items;
-
-    function checkCollider(width, height) {
-        const arrivalPlace = {
-            width: $(".arrival").outerWidth(),
-            height: $(".arrival").outerHeight(),
-            center: {
-                x: $(".arrival").offset().left + ($(".arrival").outerWidth() / 2),
-                y: $(".arrival").offset().top + ($(".arrival").outerHeight() / 2)
-            }
-        };
-
-        if (width - 40 <= Math.floor(arrivalPlace.center.x + (arrivalPlace.width / 2)) &&
-            width + 40 >= Math.floor(arrivalPlace.center.x - (arrivalPlace.width / 2)) &&
-            height - 40 <= Math.floor(arrivalPlace.center.y + (arrivalPlace.height / 2)) &&
-            height + 40 >= Math.floor(arrivalPlace.center.y - (arrivalPlace.height / 2))) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-}
-
 function playAgain() {
     sendMessage("reloading game...");
-    collectableItems.forEach(element => element.remove());
     scene.init();
-}
-
-function getRandomr(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
 }
 
 function getFromAndroid() {

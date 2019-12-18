@@ -1,11 +1,8 @@
 ﻿body {
-    background: linear-gradient(135deg, rgb(0,133,119) 0%,rgb(144,164,174) 100%);
-}
-
-.wrapper {
-    position: absolute;
-    top: 15%;
-    left: 25%;
+    /* background: linear-gradient(135deg, rgb(0,133,119) 0%,rgb(144,164,174) 100%);*/
+    background-image: url("background2.png");
+    background-repeat: no-repeat;
+    margin: 0px;
 }
 
 .ball {
@@ -13,33 +10,11 @@
     height: 100%;
     position: absolute;
     border-radius: 50%;
-    overflow: hidden;
-    box-shadow: -5px -5px 5px red;
-    /* left: 50%; */
-    /* top: 50%; */
-    box-shadow: -3px 3px 15px rgba(0,0,0,0.35), 0px 0px 100px rgba(0,0,0,0.25), 0px 0px 5px rgba(255,255,255,0.5);
+    background-image: url("planet.png");
+    background-size: cover;
     z-index: 1;
 }
 
-    .ball:before {
-        position: absolute;
-        content: '';
-        height: 100%;
-        width: 100%;
-        background-image: linear-gradient(transparent 0%, rgba(0,0,0,0.2) 50%);
-        transform: rotate(-125deg);
-    }
-
-
-.texture {
-    position: relative;
-    animation: translateBackground 40s infinite linear;
-    background: url(http://thumbs.dreamstime.com/x/golf-ball-texture-17926947.jpg) 0% 0 repeat-x;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    border-radius: 50%;
-}
 
 @keyframes translateBackground {
     0% {
@@ -55,13 +30,12 @@ html {
     overflow: hidden !important;
 }
 
-
 .player {
-    width: 60px;
-    height: 60px;
+    width: 100px;
+    height: 100px;
     position: absolute;
 }
-
+/* square
 .arrival {
     width: 80px;
     height: 80px;
@@ -71,6 +45,19 @@ html {
     top: 0px;
     left: 50px
 }
+*/
+.arrival {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    left: 50px;
+    top: 0px;
+    background-size: cover;
+    border-radius: 50%;
+    background-color: #040427;
+    -webkit-box-shadow: inset 1px 0px 20px #1c1c5f, -3px -1px 11px rgba(51, 87, 185, 0.514), 3px 0px 11px rgba(186, 67, 241, 0.411);
+    box-shadow: inset 1px 0px 20px #1c1c5f, -3px -1px 11px rgba(51, 87, 185, 0.514), 3px 0px 11px rgba(186, 67, 241, 0.411);
+}
 
 .brick {
     width: 20px;
@@ -79,7 +66,7 @@ html {
     background: black;
 }
 
-.button-reset {
+/*.button-reset {
     position: absolute;
     display: inline-block;
     width: 100%;
@@ -88,17 +75,55 @@ html {
     font-size: 25px;
     border-radius: 8px;
     background-color: rgb(0,133,119);
+    //border: none;
     border-color: rgb(255,235,59);
     color: white;
-}
+}*/
 
-.score-position {
-    position: absolute;
+.box_scor {
+    background-color: rgba(0, 0, 0, 0.3);
+    /*margin: 10% 10% 10% 10%;*/
     width: 100%;
-    height: 80px;
-    font-size: 25px;
-    color: white;
-    top: 150px;
-    left: 150px;
+    height: 100%;
+    display: block;
+    position: relative;
 }
 
+.text {
+    text-decoration: none;
+    font-family: 'Roboto',sans-serif;
+    font-size: 50px;
+    margin-top: 10px;
+    color: #FFFFFF;
+    text-align: center;
+}
+
+button.button-reset {
+    display: inline-block;
+    padding: 5px 20px;
+    border: 1.5px solid #FFFFFF;
+    border-radius: 2px;
+    box-sizing: border-box;
+    font-family: 'Roboto',sans-serif;
+    font-weight: 300;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    text-align: center;
+    width: 30%;
+    margin-top: 30%;
+    margin-bottom: 20%;
+    font-size: 25px;
+}
+
+button.button-reset:hover {
+    color: #000000;
+    background-color: #FFFFFF;
+}
+
+
+@media all and (max-width:450px) {
+    button.button-reset {
+        display: block;
+        margin: 6.5px auto;
+    }
+}
