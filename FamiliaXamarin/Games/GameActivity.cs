@@ -117,7 +117,6 @@ namespace Familia.Games
         [JavascriptInterface]
         public string getScore()
         {
-            
             return ((GameActivity)context).score + "";
         }
 

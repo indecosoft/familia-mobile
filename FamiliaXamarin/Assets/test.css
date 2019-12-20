@@ -34,19 +34,25 @@ html {
     width: 100px;
     height: 100px;
     position: absolute;
+    display: none;
 }
-/* square
+
 .arrival {
-    width: 80px;
-    height: 80px;
     position: absolute;
-    border-radius: 8px;
-    background-color: rgb(255,235,59);
-    top: 0px;
-    left: 50px
+    width: 150px;
+    height: 150px;
+    left: 100px;
+    top: 100px;
+    background-size: cover;
+    border-radius: 50%;
+    background-color: #DA416B; /* #040427;*/
+    -webkit-box-shadow: inset 1px 0px 20px #1c1c5f, -3px -1px 11px rgba(51, 87, 185, 0.514), 3px 0px 11px rgba(186, 67, 241, 0.411);
+    box-shadow: inset 1px 0px 20px #1c1c5f, -3px -1px 11px rgba(51, 87, 185, 0.514), 3px 0px 11px rgba(186, 67, 241, 0.411);
+
 }
-*/
-.arrival {
+
+.wrong-place1 {
+    display: none;
     position: absolute;
     width: 150px;
     height: 150px;
@@ -54,76 +60,134 @@ html {
     top: 0px;
     background-size: cover;
     border-radius: 50%;
-    background-color: #040427;
+    background-color: #339D82;
     -webkit-box-shadow: inset 1px 0px 20px #1c1c5f, -3px -1px 11px rgba(51, 87, 185, 0.514), 3px 0px 11px rgba(186, 67, 241, 0.411);
     box-shadow: inset 1px 0px 20px #1c1c5f, -3px -1px 11px rgba(51, 87, 185, 0.514), 3px 0px 11px rgba(186, 67, 241, 0.411);
 }
 
-.brick {
-    width: 20px;
-    height: 20px;
+
+.wrong-place2 {
+    display: none;
     position: absolute;
-    background: black;
+    width: 150px;
+    height: 150px;
+    left: 50px;
+    top: 0px;
+    background-size: cover;
+    border-radius: 50%;
+    background-color: #F18A28;
+    -webkit-box-shadow: inset 1px 0px 20px #1c1c5f, -3px -1px 11px rgba(51, 87, 185, 0.514), 3px 0px 11px rgba(186, 67, 241, 0.411);
+    box-shadow: inset 1px 0px 20px #1c1c5f, -3px -1px 11px rgba(51, 87, 185, 0.514), 3px 0px 11px rgba(186, 67, 241, 0.411);
 }
 
-/*.button-reset {
-    position: absolute;
-    display: inline-block;
-    width: 100%;
-    height: 80px;
-    text-align: center;
-    font-size: 25px;
-    border-radius: 8px;
-    background-color: rgb(0,133,119);
-    //border: none;
-    border-color: rgb(255,235,59);
-    color: white;
-}*/
 
 .box_scor {
-    background-color: rgba(0, 0, 0, 0.3);
-    /*margin: 10% 10% 10% 10%;*/
+    background-color: rgba(0, 0, 0, 0.5);
     width: 100%;
-    height: 100%;
-    display: block;
-    position: relative;
+    display: none;
+    position: absolute;
+    z-index: 2;
 }
 
 .text {
     text-decoration: none;
     font-family: 'Roboto',sans-serif;
     font-size: 50px;
-    margin-top: 10px;
+    margin-top: 10%;
     color: #FFFFFF;
     text-align: center;
+}
+
+.text-howToPlay {
+    text-decoration: none;
+    font-family: 'Roboto',sans-serif;
+    font-size: 25px;
+    margin-top: 50%;
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.text-score {
+    text-decoration: none;
+    font-family: 'Roboto',sans-serif;
+    font-size: 60px;
+    margin-top: 2%;
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.m-top {
+    margin-top: 20%;
 }
 
 button.button-reset {
     display: inline-block;
     padding: 5px 20px;
-    border: 1.5px solid #FFFFFF;
-    border-radius: 2px;
+    border: 3px solid #FFFFFF;
+    border-radius: 5px;
     box-sizing: border-box;
+    border-color: rgba(51, 157, 130, 0.8);
     font-family: 'Roboto',sans-serif;
     font-weight: 300;
     background-color: rgba(0, 0, 0, 0.3);
     color: #ffffff;
     text-align: center;
-    width: 30%;
-    margin-top: 30%;
-    margin-bottom: 20%;
+    width: 250px;
+    height: 60px;
+    margin-bottom: 10%;
+    margin-right: 10%;
     font-size: 25px;
 }
 
-button.button-reset:hover {
-    color: #000000;
-    background-color: #FFFFFF;
+button.button-next-level {
+    display: inline-block;
+    padding: 5px 20px;
+    border: 3px solid #FFFFFF;
+    border-radius: 5px;
+    border-color: rgba(51, 157, 130, 0.9);
+    box-sizing: border-box;
+    font-family: 'Roboto',sans-serif;
+    font-weight: 300;
+    background-color: rgba(51, 157, 130, 0.8);
+    color: #ffffff;
+    text-align: center;
+    width: 250px;
+    height: 60px;
+    margin-bottom: 10%;
+    margin-right: 10%;
+    font-size: 25px;
 }
 
 
-@media all and (max-width:450px) {
+button.button-reset:hover {
+    color: #000000;
+    background-color: rgb(51, 157, 130);
+}
+
+button.button-next-level:hover {
+    color: #000000;
+    background-color: rgb(51, 157, 130);
+}
+
+button.button-reset:hover::after {
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+button.button-next-level:hover::after {
+    color: #ffffff;
+    background-color: rgba(51, 157, 130, 0.8);
+}
+
+
+@media all and (max-width:1000px) {
     button.button-reset {
         display: block;
         margin: 6.5px auto;
     }
+    button.button-next-level {
+        display: block;
+        margin: 6.5px auto;
+    }
+
 }
