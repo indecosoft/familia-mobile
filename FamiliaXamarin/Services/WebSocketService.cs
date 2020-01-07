@@ -10,45 +10,34 @@ using FamiliaXamarin;
 using FamiliaXamarin.Helpers;
 using Org.Json;
 
-namespace Familia.Services
-{
+namespace Familia.Services {
     [Service]
-    class WebSocketService : Service
-    {
-        //private NotificationManager _notificationManager;
+    class WebSocketService : Service {
         readonly IWebSocketClient _socketClient = new WebSocketClient();
         readonly IWebSocketClient webSocketLocation = new WebSocketLocation();
         private const int ServiceRunningNotificationId = 10000;
         private readonly ChargerReceiver charger = new ChargerReceiver();
-        public override IBinder OnBind(Intent intent)
-        {
-            throw new NotImplementedException();
-        }
+        public override IBinder OnBind(Intent intent) => throw new NotImplementedException();
 
-        public override void OnDestroy()
-        {
+        public override void OnDestroy() {
             base.OnDestroy();
             UnregisterReceiver(charger);
         }
 
-        public override async void OnCreate()
-        {
+        public override async void OnCreate() {
             base.OnCreate();
             Log.Error("Service:", "WebSocketService STARTED");
 
-            try
-            {
-                
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                {
+            try {
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O) {
                     const string channelId = "my_channel_01";
                     var channel = new NotificationChannel(channelId, "WebSocket",
-                        NotificationImportance.Default)
-                        { Importance = NotificationImportance.Low };
+                        NotificationImportance.Default) { Importance = NotificationImportance.Low };
 
                     ((NotificationManager)GetSystemService(NotificationService)).CreateNotificationChannel(channel);
 
-                    var notification = new NotificationCompat.Builder(this, channelId)
+                    using var notification = new NotificationCompat.Builder(this, channelId)
                         .SetContentTitle("Familia")
                         .SetContentText("Ruleaza in fundal")
                         .SetSmallIcon(Resource.Drawable.logo)
@@ -59,67 +48,35 @@ namespace Familia.Services
                 }
                 RegisterReceiver(charger, new IntentFilter(Intent.ActionHeadsetPlug));
                 bool ok = int.TryParse(Utils.GetDefaults("UserType"), out var type);
-                if (ok)
-                {
-                    if(type != 2)
+                if (ok) {
+                    if (type != 2)
                         await _socketClient.ConnectAsync(Constants.WebSocketAddress, Constants.WebSocketPort, this);
                 }
                 webSocketLocation.Connect(Constants.WebSocketLocationAddress, Constants.WebSocketPort, this);
-                await Task.Run(async () =>
-                {
-                    try
-                    {
-                        var data = await GetData();
-                        var obj = new JSONObject(data);
-                        var idPersoana = obj.GetInt("idPersoana");
-                        Utils.SetDefaults("IdPersoana", idPersoana.ToString());
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error("Configuration Error", "Error getting the configuration file from GIS");
+                await Task.Run(async () => {
+                    try {
+                        var result = await GetData();
+                        if (result == "{}") throw new Exception("Error geting configuration from GIS");
+                        Utils.SetDefaults("IdPersoana", new JSONObject(result).GetInt("idPersoana").ToString());
+                    } catch (Exception ex) {
+                        Log.Error("Configuration Error", ex.Message);
                     }
 
                 });
 
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Console.WriteLine(e);
                 //throw;
             }
-
-        
         }
 
 
-        private static async Task<string> GetData()
-        {
-            if (!Utils.CheckNetworkAvailability()) return null;
-            var result =
-                await WebServices.Get(
-                    $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetDeviceIdentificator(Application.Context)}");
-            //               var result = await WebServices.Get(
-            //                   $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetDeviceIdentificator(Application.Context)}",
-            //                   Utils.GetDefaults("Token", context));
-            return result ?? null;
+        private static async Task<string> GetData() {
+            if (!Utils.CheckNetworkAvailability()) return "{}";
+            return await WebServices.Get(
+                    $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetDeviceIdentificator(Application.Context)}") ?? "{}";
         }
 
-        public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
-        {
-            Log.Error("WebSocket Service", "Started");
-
-//            var notification = new NotificationCompat.Builder(this)
-//                .SetContentTitle(Resources.GetString(Resource.String.app_name))
-//                .SetContentText("Ruleaza in fundal")
-//                .SetSmallIcon(Resource.Drawable.logo)
-//                .SetOngoing(true)
-//                .Build();
-//
-//            // Enlist this instance of the service as a foreground service
-//            StartForeground(ServiceRunningNotificationId, notification);
-            return StartCommandResult.Sticky;
-        }
-
-
+        public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) => StartCommandResult.Sticky;
     }
 }

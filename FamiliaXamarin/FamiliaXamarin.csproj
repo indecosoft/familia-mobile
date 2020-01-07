@@ -202,6 +202,12 @@
     <Compile Include="Location\LocationManager.cs" />
     <Compile Include="Location\LocationEventArgs.cs" />
     <Compile Include="Location\ILocationEvents.cs" />
+    <Compile Include="Devices\BroadcastReceivers\BondingBroadcastReceiver.cs" />
+    <Compile Include="Devices\BluetoothEvents\BondingStatusEventArgs.cs" />
+    <Compile Include="Devices\Models\BluetoothDeviceModel.cs" />
+    <Compile Include="Devices\BluetoothScanCallback.cs" />
+    <Compile Include="Devices\BluetoothEvents\BluetoothScanCallbackEventArgs.cs" />
+    <Compile Include="Devices\BLEHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -1064,6 +1070,11 @@
     <AndroidResource Include="Resources\layout\activity_tracker.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Devices\BroadcastReceivers\" />
+    <Folder Include="Devices\BluetoothEvents\" />
+    <Folder Include="Devices\Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -17,14 +17,12 @@ using FamiliaXamarin.Services;
 using Org.Json;
 using SQLite;
 
-namespace FamiliaXamarin.Medicatie.Alarm
-{
+namespace FamiliaXamarin.Medicatie.Alarm {
     [BroadcastReceiver(Enabled = true, Exported = true)]
-//    [Android.Runtime.Register("newWakeLock", "(ILjava/lang/String;)Landroid/os/PowerManager$WakeLock;", "GetNewWakeLock_ILjava_lang_String_Handler")]
-    class AlarmBroadcastReceiverServer : BroadcastReceiver
-    {
+    //    [Android.Runtime.Register("newWakeLock", "(ILjava/lang/String;)Landroid/os/PowerManager$WakeLock;", "GetNewWakeLock_ILjava_lang_String_Handler")]
+    class AlarmBroadcastReceiverServer : BroadcastReceiver {
 
-//        public virtual Android.OS.PowerManager.WakeLock NewWakeLock(Android.OS.WakeLockFlags levelAndFlags, string tag);
+        //        public virtual Android.OS.PowerManager.WakeLock NewWakeLock(Android.OS.WakeLockFlags levelAndFlags, string tag);
 
         public const string Uuid = "uuid";
         public const string Title = "title";
@@ -41,12 +39,11 @@ namespace FamiliaXamarin.Medicatie.Alarm
         public static readonly string MEDICATION_NAME = "med_name";
 
 
-        public override async void OnReceive(Context context, Intent intent)
-        {
-//            var action = intent.Action;
-//            if (action == null) return;
-//            var now = DateTime.Now;
-           
+        public override async void OnReceive(Context context, Intent intent) {
+            //            var action = intent.Action;
+            //            if (action == null) return;
+            //            var now = DateTime.Now;
+
             if (string.IsNullOrEmpty(Utils.GetDefaults("Token"))) return;
 
             var uuid = intent.GetStringExtra(Uuid);
@@ -54,15 +51,14 @@ namespace FamiliaXamarin.Medicatie.Alarm
             var content = intent.GetStringExtra(Content);
             var postpone = intent.GetIntExtra(Postpone, 5);
 
-            if (await Storage.GetInstance().isHere(uuid) == false)
-            {
+            if (await Storage.GetInstance().isHere(uuid) == false) {
                 Log.Error("RECEIVER SERVER", "med is not here anymore");
                 return;
             }
-            
+
 
             const string channel = "channelabsolut";
-            Log.Error("RECEIVER",  title + ", "+ content +", " + postpone);
+            Log.Error("RECEIVER", title + ", " + content + ", " + postpone);
 
             CreateNotificationChannel(channel, title, content);
 
@@ -72,7 +68,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
             NotifyId += randomNumber;
 
             var alarmIntent = new Intent(context, typeof(AlarmActivity));
-//            alarmIntent.AddFlags(ActivityFlags.ClearTop);
+            //            alarmIntent.AddFlags(ActivityFlags.ClearTop);
             alarmIntent.PutExtra(Uuid, uuid);
             alarmIntent.PutExtra("notifyId", NotifyId);
             alarmIntent.PutExtra("message", FROM_SERVER);
@@ -84,44 +80,36 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
             BuildNotification(context, NotifyId, channel, title, content, alarmIntent);
 
-            try
-            {
+            try {
                 var powerManager = (PowerManager)context.GetSystemService(Context.PowerService);
                 var wakeLock = powerManager.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "server tag");
                 wakeLock.Acquire();
                 wakeLock.Release();
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.Error("ERR", e.ToString());
             }
         }
 
-        private static bool IsServiceRunning(Type classTypeof, Context context)
-        {
-            var manager = (ActivityManager) context.GetSystemService(Context.ActivityService);
+        private static bool IsServiceRunning(Type classTypeof, Context context) {
+            var manager = (ActivityManager)context.GetSystemService(Context.ActivityService);
 #pragma warning disable 618
             return manager.GetRunningServices(int.MaxValue).Any(service =>
                 service.Service.ShortClassName == classTypeof.ToString());
         }
 
-        private static async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now)
-        {
-            await db.InsertAsync(new MedicineRecords()
-            {
+        private static async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now) {
+            await db.InsertAsync(new MedicineRecords() {
                 Uuid = uuid,
                 DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
             });
         }
 
-        private static async Task<bool> SendData(Context context, JSONArray mArray)
-        {
+        private static async Task<bool> SendData(Context context, JSONArray mArray) {
             var result = await WebServices.Post(
                 $"{Constants.PublicServerAddress}/api/medicine", mArray,
                 Utils.GetDefaults("Token"));
             if (!Utils.CheckNetworkAvailability()) return false;
-            switch (result)
-            {
+            switch (result) {
                 case "Done":
                     return true;
                 default:
@@ -130,9 +118,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
         }
 
 
-        private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent)
-        {
-            Log.Error("RECEIVER", mTitle + " "+  mContent);
+        private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent) {
+            Log.Error("RECEIVER", mTitle + " " + mContent);
 
             var description = mContent;
             Android.Net.Uri sound = Android.Net.Uri.Parse(ContentResolver.SchemeAndroidResource + "://" + Application.Context.PackageName + "/" + Resource.Raw.alarm);  //Here is FILE_NAME is the name of file that you want to play
@@ -140,28 +127,26 @@ namespace FamiliaXamarin.Medicatie.Alarm
                 .SetUsage(AudioUsageKind.Notification)
                 .Build();
             var channel =
-                new NotificationChannel(mChannel, mTitle, NotificationImportance.Default)
-                {
+                new NotificationChannel(mChannel, mTitle, NotificationImportance.Default) {
                     Description = description
                 };
-            channel.SetSound(sound,attributes);
+            channel.SetSound(sound, attributes);
             channel.Importance = NotificationImportance.High;
-            
+
             var notificationManager =
-                (NotificationManager) Application.Context.GetSystemService(
+                (NotificationManager)Application.Context.GetSystemService(
                     Context.NotificationService);
             notificationManager.CreateNotificationChannel(channel);
         }
 
 
-        private static void BuildNotification(Context context, int notifyId, string channel, string title, string content, Intent intent)
-        {
+        private static void BuildNotification(Context context, int notifyId, string channel, string title, string content, Intent intent) {
 
             //Log.Error("PPPAAAAAAAAAAAAAAAAAA", "build notification for " + title + " with id: " + notifyId);
             Log.Error("RECEIVER", "build notification");
 
             var piNotification = PendingIntent.GetActivity(context, notifyId, intent, PendingIntentFlags.UpdateCurrent);
-            
+
             var mBuilder =
                 new NotificationCompat.Builder(context, channel)
                     .SetSmallIcon(Resource.Drawable.logo)
@@ -170,7 +155,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     .SetAutoCancel(false)
                     .SetContentIntent(piNotification)
                     .SetPriority(NotificationCompat.PriorityHigh)
-                    
+
                     .SetOngoing(true);
 
 
