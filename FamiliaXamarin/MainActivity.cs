@@ -129,12 +129,15 @@ namespace FamiliaXamarin
 
            
             //Consiliere de activitate ------
-            _stepCounterService = new Intent(this, typeof(TrackerActivityService));
-            StartForegroundService(_stepCounterService);
+            //_stepCounterService = new Intent(this, typeof(TrackerActivityService));
+            //StartForegroundService(_stepCounterService);
             //-------------
 
             //            make it hidden for release bc is not done yet
-            //            menuNav.FindItem(Resource.Id.games).SetVisible(false);
+            menuNav.FindItem(Resource.Id.games).SetVisible(false);
+            menuNav.FindItem(Resource.Id.activity_tracker).SetVisible(false);
+
+
 
 
             switch (type)
@@ -143,6 +146,9 @@ namespace FamiliaXamarin
                     Toast.MakeText(this, "1", ToastLength.Long).Show();
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_devices).SetVisible(false);
+
+                    //new item in menu
+                    menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
 
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new QrCodeGenerator())
@@ -170,6 +176,10 @@ namespace FamiliaXamarin
                 case 3: // pacient
                     Toast.MakeText(this, "3", ToastLength.Long).Show();
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
+
+                    //new item in menu
+                    menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
+
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
                         .AddToBackStack(null).Commit();
@@ -182,6 +192,10 @@ namespace FamiliaXamarin
                     Toast.MakeText(this, "4", ToastLength.Long).Show();
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_monitorizare)?.SetVisible(false);
+
+                    //new item in menu
+                    menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
+
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new FindUsersFragment())
                         .AddToBackStack(null).Commit();
@@ -297,11 +311,13 @@ namespace FamiliaXamarin
                         .AddToBackStack(null).Commit();
                     Title = item.ToString();
                     break;
+
+                case Resource.Id.nav_devices_asistent:
+
+                    Toast.MakeText(this, "Devices Asistent", ToastLength.Long).Show();
+
+                    break;
                 case Resource.Id.medicatie:
-                    /*
-                    SupportFragmentManager.BeginTransaction()
-                        .Replace(Resource.Id.fragment_container, new MedicineFragment())
-                        .AddToBackStack(null).Commit();*/
                     StartActivity(typeof(MedicineBaseActivity));
                     break;
                 case Resource.Id.chat:

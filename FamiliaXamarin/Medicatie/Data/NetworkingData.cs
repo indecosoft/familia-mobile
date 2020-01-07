@@ -55,9 +55,9 @@ namespace Familia.Medicatie.Data
                     var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("IdClient")}/{size}", Utils.GetDefaults("Token")); //this should be here
                     if (res != null)
                     {
-                        Log.Error("Networking data", " RESULT_FOR_MEDICATIE" + res);
+                        Log.Error("Networking data future", " RESULT_FOR_MEDICATIE" + res);
                         medications = ParseResultFromUrl(res);
-                        Log.Error("Networking data", " count: " + medications.Count);
+                        Log.Error("Networking data future", " count: " + medications.Count);
                     }
                 }
                 catch (Exception e)
