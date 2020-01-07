@@ -2,26 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.App;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
-using Android.Views;
-using Android.Widget;
 using Android.Content.PM;
 using Android.Support.V7.Widget;
 using FamiliaXamarin;
-using Org.Json;
 using Android.Support.Design.Widget;
 using Newtonsoft.Json;
-using Android.Graphics.Drawables;
 
-namespace Familia.Asistentasociala
-{
+namespace Familia.Asistentasociala {
     [Activity(Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class SearchListActivity : AppCompatActivity
     {

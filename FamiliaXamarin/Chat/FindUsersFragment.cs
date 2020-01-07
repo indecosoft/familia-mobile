@@ -30,10 +30,8 @@ namespace Familia.Chat {
                 if (args.Direction.ToString() == "Right" && _adapter.Count != 0) {
                     await Task.Run(() => {
                         try {
-                            var emailFrom = Utils.GetDefaults("Email");
-
                             var emailObject = new JSONObject().Put("dest", _adapter.GetItem(_cardStackView.TopIndex - 1).Email)
-                                .Put("from", emailFrom);
+                                .Put("from", Utils.GetDefaults("Email"));
                             WebSocketClient.Client.Emit("chat request", emailObject);
                         } catch (Exception e) {
                             Log.Error("Chat Request Err: ", e.Message);

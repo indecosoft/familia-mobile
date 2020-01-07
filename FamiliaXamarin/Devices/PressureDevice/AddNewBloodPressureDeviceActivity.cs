@@ -21,6 +21,7 @@ using FamiliaXamarin.Helpers;
 using Org.Json;
 using SQLite;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Familia.Devices;
 
 namespace FamiliaXamarin.Devices.PressureDevice
 {
@@ -28,8 +29,6 @@ namespace FamiliaXamarin.Devices.PressureDevice
     public class AddNewBloodPressureDeviceActivity : AppCompatActivity
     {
         private RecyclerView _recyclerView;
-        private List<string> _devices;
-        private List<string> _devicesAddress;
         private const int EnableBt = 11;
         private BluetoothAdapter _bluetoothAdapter;
         private BluetoothLeScanner _scanner;
@@ -60,21 +59,19 @@ namespace FamiliaXamarin.Devices.PressureDevice
                 (sender, args) => Finish());
             _progressBarDialog.Show();
 
-            _devices = new List<string>();
-            _devicesAddress = new List<string>();
-            
-//            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-//            var numeDb = "devices_data.db";
-//            _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
-//            await _db.CreateTableAsync<BluetoothDeviceRecords>();
-            _adapter = new DevicesRecyclerViewAdapter(this, _devices);
-            _adapter.ItemClick += async delegate (object sender, int i)
+            _scanCallback.OnScanResultChanged += OnScanResult;
+            //            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            //            var numeDb = "devices_data.db";
+            //            _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
+            //            await _db.CreateTableAsync<BluetoothDeviceRecords>();
+            _adapter = new DevicesRecyclerViewAdapter();
+            _adapter.ItemClick += async delegate (object sender, DevicesRecyclerViewAdapterClickEventArgs args)
             {
                 _bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
                 await _bleDevicesRecords.Insert(
                     new BluetoothDeviceRecords
                     {
-                        Name = _devices[i], Address = _devicesAddress[i],
+                        Name = _adapter.GetItem(args.Position).Name, Address = _adapter.GetItem(args.Position).Address,
                         DeviceType = GetString(Resource.String.blood_pressure_device)
                     });
                 if (!Intent.GetBooleanExtra("RegisterOnly", false))
@@ -115,7 +112,12 @@ namespace FamiliaXamarin.Devices.PressureDevice
                 }
             }
         }
-        
+
+        private void OnScanResult(object source, Familia.Devices.BluetoothEvents.BluetoothScanCallbackEventArgs args) {
+            if (args.Result.Device.Name == null) return;
+            _adapter.Add(args.Result.Device);
+            _progressBarDialog.Dismiss();
+        }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
@@ -142,18 +144,18 @@ namespace FamiliaXamarin.Devices.PressureDevice
             _scanner?.StopScan(_scanCallback);
         }
 
-        private class BluetoothScanCallback : ScanCallback
-        {
-            public override void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result)
-            {
-                base.OnScanResult(callbackType, result);
-                if (result.Device.Name == null ||
-                    _context._devicesAddress.Contains(result.Device.Address)) return;
-                _context._devices.Add(result.Device.Name);
-                _context._devicesAddress.Add(result.Device.Address);
-                _context._adapter.NotifyDataSetChanged();
-                _context._progressBarDialog.Dismiss();
-            }
-        }
+        //private class BluetoothScanCallback : ScanCallback
+        //{
+        //    public override void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result)
+        //    {
+        //        base.OnScanResult(callbackType, result);
+        //        if (result.Device.Name == null ||
+        //            _context._devicesAddress.Contains(result.Device.Address)) return;
+        //        _context._devices.Add(result.Device.Name);
+        //        _context._devicesAddress.Add(result.Device.Address);
+        //        _context._adapter.NotifyDataSetChanged();
+        //        _context._progressBarDialog.Dismiss();
+        //    }
+        //}
     }
 }

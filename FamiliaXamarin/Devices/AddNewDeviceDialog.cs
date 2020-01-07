@@ -41,7 +41,7 @@ namespace FamiliaXamarin.Devices
             };
             _btnBloodGlucose.Click += delegate(object sender, EventArgs args)
             {
-                var intent = new Intent(_context, typeof(AddNewGucoseDeviceActivity));
+                var intent = new Intent(_context, typeof(AddNewGlucoseDeviceActivity));
                 intent.PutExtra("RegisterOnly", true);
                 _context.StartActivity(intent);
                 Dismiss();

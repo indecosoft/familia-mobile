@@ -161,14 +161,13 @@ namespace FamiliaXamarin
 
         private void EmailEditTextOnTextChanged(object sender, TextChangedEventArgs e)
         {
-            string email = _emailEditText.Text;
-            if (email == string.Empty)
+            if (_emailEditText.Text == string.Empty)
             {
                 _emailInputLayout.Error ="Camp obligatoriu";
                 _validateForm = false;
 
             }
-            else if (!Utils.EmailValidator(email))
+            else if (!Utils.EmailValidator(_emailEditText.Text))
             {
                 _emailInputLayout.Error = "Adresa de email invalida";
                 _validateForm = false;
@@ -183,8 +182,7 @@ namespace FamiliaXamarin
 
         private void NameEditTextOnTextChanged(object sender, TextChangedEventArgs e)
         {
-            string name = _nameEditText.Text;
-            if (name == string.Empty)
+            if (_nameEditText.Text == string.Empty)
             {
                 _lastNameInputLayout.Error = "Camp obligatoriu";
                 _validateForm = false;
@@ -220,31 +218,21 @@ namespace FamiliaXamarin
                 var response = await WebServices.Post(Constants.PublicServerAddress + "/api/register", dataToSend);
                 if (response != null)
                 {
-                    Snackbar snack;
-                    var responseJson = new JSONObject(response);
-                    switch (responseJson.GetInt("status"))
+                    Snackbar snack = new JSONObject(response).GetInt("status") switch
                     {
-                        case 0:
-                            snack = Snackbar.Make(_layout, "Wrong Data", Snackbar.LengthLong);
-                            snack.Show();
-                            break;
-                        case 1:
-                            snack = Snackbar.Make(_layout, "Internal Server Error", Snackbar.LengthLong);
-                            snack.Show();
-                            break;
-                        case 2:
-                            snack = Snackbar.Make(_layout, "Account created", Snackbar.LengthIndefinite).SetAction("Ok", (v) =>
-                            {
-                                Finish();
-                            });
-                            snack.Show();
-                            break;
-                    }
+                        0 => Snackbar.Make(_layout, "Date incorecte", Snackbar.LengthLong),
+                        1 => Snackbar.Make(_layout, "Eroare server", Snackbar.LengthLong),
+                        2 => Snackbar.Make(_layout, "Cont creat cu succes", Snackbar.LengthIndefinite).SetAction("Ok", (v) =>
+                        {
+                            Finish();
+                        }),
+                        _ => Snackbar.Make(_layout, "A fost intampinata o eroare", Snackbar.LengthLong)
+                    };
+                    snack.Show();
                 }
                 else
                 {
-                    var snack = Snackbar.Make(_layout, "Unable to reach the server!", Snackbar.LengthLong);
-                    snack.Show();
+                    Snackbar.Make(_layout, "Unable to reach the server!", Snackbar.LengthLong).Show();
                 }
             });
             _progressBarDialog.Dismiss();

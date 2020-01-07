@@ -4,9 +4,7 @@ using Org.Json;
 
 namespace FamiliaXamarin {
     public interface IWebSocketClient {
-        Task ConnectAsync(string hostname, int port, Context context) {
-            return null;
-        }
+        Task ConnectAsync(string hostname, int port, Context context) => null;
         void Connect(string hostname, int port, Context context) {
         }
 

@@ -18,6 +18,7 @@ using Com.Bumptech.Glide;
 using FamiliaXamarin.Helpers;
 using Org.Json;
 using Resource = Familia.Resource;
+using Familia.Helpers;
 
 namespace FamiliaXamarin.Sharing
 {
@@ -38,68 +39,17 @@ namespace FamiliaXamarin.Sharing
             View view = inflater.Inflate(Resource.Layout.layout_tab1, container, false);
             btnScan = view.FindViewById<Button>(Resource.Id.btn_scanQR);
             btnScan.Click += BtnScan_Click;
-           // btnScan.SetOnClickListener(Activity);
             return view;
         }
-
-        static async Task<ZXing.Result> StartScan()
-        {
-            var options = new MobileBarcodeScanningOptions
-            {
-                PossibleFormats = new List<ZXing.BarcodeFormat>()
-                {
-                    ZXing.BarcodeFormat.QR_CODE
-                },
-                UseNativeScanning = true,
-                AutoRotate = false,
-                TryHarder = true
-
-            };
-
-            ZXing.Result result = null;
-            var scanner = new MobileBarcodeScanner();
-            //var result = await scanner.scan(options);
-            // Start thread to adjust focus at 1-sec intervals
-            new Thread(new ThreadStart(delegate
-            {
-                while (result == null)
-                {
-                    scanner.AutoFocus();
-                    Thread.Sleep(1000);
-                }
-            })).Start();
-            result = await scanner.Scan(options);
-            return result;
-
-
-        }
-
-
         private async void BtnScan_Click(object sender, EventArgs e)
         {
-            //IntentIntegrator.forSupportFragment(this).InitiateScan();
-#if __ANDROID__
-            // Initialize the scanner first so it can track the current context
-            var app = new Application();
-            MobileBarcodeScanner.Initialize(app);
-#endif
-
-            var result = await StartScan();
-            if (result == null) return;
+            var qrJsonData = await Utils.ScanQRCode(Activity);
+            if (qrJsonData == null) return;
             try
             {
-                var qrJsonData = new JSONObject(result.Text);
-
                 var dialog = OpenMiniProfileDialog();
                 dialog.Name.Text = qrJsonData.GetString("Name");
                 Glide.With(this).Load(qrJsonData.GetString("Avatar")).Into(dialog.Image);
-
-//                Picasso.With(Activity)
-//                    .Load(qrJsonData.GetString("Avatar"))
-//                    //.Load("https://i.imgur.com/EepDV83.jpg")
-//                    .Resize(100, 100)
-//                    .CenterCrop()
-//                    .Into(dialog.Image);
                 dialog.ButtonConfirm.Click += (o, args) =>
                 {
                     Task.Run(async () =>
@@ -117,9 +67,6 @@ namespace FamiliaXamarin.Sharing
                     
                     dialog.Dismiss();
                 };
-
-
-                //Log.Error("QR_CODE", qrJsonData.ToString());
             }
             catch (JSONException ex)
             {
@@ -131,8 +78,6 @@ namespace FamiliaXamarin.Sharing
         private CustomDialogProfileSharingData OpenMiniProfileDialog()
         {
             CustomDialogProfileSharingData cdd = new CustomDialogProfileSharingData(Activity);
-
-            IWindowManager windowManager = Context.GetSystemService(Context.WindowService).JavaCast<IWindowManager>();
 
             WindowManagerLayoutParams lp = new WindowManagerLayoutParams();
             lp.CopyFrom(cdd.Window.Attributes);
