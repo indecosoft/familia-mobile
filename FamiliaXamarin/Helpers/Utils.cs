@@ -118,7 +118,8 @@ namespace FamiliaXamarin.Helpers {
                 var cal = Calendar.Instance;
                 cal.Time = sdf.Parse(genDateTime);
                 cal.Add(CalendarField.Minute, 30);
-                return new BarcodeWriter {
+                return new BarcodeWriter
+                {
                     Format = BarcodeFormat.QR_CODE,
                     Options = new EncodingOptions { Height = 1000, Width = 1000 }
                 }.Write(Encryption.Encrypt(new JSONObject()
@@ -128,7 +129,9 @@ namespace FamiliaXamarin.Helpers {
                 .Put("email", GetDefaults("Email"))
                 .Put("Name", GetDefaults("Name"))
                 .Put("Avatar", GetDefaults("Avatar"))
-                .Put("Id", GetDefaults("IdClient")).ToString()));
+                .Put("Id", GetDefaults("IdClient"))
+                .Put("imei", GetDefaults("DeviceId")).ToString()));
+                
             } catch (Exception e) {
                 Log.Error("ErrorGeneratingQRCode", e.Message);
             }

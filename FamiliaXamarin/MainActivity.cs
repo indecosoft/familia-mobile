@@ -33,6 +33,7 @@ using Familia.Sharing;
 using FamiliaXamarin.DataModels;
 using AlertDialog = Android.App.AlertDialog;
 using Resource = Familia.Resource;
+using Familia.Devices.DevicesAsistent;
 
 namespace FamiliaXamarin
 {
@@ -313,7 +314,10 @@ namespace FamiliaXamarin
                     break;
 
                 case Resource.Id.nav_devices_asistent:
-
+                    SupportFragmentManager.BeginTransaction()
+                       .Replace(Resource.Id.fragment_container, new AsistentHealthDevicesFragment())
+                       .AddToBackStack(null).Commit();
+                    Title = item.ToString();
                     Toast.MakeText(this, "Devices Asistent", ToastLength.Long).Show();
 
                     break;

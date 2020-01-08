@@ -36,7 +36,6 @@
     <AndroidLinkMode>Full</AndroidLinkMode>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -52,7 +51,6 @@
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <Debugger>Xamarin</Debugger>
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev.Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -63,7 +61,6 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android.Export" />
@@ -85,12 +82,19 @@
     <Compile Include="DataModels\MedicineServerRecords.cs" />
     <Compile Include="DataModels\SmartBandRecords.cs" />
     <Compile Include="Devices\AddNewDeviceDialog.cs" />
+    <Compile Include="Devices\BLEHelpers.cs" />
+    <Compile Include="Devices\BluetoothEvents\BluetoothScanCallbackEventArgs.cs" />
+    <Compile Include="Devices\BluetoothEvents\BondingStatusEventArgs.cs" />
+    <Compile Include="Devices\BluetoothScanCallback.cs" />
+    <Compile Include="Devices\BroadcastReceivers\BondingBroadcastReceiver.cs" />
     <Compile Include="Devices\DeleteDeviceDialog.cs" />
     <Compile Include="Devices\DeviceManagementDialog.cs" />
+    <Compile Include="Devices\DevicesAsistent\AsistentHealthDevicesFragment.cs" />
     <Compile Include="Devices\DevicesManagementActivity.cs" />
     <Compile Include="Devices\DevicesManagementAdapter.cs" />
     <Compile Include="Devices\DevicesManagementModel.cs" />
     <Compile Include="Devices\DevicesManagementRecyclerViewAdapter.cs" />
+    <Compile Include="Devices\Models\BluetoothDeviceModel.cs" />
     <Compile Include="Games\GameActivity.cs" />
     <Compile Include="Games\GameCenterActivity.cs" />
     <Compile Include="Games\Sensors\GyroSensor.cs" />
@@ -106,6 +110,9 @@
     <Compile Include="JsonModels\DiseaseModel.cs" />
     <Compile Include="JsonModels\FirstSetupModel.cs" />
     <Compile Include="JsonModels\SharingModel.cs" />
+    <Compile Include="Location\ILocationEvents.cs" />
+    <Compile Include="Location\LocationEventArgs.cs" />
+    <Compile Include="Location\LocationManager.cs" />
     <Compile Include="Location\MedicalAsistanceFusedLocationProviderCallback.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Medicatie\Alarm\AlarmActivity.cs" />
@@ -201,15 +208,6 @@
     <Compile Include="Asistenta sociala\SearchListActivity.cs" />
     <Compile Include="Asistenta sociala\SearchListAdapter.cs" />
     <Compile Include="WebSocket\WebSocketLocation.cs" />
-    <Compile Include="Location\LocationManager.cs" />
-    <Compile Include="Location\LocationEventArgs.cs" />
-    <Compile Include="Location\ILocationEvents.cs" />
-    <Compile Include="Devices\BroadcastReceivers\BondingBroadcastReceiver.cs" />
-    <Compile Include="Devices\BluetoothEvents\BondingStatusEventArgs.cs" />
-    <Compile Include="Devices\Models\BluetoothDeviceModel.cs" />
-    <Compile Include="Devices\BluetoothScanCallback.cs" />
-    <Compile Include="Devices\BluetoothEvents\BluetoothScanCallbackEventArgs.cs" />
-    <Compile Include="Devices\BLEHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -249,9 +247,9 @@
       <Generator>
       </Generator>
     </AndroidResource>
-    <AndroidResource Include="Resources\raw\walking_animation.json" />
-    <AndroidResource Include="Resources\raw\walk.json" />
     <AndroidResource Include="Resources\raw\steps_progress.json" />
+    <AndroidResource Include="Resources\raw\walk.json" />
+    <AndroidResource Include="Resources\raw\walking_animation.json" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -1069,33 +1067,18 @@
     <AndroidAsset Include="Assets\p5.js" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\shoe_print.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\activity_tracker.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-<<<<<<< HEAD
     <AndroidResource Include="Resources\drawable\pencil.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\planet.png" />
+    <AndroidResource Include="Resources\drawable\shoe_print.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\background2.png" />
+    <AndroidResource Include="Resources\layout\activity_tracker.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\background.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\planet 5.png" />
-=======
-    <Folder Include="Devices\BroadcastReceivers\" />
-    <Folder Include="Devices\BluetoothEvents\" />
-    <Folder Include="Devices\Models\" />
->>>>>>> Voicu
+    <AndroidResource Include="Resources\layout\fragment_asistent_health_devices.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
