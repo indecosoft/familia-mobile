@@ -1,10 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Android;
 using Android.App;
+using Android.Content.PM;
 using Android.OS;
 using Android.Support.CustomTabs;
+using Android.Support.Design.Widget;
 using Android.Text;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Familia;
@@ -14,21 +18,22 @@ using FamiliaXamarin.Devices.PressureDevice;
 using FamiliaXamarin.Devices.SmartBand;
 using FamiliaXamarin.Helpers;
 using SQLite;
+using Resource = Familia.Resource;
 
 namespace FamiliaXamarin.Devices {
     public class HealthDevicesFragment : Android.Support.V4.App.Fragment, View.IOnClickListener {
-
+        private enum DeviceType {
+            FitBit=1,
+            BLEBloodPressureDevice = 2,
+            BLEGlucoseDevice = 3
+        }
         public override void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
 
             // Create your fragment here
         }
         private SqlHelper<BluetoothDeviceRecords> _bleDevicesRecords;
-        private async void StartNewActivity(Type newActivity, string button, View v) {
-            //            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            //            var numeDb = "devices_data.db";
-            //            var db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
-            //            await db.CreateTableAsync<BluetoothDeviceRecords>();
+        private async void StartNewActivity(Type newActivity, string button, DeviceType devicetype) {
             _bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
             var list = await _bleDevicesRecords.QueryValuations(
                 "select * from BluetoothDeviceRecords");
@@ -38,7 +43,7 @@ namespace FamiliaXamarin.Devices {
                 Activity.StartActivity(newActivity);
                 //Activity.StartActivity(typeof(AddNewGucoseDeviceActivity));
             } else {
-                if (v.Id == Resource.Id.SmartbandButton) {
+                if (devicetype == DeviceType.FitBit) {
                     const string url = "https://www.fitbit.com/oauth2/authorize?" + /*"grant_type=authorization_code"+*/
                                        "response_type=code" +
                                        "&client_id=22CZRL" +
@@ -51,16 +56,16 @@ namespace FamiliaXamarin.Devices {
                     customTabsIntent.LaunchUrl(Activity, Android.Net.Uri.Parse(url));
                 } else {
                     // Do something for Oreo and above versions
-                    var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dialog).Create();
+                    using var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dialog).Create();
                     alertDialog.SetTitle("Avertisment");
 
                     alertDialog.SetMessage("Nu aveti niciun dispozitiv inregistrat!");
                     alertDialog.SetButton("OK", delegate {
-                        switch (v.Id) {
-                            case Resource.Id.BloodPressureButton:
+                        switch (devicetype) {
+                            case DeviceType.BLEBloodPressureDevice:
                                 Activity.StartActivity(typeof(AddNewBloodPressureDeviceActivity));
                                 break;
-                            case Resource.Id.BloodGlucoseButton:
+                            case DeviceType.BLEGlucoseDevice:
                                 Activity.StartActivity(typeof(AddNewGlucoseDeviceActivity));
                                 break;
                         }
@@ -88,23 +93,73 @@ namespace FamiliaXamarin.Devices {
             smartBandButton.SetOnClickListener(this);
             //        AddNewDeviceButton.setOnClickListener(this);
         }
+        private readonly string[] _permissionsArray =
+        {
+            Manifest.Permission.ReadPhoneState,
+            Manifest.Permission.AccessCoarseLocation,
+            Manifest.Permission.AccessFineLocation,
+            Manifest.Permission.Camera,
+            Manifest.Permission.ReadExternalStorage,
+            Manifest.Permission.WriteExternalStorage
+        };
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions,
+            Permission[] grantResults) {
+
+            if (grantResults[0] != Permission.Granted) {
+                Toast.MakeText(Activity, "Permisiuni pentru telefon refuzate", ToastLength.Short).Show();
+            } else if (grantResults[3] != Permission.Granted) {
+                Toast.MakeText(Activity, "Permisiuni pentru camera refuzate", ToastLength.Short).Show();
+            }
+            if (grantResults[1] == Permission.Granted && grantResults[2] == Permission.Granted) {
+                switch ((DeviceType)requestCode) {
+                    case DeviceType.BLEBloodPressureDevice:
+                        StartNewActivity(typeof(BloodPressureDeviceActivity),
+                            GetString(Resource.String.blood_pressure_device), DeviceType.BLEBloodPressureDevice);
+                        break;
+                    case DeviceType.BLEGlucoseDevice:
+                        StartNewActivity(typeof(GlucoseDeviceActivity),
+                            GetString(Resource.String.blood_glucose_device), DeviceType.BLEGlucoseDevice);
+                        break;
+                    case DeviceType.FitBit:
+                        StartNewActivity(typeof(SmartBandDeviceActivity),
+                            GetString(Resource.String.smartband_device), DeviceType.FitBit);
+                        break;
+                    default:
+                        Log.Error("RequestCode inexistent", requestCode.ToString());
+                        break;
+                }
+            } else if (grantResults[1] != Permission.Granted || grantResults[2] != Permission.Granted) {
+                Toast.MakeText(Activity, "Permisiuni pentru locatie refuzate", ToastLength.Short).Show();
+            }
+        }
 
         public void OnClick(View v) {
             switch (v.Id) {
                 case Resource.Id.BloodPressureButton:
-                    StartNewActivity(typeof(BloodPressureDeviceActivity),
-                        GetString(Resource.String.blood_pressure_device), v);
+                    if (Activity.CheckSelfPermission(Manifest.Permission.AccessCoarseLocation) != Permission.Granted) {
+                        RequestPermissions(_permissionsArray, (int)DeviceType.BLEBloodPressureDevice);
+                    } else {
+                        StartNewActivity(typeof(BloodPressureDeviceActivity),
+                        GetString(Resource.String.blood_pressure_device), DeviceType.BLEBloodPressureDevice);
+                    }
                     break;
-
                 case Resource.Id.BloodGlucoseButton:
-                    StartNewActivity(typeof(GlucoseDeviceActivity),
-                        GetString(Resource.String.blood_glucose_device), v);
+                    if (Activity.CheckSelfPermission(Manifest.Permission.AccessCoarseLocation) != Permission.Granted) {
+                        RequestPermissions(_permissionsArray, (int)DeviceType.BLEGlucoseDevice);
+                    } else {
+                        StartNewActivity(typeof(GlucoseDeviceActivity),
+                        GetString(Resource.String.blood_glucose_device), DeviceType.BLEGlucoseDevice);
+                    }
                     break;
                 case Resource.Id.SmartbandButton:
-                    StartNewActivity(typeof(SmartBandDeviceActivity),
-                        GetString(Resource.String.smartband_device), v);
+                    if (Activity.CheckSelfPermission(Manifest.Permission.Internet) != Permission.Granted) {
+                        RequestPermissions(_permissionsArray, (int)DeviceType.FitBit);
+                    } else {
+                        StartNewActivity(typeof(SmartBandDeviceActivity),
+                        GetString(Resource.String.smartband_device), DeviceType.FitBit);
+                    }
                     break;
-
             }
         }
     }

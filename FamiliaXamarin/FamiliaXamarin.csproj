@@ -208,6 +208,9 @@
     <Compile Include="Devices\BluetoothScanCallback.cs" />
     <Compile Include="Devices\BluetoothEvents\BluetoothScanCallbackEventArgs.cs" />
     <Compile Include="Devices\BLEHelpers.cs" />
+    <Compile Include="Devices\Models\GlucoseRecord.cs" />
+    <Compile Include="Devices\BluetoothCallbacks\Glucose\GlucoseGattCallBack.cs" />
+    <Compile Include="Devices\BluetoothCallbacks\Glucose\GlucoseScanCallback.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -1075,6 +1078,8 @@
     <Folder Include="Devices\BroadcastReceivers\" />
     <Folder Include="Devices\BluetoothEvents\" />
     <Folder Include="Devices\Models\" />
+    <Folder Include="Devices\BluetoothCallbacks\" />
+    <Folder Include="Devices\BluetoothCallbacks\Glucose\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
