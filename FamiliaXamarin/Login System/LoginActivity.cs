@@ -295,7 +295,7 @@ namespace Familia.Login_System
             }
             catch(Exception ex)
             {
-                Log.Error("loginActivity", ex.Message);
+                Log.Error("loginActivity Error la verificare login", ex.Message);
             }
         }
 
@@ -442,9 +442,9 @@ namespace Familia.Login_System
                                 Utils.SetDefaults("Logins", logins.ToString());
                                 Utils.SetDefaults("Name", nume);
                                 Utils.SetDefaults("Avatar", $"{Constants.PublicServerAddress}/{avatar}");
-                                Utils.SetDefaults("IdClient", id);
-                                Utils.SetDefaults("IdClientPentruFitbit", idClient);
-                                Utils.SetDefaults("IdPersoana", idPersoana);
+                                Utils.SetDefaults("Id", id);
+                                Utils.SetDefaults("IdClient", idClient??"");
+                                Utils.SetDefaults("IdPersoana", idPersoana??"");
                                 Utils.SetDefaults("UserType", type);
 
                                 StartActivity(logins ? typeof(MainActivity) : typeof(FirstSetup));

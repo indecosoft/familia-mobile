@@ -9,7 +9,7 @@ using Android.Content.PM;
 using Android.Support.V4.View;
 using Familia;
 using String = Java.Lang.String;
-
+using FamiliaXamarin.Helpers;
 
 namespace FamiliaXamarin.Services
 {
@@ -52,6 +52,7 @@ namespace FamiliaXamarin.Services
                     }
                 };
             LoadFragment(Resource.Id.menu_tab1);
+
         }
 
         private void SetToolbar()

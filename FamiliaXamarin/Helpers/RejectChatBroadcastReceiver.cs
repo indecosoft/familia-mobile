@@ -12,7 +12,7 @@ namespace FamiliaXamarin.Helpers
         {
             var ids = intent.GetStringExtra("Room").Split(':');
             NotificationManagerCompat.From(context).Cancel(
-                ids[0] == Utils.GetDefaults("IdClient")
+                ids[0] == Utils.GetDefaults("Id")
                     ? int.Parse(ids[1])
                     : int.Parse(ids[0]));
             var emailFrom = Utils.GetDefaults("Email");

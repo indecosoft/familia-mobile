@@ -58,7 +58,7 @@ namespace Familia.Chat {
             var list = new List<UserCard>();
             await Task.Run(async () => {
                 try {
-                    var dataToSent = new JSONObject().Put("id", Utils.GetDefaults("IdClient")).Put("distance", 3000);
+                    var dataToSent = new JSONObject().Put("id", Utils.GetDefaults("Id")).Put("distance", 3000);
                     var response = await WebServices.Post(Constants.PublicServerAddress + "/api/nearMe", dataToSent, Utils.GetDefaults("Token"));
                     if (response != null) {
                         var nearMe = new JSONArray(response);

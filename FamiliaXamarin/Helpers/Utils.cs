@@ -50,7 +50,7 @@ namespace FamiliaXamarin.Helpers {
             }
         }
 
-        public static void SetDefaults(string key, string value) => PreferenceManager.GetDefaultSharedPreferences(Application.Context).Edit().PutString(key, value);
+        public static void SetDefaults(string key, string value) => PreferenceManager.GetDefaultSharedPreferences(Application.Context).Edit().PutString(key, value).Commit();
 
         public static void RemoveDefaults() => Application.Context.GetSharedPreferences(PreferenceManager.GetDefaultSharedPreferencesName(Application.Context), 0).Edit().Clear().Commit();
 
@@ -129,7 +129,7 @@ namespace FamiliaXamarin.Helpers {
                 .Put("email", GetDefaults("Email"))
                 .Put("Name", GetDefaults("Name"))
                 .Put("Avatar", GetDefaults("Avatar"))
-                .Put("Id", GetDefaults("IdClient"))
+                .Put("Id", GetDefaults("Id"))
                 .Put("imei", GetDefaults("DeviceId")).ToString()));
                 
             } catch (Exception e) {

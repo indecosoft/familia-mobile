@@ -37,7 +37,7 @@ namespace FamiliaXamarin.Sharing
             // Create your fragment here
         }
 
-        private async void LoadData()
+        private async void LoadData(View view)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace FamiliaXamarin.Sharing
                 await Task.Run(async () =>
                 {
                     var response = await WebServices.Post($"{Constants.PublicServerAddress}/api/getSharedPeople",
-                        new JSONObject().Put("id", Utils.GetDefaults("IdClient")),
+                        new JSONObject().Put("id", Utils.GetDefaults("Id")),
                             Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(response))
                     {
@@ -56,7 +56,7 @@ namespace FamiliaXamarin.Sharing
                         contacts = JsonConvert.DeserializeObject<List<SharingModel>>(response);
                         Log.Error("ListaConexiuni", "No. of contacts: " + contacts.Count);
                     }
-                });
+                }); 
 
 
                 Activity.RunOnUiThread(() =>
@@ -68,12 +68,8 @@ namespace FamiliaXamarin.Sharing
 
                 if (contacts != null)
                 {
-
-                    // Create adapter passing in the sample user data
                     var adapter = new SharingAdapter(contacts);
-                    // Attach the adapter to the recyclerview to populate items
                     _sharingRecyclerView.SetAdapter(adapter);
-                    // Set layout manager to position the items
                     _sharingRecyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
                     adapter.ItemClick += delegate(object sender, SharingAdapterClickEventArgs args)
                     {
@@ -82,28 +78,30 @@ namespace FamiliaXamarin.Sharing
                         var dialog = OpenMiniProfileDialog();
                         dialog.Name.Text = name;
                         Glide.With(this).Load($"{Constants.PublicServerAddress}/{contacts[args.Position].Avatar}").Into(dialog.Image);
-//                        Picasso.With(Activity)
-//                            .Load($"{Constants.PublicServerAddress}/{contacts[args.Position].Avatar}")
-//                            //.Load("https://i.imgur.com/EepDV83.jpg")
-//                            //.Resize(100, 100)
-//                            .CenterCrop()
-//                            .Into(dialog.Image);
+
                         dialog.ButtonConfirm.Visibility = ViewStates.Gone;
                         dialog.ButtonCancel.Text = "Sterge";
                         dialog.ButtonCancel.SetPadding(5,5,5,5);
-                        dialog.ButtonCancel.Click += delegate(object o, EventArgs eventArgs)
+                        dialog.ButtonCancel.Click += delegate (object o, EventArgs eventArgs)
                         {
 
                             var alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dialog).Create();
                             alertDialog.SetTitle("Avertisment");
                             alertDialog.SetMessage("Doriti sa stergeti aceasta conexiune?");
-                            alertDialog.SetButton("Da", delegate
+                            alertDialog.SetButton("Da", async delegate
                             {
+                                var obj = adapter.getItemAt(args.Position);
+
                                 adapter.DeleteItemAt(args.Position);
                                 adapter.NotifyDataSetChanged();
+
+                                //item deleted from list, call server
+                                await sendData(obj);
+
                                 dialog.Dismiss();
                                 //                                var serialized = JsonConvert.SerializeObject(contacts);
                                 //                                Utils.SetDefaults("Rooms", serialized, Activity);
+
                             });
                             alertDialog.SetButton2("Nu", delegate { });
                             alertDialog.Show();
@@ -158,9 +156,24 @@ namespace FamiliaXamarin.Sharing
             }
         }
 
+        private static async Task sendData(SharingModel obj)
+        {
+            try
+            {
+                JSONObject jsonObj = new JSONObject().Put("from", Utils.GetDefaults("Id")).Put("email", obj.Email);
+                Log.Error("DeleteSharing", "sending obj: " + jsonObj.ToString());
+                if (Utils.CheckNetworkAvailability())
+                {
+                    string result = await WebServices.Post($"{Constants.PublicServerAddress}/api/deleteSharingPeople", jsonObj, Utils.GetDefaults("Token"));
+                    Log.Error("DeleteSharing", "response: " + result);
+                }
+            } catch(Exception e) {
+                Log.Error("DeleteSharing err ", e.Message);
+            }
+          
+        }
 
-
-        private async void LoadDataReceived()
+        private async void LoadDataReceived(View view)
         {
             try
             {
@@ -182,12 +195,10 @@ namespace FamiliaXamarin.Sharing
                 if (contacts != null)
                 {
 
-                    // Create adapter passing in the sample user data
                     var adapter = new SharingAdapter(contacts);
-                    // Attach the adapter to the recyclerview to populate items
                     _sharingRecyclerViewReceived.SetAdapter(adapter);
-                    // Set layout manager to position the items
                     _sharingRecyclerViewReceived.SetLayoutManager(new LinearLayoutManager(Activity));
+
                     adapter.ItemClick += delegate (object sender, SharingAdapterClickEventArgs args)
                     {
                         var name = contacts[args.Position].Name;
@@ -222,8 +233,8 @@ namespace FamiliaXamarin.Sharing
 
             _sharingRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.rv_persons);
             _sharingRecyclerViewReceived = view.FindViewById<RecyclerView>(Resource.Id.rv_persons_received);
-            LoadData();
-           LoadDataReceived();
+            LoadData(view);
+           LoadDataReceived(view);
 
             return view;
         }

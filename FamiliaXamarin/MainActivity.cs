@@ -34,6 +34,7 @@ using FamiliaXamarin.DataModels;
 using AlertDialog = Android.App.AlertDialog;
 using Resource = Familia.Resource;
 using Familia.Devices.DevicesAsistent;
+using FamiliaXamarin.Sharing;
 
 namespace FamiliaXamarin
 {
@@ -91,7 +92,10 @@ namespace FamiliaXamarin
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
-
+            Log.Error("AAAAAAAAAAA", string.IsNullOrEmpty(Utils.GetDefaults("Token")).ToString());
+            Log.Error("AAAAAAAAAAA", string.IsNullOrEmpty(Utils.GetDefaults("UserType")).ToString());
+            Log.Error("AAAAAAAAAAA", Utils.GetDefaults("Token") + "");
+            Log.Error("AAAAAAAAAAA", Utils.GetDefaults("UserType") + "");
             if (string.IsNullOrEmpty(Utils.GetDefaults("Token")) || string.IsNullOrEmpty(Utils.GetDefaults("UserType")))
             {
                 var intent = new Intent(this, typeof(LoginActivity));
@@ -126,9 +130,6 @@ namespace FamiliaXamarin
             _medicationServiceIntent = new Intent(this, typeof(MedicationService));
             var menuNav = navigationView.Menu;
 
-            // Asistat la domiciliu
-
-           
             //Consiliere de activitate ------
             //_stepCounterService = new Intent(this, typeof(TrackerActivityService));
             //StartForegroundService(_stepCounterService);
@@ -138,17 +139,13 @@ namespace FamiliaXamarin
             menuNav.FindItem(Resource.Id.games).SetVisible(false);
             menuNav.FindItem(Resource.Id.activity_tracker).SetVisible(false);
 
-
-
-
             switch (type)
             {
                 case 1:
                     Toast.MakeText(this, "1", ToastLength.Long).Show();
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_devices).SetVisible(false);
-
-                    //new item in menu
+                    menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
 
                     SupportFragmentManager.BeginTransaction()
@@ -177,8 +174,7 @@ namespace FamiliaXamarin
                 case 3: // pacient
                     Toast.MakeText(this, "3", ToastLength.Long).Show();
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
-
-                    //new item in menu
+                    menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
 
                     SupportFragmentManager.BeginTransaction()
@@ -193,8 +189,7 @@ namespace FamiliaXamarin
                     Toast.MakeText(this, "4", ToastLength.Long).Show();
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_monitorizare)?.SetVisible(false);
-
-                    //new item in menu
+                    menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
 
                     SupportFragmentManager.BeginTransaction()
@@ -338,7 +333,14 @@ namespace FamiliaXamarin
                     break;
                 case Resource.Id.partajare_date:
 
-                    StartActivity(new Intent(this, typeof(SharingDataActivity)));
+                    if (int.Parse(Utils.GetDefaults("UserType")) == 2) {
+                        SupportFragmentManager.BeginTransaction()
+                          .Replace(Resource.Id.fragment_container, new Tab1Fragment())
+                          .AddToBackStack(null).Commit();
+                        Title = item.ToString();
+                    } else { 
+                        StartActivity(new Intent(this, typeof(SharingDataActivity)));
+                    }
 
                     break;
                 case Resource.Id.games:

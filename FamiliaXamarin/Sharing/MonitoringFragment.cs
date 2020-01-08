@@ -45,12 +45,8 @@ namespace Familia.Sharing
                 });
                 if (contacts != null)
                 {
-
-                    // Create adapter passing in the sample user data
                     var adapter = new SharingAdapter(contacts);
-                    // Attach the adapter to the recyclerview to populate items
                     _sharingRecyclerView.SetAdapter(adapter);
-                    // Set layout manager to position the items
                     _sharingRecyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
                     adapter.ItemClick += delegate (object sender, SharingAdapterClickEventArgs args)
                     {
@@ -80,7 +76,6 @@ namespace Familia.Sharing
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            // Use this to return your custom view for this Fragment
             var view = inflater.Inflate(Resource.Layout.fragment_monitoring, container, false);
             _sharingRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.rv_persons);
             LoadData();

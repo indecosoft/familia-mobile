@@ -64,7 +64,7 @@ namespace Familia.Location {
             OnLocationRequested((args as LocationEventArgs).Location);
             if (!Utils.CheckNetworkAvailability()) return;
             var obj = new JSONObject().Put("latitude", (args as LocationEventArgs).Location.Latitude).Put("longitude", (args as LocationEventArgs).Location.Longitude);
-            var finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("IdClient")).Put("location", obj);
+            var finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("Id")).Put("location", obj);
             try {
                 Task.Run(async () => {
                     await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token"));
