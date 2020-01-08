@@ -33,31 +33,43 @@ using Familia.Sharing;
 using FamiliaXamarin.DataModels;
 using AlertDialog = Android.App.AlertDialog;
 using Resource = Familia.Resource;
+using Familia.Devices.DevicesAsistent;
+using FamiliaXamarin.Sharing;
 
-namespace FamiliaXamarin {
+namespace FamiliaXamarin
+{
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
-    public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener {
+    public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
+    {
         Intent _loacationServiceIntent;
         Intent _webSocketServiceIntent;
         Intent _medicationServiceIntent;
         Intent _smartBandServiceIntent;
         Intent _medicationServerServiceIntent;
+        Intent _stepCounterService;
 
-        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data) {
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
             base.OnActivityResult(requestCode, resultCode, data);
             Log.Error("InResult", "Inainte de if");
-            if (requestCode == 215) {
-                if (Utils.CheckIfLocationIsEnabled()) {
+            if (requestCode == 215)
+            {
+                if (Utils.CheckIfLocationIsEnabled())
+                {
                     StartForegroundService(_loacationServiceIntent);
                     if (int.Parse(Utils.GetDefaults("UserType")) == 4 || int.Parse(Utils.GetDefaults("UserType")) == 3)
                         StartForegroundService(_smartBandServiceIntent);
-                } else {
+                }
+                else
+                {
                     Toast.MakeText(Application.Context, "Locatie dezactivata", ToastLength.Long).Show();
                 }
             }
 
-            if (resultCode == Result.Ok) {
-                if (requestCode == 466) {
+            if (resultCode == Result.Ok)
+            {
+                if (requestCode == 466)
+                {
                     var navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
                     navigationView.SetNavigationItemSelectedListener(this);
                     var headerView = navigationView.GetHeaderView(0);
@@ -76,16 +88,23 @@ namespace FamiliaXamarin {
         }
 
 
-        protected override void OnCreate(Bundle savedInstanceState) {
+        protected override void OnCreate(Bundle savedInstanceState)
+        {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
-
-            if (string.IsNullOrEmpty(Utils.GetDefaults("Token")) || string.IsNullOrEmpty(Utils.GetDefaults("UserType"))) {
+            Log.Error("AAAAAAAAAAA", string.IsNullOrEmpty(Utils.GetDefaults("Token")).ToString());
+            Log.Error("AAAAAAAAAAA", string.IsNullOrEmpty(Utils.GetDefaults("UserType")).ToString());
+            Log.Error("AAAAAAAAAAA", Utils.GetDefaults("Token") + "");
+            Log.Error("AAAAAAAAAAA", Utils.GetDefaults("UserType") + "");
+            if (string.IsNullOrEmpty(Utils.GetDefaults("Token")) || string.IsNullOrEmpty(Utils.GetDefaults("UserType")))
+            {
                 var intent = new Intent(this, typeof(LoginActivity));
                 StartActivity(intent);
+
             }
             bool ok = int.TryParse(Utils.GetDefaults("UserType"), out var type);
-            if (!ok) {
+            if (!ok)
+            {
                 _ = ClearStorage();
                 StartActivity(typeof(LoginActivity));
                 Finish();
@@ -111,11 +130,23 @@ namespace FamiliaXamarin {
             _medicationServiceIntent = new Intent(this, typeof(MedicationService));
             var menuNav = navigationView.Menu;
 
-            switch (type) {
-                case 1: // Asistat la domiciliu
+            //Consiliere de activitate ------
+            //_stepCounterService = new Intent(this, typeof(TrackerActivityService));
+            //StartForegroundService(_stepCounterService);
+            //-------------
+
+            //            make it hidden for release bc is not done yet
+            menuNav.FindItem(Resource.Id.games).SetVisible(false);
+            menuNav.FindItem(Resource.Id.activity_tracker).SetVisible(false);
+
+            switch (type)
+            {
+                case 1:
                     Toast.MakeText(this, "1", ToastLength.Long).Show();
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_devices).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
 
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new QrCodeGenerator())
@@ -143,6 +174,9 @@ namespace FamiliaXamarin {
                 case 3: // pacient
                     Toast.MakeText(this, "3", ToastLength.Long).Show();
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
+
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
                         .AddToBackStack(null).Commit();
@@ -155,6 +189,9 @@ namespace FamiliaXamarin {
                     Toast.MakeText(this, "4", ToastLength.Long).Show();
                     menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_monitorizare)?.SetVisible(false);
+                    menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
+                    menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
+
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new FindUsersFragment())
                         .AddToBackStack(null).Commit();
@@ -165,15 +202,19 @@ namespace FamiliaXamarin {
                     break;
             }
 
-            if (!Utils.CheckIfLocationIsEnabled()) {
+            if (!Utils.CheckIfLocationIsEnabled())
+            {
                 _ = new AlertDialog.Builder(this)
                     .SetMessage("Locatia nu este activata")
-                    .SetPositiveButton("Activare", (sender, args) => {
+                    .SetPositiveButton("Activare", (sender, args) =>
+                    {
                         StartActivityForResult(new Intent(Android.Provider.Settings.ActionLocationSourceSettings), 215);
                     })
                     .SetNegativeButton("Anulare", (sender, args) => { })
                     .Show();
-            } else {
+            }
+            else
+            {
                 StartForegroundService(_loacationServiceIntent);
                 if (int.Parse(Utils.GetDefaults("UserType")) == 4 || int.Parse(Utils.GetDefaults("UserType")) == 3)
                     StartForegroundService(_smartBandServiceIntent);
@@ -188,58 +229,72 @@ namespace FamiliaXamarin {
 
             var lbNume = headerView.FindViewById<TextView>(Resource.Id.lbNume);
             lbNume.Text = Utils.GetDefaults("Name");
-            profileImageView.Click += delegate {
+            profileImageView.Click += delegate
+            {
                 StartActivityForResult(new Intent(this, typeof(ProfileActivity)), 466);
             };
 
-            if (Intent.GetBooleanExtra("FromChat", false)) {
+            if (Intent.GetBooleanExtra("FromChat", false))
+            {
                 SupportFragmentManager.BeginTransaction()
                     .Replace(Resource.Id.fragment_container, new ConversationsFragment())
                     .AddToBackStack(null).Commit();
                 Title = "Conversatii active";
             }
-            if (Intent.GetBooleanExtra("FromMedicine", false)) {
+            if (Intent.GetBooleanExtra("FromMedicine", false))
+            {
                 StartActivity(new Intent(this, typeof(MedicineBaseActivity)));
                 Log.Error("MAIN ACTIVITY", "on back pressed");
                 Title = "Medicatie";
             }
-            if (Intent.GetBooleanExtra("FromSmartband", false)) {
+            if (Intent.GetBooleanExtra("FromSmartband", false))
+            {
                 SupportFragmentManager.BeginTransaction()
                     .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
                     .AddToBackStack(null).Commit();
                 Title = "Dispozitive de masurare";
             }
 
-            if (Intent.HasExtra("extra_health_device")) {
+            if (Intent.HasExtra("extra_health_device"))
+            {
                 SupportFragmentManager.BeginTransaction()
                     .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
                     .AddToBackStack(null).Commit();
             }
 
+
         }
-        public override void OnBackPressed() {
+        public override void OnBackPressed()
+        {
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
-            if (drawer.IsDrawerOpen(GravityCompat.Start)) {
+            if (drawer.IsDrawerOpen(GravityCompat.Start))
+            {
                 drawer.CloseDrawer(GravityCompat.Start);
                 Utils.HideKeyboard(this);
-            } else {
+            }
+            else
+            {
                 Finish();
             }
         }
-        public override bool OnCreateOptionsMenu(IMenu menu) {
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
             MenuInflater.Inflate(Resource.Menu.menu_main, menu);
             base.OnCreateOptionsMenu(menu);
             return true;
         }
 
-        public override bool OnOptionsItemSelected(IMenuItem item) {
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
             return base.OnOptionsItemSelected(item);
         }
 
-        public bool OnNavigationItemSelected(IMenuItem item) {
+        public bool OnNavigationItemSelected(IMenuItem item)
+        {
             var id = item.ItemId;
 
-            switch (id) {
+            switch (id)
+            {
                 case Resource.Id.harta:
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new FindUsersFragment())
@@ -252,11 +307,16 @@ namespace FamiliaXamarin {
                         .AddToBackStack(null).Commit();
                     Title = item.ToString();
                     break;
-                case Resource.Id.medicatie:
-                    /*
+
+                case Resource.Id.nav_devices_asistent:
                     SupportFragmentManager.BeginTransaction()
-                        .Replace(Resource.Id.fragment_container, new MedicineFragment())
-                        .AddToBackStack(null).Commit();*/
+                       .Replace(Resource.Id.fragment_container, new AsistentHealthDevicesFragment())
+                       .AddToBackStack(null).Commit();
+                    Title = item.ToString();
+                    Toast.MakeText(this, "Devices Asistent", ToastLength.Long).Show();
+
+                    break;
+                case Resource.Id.medicatie:
                     StartActivity(typeof(MedicineBaseActivity));
                     break;
                 case Resource.Id.chat:
@@ -273,7 +333,14 @@ namespace FamiliaXamarin {
                     break;
                 case Resource.Id.partajare_date:
 
-                    StartActivity(new Intent(this, typeof(SharingDataActivity)));
+                    if (int.Parse(Utils.GetDefaults("UserType")) == 2) {
+                        SupportFragmentManager.BeginTransaction()
+                          .Replace(Resource.Id.fragment_container, new Tab1Fragment())
+                          .AddToBackStack(null).Commit();
+                        Title = item.ToString();
+                    } else { 
+                        StartActivity(new Intent(this, typeof(SharingDataActivity)));
+                    }
 
                     break;
                 case Resource.Id.games:
@@ -312,6 +379,8 @@ namespace FamiliaXamarin {
                     _ = ClearStorage();
 
                     StartActivity(typeof(LoginActivity));
+                    
+                    //StopService(_stepCounterService);
                     Finish();
                     break;
             }
@@ -320,39 +389,53 @@ namespace FamiliaXamarin {
             drawer.CloseDrawer(GravityCompat.Start);
             return true;
         }
-        private async Task ClearStorage() {
+        private async Task ClearStorage()
+        {
             Utils.RemoveDefaults();
             await ClearBluetoothDevices();
             await ClearMedicationStorages();
             await ClearConversationsStorages();
-            await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 Glide.Get(this).ClearDiskCache();
             });
             Glide.Get(this).ClearMemory();
         }
-        private async Task ClearBluetoothDevices() {
-            try {
+        private async Task ClearBluetoothDevices()
+        {
+            try
+            {
                 var sqlHelper = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
                 sqlHelper.DropTables(typeof(BluetoothDeviceRecords));
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Log.Error("Logout Clear Device Error", e.Message);
             }
 
         }
-        private async Task ClearMedicationStorages() {
-            try {
+        private async Task ClearMedicationStorages()
+        {
+            try
+            {
                 var sqlHelper = await SqlHelper<MedicineServerRecords>.CreateAsync();
                 sqlHelper.DropTables(typeof(MedicineServerRecords));
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Log.Error("Logout Clear Medication Error", e.Message);
             }
 
         }
-        private async Task ClearConversationsStorages() {
-            try {
+        private async Task ClearConversationsStorages()
+        {
+            try
+            {
                 var sqlHelper = await SqlHelper<ConversationsRecords>.CreateAsync();
                 sqlHelper.DropTables(typeof(ConversationsRecords));
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Log.Error("Logout Clear Conversations Error", e.Message);
             }
 

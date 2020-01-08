@@ -6,23 +6,35 @@
 <body>
 
     <div class="arrival"></div>
+    <div class="player ball "></div>
 
-    <div class="player wrapper ball texture"></div>
+    <div class="wrong-place1"></div>
+    <div class="wrong-place2"></div>
+  
+     <p id="hintHowToPlay" class="text-howToPlay">Miscati device-ul pentru a controla planeta.</p>
 
-   
+    <div class="box_scor">
+        <p class="text">Scor:</p>
+        <p id="score" class="text-score">0</p>
+        <center class="m-top">
+            <table>
+                <tr>
+                    <td>
+                        <button id="reset" class="button-reset" onclick="playAgain()" >Play again</button>
+                    </td>
+                    <td style="width: 50px">
+
+                    </td>
+                    <td>
+                        <button id="nextLevel" class="button-next-level" onclick="nextLevel()">Next level</button>
+                    </td>
+                </tr>
+            </table>
+        </center>
+    </div>
 
 
-<!-- <button onclick="sendMessage();">Send to Android</button> -->
-   
-    <!-- <input type="button" value="Get from android" onclick="getFromAndroid()" /> -->
-    
-    <button id="reset" class="button-reset"  onclick="playAgain()">Play again</button>
-    
-<div id="score" class="score-position"></div>
-<div id="itemsCollected"></div>
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="jquery.keyframes.min.js"></script>
     <script src="test.js"></script>

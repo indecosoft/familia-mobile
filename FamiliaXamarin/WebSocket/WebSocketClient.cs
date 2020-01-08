@@ -135,7 +135,7 @@ namespace FamiliaXamarin {
                     var nb = Utils.CreateChatNotification(username, message, username, room, _context, 3, "Vizualizare");
 
                     var ids = room.Split(':');
-                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
+                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("Id") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
                 }
                 //CAZUL 3 user 1, user 2 converseaza, al3lea se baga in seama
                 else if (!ChatActivity.RoomName.Equals(room)) {
@@ -143,7 +143,7 @@ namespace FamiliaXamarin {
                     Log.Error("Caz 3", "*********************");
                     var nb = Utils.CreateChatNotification(username, message, username, room, _context, 3, "Vizualizare");
                     var ids = room.Split(':');
-                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
+                    Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("Id") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
                 }
 
             } catch (Exception ex) {
@@ -198,7 +198,7 @@ namespace FamiliaXamarin {
             }
             var nb = Utils.CreateChatNotification("Cerere acceptata", $"{email} ti-a acceptat cererea de chat!", email, room, _context, 2);
             var ids = room.Split(':');
-            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
+            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("Id") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
         }
 
         private void OnChatRequest(Object[] obj) {
@@ -220,7 +220,7 @@ namespace FamiliaXamarin {
             //var nb = Utils.GetAndroidChannelNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
             var nb = Utils.CreateChatNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", email, room, _context);
             var ids = room.Split(':');
-            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("IdClient") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
+            Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("Id") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
         }
         private void OnChatRejected(Object[] obj) {
             Log.Error("WebSocket", "Chat Rejected");

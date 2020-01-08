@@ -122,6 +122,83 @@
 
     </RelativeLayout>
 
+
+	 <TextView
+		android:id="@+id/tv_tracker_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Consiliere activitate"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.5dip"
+        android:layout_marginTop="3dp" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <TextView
+            android:id="@+id/tv_daily_target_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Target zilnic"
+            android:textSize="18sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp" />
+
+		<TextView
+            android:id="@+id/tv_daily_target_value_displayed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="6000"
+            android:textSize="18sp"
+            android:layout_marginStart="16dp"
+			android:layout_marginTop="16dp"
+			android:layout_marginRight="30dp"
+			android:maxWidth="150dp"
+			android:layout_toLeftOf="@+id/btn_daily_target_edit"
+		/>
+
+		 <Button
+		    android:id="@+id/btn_daily_target_edit"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/pencil"
+			android:layout_marginRight="5dp"
+			android:layout_marginLeft="10dp"
+			android:layout_alignParentRight="true"
+			android:layout_marginTop="12dp"
+			/>
+
+		<EditText
+            android:id="@+id/et_daily_target_value_editable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginStart="16dp"
+			android:layout_marginRight="16dp"
+			android:layout_marginTop="7dp"
+			android:layout_toLeftOf="@+id/btn_daily_target_save"
+			android:minWidth="150dp"
+			android:hint="Target zilnic"
+			android:inputType="number"
+		/>
+		<Button
+		  android:id="@+id/btn_daily_target_save"
+		  android:layout_width="35dp"
+          android:layout_height="35dp"
+		  android:layout_alignParentRight="true"
+		  android:background="@drawable/save_check"
+		  android:layout_marginTop="15dp"
+		  android:layout_marginRight="5dp"
+		/>
+
+    </RelativeLayout>
+
 	<RelativeLayout
 		android:layout_width="match_parent"
         android:layout_height="match_parent">

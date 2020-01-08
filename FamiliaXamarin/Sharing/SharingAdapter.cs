@@ -64,6 +64,10 @@ namespace FamiliaXamarin.Sharing
         {
             items.RemoveAt(position);
         }
+
+        public SharingModel getItemAt(int position) {
+            return items[position];
+        }
     }
 
     public class SharingAdapterViewHolder : RecyclerView.ViewHolder

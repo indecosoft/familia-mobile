@@ -115,7 +115,7 @@ namespace FamiliaXamarin.Chat
                 mUsername = Intent.GetStringExtra("EmailFrom");
                 var ids = RoomName.Split(':');
                 NotificationManagerCompat.From(this).Cancel(
-                    ids[0] == Utils.GetDefaults("IdClient")
+                    ids[0] == Utils.GetDefaults("Id")
                         ? int.Parse(ids[1])
                         : int.Parse(ids[0]));
                 //Active = Intent.GetBooleanExtra("Active", false);
