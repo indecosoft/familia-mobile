@@ -379,8 +379,8 @@ namespace FamiliaXamarin
                     _ = ClearStorage();
 
                     StartActivity(typeof(LoginActivity));
-                    TrackerActivityService.RestartService = false;
-                    StopService(_stepCounterService);
+                    
+                    //StopService(_stepCounterService);
                     Finish();
                     break;
             }
