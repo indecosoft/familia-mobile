@@ -94,7 +94,11 @@ namespace FamiliaXamarin
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
-            
+
+            createSimpleChannelForServices();
+            createNonstopChannelForServices();
+
+
             if (string.IsNullOrEmpty(Utils.GetDefaults("Token")) || string.IsNullOrEmpty(Utils.GetDefaults("UserType")))
             {
                 var intent = new Intent(this, typeof(LoginActivity));
@@ -270,6 +274,25 @@ namespace FamiliaXamarin
 
 
         }
+
+        private void createSimpleChannelForServices()
+        {
+            NotificationChannel channel = new NotificationChannel(App.SimpleChannelIdForServices, "Test simple channel",
+                NotificationImportance.Default);
+            ((NotificationManager)GetSystemService(App.NotificationService))
+                .CreateNotificationChannel(channel);
+            Log.Error("App CreateChannel", "Test simple channel created");
+        }
+
+        private void createNonstopChannelForServices()
+        {
+            NotificationChannel channel = new NotificationChannel(App.NonStopChannelIdForServices, "Test nonstop channel",
+                  NotificationImportance.Default);
+            ((NotificationManager)GetSystemService(NotificationService))
+                .CreateNotificationChannel(channel);
+            Log.Error("App CreateChannel", "Test nonstop channel created");
+        }
+
 
         private void createAlarmMedicationChannel()
         {

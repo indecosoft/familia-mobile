@@ -29,9 +29,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
             base.OnCreate();
             createNotificationChannel();
             Log.Error("App CreateChannel", "onCreate called");
-            createSimpleChannelForServices();
-            createNonstopChannelForServices();
-            createAlarmMedicationChannel();
+           // createSimpleChannelForServices();
+            //createNonstopChannelForServices();
+            //createAlarmMedicationChannel();
         }
 
         private void createNotificationChannel()
