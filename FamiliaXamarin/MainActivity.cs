@@ -35,6 +35,8 @@ using AlertDialog = Android.App.AlertDialog;
 using Resource = Familia.Resource;
 using Familia.Devices.DevicesAsistent;
 using FamiliaXamarin.Sharing;
+using FamiliaXamarin.Medicatie.Alarm;
+using Android.Media;
 
 namespace FamiliaXamarin
 {
@@ -43,7 +45,7 @@ namespace FamiliaXamarin
     {
         Intent _loacationServiceIntent;
         Intent _webSocketServiceIntent;
-        Intent _medicationServiceIntent;
+        //Intent _medicationServiceIntent;
         Intent _smartBandServiceIntent;
         Intent _medicationServerServiceIntent;
         Intent _stepCounterService;
@@ -92,10 +94,7 @@ namespace FamiliaXamarin
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
-            Log.Error("AAAAAAAAAAA", string.IsNullOrEmpty(Utils.GetDefaults("Token")).ToString());
-            Log.Error("AAAAAAAAAAA", string.IsNullOrEmpty(Utils.GetDefaults("UserType")).ToString());
-            Log.Error("AAAAAAAAAAA", Utils.GetDefaults("Token") + "");
-            Log.Error("AAAAAAAAAAA", Utils.GetDefaults("UserType") + "");
+            
             if (string.IsNullOrEmpty(Utils.GetDefaults("Token")) || string.IsNullOrEmpty(Utils.GetDefaults("UserType")))
             {
                 var intent = new Intent(this, typeof(LoginActivity));
@@ -127,7 +126,7 @@ namespace FamiliaXamarin
             _webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
             _smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
             _medicationServerServiceIntent = new Intent(this, typeof(MedicationServerService));
-            _medicationServiceIntent = new Intent(this, typeof(MedicationService));
+            //_medicationServiceIntent = new Intent(this, typeof(MedicationService));
             var menuNav = navigationView.Menu;
 
             //Consiliere de activitate ------
@@ -155,7 +154,7 @@ namespace FamiliaXamarin
 
                     StartForegroundService(_webSocketServiceIntent);
                     StartService(_medicationServerServiceIntent);
-                    StartService(_medicationServiceIntent);
+                   // StartService(_medicationServiceIntent);
                     break;
                 case 2: // asistent
                     Toast.MakeText(this, "2", ToastLength.Long).Show();
@@ -177,13 +176,17 @@ namespace FamiliaXamarin
                     menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
 
+                    createAlarmMedicationChannel();
+
+
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new HealthDevicesFragment())
                         .AddToBackStack(null).Commit();
                     Title = "Dispozitive de masurare";
                     StartForegroundService(_webSocketServiceIntent);
                     StartService(_medicationServerServiceIntent);
-                    StartService(_medicationServiceIntent);
+                    //StartService(_medicationServiceIntent);
+
                     break;
                 case 4: // self registered
                     Toast.MakeText(this, "4", ToastLength.Long).Show();
@@ -192,13 +195,16 @@ namespace FamiliaXamarin
                     menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
                     menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
 
+                    createAlarmMedicationChannel();
+
+
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new FindUsersFragment())
                         .AddToBackStack(null).Commit();
                     Title = "Cauta prieteni";
                     StartForegroundService(_webSocketServiceIntent);
                     StartService(_medicationServerServiceIntent);
-                    StartService(_medicationServiceIntent);
+                   // StartService(_medicationServiceIntent);
                     break;
             }
 
@@ -264,6 +270,25 @@ namespace FamiliaXamarin
 
 
         }
+
+        private void createAlarmMedicationChannel()
+        {
+            Android.Net.Uri sound = Android.Net.Uri.Parse(ContentResolver.SchemeAndroidResource + "://" + Application.Context.PackageName + "/" + Resource.Raw.alarm);  //Here is FILE_NAME is the name of file that you want to play
+            AudioAttributes attributes = new AudioAttributes.Builder()
+                .SetUsage(AudioUsageKind.Notification)
+                .Build();
+
+            NotificationChannel channel = new NotificationChannel(App.AlarmMedicationChannelId, "Test alarm medication channel",
+               NotificationImportance.High);
+
+            channel.SetSound(sound, attributes);
+
+            ((NotificationManager)GetSystemService(NotificationService))
+                .CreateNotificationChannel(channel);
+            Log.Error("MainActivity App CreateChannel", "Test alarm medication channel created");
+        }
+
+
         public override void OnBackPressed()
         {
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
@@ -375,7 +400,7 @@ namespace FamiliaXamarin
                     StopService(_webSocketServiceIntent);
                     StopService(_medicationServerServiceIntent);
                     StopService(_smartBandServiceIntent);
-                    StopService(_medicationServiceIntent);
+                    //StopService(_medicationServiceIntent);
                     _ = ClearStorage();
 
                     StartActivity(typeof(LoginActivity));

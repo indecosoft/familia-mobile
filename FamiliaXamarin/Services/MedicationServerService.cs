@@ -39,19 +39,19 @@ namespace Familia.Services
             {
                 if (int.Parse(Utils.GetDefaults("UserType")) == 3)
                 {
-                    Log.Error("MedicationServer Service", "server call");
+                    Log.Error("MedicationSS", "server call");
                     _medications = new List<MedicationSchedule>();
                     GetData();
                 }
                 else
                 {
-                    Log.Error("MedicationServer Service", "another type of user");
+                    Log.Error("MedicationSS", "another type of user");
                 }
                 _handler.PostDelayed(_runnable, _refreshTime * 3600 * 24);
             }
             else
             {
-                Log.Error("MedicationServer Service", "Operation Aborted because Network is disabled");
+                Log.Error("MedicationSS", "Operation Aborted because Network is disabled");
                 _handler.PostDelayed(_runnable, _refreshTime * 10);
             }
         }
@@ -66,35 +66,36 @@ namespace Familia.Services
 
                     if (res != null)
                     {
-
-                        Log.Error("if", "aici");
-                        Log.Error("RESULT_FOR_MEDICATIE", res);
+                        Log.Error("MedicationSS RESULT_FOR_MEDICATIE", res);
                         if (res.Equals("[]")) return;
                         _medications = ParseResultFromUrl(res);
-                        Log.Error("COUNT MEDICATIE", _medications.Count + "");
+                        Log.Error("MedicationSS COUNT MEDICATIE", _medications.Count + "");
+                    }
+                    else {
+                        Log.Error("MedicationSS res for medicatie", "res is null");
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.Error("AlarmError", e.Message);
+                    Log.Error("MedicationSS AlarmError", e.Message);
                 }
             });
            
-            Log.Error("MedicationServer Service", _medications.Count + "_med list med count");
+            Log.Error("MedicationSS", _medications.Count + "_med list med count");
 
             if (_medications.Count != 0)
             {
                 var list = new List<MedicationSchedule>();
-                Log.Error("MedicationServer Service", _medications.Count + " in if");
+                Log.Error("MedicationSS", _medications.Count + " in if");
 
                 for (var ms = 0; ms < _medications.Count; ms++)
                 {
-                    Log.Error("MedicationServer Service", _medications.Count + " in for");
+                    Log.Error("MedicationSS", _medications.Count + " in for");
                     bool x = await Storage.GetInstance().isHere(_medications[ms].Uuid);
-                    Log.Error("MedicationServerService", x + " ");
+                    Log.Error("MedicationSS", x + " ");
                     if (x == false)
                     {   list.Add(_medications[ms]);
-                        Log.Error("MedicationServer Service", _medications.Count + " in if storage false");
+                        Log.Error("MedicationSS", _medications.Count + " in if storage false");
                         SetupAlarm(ms, _medications[ms].IdNotification);
                     }
                     else
@@ -114,7 +115,7 @@ namespace Familia.Services
                                 SetupAlarm(ms, medObj.IdNotification);
                             }
 
-                            Log.Error("MedicationServer Service", "setup alarm ");
+                            Log.Error("MedicationSS", "setup alarm ");
                         }
                     }
                 }
@@ -142,7 +143,7 @@ namespace Familia.Services
                     var id = CurrentTimeMillis() * random.Next();
 
                     medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone, id));
-                    Log.Error("MEDICATIONSTRING", timestampString);
+                    Log.Error("MedicationSS MEDICATIONSTRING", timestampString);
                 }
                 return medicationScheduleList;
             }
@@ -152,7 +153,7 @@ namespace Familia.Services
 
         private void SetupAlarm(int ms, int id)
         {
-            Log.Error("MSSSSSTRING", _medications[ms].Timestampstring);
+            Log.Error("MedicationSS setuAlarm method", _medications[ms].Timestampstring);
             var am = (AlarmManager)this.GetSystemService(AlarmService);
             var i = new Intent(this, typeof(AlarmBroadcastReceiverServer));
 
@@ -192,7 +193,7 @@ namespace Familia.Services
                 {
                     TimeZone = Java.Util.TimeZone.GetTimeZone("PST")
                 };
-                Log.Error("TIMESTAMPSTRING", date.ToLocalTime().ToString());
+                Log.Error("MedicationSS TIMESTAMPSTRING", date.ToLocalTime().ToString());
             }
             catch (ParseException e)
             {
@@ -218,16 +219,19 @@ namespace Familia.Services
         public override void OnCreate()
         {
             base.OnCreate();
-            Log.Error("Service:", "MedicationServer Service STARTED");
+            Log.Error("Service:", "MedicationServer Service STARTED - MedicationSS");
             try
             {
-                if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
+
+               // if (Build.VERSION.SdkInt >= BuildVersionCodes.O) return;
+               /*
                 const string channelId = "my_channel_01";
                 var channel = new NotificationChannel(channelId, "Medication",
                     NotificationImportance.Low);
                 ((NotificationManager)GetSystemService(NotificationService)).CreateNotificationChannel(channel);
+                */
 
-                var notification = new NotificationCompat.Builder(this, channelId)
+                var notification = new NotificationCompat.Builder(this, App.NonStopChannelIdForServices)
                     .SetContentTitle("Familia")
                     .SetContentText("Ruleaza in fundal")
                     .SetSmallIcon(Resource.Drawable.logo)
@@ -235,11 +239,11 @@ namespace Familia.Services
                     .Build();
 
 
-                StartForeground(ServiceRunningNotificationId, notification);
+                StartForeground(App.NonstopNotificationIdForServices, notification);
             }
             catch (Exception e)
             {
-                Log.Error("MedicationServer Service Error occurred", e.Message);
+                Log.Error("MedicationSS Error occurred", e.Message);
             }
     }
 

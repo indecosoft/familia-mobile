@@ -8,6 +8,7 @@ using Android.Util;
 using Android.Widget;
 using Familia;
 using FamiliaXamarin.Helpers;
+using FamiliaXamarin.Medicatie.Alarm;
 using Java.Lang;
 using Exception = System.Exception;
 using Math = System.Math;
@@ -46,22 +47,24 @@ namespace FamiliaXamarin.Services
         {
             try
             {
-
+                /*
                     string CHANNEL_ID = "my_channel_01";
                     NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Distance Calculator",
                         NotificationImportance.Default);
 
                     ((NotificationManager)GetSystemService(NotificationService))
                         .CreateNotificationChannel(channel);
+                        */
 
-                    Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+
+                    Notification notification = new NotificationCompat.Builder(this, App.SimpleChannelIdForServices)
                         .SetContentTitle("Familia")
                         .SetContentText("Asistenta la domiciliu in curs de desfasurare")
                         .SetSmallIcon(Resource.Drawable.logo)
                         .SetOngoing(true)
                         .Build();
 
-                    StartForeground(ServiceRunningNotificationId, notification);
+                    StartForeground(App.SimpleNotificationIdForServices, notification);
 
             }
             catch (Exception e)

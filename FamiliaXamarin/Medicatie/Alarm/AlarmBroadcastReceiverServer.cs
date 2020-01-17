@@ -19,7 +19,6 @@ using SQLite;
 
 namespace FamiliaXamarin.Medicatie.Alarm {
     [BroadcastReceiver(Enabled = true, Exported = true)]
-    //    [Android.Runtime.Register("newWakeLock", "(ILjava/lang/String;)Landroid/os/PowerManager$WakeLock;", "GetNewWakeLock_ILjava_lang_String_Handler")]
     class AlarmBroadcastReceiverServer : BroadcastReceiver {
 
         //        public virtual Android.OS.PowerManager.WakeLock NewWakeLock(Android.OS.WakeLockFlags levelAndFlags, string tag);
@@ -52,21 +51,21 @@ namespace FamiliaXamarin.Medicatie.Alarm {
             var postpone = intent.GetIntExtra(Postpone, 5);
 
             if (await Storage.GetInstance().isHere(uuid) == false) {
-                Log.Error("RECEIVER SERVER", "med is not here anymore");
+                Log.Error("MSS Alarm BRECEIVER", "med is not here anymore");
                 return;
             }
 
 
-            const string channel = "channelabsolut";
-            Log.Error("RECEIVER", title + ", " + content + ", " + postpone);
+            //const string channel = "channelabsolut_alarm_medication";
+            Log.Error("MSS Alarm BRECEIVER", title + ", " + content + ", " + postpone);
 
-            CreateNotificationChannel(channel, title, content);
+            //CreateNotificationChannel(channel, title, content);
 
             Random random = new Random();
-            int randomNumber = random.Next(1, 5000) * random.Next(1, 5000);
+            int randomNumber = random.Next(1, 3333) * random.Next(1, 3333);
 
             NotifyId += randomNumber;
-
+            Log.Error("MSS Alarm BRECEIVER", "notification id: " + NotifyId);
             var alarmIntent = new Intent(context, typeof(AlarmActivity));
             //            alarmIntent.AddFlags(ActivityFlags.ClearTop);
             alarmIntent.PutExtra(Uuid, uuid);
@@ -78,7 +77,7 @@ namespace FamiliaXamarin.Medicatie.Alarm {
             alarmIntent.SetFlags(ActivityFlags.NewTask);
             context.StartActivity(alarmIntent);
 
-            BuildNotification(context, NotifyId, channel, title, content, alarmIntent);
+            BuildNotification(context, NotifyId, App.AlarmMedicationChannelId, title, content, alarmIntent);
 
             try {
                 var powerManager = (PowerManager)context.GetSystemService(Context.PowerService);
@@ -86,7 +85,7 @@ namespace FamiliaXamarin.Medicatie.Alarm {
                 wakeLock.Acquire();
                 wakeLock.Release();
             } catch (Exception e) {
-                Log.Error("ERR", e.ToString());
+                Log.Error("MSS Alarm BRECEIVER ERR", e.ToString());
             }
         }
 
@@ -119,7 +118,7 @@ namespace FamiliaXamarin.Medicatie.Alarm {
 
 
         private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent) {
-            Log.Error("RECEIVER", mTitle + " " + mContent);
+            Log.Error("MSS Alarm BRECEIVER", mTitle + " " + mContent);
 
             var description = mContent;
             Android.Net.Uri sound = Android.Net.Uri.Parse(ContentResolver.SchemeAndroidResource + "://" + Application.Context.PackageName + "/" + Resource.Raw.alarm);  //Here is FILE_NAME is the name of file that you want to play
@@ -142,8 +141,7 @@ namespace FamiliaXamarin.Medicatie.Alarm {
 
         private static void BuildNotification(Context context, int notifyId, string channel, string title, string content, Intent intent) {
 
-            //Log.Error("PPPAAAAAAAAAAAAAAAAAA", "build notification for " + title + " with id: " + notifyId);
-            Log.Error("RECEIVER", "build notification");
+            Log.Error("MSS Alarm BRECEIVER", "build notification");
 
             var piNotification = PendingIntent.GetActivity(context, notifyId, intent, PendingIntentFlags.UpdateCurrent);
 
@@ -153,16 +151,14 @@ namespace FamiliaXamarin.Medicatie.Alarm {
                     .SetContentText(content)
                     .SetContentTitle(title)
                     .SetAutoCancel(false)
-                    .SetContentIntent(piNotification)
-                    .SetPriority(NotificationCompat.PriorityHigh)
-
-                    .SetOngoing(true);
-
-
+                    // .SetContentIntent(piNotification)
+                    .SetPriority(NotificationCompat.PriorityHigh);
+                    //.SetOngoing(true);
 
             var notificationManager = NotificationManagerCompat.From(context);
 
             notificationManager.Notify(notifyId, mBuilder.Build());
+            Log.Error("MSS Alarm BRECEIVER", "notify");
         }
 
     }

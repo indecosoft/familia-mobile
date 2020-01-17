@@ -4,7 +4,7 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
-
+using FamiliaXamarin.Medicatie.Alarm;
 using Exception = System.Exception;
 using Resource = Familia.Resource;
 
@@ -21,20 +21,23 @@ namespace FamiliaXamarin.Services {
             Log.Info("Location Service", "OnCreate: the service is initializing.");
             try {
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O) {
+                    /*
                     string CHANNEL_ID = "my_channel_01";
                     NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Location",
                         NotificationImportance.Default) { Importance = NotificationImportance.Low };
 
                     ((NotificationManager)GetSystemService(NotificationService)).CreateNotificationChannel(channel);
+                    */
 
-                    Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+
+                    Notification notification = new NotificationCompat.Builder(this, App.NonStopChannelIdForServices)
                         .SetContentTitle("Familia")
                         .SetContentText("Ruleaza in fundal")
                         .SetSmallIcon(Resource.Drawable.logo)
                         .SetOngoing(true)
                         .Build();
 
-                    StartForeground(ServiceRunningNotificationId, notification);
+                    StartForeground(App.NonstopNotificationIdForServices, notification);
                 }
                 _ = Familia.Location.LocationManager.Instance.StartRequestingLocation();
             } catch (Exception e) {
