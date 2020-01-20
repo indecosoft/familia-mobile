@@ -10,6 +10,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Familia;
+using Familia.Devices.DevicesManagement.Dialogs.DialogEvents;
+using Familia.Devices.DevicesManagement.Dialogs.DialogHelpers;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
 
@@ -18,7 +20,7 @@ namespace FamiliaXamarin.Devices
     class DeleteDeviceDialog : Dialog
     {
         private Context _context;
-        private readonly DevicesManagementModel _model;
+        private readonly DeviceEditingManagementModel _model;
         public EventHandler<DialogStateEventArgs> DialogState;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -47,16 +49,16 @@ namespace FamiliaXamarin.Devices
         {
             base.Dismiss();
             DialogState.Invoke(this, new DialogStateEventArgs
-                { Status = DialogStateEventArgs.DialogStatus.Dismissed });
+                { Status = DialogStatuses.Dismissed });
         }
 
         public override void Show()
         {
             base.Show();
             DialogState.Invoke(this, new DialogStateEventArgs
-                { Status = DialogStateEventArgs.DialogStatus.Showing });
+                { Status = DialogStatuses.Showing });
         }
-        public DeleteDeviceDialog(Context context, DevicesManagementModel model) : base(context)
+        public DeleteDeviceDialog(Context context, DeviceEditingManagementModel model) : base(context)
         {
             _context = context;
             _model = model;

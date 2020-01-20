@@ -22,6 +22,7 @@ using Org.Json;
 using SQLite;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Familia.Devices;
+using Android;
 
 namespace FamiliaXamarin.Devices.PressureDevice
 {
@@ -37,26 +38,32 @@ namespace FamiliaXamarin.Devices.PressureDevice
         private static AddNewBloodPressureDeviceActivity _context;
         private readonly BluetoothScanCallback _scanCallback = new BluetoothScanCallback();
         private SqlHelper<BluetoothDeviceRecords> _bleDevicesRecords;
-        protected override async void OnCreate(Bundle savedInstanceState)
-        {
+        protected override async void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_add_new_blood_pressure_device);
+            SetContentView(Familia.Resource.Layout.activity_add_new_blood_pressure_device);
 
-            Toolbar toolbar = (Toolbar)FindViewById(Resource.Id.toolbar);
+            Toolbar toolbar = (Toolbar)FindViewById(Familia.Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             Title = "Dispozitive Bluetooth";
             _context = this;
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
-            toolbar.NavigationClick += delegate
-            {
+            toolbar.NavigationClick += delegate {
                 Finish();
             };
+            if (CheckSelfPermission(Manifest.Permission.AccessCoarseLocation) != Permission.Granted) {
+                RequestPermissions(_permissionsArray, 0);
+            } else {
+                StartDicovery();
+            }
+        }
+
+        private void StartDicovery() {
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati",
-                "Se cauta dispozitive...", this, false, 
-                null, null, null, 
-                null, "Anulare",
-                (sender, args) => Finish());
+                            "Se cauta dispozitive...", this, false,
+                            null, null, null,
+                            null, "Anulare",
+                            (sender, args) => Finish());
             _progressBarDialog.Show();
 
             _scanCallback.OnScanResultChanged += OnScanResult;
@@ -65,52 +72,74 @@ namespace FamiliaXamarin.Devices.PressureDevice
             //            _db = new SQLiteAsyncConnection(Path.Combine(path, numeDb));
             //            await _db.CreateTableAsync<BluetoothDeviceRecords>();
             _adapter = new DevicesRecyclerViewAdapter();
-            _adapter.ItemClick += async delegate (object sender, DevicesRecyclerViewAdapterClickEventArgs args)
-            {
+            _adapter.ItemClick += async delegate (object sender, DevicesRecyclerViewAdapterClickEventArgs args) {
                 _bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
                 await _bleDevicesRecords.Insert(
-                    new BluetoothDeviceRecords
-                    {
-                        Name = _adapter.GetItem(args.Position).Name, Address = _adapter.GetItem(args.Position).Address,
-                        DeviceType = GetString(Resource.String.blood_pressure_device)
+                    new BluetoothDeviceRecords {
+                        Name = _adapter.GetItem(args.Position).Name,
+                        Address = _adapter.GetItem(args.Position).Address,
+                        DeviceType = GetString(Familia.Resource.String.blood_pressure_device)
                     });
-                if (!Intent.GetBooleanExtra("RegisterOnly", false))
-                {
+                if (!Intent.GetBooleanExtra("RegisterOnly", false)) {
                     StartActivity(typeof(BloodPressureDeviceActivity));
                 }
                 Finish();
 
             };
 
-            _recyclerView = FindViewById<RecyclerView>(Resource.Id.addNewDeviceRecyclerView);
+            _recyclerView = FindViewById<RecyclerView>(Familia.Resource.Id.addNewDeviceRecyclerView);
             _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
             _recyclerView.SetAdapter(_adapter);
 
             var bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
 
-            if (bluetoothManager != null)
-            {
+            if (bluetoothManager != null) {
                 _bluetoothAdapter = bluetoothManager.Adapter;
             }
 
-            if (_bluetoothAdapter == null)
-            {
+            if (_bluetoothAdapter == null) {
                 Toast.MakeText(this, "Dispozitivul nu suporta Bluetooth Low Energy!",
                     ToastLength.Short).Show();
                 Finish();
-            }
-            else
-            {
-                if (!_bluetoothAdapter.IsEnabled)
-                {
+            } else {
+                if (!_bluetoothAdapter.IsEnabled) {
                     StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable),
                         EnableBt);
-                }
-                else
-                {
+                } else {
                     ScanDevices();
                 }
             }
+        }
+
+        private readonly string[] _permissionsArray =
+  {
+            Manifest.Permission.ReadPhoneState,
+            Manifest.Permission.AccessCoarseLocation,
+            Manifest.Permission.AccessFineLocation,
+            Manifest.Permission.Camera,
+            Manifest.Permission.ReadExternalStorage,
+            Manifest.Permission.WriteExternalStorage
+        };
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions,
+            Permission[] grantResults) {
+
+            if (grantResults[0] != Permission.Granted) {
+                Toast.MakeText(this, "Permisiuni pentru telefon refuzate", ToastLength.Short).Show();
+            }
+            if (grantResults[3] != Permission.Granted) {
+                Toast.MakeText(this, "Permisiuni pentru camera refuzate", ToastLength.Short).Show();
+            }
+            if (grantResults[4] != Permission.Granted || grantResults[5] != Permission.Granted) {
+                Toast.MakeText(this, "Permisiuni pentru stocare refuzate", ToastLength.Short).Show();
+            }
+            if (grantResults[1] != Permission.Granted || grantResults[2] != Permission.Granted) {
+                Toast.MakeText(this, "Permisiuni pentru locatie refuzate", ToastLength.Short).Show();
+                Finish();
+            } else {
+                StartDicovery();
+            }
+
         }
 
         private void OnScanResult(object source, Familia.Devices.BluetoothEvents.BluetoothScanCallbackEventArgs args) {

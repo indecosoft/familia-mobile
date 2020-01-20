@@ -6,20 +6,21 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Familia;
+using Familia.Devices.DevicesManagement.Dialogs.DialogEvents;
+using Familia.Devices.DevicesManagement.Dialogs.DialogHelpers;
+using Familia.Devices.Helpers;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
 
 namespace FamiliaXamarin.Devices
 {
-    public class DeviceManagementDialog : Dialog
+    public class DeviceEditingDialog : Dialog
     {
 
         private EditText _etDeviceName;
         private Button _btnSave;
         private Button _btnCancel;
-        private DevicesManagementModel _deviceModel;
-        private Context _context;
-        
+        private DeviceEditingManagementModel _deviceModel;
         public EventHandler<DialogStateEventArgs> DialogState;
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -39,7 +40,7 @@ namespace FamiliaXamarin.Devices
             _btnSave.Click += async delegate(object sender, EventArgs args)
             {
                 SqlHelper<BluetoothDeviceRecords> db = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
-                await db.QueryValuations(
+                 await db.QueryValuations(
                     $"Update BluetoothDeviceRecords set Name = '{_etDeviceName.Text}' where Id = '{_deviceModel.Device.Id}'");
                 Dismiss();
             };
@@ -49,54 +50,45 @@ namespace FamiliaXamarin.Devices
             };
         }
 
-        protected DeviceManagementDialog(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
+        protected DeviceEditingDialog(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
         }
 
-        public DeviceManagementDialog(Context context, DevicesManagementModel model) : base(context)
+        public DeviceEditingDialog(Context context, DeviceEditingManagementModel model) : base(context)
         {
-            
             _deviceModel = model;
-            _context = context;
             SetTitle("Editare dispozitiv");
         }
 
-        protected DeviceManagementDialog(Context context, bool cancelable, IDialogInterfaceOnCancelListener cancelListener) : base(context, cancelable, cancelListener)
+        protected DeviceEditingDialog(Context context, bool cancelable, IDialogInterfaceOnCancelListener cancelListener) : base(context, cancelable, cancelListener)
         {
+            SetTitle("Editare dispozitiv");
         }
 
         public override void Dismiss()
         {
             base.Dismiss();
             DialogState.Invoke(this, new DialogStateEventArgs
-                {Status = DialogStateEventArgs.DialogStatus.Dismissed});
+                {Status = DialogStatuses.Dismissed});
         }
        
         public override void Show()
         {
             base.Show();
             DialogState.Invoke(this,new DialogStateEventArgs
-                {Status = DialogStateEventArgs.DialogStatus.Showing});
+                {Status = DialogStatuses.Showing});
         } 
 
-        public DeviceManagementDialog(Context context, int themeResId) : base(context, themeResId)
+        public DeviceEditingDialog(Context context, int themeResId) : base(context, themeResId)
         {
+            SetTitle("Editare dispozitiv");
         }
 
-        protected DeviceManagementDialog(Context context, bool cancelable, EventHandler cancelHandler) : base(context, cancelable, cancelHandler)
+        protected DeviceEditingDialog(Context context, bool cancelable, EventHandler cancelHandler) : base(context, cancelable, cancelHandler)
         {
+            SetTitle("Editare dispozitiv");
         }
     }
 
-    public class DialogStateEventArgs : EventArgs
-    {
-        public DialogStatus Status { get;  set; }
-        public enum DialogStatus
-        {
-            Dismissed = 1,
-            Showing = 2,
-            Hidden = 3,
-            Canceled = 4
-        }
-    }
+    
 }

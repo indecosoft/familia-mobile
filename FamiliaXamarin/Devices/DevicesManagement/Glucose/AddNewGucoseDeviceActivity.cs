@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Android;
 using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
@@ -34,8 +35,8 @@ namespace FamiliaXamarin.Devices.GlucoseDevice {
             base.OnCreate(savedInstanceState);
 
             // Create your application here
-            SetContentView(Resource.Layout.add_new_blood_glucose_device);
-            Toolbar toolbar = (Toolbar)FindViewById(Resource.Id.toolbar);
+            SetContentView(Familia.Resource.Layout.add_new_blood_glucose_device);
+            Toolbar toolbar = (Toolbar)FindViewById(Familia.Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             Title = "Dispozitive Bluetooth";
 
@@ -44,8 +45,19 @@ namespace FamiliaXamarin.Devices.GlucoseDevice {
             toolbar.NavigationClick += delegate {
                 Finish();
             };
-            _scanCallback.OnScanResultChanged += OnScanResult;
+
+            if (CheckSelfPermission(Manifest.Permission.AccessCoarseLocation) != Permission.Granted) {
+                RequestPermissions(_permissionsArray, 0);
+            } else {
+                StartDicovery();
+            }
+
             
+        }
+
+        private void StartDicovery() {
+            _scanCallback.OnScanResultChanged += OnScanResult;
+
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Se cauta dispozitive...", this, false, null, null, null, null, "Anulare", (sender, args) => Finish());
             _progressBarDialog.Show();
             RegisterReceiver(bondingBroadcastReceiver, new IntentFilter(BluetoothDevice.ActionBondStateChanged) {
@@ -55,7 +67,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice {
             _adapter.ItemClick += delegate (object sender, DevicesRecyclerViewAdapterClickEventArgs args) {
                 _adapter.GetItem(args.Position).CreateBond();
             };
-            _recyclerView = FindViewById<RecyclerView>(Resource.Id.addNewDeviceRecyclerView);
+            _recyclerView = FindViewById<RecyclerView>(Familia.Resource.Id.addNewDeviceRecyclerView);
             _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
             _recyclerView.SetAdapter(_adapter);
 
@@ -89,11 +101,41 @@ namespace FamiliaXamarin.Devices.GlucoseDevice {
                        new BluetoothDeviceRecords {
                            Name = args.Device.Name,
                            Address = args.Device.Address,
-                           DeviceType = GetString(Resource.String.blood_glucose_device)
+                           DeviceType = GetString(Familia.Resource.String.blood_glucose_device)
                        });
                     Finish();
                     break;
             }
+        }
+        private readonly string[] _permissionsArray =
+  {
+            Manifest.Permission.ReadPhoneState,
+            Manifest.Permission.AccessCoarseLocation,
+            Manifest.Permission.AccessFineLocation,
+            Manifest.Permission.Camera,
+            Manifest.Permission.ReadExternalStorage,
+            Manifest.Permission.WriteExternalStorage
+        };
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions,
+            Permission[] grantResults) {
+
+            if (grantResults[0] != Permission.Granted) {
+                Toast.MakeText(this, "Permisiuni pentru telefon refuzate", ToastLength.Short).Show();
+            }
+            if (grantResults[3] != Permission.Granted) {
+                Toast.MakeText(this, "Permisiuni pentru camera refuzate", ToastLength.Short).Show();
+            }
+            if (grantResults[4] != Permission.Granted || grantResults[5] != Permission.Granted) {
+                Toast.MakeText(this, "Permisiuni pentru stocare refuzate", ToastLength.Short).Show();
+            }
+            if (grantResults[1] != Permission.Granted || grantResults[2] != Permission.Granted) {
+                Toast.MakeText(this, "Permisiuni pentru locatie refuzate", ToastLength.Short).Show();
+                Finish();
+            } else {
+                StartDicovery();
+            }
+
         }
 
         private void OnScanResult(object source, BluetoothScanCallbackEventArgs args) {

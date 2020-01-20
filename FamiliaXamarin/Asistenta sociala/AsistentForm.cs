@@ -169,7 +169,7 @@ namespace FamiliaXamarin.Asistenta_sociala {
         private async void BtnScan_Click(object sender, EventArgs e) {
             //IntentIntegrator.forSupportFragment(this).InitiateScan();
             // Initialize the scanner first so it can track the current context
-            _qrJsonData = await Utils.ScanQRCode(Activity);
+            _qrJsonData = await Utils.ScanEncryptedQRCode(Activity);
             if (_qrJsonData is null) return;
             try {
                 using var sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");

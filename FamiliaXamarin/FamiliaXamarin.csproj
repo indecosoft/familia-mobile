@@ -24,6 +24,7 @@
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <AndroidLinkSkip></AndroidLinkSkip>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -36,6 +37,11 @@
     <AndroidLinkMode>Full</AndroidLinkMode>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
+    <ExternalConsole>false</ExternalConsole>
+    <RunWithWarnings>true</RunWithWarnings>
+    <AndroidManagedSymbols>false</AndroidManagedSymbols>
+    <MandroidExtraArgs></MandroidExtraArgs>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -51,6 +57,7 @@
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <Debugger>Xamarin</Debugger>
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev.Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -61,6 +68,7 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android.Export" />
@@ -81,19 +89,7 @@
     <Compile Include="DataModels\MedicineRecords.cs" />
     <Compile Include="DataModels\MedicineServerRecords.cs" />
     <Compile Include="DataModels\SmartBandRecords.cs" />
-    <Compile Include="Devices\AddNewDeviceDialog.cs" />
-    <Compile Include="Devices\BLEHelpers.cs" />
-    <Compile Include="Devices\BluetoothEvents\BluetoothScanCallbackEventArgs.cs" />
-    <Compile Include="Devices\BluetoothEvents\BondingStatusEventArgs.cs" />
-    <Compile Include="Devices\BluetoothScanCallback.cs" />
-    <Compile Include="Devices\BroadcastReceivers\BondingBroadcastReceiver.cs" />
-    <Compile Include="Devices\DeleteDeviceDialog.cs" />
-    <Compile Include="Devices\DeviceManagementDialog.cs" />
     <Compile Include="Devices\DevicesAsistent\AsistentHealthDevicesFragment.cs" />
-    <Compile Include="Devices\DevicesManagementActivity.cs" />
-    <Compile Include="Devices\DevicesManagementAdapter.cs" />
-    <Compile Include="Devices\DevicesManagementModel.cs" />
-    <Compile Include="Devices\DevicesManagementRecyclerViewAdapter.cs" />
     <Compile Include="Devices\Models\BluetoothDeviceModel.cs" />
     <Compile Include="Games\GameActivity.cs" />
     <Compile Include="Games\GameCenterActivity.cs" />
@@ -172,14 +168,11 @@
     <Compile Include="WebSocket\WebSocketClient.cs" />
     <Compile Include="Services\WebSocketService.cs" />
     <Compile Include="WebSocket\IWebSocketClient.cs" />
-    <Compile Include="Devices\GlucoseDevice\AddNewGucoseDeviceActivity.cs" />
     <Compile Include="Devices\GlucoseDevice\GlucoseDeviceActivity.cs" />
     <Compile Include="Devices\GlucoseDevice\GlucoseDeviceData.cs" />
-    <Compile Include="Devices\PressureDevice\AddNewBloodPressureDeviceActivity.cs" />
     <Compile Include="Devices\PressureDevice\BloodPressureData.cs" />
     <Compile Include="Devices\PressureDevice\BloodPressureDeviceActivity.cs" />
     <Compile Include="Devices\SmartBand\SmartBandDeviceActivity.cs" />
-    <Compile Include="Devices\DevicesRecyclerViewAdapter.cs" />
     <Compile Include="Devices\HealthDevicesFragment.cs" />
     <Compile Include="Services\DistanceCalculator.cs" />
     <Compile Include="Location\FusedLocationProviderCallback.cs" />
@@ -208,18 +201,33 @@
     <Compile Include="Asistenta sociala\SearchListActivity.cs" />
     <Compile Include="Asistenta sociala\SearchListAdapter.cs" />
     <Compile Include="WebSocket\WebSocketLocation.cs" />
-    <Compile Include="Location\LocationManager.cs" />
-    <Compile Include="Location\LocationEventArgs.cs" />
-    <Compile Include="Location\ILocationEvents.cs" />
-    <Compile Include="Devices\BroadcastReceivers\BondingBroadcastReceiver.cs" />
-    <Compile Include="Devices\BluetoothEvents\BondingStatusEventArgs.cs" />
-    <Compile Include="Devices\Models\BluetoothDeviceModel.cs" />
-    <Compile Include="Devices\BluetoothScanCallback.cs" />
-    <Compile Include="Devices\BluetoothEvents\BluetoothScanCallbackEventArgs.cs" />
-    <Compile Include="Devices\BLEHelpers.cs" />
+
     <Compile Include="Devices\Models\GlucoseRecord.cs" />
-    <Compile Include="Devices\BluetoothCallbacks\Glucose\GlucoseGattCallBack.cs" />
-    <Compile Include="Devices\BluetoothCallbacks\Glucose\GlucoseScanCallback.cs" />
+    <Compile Include="Devices\Helpers\DeviceTypes.cs" />
+    <Compile Include="Devices\DevicesManagement\BloodPressure\AddNewBloodPressureDeviceActivity.cs" />
+    <Compile Include="Devices\DevicesManagement\Glucose\AddNewGucoseDeviceActivity.cs" />
+    <Compile Include="Devices\DevicesManagement\DeviceManufactureSelector\DeviceManufactureSelectorActivity.cs" />
+    <Compile Include="Devices\DevicesManagement\DeviceManufactureSelector\DeviceManufactureSelectorRecyclerViewAdapter.cs" />
+    <Compile Include="Devices\DevicesManagement\DeviceManufactureSelector\DeviceTypeSelectorModel.cs" />
+    <Compile Include="Devices\DevicesManagement\Dialogs\DeleteDeviceDialog.cs" />
+    <Compile Include="Devices\DevicesManagement\Dialogs\DeviceEditingDialog.cs" />
+    <Compile Include="Devices\DevicesManagement\Dialogs\AddNewDeviceDialog.cs" />
+    <Compile Include="Devices\DevicesManagement\Dialogs\Events\DialogStateEventArgs.cs" />
+    <Compile Include="Devices\DevicesManagement\Dialogs\Helpers\DialogStatuses.cs" />
+    <Compile Include="Devices\DevicesManagement\Dialogs\Models\DeviceEditingManagementModel.cs" />
+    <Compile Include="Devices\Helpers\BLEHelpers.cs" />
+    <Compile Include="Devices\Bluetooth\Callbacks\BloodPressure\BloodPressureGattCallBack.cs" />
+    <Compile Include="Devices\Bluetooth\Callbacks\BloodPressure\BloodPressureScanCallBack.cs" />
+    <Compile Include="Devices\Bluetooth\Callbacks\Glucose\GlucoseGattCallBack.cs" />
+    <Compile Include="Devices\Bluetooth\Callbacks\Glucose\GlucoseScanCallback.cs" />
+    <Compile Include="Devices\Bluetooth\Events\BluetoothScanCallbackEventArgs.cs" />
+    <Compile Include="Devices\Bluetooth\Events\BondingStatusEventArgs.cs" />
+    <Compile Include="Devices\Bluetooth\Receivers\BondingBroadcastReceiver.cs" />
+    <Compile Include="Devices\Bluetooth\Callbacks\BluetoothScanCallback.cs" />
+    <Compile Include="Devices\DevicesManagement\DevicesManagementActivity.cs" />
+    <Compile Include="Devices\DevicesManagement\DevicesManagementAdapter.cs" />
+    <Compile Include="Devices\DevicesManagement\DevicesManagementRecyclerViewAdapter.cs" />
+    <Compile Include="Devices\DevicesRecyclerViewAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -262,6 +270,14 @@
     <AndroidResource Include="Resources\raw\steps_progress.json" />
     <AndroidResource Include="Resources\raw\walk.json" />
     <AndroidResource Include="Resources\raw\walking_animation.json" />
+    <AndroidResource Include="Resources\layout\activity_device_selector.axml">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\item_device_selector.axml">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -1094,11 +1110,20 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\rounded_button.xml" />
-    <Folder Include="Devices\BroadcastReceivers\" />
-    <Folder Include="Devices\BluetoothEvents\" />
     <Folder Include="Devices\Models\" />
-    <Folder Include="Devices\BluetoothCallbacks\" />
-    <Folder Include="Devices\BluetoothCallbacks\Glucose\" />
+    <Folder Include="Devices\Helpers\" />
+    <Folder Include="Devices\DevicesManagement\" />
+    <Folder Include="Devices\DevicesManagement\BloodPressure\" />
+    <Folder Include="Devices\DevicesManagement\Glucose\" />
+    <Folder Include="Devices\DevicesManagement\DeviceManufactureSelector\" />
+    <Folder Include="Devices\DevicesManagement\Dialogs\" />
+    <Folder Include="Devices\DevicesManagement\Dialogs\Events\" />
+    <Folder Include="Devices\DevicesManagement\Dialogs\Helpers\" />
+    <Folder Include="Devices\DevicesManagement\Dialogs\Models\" />
+    <Folder Include="Devices\Bluetooth\" />
+    <Folder Include="Devices\Bluetooth\Callbacks\" />
+    <Folder Include="Devices\Bluetooth\Events\" />
+    <Folder Include="Devices\Bluetooth\Receivers\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\layout_tab2.xml" />

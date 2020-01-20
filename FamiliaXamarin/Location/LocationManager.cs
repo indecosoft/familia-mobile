@@ -68,6 +68,8 @@ namespace Familia.Location {
             try {
                 Task.Run(async () => {
                     await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token"));
+                    Utils.SetDefaults("Latitude", (args as LocationEventArgs).Location.Latitude.ToString());
+                    Utils.SetDefaults("Longitude", (args as LocationEventArgs).Location.Longitude.ToString());
                     Log.Debug("Latitude ", (args as LocationEventArgs).Location.Latitude.ToString());
                     Log.Debug("Longitude", (args as LocationEventArgs).Location.Longitude.ToString());
                 });

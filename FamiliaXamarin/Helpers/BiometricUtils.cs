@@ -1,21 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Android;
-using Familia;
-using Android.App;
+﻿using Android;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Runtime;
-using Android.Support.V4.App;
 using Android.Support.V4.Hardware.Fingerprint;
-using Android.Views;
-using Android.Widget;
 
-namespace FamiliaXamarin.Helpers
-{
+namespace FamiliaXamarin.Helpers {
     public class BiometricUtils
     {
 
@@ -78,7 +67,7 @@ namespace FamiliaXamarin.Helpers
          * */
         public static bool IsPermissionGranted(Context context)
         {
-            return ActivityCompat.CheckSelfPermission(context, Manifest.Permission.UseBiometric) ==
+            return Android.Support.V4.Content.ContextCompat.CheckSelfPermission(context, Manifest.Permission.UseBiometric) ==
                     Permission.Granted;
         }
     }

@@ -13,9 +13,9 @@ namespace FamiliaXamarin.Devices
     {
         public event EventHandler<DevicesManagementRecyclerViewAdapterClickEventArgs> ItemClick;
         public event EventHandler<DevicesManagementRecyclerViewAdapterClickEventArgs> ItemLongClick;
-        private readonly List<DevicesManagementModel> _devices;
+        private readonly List<DeviceEditingManagementModel> _devices;
         
-        public DevicesManagementRecyclerViewAdapter( List<DevicesManagementModel> data)
+        public DevicesManagementRecyclerViewAdapter( List<DeviceEditingManagementModel> data)
         {
             _devices = data;
         }

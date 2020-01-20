@@ -50,7 +50,7 @@ namespace Familia.Devices.DevicesAsistent
 
         public async void scanQRCode() {
             try {
-                var qrJsonData = await Utils.ScanQRCode(Activity);
+                var qrJsonData = await Utils.ScanEncryptedQRCode(Activity);
                 Log.Error("AsistentHealthDevicesFragment", qrJsonData.ToString());
                 var imei = qrJsonData.Get("imei");
                 Log.Error("AsistentHealthDevicesFragment", "imei: " + imei);
