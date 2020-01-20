@@ -17,6 +17,7 @@ using Android.Widget;
 using Familia;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
+using FamiliaXamarin.Medicatie.Alarm;
 using Org.Json;
 using SQLite;
 
@@ -26,15 +27,15 @@ namespace FamiliaXamarin.Services
     class MedicationService : Service
     {
         private SQLiteAsyncConnection _db;
-        private const int ServiceRunningNotificationId = 10000;
-        Timer aTimer = new Timer(1000);
-        private int interval = 1000, counter = 0;
+        private const int ServiceRunningNotificationId = 20000;
+        Timer aTimer = new Timer(2000);
+        private int interval = 2000, counter = 0;
 
 
         public override void OnDestroy()
         {
             base.OnDestroy();
-            Log.Error("Service", "Stopped");
+            Log.Error("Medication Service", "Stopped");
             aTimer.Stop();
         }
         private async void OnTimedEvent(object source, ElapsedEventArgs e)
@@ -45,9 +46,7 @@ namespace FamiliaXamarin.Services
                 if (await SendData(this))
                 {
                     Log.Error("Medication Service", "S-a conectat la server");
-                    interval = 6000;
-                    counter = 0;
-//                    StopSelf();
+                    StopSelf();
                 }
                 else
                 {
@@ -57,13 +56,14 @@ namespace FamiliaXamarin.Services
                     {
                         interval = 10000;
                         counter = 0;
+                        aTimer.Interval = interval;
                     }
 
                 }
             });
            
 
-            aTimer.Interval = interval;
+           
 
            
         }
@@ -75,7 +75,7 @@ namespace FamiliaXamarin.Services
         public override void OnCreate()
         {
             base.OnCreate();
-            Log.Error("Service:", "STARTED");
+            Log.Error("Medication Service:", "STARTED");
 
             var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var numeDB = "devices_data.db";
@@ -89,7 +89,7 @@ namespace FamiliaXamarin.Services
             aTimer.Stop();
             await _db.CreateTableAsync<MedicineRecords>();
             var myList = await EvaluateQuery(_db, "Select * FROM MedicineRecords");
-
+            Log.Error("Medication Service:", " count from myList" + myList.Count());
             JSONArray jsonList = new JSONArray();
             if (myList.Count() == 0) return false;
             foreach (var el in myList)
@@ -97,17 +97,21 @@ namespace FamiliaXamarin.Services
                 JSONObject element = new JSONObject().Put("uuid", el.Uuid).Put("date", el.DateTime);
                 jsonList.Put(element);
             }
-
+            Log.Error("Medication Service:", "sending object.. " + jsonList.ToString());
             if (Utils.CheckNetworkAvailability())
             {
+                Log.Error("Medication Service:", "network checked");
                 string result = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", jsonList, Utils.GetDefaults("Token"));
                 Log.Error("Medication Service", result);
                 switch (result)
                 {
                     case "Done":
                     case "done":
-                        aTimer.Start();
+                        Log.Error("Medication Service:", "response done. timer start");
+                        //aTimer.Start();
+
                         await _db.DropTableAsync<MedicineRecords>();
+                        Log.Error("Medication Service:", "table deleted");
                         return true;
                     default:
                         aTimer.Start();
@@ -139,20 +143,21 @@ namespace FamiliaXamarin.Services
 
             try
             {
-                string CHANNEL_ID = "my_channel_01";
+              /*  string CHANNEL_ID = "my_channel_02";
                 NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Medication",
                     NotificationImportance.Default);
 
                 ((NotificationManager)GetSystemService(NotificationService))
-                    .CreateNotificationChannel(channel);
-                Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .CreateNotificationChannel(channel);*/
+
+                Notification notification = new NotificationCompat.Builder(this, App.SimpleChannelIdForServices)
                     .SetContentTitle("Familia")
-                    .SetContentText("Ruleaza in fundal")
+                    .SetContentText("Se trimit date..")
                     .SetSmallIcon(Resource.Drawable.logo)
                     .SetOngoing(true)
                     .Build();
 
-                StartForeground(ServiceRunningNotificationId, notification);
+                StartForeground(App.SimpleNotificationIdForServices, notification);
             }
             catch (Exception e)
             {

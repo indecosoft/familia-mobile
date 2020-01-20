@@ -8,6 +8,7 @@ using Android.Util;
 using Familia.WebSocket;
 using FamiliaXamarin;
 using FamiliaXamarin.Helpers;
+using FamiliaXamarin.Medicatie.Alarm;
 using Org.Json;
 
 namespace Familia.Services {
@@ -31,20 +32,22 @@ namespace Familia.Services {
             try {
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O) {
+                    /*
                     const string channelId = "my_channel_01";
                     var channel = new NotificationChannel(channelId, "WebSocket",
                         NotificationImportance.Default) { Importance = NotificationImportance.Low };
 
                     ((NotificationManager)GetSystemService(NotificationService)).CreateNotificationChannel(channel);
+                    */
 
-                    using var notification = new NotificationCompat.Builder(this, channelId)
+                    using var notification = new NotificationCompat.Builder(this, App.NonStopChannelIdForServices)
                         .SetContentTitle("Familia")
                         .SetContentText("Ruleaza in fundal")
                         .SetSmallIcon(Resource.Drawable.logo)
                         .SetOngoing(true)
                         .Build();
 
-                    StartForeground(ServiceRunningNotificationId, notification);
+                    StartForeground(App.NonstopNotificationIdForServices, notification);
                 }
                 RegisterReceiver(charger, new IntentFilter(Intent.ActionHeadsetPlug));
                 bool ok = int.TryParse(Utils.GetDefaults("UserType"), out var type);

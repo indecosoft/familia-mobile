@@ -78,13 +78,21 @@ namespace Familia.Profile
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_update_profile);
             InitUI();
-
+            Log.Error("UpdateProfileActivity ERR person view", "oncreat start");
             personView = new PersonView(Intent.GetStringExtra("name"),
-                                        Intent.GetStringExtra("email"),
+                                        Utils.GetDefaults("Email"),
                                         Intent.GetStringExtra("birthdate"),
                                         Intent.GetStringExtra("gender"),
                                         Intent.GetStringExtra("avatar"),
                                         null, "none");
+
+            Log.Error("UpdateProfileActivity ERR person view", Intent.GetStringExtra("name"));
+            Log.Error("UpdateProfileActivity ERR person view", Utils.GetDefaults("Email"));
+            Log.Error("UpdateProfileActivity ERR person view", Intent.GetStringExtra("birthdate"));
+            Log.Error("UpdateProfileActivity ERR person view", Intent.GetStringExtra("gender"));
+            Log.Error("UpdateProfileActivity ERR person view", Intent.GetStringExtra("avatar"));
+
+            Log.Error("UpdateProfileActivity ERR person view", "data was extrated from intent");
 
             LoadModel();
         }
@@ -382,31 +390,41 @@ namespace Familia.Profile
             ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
             dialog.Show(); try
             {
-                personalData = await ProfileStorage.GetInstance().read();
-                if (personalData == null)
-                {
-                    Toast.MakeText(this, "S-a intampinat o eroare.", ToastLength.Long).Show();
-                    return;
-                }
-
-
-                btnLabelDiseases.Text = "Afecțiuni curente:" + personalData.listOfPersonalDiseases.Count;
-
+                Log.Error("UpdateProfileActivity ERR load model", "load picture");
                 Glide.With(this)
                     .Load(personView.Avatar)
                     .Apply(RequestOptions.SignatureOf(new ObjectKey(ProfileActivity.ImageUpdated)))
                     .Into(ciwProfileImage);
-          
+
                 etName.Text = personView.Name;
                 SetGender(personView.Gender);
 
                 birthdate = getDateString(personView.Birthdate);
                 personView.Birthdate = getDateString(personView.Birthdate);
-                
-
 
                 tvBirthDate.Text = personView.Birthdate;
 
+                Log.Error("UpdateProfileActivity ERR load model", "start getting diseases");
+                personalData = await ProfileStorage.GetInstance().read();
+                Log.Error("UpdateProfileActivity ERR load model", "after read data from db");
+
+
+                if (personalData == null)
+                {
+                    Log.Error("UpdateProfileActivity ERR load model", "something went wrong");
+                    Toast.MakeText(this, "S-a intampinat o eroare.", ToastLength.Long).Show();
+                   // return;
+                }
+                else {
+                    Log.Error("UpdateProfileActivity ERR load model", " else ");
+
+                    if (personalData.listOfPersonalDiseases == null) {
+                        Log.Error("UpdateProfileActivity ERR load model", "list is null");
+                        personalData.listOfPersonalDiseases = new List<PersonalDisease>();
+                    }
+                    Log.Error("UpdateProfileActivity ERR load model", "set disease count to TV " + personalData.listOfPersonalDiseases.Count);
+                    btnLabelDiseases.Text = "Afecțiuni curente:" + personalData.listOfPersonalDiseases.Count;
+                }
 
                 if (int.Parse(Utils.GetDefaults("UserType")) == 2)
                 {
@@ -420,7 +438,7 @@ namespace Familia.Profile
             }
             catch (Exception e)
             {
-                Log.Error("UpdateProfileActivity ERR", e.Message);
+                Log.Error("UpdateProfileActivity ERR 1", e.Message);
                 RunOnUiThread(() => dialog.Dismiss());
             }
         }

@@ -207,34 +207,46 @@ namespace Familia.Profile
 
         public async Task<PersonalData> read()
         {
-            Log.Error("ProfileStorage", "reading...");
-            var list = await GetDiseasesFromDb();
-            var listDiseases = new List<PersonalDisease>();
-            if (list == null) return null;
+            try {
+                Log.Error("ProfileStorage", "reading...");
+                var list = await GetDiseasesFromDb();
+                Log.Error("ProfileStorage", " after getting list for db");
 
-            foreach (var item in list)
-            {
-                var obj = new PersonalDisease(item.Cod, item.Name);
-                obj.Id = item.Id;
-                listDiseases.Add(obj);
+                var listDiseases = new List<PersonalDisease>();
+                if (list == null) return null;
+                Log.Error("ProfileStorage", " start adding item in list");
+                foreach (var item in list)
+                {
+                    var obj = new PersonalDisease(item.Cod, item.Name);
+                    obj.Id = item.Id;
+                    listDiseases.Add(obj);
+                }
+                Log.Error("ProfileStorage", "after adding all items in lists");
+                Log.Error("ProfileStorage", " start getting profile info from db");
+                var listProfile = await GetProfileInfoFromDb();
+                if (listProfile == null) return null;
+                Log.Error("ProfileStorage", " start adding item in list for profile");
+
+                foreach (var item in listProfile)
+                {
+                    personalData = new PersonalData(
+                        listDiseases,
+                        item.Base64Image,
+                        item.DateOfBirth,
+                        item.Gender,
+                        item.ImageName,
+                        item.ImageExtension
+                    );
+                }
+                Log.Error("ProfileStorage", " return");
+                return personalData;
+
+            }
+            catch (Exception e) {
+                Log.Error("ProfileStorage err", e.Message);
+                return null;
             }
             
-            var listProfile = await GetProfileInfoFromDb();
-            if (listProfile == null) return null; 
-
-            foreach (var item in listProfile)
-            {
-                personalData = new PersonalData(
-                    listDiseases,
-                    item.Base64Image,
-                    item.DateOfBirth,
-                    item.Gender,
-                    item.ImageName,
-                    item.ImageExtension
-                );
-            }
-
-            return personalData;
         }
 
         private async Task<IEnumerable<DiseaseDataModel>> GetDiseasesFromDb()

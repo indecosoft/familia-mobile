@@ -14,6 +14,7 @@ using FamiliaXamarin;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Devices.SmartBand;
 using FamiliaXamarin.Helpers;
+using FamiliaXamarin.Medicatie.Alarm;
 using Java.IO;
 using Java.Lang;
 using Java.Text;
@@ -66,12 +67,14 @@ namespace Familia.Services {
 
             try {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
-                const string channelId = "my_channel_01";
+                /*const string channelId = "my_channel_01";
                 var channel = new NotificationChannel(channelId, "Smartband",
                     NotificationImportance.Default) { Importance = NotificationImportance.Low };
                 ((NotificationManager)GetSystemService(NotificationService)).CreateNotificationChannel(channel);
+                */
 
-                var notification = new NotificationCompat.Builder(this, channelId)
+
+                var notification = new NotificationCompat.Builder(this, App.NonStopChannelIdForServices)
                     .SetContentTitle("Familia")
                     .SetContentText("Ruleaza in fundal")
                     .SetSmallIcon(Resource.Drawable.logo)

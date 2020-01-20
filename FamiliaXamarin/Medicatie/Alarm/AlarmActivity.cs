@@ -141,23 +141,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
                         var mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid)
                             .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
 
-                        //                        await Task.Run(async () =>
-                        //                        {
-                        //                            if (await SendData(this, mArray))
-                        //                            {   
-                        //                                Storage.GetInstance().removeMedSer(uuid);
-                        //
-                        //                                var running = IsServiceRunning(typeof(MedicationService), this);
-                        //                                if (running)
-                        //                                {
-                        //                                    Log.Error("SERVICE", "Medication service is running");
-                        //                                    this.StopService(_medicationServiceIntent);
-                        //                                }
-                        //
-                        //
-                        //                            }
-                        //                            else
-                        //                             {
                                 AddMedicine(_db, uuid, now);
                                 Log.Error("SERVICE", "Medication service started");
                                 _medicationServiceIntent =
@@ -172,8 +155,6 @@ namespace FamiliaXamarin.Medicatie.Alarm
                                 }
                                  Storage.GetInstance().removeMedSer(uuid);
 
-                        //                               }
-                        //                        });
 
                     }
 
@@ -194,6 +175,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         private void LaunchSnoozeAlarm()
         {
+            Log.Error("Alarm activity", "snoozed");
             Intent i;
             var snoozeInMilisec = postpone * 60000;
             PendingIntent pi;

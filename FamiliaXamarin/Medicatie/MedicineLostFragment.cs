@@ -174,7 +174,7 @@ namespace Familia.Medicatie
                                 var now = DateTime.Now;
                                 var mArray = new JSONArray().Put(new JSONObject().Put("uuid", med.Uuid)
                                     .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
-                                isSent = SendMedicationTask(mArray, med, now);
+                                isSent =  SendMedicationTask(mArray, med, now);
                             }
 
                             if (isSent)

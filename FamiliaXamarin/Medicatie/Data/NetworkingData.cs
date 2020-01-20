@@ -70,6 +70,7 @@ namespace Familia.Medicatie.Data
 
         private async Task<List<MedicationSchedule>> CallServerPastData(int size)
         {
+            var serverItemsError = false;
             var medications = new List<MedicationSchedule>();
             await Task.Run(async () =>
             {
@@ -82,12 +83,20 @@ namespace Familia.Medicatie.Data
                         medications = ParseResultFromUrl(res);
                         Log.Error("Networking data", " count: " + medications.Count);
                     }
+                    else {
+                        serverItemsError = true;
+                    }
                 }
                 catch (Exception e)
                 {
                     Log.Error("MEDICATION SERVER ERR", e.Message);
                 }
             });
+
+            if (serverItemsError) {
+                return null;
+            }
+
             return medications;
         }
 
@@ -116,21 +125,21 @@ namespace Familia.Medicatie.Data
 
         public async Task<List<MedicationSchedule>> ReadPastDataTask(int size)
         {
-            _medicationSchedules = new List<MedicationSchedule>(await CallServerPastData(size));
-            if (_medicationSchedules.Count != 0)
-            {
-                bool finished = await SaveListInDBTask(_medicationSchedules);
-                Log.Error("NetworkingData class", "saved: " + finished);
-            }
-            else
-            {
+            _medicationSchedules = await CallServerPastData(size);
+            if (_medicationSchedules == null) {
                 if (size == 0)
                 {
                     Log.Error("NetworkingData class", "reading from local db..");
                     _medicationSchedules = new List<MedicationSchedule>(await ReadListFromDbPastDataTask());
                     Log.Error("NetworkingData class", "reading finish");
                 }
+            }else
+            if (_medicationSchedules.Count != 0)
+            {
+                bool finished = await SaveListInDBTask(_medicationSchedules);
+                Log.Error("NetworkingData class", "saved: " + finished);
             }
+      
 
             Log.Error("NetworkingData class", "count from reading" + _medicationSchedules.Count);
             return _medicationSchedules.OrderBy(x => DateTime.Parse(x.Timestampstring)).ToList();
