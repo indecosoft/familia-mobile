@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<android.support.constraint.ConstraintLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:fitsSystemWindows="false">
+
+		<android.support.design.widget.AppBarLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:theme="@style/AppTheme.AppBarOverlay">
+
+			<android.support.v7.widget.Toolbar
+				android:id="@+id/toolbar"
+				style="@style/SharingBar"
+				android:paddingEnd="16dp"
+				android:layout_width="match_parent"
+				android:layout_height="?attr/actionBarSize"
+				app:popupTheme="@style/ActionBarPopupThemeOverlayDark"
+				app:theme="@style/ActionBarThemeOverlayDark">
+
+				<android.support.design.widget.TextInputLayout
+					android:id="@+id/et_search_layout"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint=" ">
+
+					<android.support.v7.widget.AppCompatEditText
+						android:id="@+id/et_search"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:hint="Cauta"
+						android:inputType="text"
+						android:textColor="#fff"
+						android:textColorHint="@color/colorSecondary"
+						android:drawableStart="@drawable/magnify"
+						android:drawableTint="@drawable/drawable_tint_selector"
+						android:drawablePadding="5dp"
+						android:paddingStart="10dp"
+						android:paddingTop="10dp"
+						android:paddingBottom="10dp"
+						android:paddingEnd="10dp"
+						android:background="@drawable/edit_text_layout"
+
+            />
+				</android.support.design.widget.TextInputLayout>
+			</android.support.v7.widget.Toolbar>
+
+		</android.support.design.widget.AppBarLayout>
+	</android.support.constraint.ConstraintLayout>
+	<android.support.v7.widget.RecyclerView
+		android:id="@+id/devices"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:padding="16dp"
+		android:layout_marginTop="?attr/actionBarSize"
+		android:scrollbars="vertical"
+		android:scrollbarStyle="outsideOverlay"/>
+</RelativeLayout>

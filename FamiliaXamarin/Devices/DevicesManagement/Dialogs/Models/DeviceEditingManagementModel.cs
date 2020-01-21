@@ -2,7 +2,7 @@ using FamiliaXamarin.DataModels;
 
 namespace FamiliaXamarin.Devices
 {
-    public class DevicesManagementModel
+    public class DeviceEditingManagementModel
     {
         public int ItemType { get; set; }
         public string ItemValue { get; set; }

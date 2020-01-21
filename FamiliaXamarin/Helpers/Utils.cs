@@ -137,7 +137,7 @@ namespace FamiliaXamarin.Helpers {
             }
             return null;
         }
-        public static async Task<JSONObject> ScanQRCode(Activity activity) {
+        public static async Task<JSONObject> ScanEncryptedQRCode(Activity activity) {
             MobileBarcodeScanner.Initialize(new Application());
             var options = new MobileBarcodeScanningOptions {
                 PossibleFormats = new List<BarcodeFormat>()
@@ -162,6 +162,24 @@ namespace FamiliaXamarin.Helpers {
                 }
             }
             return null;
+        }
+        public static async Task<ZXing.Result> ScanQRCode(Activity activity) {
+            MobileBarcodeScanner.Initialize(new Application());
+            var options = new MobileBarcodeScanningOptions {
+                PossibleFormats = new List<BarcodeFormat>()
+                {
+                    BarcodeFormat.QR_CODE
+                },
+                CameraResolutionSelector = availableResolutions => availableResolutions[0],
+                UseNativeScanning = true,
+                AutoRotate = false,
+                TryHarder = true
+            };
+            WindowManagerFlags flags = WindowManagerFlags.Fullscreen;
+            activity.Window.SetFlags(flags,
+                flags);
+            return await new MobileBarcodeScanner().Scan(options);
+            
         }
         public static bool IsGooglePlayServicesInstalled(Context ctx) {
             var queryResult = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(ctx);

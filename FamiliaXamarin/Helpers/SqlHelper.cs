@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Android.Util;
-using FamiliaXamarin.DataModels;
-using Java.Lang;
+
 using SQLite;
 using Exception = Java.Lang.Exception;
 
@@ -27,7 +26,7 @@ namespace FamiliaXamarin.Helpers
         
         static SqlHelper()
         {
-            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             const string dbName = "devices_data.db";
             Db = new SQLiteAsyncConnection(Path.Combine(path, dbName));
         }
@@ -66,6 +65,14 @@ namespace FamiliaXamarin.Helpers
             catch (Exception e)
             {
                 Log.Error("InsertionError", e.Message);
+            }
+
+        }
+        public async Task DeleteAll() {
+            try {
+                await Db.DeleteAllAsync<T>();
+            } catch (Exception e) {
+                Log.Error("DeleteError", e.Message);
             }
 
         }

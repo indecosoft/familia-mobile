@@ -43,7 +43,7 @@ namespace FamiliaXamarin.Sharing
         }
         private async void BtnScan_Click(object sender, EventArgs e)
         {
-            var qrJsonData = await Utils.ScanQRCode(Activity);
+            var qrJsonData = await Utils.ScanEncryptedQRCode(Activity);
             if (qrJsonData == null) return;
             try
             {

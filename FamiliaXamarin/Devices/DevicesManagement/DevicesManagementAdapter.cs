@@ -12,9 +12,9 @@ namespace FamiliaXamarin.Devices
     {
         public event EventHandler<DevicesManagementAdapterClickEventArgs> ItemClick;
         public event EventHandler<DevicesManagementAdapterClickEventArgs> ItemLongClick;
-        private readonly List<DevicesManagementModel> _devices;
+        private readonly List<DeviceEditingManagementModel> _devices;
 
-        public DevicesManagementAdapter(List<DevicesManagementModel> data)
+        public DevicesManagementAdapter(List<DeviceEditingManagementModel> data)
         {
             _devices = data;
         }
@@ -23,7 +23,7 @@ namespace FamiliaXamarin.Devices
             return _devices[position].ItemType;
         }
 
-        public DevicesManagementModel GetItemModel(int position)
+        public DeviceEditingManagementModel GetItemModel(int position)
         {
             return _devices[position].ItemType == 1 ?_devices[position] : null;
         }
@@ -85,7 +85,7 @@ namespace FamiliaXamarin.Devices
             }
         }
 
-        public void AddMessage(DevicesManagementModel model)
+        public void AddMessage(DeviceEditingManagementModel model)
         {
             _devices.Add(model);
         }
