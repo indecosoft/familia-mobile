@@ -54,15 +54,23 @@ namespace FamiliaXamarin.Sharing
                 {
                     Task.Run(async () =>
                     {
+                        Log.Error("ListaConexiuni", "send data");
+                        Log.Error("qrjsondata", qrJsonData + "  " );
                         var response = await WebServices.Post($"{Constants.PublicServerAddress}/api/newSharingPeople",
                             new JSONObject().Put("from", qrJsonData.GetString("Id")).Put("dest", Utils.GetDefaults("Id")), Utils.GetDefaults("Token"));
+                        Log.Error("SharingData scan", response + " " );
                         if (!string.IsNullOrEmpty(response))
                         {
                             Log.Error("SharingData scan", response);
                            // Activity.RunOnUiThread(() => Toast.MakeText(Activity, response, ToastLength.Long).Show());
                         }
-                    });
+
+                         //Activity.RunOnUiThread(() => );
+
+                    }).Wait();
                     dialog.Dismiss();
+
+
                 };dialog.ButtonCancel.Click += (o, args) =>
                 {
                     

@@ -176,7 +176,8 @@ namespace Familia.Services
             setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
             Log.Error("DATE ", date.Year + ", " + date.Month + ", " + date.Day + ", " + date.Second);
             if (setcalendar.Before(calendar)) return;
-            am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
+            // am.SetInexactRepeating(AlarmType.RtcWakeup, setcalendar.TimeInMillis, AlarmManager.IntervalDay, pi);
+            am.SetExact(AlarmType.RtcWakeup, setcalendar.TimeInMillis, pi);
         }
 
         private DateTime parseTimestampStringToDate(MedicationSchedule ms)

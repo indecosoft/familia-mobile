@@ -188,7 +188,7 @@ namespace FamiliaXamarin.Sharing
                             Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(response))
                     {
-
+                        Log.Error("ListaConexiuni", response);
                         contacts = JsonConvert.DeserializeObject<List<SharingModel>>(response);
                     }
                 });

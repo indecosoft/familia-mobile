@@ -222,8 +222,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
             if (am != null)
             {
-                am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + snoozeInMilisec,
-                    AlarmManager.IntervalDay, pi);
+                // am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + snoozeInMilisec,
+                //    AlarmManager.IntervalDay, pi);
+                am.SetExact(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + snoozeInMilisec, pi);
             }
         }
 
