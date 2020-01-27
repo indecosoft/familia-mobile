@@ -17,6 +17,7 @@ using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
 using Familia;
+using Familia.Devices.Bluetooth.Callbacks.Glucose;
 using Familia.Devices.BluetoothCallbacks.Glucose;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
@@ -39,6 +40,8 @@ namespace FamiliaXamarin.Devices.GlucoseDevice {
         private LottieAnimationView _animationView;
         internal GlucoseScanCallback _scanCallback;
         internal GlucoseGattCallBack _gattCallback;
+        internal MedisanaGattCallback _medisanaGattCallback;
+
         private SqlHelper<DevicesRecords> _bleDevicesDataRecords;
 
         protected override void OnCreate(Bundle savedInstanceState) {
@@ -54,6 +57,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice {
                     _bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
                     _scanCallback = new GlucoseScanCallback(this, list);
                     _gattCallback = new GlucoseGattCallBack(this, list);
+                    _medisanaGattCallback = new MedisanaGattCallback(this);
                     _animationView.PlayAnimation();
                 });
             }).Wait();

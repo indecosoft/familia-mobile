@@ -58,8 +58,7 @@ namespace FamiliaXamarin {
         public static string ClientId { get; } = "22CZRL";
         public static string CallbackUrl { get; } = "fittauth://finish";
         #endregion
-        public static readonly List<string> AvailableGlucoseDevices = new List<string> { "CareSens N Premier", "Medisana MediTouch 2" };
-        public static readonly List<string> AvailableBloodPressureDevices = new List<string> { "Medisana BU 530 Connect"};
+        
 
 
        public static string SaveDeviceDataUrl { get; } = "https://gisdev.indecosoft.net/devices/save-device-measurements";

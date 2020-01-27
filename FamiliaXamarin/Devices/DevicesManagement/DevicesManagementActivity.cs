@@ -14,6 +14,7 @@ using Android.Widget;
 using Familia.Devices.DevicesManagement.Dialogs.DialogEvents;
 using Familia.Devices.DevicesManagement.Dialogs.DialogHelpers;
 using Familia.Devices.Helpers;
+using Familia.Devices.Models;
 using FamiliaXamarin;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Devices;
@@ -76,17 +77,11 @@ namespace Familia.Devices {
                                 await InitDatabaseConnection();
                             });
                             Intent intent = new Intent(this, typeof(DeviceManufactureSelectorActivity));
-                            var list = new List<DeviceTypeSelectorModel>();
+                            var list = new List<SupportedDeviceModel>();
                             if (eventArgs.DeviceType == DeviceType.BloodPressure) {
-                                foreach (
-                            var item in Constants.AvailableBloodPressureDevices) {
-                                    list.Add(new DeviceTypeSelectorModel() { Title = item, Type = DeviceType.BloodPressure });
-                                }
+                                list = SupportedDevices.BloodPressureDevices;
                             } else if (eventArgs.DeviceType == DeviceType.Glucose) {
-                                foreach (
-                            var item in Constants.AvailableGlucoseDevices) {
-                                    list.Add(new DeviceTypeSelectorModel() { Title = item, Type = DeviceType.Glucose });
-                                }
+                                list = SupportedDevices.GlucoseDevices;
                             }
                             
                             intent.PutExtra("Items", JsonConvert.SerializeObject(list));
@@ -175,22 +170,28 @@ namespace Familia.Devices {
 
   
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data) {
-            if (requestCode == 1) {
-                var item = JsonConvert.DeserializeObject<DeviceTypeSelectorModel>(data.GetStringExtra("result"));
-                if (item.Type == DeviceType.Glucose) {
-                    var intent = new Intent(this, typeof(AddNewGlucoseDeviceActivity));
-                    intent.PutExtra("RegisterOnly", true);
-                    if (item.Title.Equals("Medisana MediTouch 2")) {
-                        intent.PutExtra("IsMedisana", true);
-                    }
-                    StartActivity(intent);
+            if(resultCode == Result.Ok) {
+                Log.Error("RequestCode", requestCode.ToString());
+                if (requestCode == 1) {
+                    var item = JsonConvert.DeserializeObject<SupportedDeviceModel>(data.GetStringExtra("result"));
+                    if (item.DeviceType == DeviceType.Glucose) {
+                        var intent = new Intent(this, typeof(AddNewGlucoseDeviceActivity));
+                        intent.PutExtra("RegisterOnly", true);
+                        intent.PutExtra("Device", data.GetStringExtra("result"));
+                        if (item.Manufacturer == SupportedManufacturers.Medisana) {
 
-                } else if (item.Type == DeviceType.BloodPressure) {
-                    var intent = new Intent(this, typeof(AddNewBloodPressureDeviceActivity));
-                    intent.PutExtra("RegisterOnly", true);
-                    StartActivity(intent);
+                            Log.Error("Selected Device", "You have selected Medisana Glucometer");
+                        }
+                        StartActivity(intent);
+
+                    } else if (item.DeviceType == DeviceType.BloodPressure) {
+                        var intent = new Intent(this, typeof(AddNewBloodPressureDeviceActivity));
+                        intent.PutExtra("RegisterOnly", true);
+                        StartActivity(intent);
+                    }
                 }
             }
+            
         }
     }
 }
