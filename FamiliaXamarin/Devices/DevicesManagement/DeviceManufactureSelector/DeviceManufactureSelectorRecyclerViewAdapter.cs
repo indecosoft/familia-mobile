@@ -6,16 +6,17 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Familia.Devices.Helpers;
+using Familia.Devices.Models;
 
 namespace Familia.Devices {
     public class DeviceManufactureSelectorRecyclerViewAdapter : RecyclerView.Adapter{
         
         public event EventHandler<DeviceSelectorAdapterClickEventArgs> ItemClick;
-        private List<DeviceTypeSelectorModel> items;
-        private readonly List<DeviceTypeSelectorModel> itemsCopy;
+        private List<SupportedDeviceModel> items;
+        private readonly List<SupportedDeviceModel> itemsCopy;
         private readonly LayoutInflater mInflater;
 
-        public DeviceManufactureSelectorRecyclerViewAdapter(Context context, List<DeviceTypeSelectorModel> items) {
+        public DeviceManufactureSelectorRecyclerViewAdapter(Context context, List<SupportedDeviceModel> items) {
             mInflater = LayoutInflater.From(context);
             this.items = items;
             this.itemsCopy = items;
@@ -26,7 +27,7 @@ namespace Familia.Devices {
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             var item = items[position];
             if (!(holder is DeviceSelectorHolder viewHolder)) return;
-            viewHolder.Item.Text = item.Title;
+            viewHolder.Item.Text = item.DeviceName;
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType) {
@@ -39,10 +40,10 @@ namespace Familia.Devices {
         }
         void OnClick(DeviceSelectorAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
 
-        public DeviceTypeSelectorModel GetItem(int position) => items[position];
+        public SupportedDeviceModel GetItem(int position) => items[position];
 
         public void Search(string textToSearch) {
-            items = itemsCopy.Where(c => c.Title.ToLower().StartsWith(textToSearch.ToLower(), StringComparison.Ordinal)).ToList();
+            items = itemsCopy.Where(c => c.DeviceName.ToLower().StartsWith(textToSearch.ToLower(), StringComparison.Ordinal)).ToList();
             NotifyDataSetChanged();
         }
         

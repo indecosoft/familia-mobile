@@ -14,8 +14,11 @@ using Familia;
 using Familia.Devices;
 using Familia.Devices.BluetoothEvents;
 using Familia.Devices.BroadcastReceivers;
+using Familia.Devices.Helpers;
+using Familia.Devices.Models;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Helpers;
+using Newtonsoft.Json;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace FamiliaXamarin.Devices.GlucoseDevice {
@@ -30,6 +33,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice {
         private readonly DevicesRecyclerViewAdapter _adapter = new DevicesRecyclerViewAdapter();
         private readonly BluetoothScanCallback _scanCallback = new BluetoothScanCallback();
         private readonly BondingBroadcastReceiver bondingBroadcastReceiver = new BondingBroadcastReceiver();
+        SupportedDeviceModel device;
 
         protected override void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
@@ -45,7 +49,8 @@ namespace FamiliaXamarin.Devices.GlucoseDevice {
             toolbar.NavigationClick += delegate {
                 Finish();
             };
-
+            device = JsonConvert.DeserializeObject<SupportedDeviceModel>(Intent.GetStringExtra("Device"));
+            
             if (CheckSelfPermission(Manifest.Permission.AccessCoarseLocation) != Permission.Granted) {
                 RequestPermissions(_permissionsArray, 0);
             } else {
@@ -64,8 +69,27 @@ namespace FamiliaXamarin.Devices.GlucoseDevice {
                 Priority = (int)IntentFilterPriority.HighPriority
             });
             bondingBroadcastReceiver.OnBondedStatusChanged += BondedStatusChanged;
-            _adapter.ItemClick += delegate (object sender, DevicesRecyclerViewAdapterClickEventArgs args) {
-                _adapter.GetItem(args.Position).CreateBond();
+            _adapter.ItemClick += async delegate (object sender, DevicesRecyclerViewAdapterClickEventArgs args) {
+                
+                switch (device.Manufacturer) {
+                    case SupportedManufacturers.Medisana:
+                       var  _bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                        await _bleDevicesRecords.Insert(
+                            new BluetoothDeviceRecords {
+                                Name = _adapter.GetItem(args.Position).Name,
+                                Address = _adapter.GetItem(args.Position).Address,
+                                DeviceType = GetString(Familia.Resource.String.blood_glucose_device),
+                                DeviceManufacturer = device.Manufacturer
+                            });
+                        Finish();
+                        break;
+                    case SupportedManufacturers.Caresens:
+                        _adapter.GetItem(args.Position).CreateBond();
+                        break;
+                    default:
+                        Log.Error("Error", "Unsupported device");
+                        break;
+                }
             };
             _recyclerView = FindViewById<RecyclerView>(Familia.Resource.Id.addNewDeviceRecyclerView);
             _recyclerView.SetLayoutManager(new LinearLayoutManager(this));
@@ -101,7 +125,8 @@ namespace FamiliaXamarin.Devices.GlucoseDevice {
                        new BluetoothDeviceRecords {
                            Name = args.Device.Name,
                            Address = args.Device.Address,
-                           DeviceType = GetString(Familia.Resource.String.blood_glucose_device)
+                           DeviceType = GetString(Familia.Resource.String.blood_glucose_device),
+                           DeviceManufacturer = device.Manufacturer
                        });
                     Finish();
                     break;

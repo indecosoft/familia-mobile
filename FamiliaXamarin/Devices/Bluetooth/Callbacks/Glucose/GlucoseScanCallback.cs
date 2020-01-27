@@ -20,11 +20,19 @@ namespace Familia.Devices.BluetoothCallbacks.Glucose {
         public override void OnScanResult([GeneratedEnum] ScanCallbackType callbackType, ScanResult result) {
             var devicesDataNormalized = from c in ListOfSavedDevices
                                         where c.Address == result.Device.Address
-                                        select new { c.Name, c.Address, c.DeviceType };
+                                        select new { c.Name, c.Address, c.DeviceType, c.DeviceManufacturer };
             if (!devicesDataNormalized.Any())
                 return;
-            result.Device.ConnectGatt(Context, true,
+            switch(devicesDataNormalized.FirstOrDefault().DeviceManufacturer) {
+                case Helpers.SupportedManufacturers.Medisana:
+                    result.Device.ConnectGatt(Context, true,
+                ((GlucoseDeviceActivity)Context)._medisanaGattCallback, BluetoothTransports.Le);
+                    break;
+                case Helpers.SupportedManufacturers.Caresens:
+                    result.Device.ConnectGatt(Context, true,
                 ((GlucoseDeviceActivity)Context)._gattCallback, BluetoothTransports.Le);
+                    break;
+            }
             ((GlucoseDeviceActivity)Context)._bluetoothScanner.StopScan(
                 ((GlucoseDeviceActivity)Context)._scanCallback);
 

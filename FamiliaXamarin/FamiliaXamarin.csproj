@@ -228,6 +228,10 @@
     <Compile Include="Devices\DevicesManagement\DevicesManagementAdapter.cs" />
     <Compile Include="Devices\DevicesManagement\DevicesManagementRecyclerViewAdapter.cs" />
     <Compile Include="Devices\DevicesRecyclerViewAdapter.cs" />
+    <Compile Include="Devices\Helpers\SupportedManufacturers.cs" />
+    <Compile Include="Devices\Helpers\SupportedDevices.cs" />
+    <Compile Include="Devices\Models\SupportedDeviceModel.cs" />
+    <Compile Include="Devices\Bluetooth\Callbacks\Glucose\MedisanaGattCallback.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

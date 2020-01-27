@@ -13,6 +13,7 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Familia.Devices.Helpers;
+using Familia.Devices.Models;
 using FamiliaXamarin;
 using FamiliaXamarin.Devices.GlucoseDevice;
 using FamiliaXamarin.Devices.PressureDevice;
@@ -23,14 +24,14 @@ namespace Familia.Devices {
     [Activity(Label = "DeviceSelectorActivity")]
 
     public class DeviceManufactureSelectorActivity : AppCompatActivity {
-        List<DeviceTypeSelectorModel> list = new List<DeviceTypeSelectorModel>();
+        List<SupportedDeviceModel> list = new List<SupportedDeviceModel>();
         DeviceManufactureSelectorRecyclerViewAdapter mAdapter;
         protected override void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
             InitUI();
 
-            list = JsonConvert.DeserializeObject<List<DeviceTypeSelectorModel>>(Intent.GetStringExtra("Items"));
-            list = list.OrderBy(c => c.Title).OrderByDescending(el => el.Title).ToList();
+            list = JsonConvert.DeserializeObject<List<SupportedDeviceModel>>(Intent.GetStringExtra("Items"));
+            list = list.OrderByDescending(el => el.DeviceName).ToList();
 
             mAdapter = new DeviceManufactureSelectorRecyclerViewAdapter(this, list);
             mAdapter.ItemClick += ItemClick;
@@ -53,6 +54,10 @@ namespace Familia.Devices {
             Intent returnIntent = new Intent();
             returnIntent.PutExtra("result", JsonConvert.SerializeObject(mAdapter.GetItem(e.Position)));
             SetResult(Result.Ok, returnIntent);
+            Finish();
+        }
+        public override void OnBackPressed() {
+            SetResult(Result.Canceled);
             Finish();
         }
         private void InitUI() {
