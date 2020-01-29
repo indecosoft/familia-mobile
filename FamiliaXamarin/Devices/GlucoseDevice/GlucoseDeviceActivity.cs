@@ -43,12 +43,17 @@ namespace FamiliaXamarin.Devices.GlucoseDevice {
         internal MedisanaGattCallback _medisanaGattCallback;
 
         private SqlHelper<DevicesRecords> _bleDevicesDataRecords;
+        private string Imei;
 
         protected override void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.blood_glucose_device);
             InitUI();
             InitEvents();
+            Imei = Intent.GetStringExtra("Imei");
+            if (string.IsNullOrEmpty(Imei)) {
+                Imei = Utils.GetDeviceIdentificator(this);
+            }
             Task.Run(async () => {
                 _bleDevicesDataRecords = await SqlHelper<DevicesRecords>.CreateAsync();
                 var bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
@@ -154,7 +159,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice {
                 using var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
                 if (!Utils.CheckNetworkAvailability()) {
                     await _bleDevicesDataRecords.Insert(new DevicesRecords() {
-                        Imei = Utils.GetDeviceIdentificator(this),
+                        Imei = Imei,
                         DateTime = ft.Format(new Date()),
                         BloodGlucose = (int)g
                     });
@@ -188,7 +193,7 @@ namespace FamiliaXamarin.Devices.GlucoseDevice {
                     }
                     jsonObject = new JSONObject();
                     jsonObject
-                        .Put("imei", Utils.GetDeviceIdentificator(this))
+                        .Put("imei", Imei)
                         .Put("dateTimeISO", ft.Format(new Date()))
                         .Put("geolocation", string.Empty)
                         .Put("lastLocation", string.Empty)

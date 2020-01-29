@@ -158,9 +158,14 @@ namespace Familia.Devices.BluetoothCallbacks.BloodPressure {
 
         }
         private void SetCharacteristicNotificationWithDelay(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid) {
-            handler.PostDelayed(() => {
-                SetCharacteristicNotification_private(gatt, serviceUuid, characteristicUuid);
-            }, 300);
+            try {
+                handler.PostDelayed(() => {
+                    SetCharacteristicNotification_private(gatt, serviceUuid, characteristicUuid);
+                }, 300);
+            } catch (Exception ex) {
+                Log.Error("Error", ex.Message);
+            }
+            
         }
         private static void SetCharacteristicNotification_private(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid) {
             try {

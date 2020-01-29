@@ -27,14 +27,17 @@ namespace Familia.Devices.BluetoothCallbacks.Glucose {
                 case Helpers.SupportedManufacturers.Medisana:
                     result.Device.ConnectGatt(Context, true,
                 ((GlucoseDeviceActivity)Context)._medisanaGattCallback, BluetoothTransports.Le);
+                    ((GlucoseDeviceActivity)Context)._bluetoothScanner.StopScan(
+                ((GlucoseDeviceActivity)Context)._scanCallback);
                     break;
                 case Helpers.SupportedManufacturers.Caresens:
                     result.Device.ConnectGatt(Context, true,
                 ((GlucoseDeviceActivity)Context)._gattCallback, BluetoothTransports.Le);
+                    ((GlucoseDeviceActivity)Context)._bluetoothScanner.StopScan(
+                ((GlucoseDeviceActivity)Context)._scanCallback);
                     break;
             }
-            ((GlucoseDeviceActivity)Context)._bluetoothScanner.StopScan(
-                ((GlucoseDeviceActivity)Context)._scanCallback);
+            
 
         }
     }

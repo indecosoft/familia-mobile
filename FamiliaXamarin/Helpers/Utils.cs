@@ -20,6 +20,7 @@ using Java.Util;
 using Org.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ZXing;
@@ -354,6 +355,10 @@ namespace FamiliaXamarin.Helpers {
             NetworkInfo activeNetwork = ((ConnectivityManager)Application.Context.GetSystemService(Context.ConnectivityService)).ActiveNetworkInfo;
             return activeNetwork != null && activeNetwork.IsConnected;
         }
+
+        [Obsolete]
+        public static bool IsServiceRunning(Type classTypeof, Context context) => ((ActivityManager)context.GetSystemService(Context.ActivityService)).GetRunningServices(int.MaxValue).Any(service =>
+                service.Service.ShortClassName == classTypeof.ToString());
 
     }
 }

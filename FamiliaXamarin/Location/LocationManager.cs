@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Android;
 using Android.App;
 using Android.Content.PM;
+using Android.Gms.Common.Apis;
 using Android.Gms.Location;
 using Android.Support.V4.Content;
 using Android.Util;
@@ -38,11 +39,21 @@ namespace Familia.Location {
             _locationRequest = new LocationRequest()
                 .SetPriority(LocationRequest.PriorityBalancedPowerAccuracy)
                 .SetInterval(miliseconds)
-                .SetMaxWaitTime(miliseconds);
+                .SetFastestInterval(miliseconds)
+                .SetMaxWaitTime(miliseconds+1000);
             _locationCallback = new FusedLocationProviderCallback(this);
 
             _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Application.Context);
             await RequestLocationUpdates();
+        }
+        public async void ChangeInterval(int miliseconds) {
+            if(_locationRequest != null) {
+                _locationRequest.SetFastestInterval(miliseconds);
+                _locationRequest.SetInterval(miliseconds);
+                _locationRequest.SetMaxWaitTime(miliseconds+10000);
+
+                await _fusedLocationProviderClient.RequestLocationUpdatesAsync(_locationRequest, _locationCallback);
+            }
         }
         private async Task RequestLocationUpdates() {
             if (ContextCompat.CheckSelfPermission(Application.Context, Manifest.Permission.AccessFineLocation) !=
@@ -55,8 +66,8 @@ namespace Familia.Location {
             if (_isRequestingLocationUpdates) {
                 _isRequestingLocationUpdates = false;
                 await _fusedLocationProviderClient.RemoveLocationUpdatesAsync(_locationCallback);
-                _fusedLocationProviderClient.Dispose();
-                _locationRequest.Dispose();
+                //_fusedLocationProviderClient.Dispose();
+                //_locationRequest.Dispose();
             }
         }
 
@@ -83,5 +94,6 @@ namespace Familia.Location {
                 Location = location
             });
         }
+
     }
 }
