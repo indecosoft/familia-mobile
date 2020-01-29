@@ -12,6 +12,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Familia;
+using Familia.Devices;
 using FamiliaXamarin.DataModels;
 using FamiliaXamarin.Devices.GlucoseDevice;
 using FamiliaXamarin.Devices.PressureDevice;
@@ -61,14 +62,7 @@ namespace FamiliaXamarin.Devices {
 
                     alertDialog.SetMessage("Nu aveti niciun dispozitiv inregistrat!");
                     alertDialog.SetButton("OK", delegate {
-                        switch (devicetype) {
-                            case DeviceType.BLEBloodPressureDevice:
-                                Activity.StartActivity(typeof(AddNewBloodPressureDeviceActivity));
-                                break;
-                            case DeviceType.BLEGlucoseDevice:
-                                Activity.StartActivity(typeof(AddNewGlucoseDeviceActivity));
-                                break;
-                        }
+                        Activity.StartActivity(typeof(DevicesManagementActivity));
                     });
                     alertDialog.Show();
                 }

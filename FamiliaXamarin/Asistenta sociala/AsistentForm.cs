@@ -28,9 +28,10 @@ using Resource = Familia.Resource;
 using Familia.Helpers;
 using Familia.Asistentasociala;
 using Newtonsoft.Json;
+using Familia.Location;
 
 namespace FamiliaXamarin.Asistenta_sociala {
-    public class AsistentForm : Android.Support.V4.App.Fragment, ILocationEvents {
+    public class AsistentForm : Android.Support.V4.App.Fragment {
         private FusedLocationProviderClient _fusedLocationProviderClient;
         private bool _isGooglePlayServicesInstalled;
         private EditText _tbDetails;
@@ -42,7 +43,9 @@ namespace FamiliaXamarin.Asistenta_sociala {
         private JSONObject _location, _details, _qrJsonData;
         private JSONArray _benefitsArray;
         private List<SearchListModel> SelectedBenefits = new List<SearchListModel>();
-        private Intent _distanceCalculatorService, _medicalAsistanceService;
+        private Intent _distanceCalculatorService;
+        LocationManager location = LocationManager.Instance;
+
 
         private void IntiUi(View v) {
 
@@ -67,7 +70,7 @@ namespace FamiliaXamarin.Asistenta_sociala {
             NotificationManagerCompat.From(Activity).Cancel(Constants.NotifMedicationId--);
             IntiUi(view);
             _distanceCalculatorService = new Intent(Activity, typeof(DistanceCalculator));
-            _medicalAsistanceService = new Intent(Activity, typeof(MedicalAsistanceService));
+            //_medicalAsistanceService = new Intent(Activity, typeof(MedicalAsistanceService));
 
             var fromPreferences = Utils.GetDefaults("ActivityStart");
             _tbDetails.TextChanged += delegate {
@@ -81,7 +84,7 @@ namespace FamiliaXamarin.Asistenta_sociala {
                 _formContainer.Visibility = ViewStates.Gone;
                 _btnAnulare.Visibility = ViewStates.Gone;
                 _btnScan.Text = "Incepe activitatea";
-                Activity.StopService(_medicalAsistanceService);
+                //Activity.StopService(_medicalAsistanceService);
                 Activity.StopService(_distanceCalculatorService);
                 SelectedBenefits.Clear();
                 _tbDetails.Text = string.Empty;
@@ -116,17 +119,17 @@ namespace FamiliaXamarin.Asistenta_sociala {
             }
 
             _btnScan.Click += BtnScan_Click;
-            _isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(Activity);
+            //_isGooglePlayServicesInstalled = Utils.IsGooglePlayServicesInstalled(Activity);
 
 
-            if (!_isGooglePlayServicesInstalled) return view;
-            var locationRequest = new LocationRequest();
-            locationRequest.SetPriority(LocationRequest.PriorityHighAccuracy);
-            locationRequest.SetInterval(1000);
-            locationRequest.SetFastestInterval(1000);
-            _ = new FusedLocationProviderCallback(this);
+            //if (!_isGooglePlayServicesInstalled) return view;
+            //var locationRequest = new LocationRequest();
+            //locationRequest.SetPriority(LocationRequest.PriorityHighAccuracy);
+            //locationRequest.SetInterval(1000);
+            //locationRequest.SetFastestInterval(1000);
+            //_ = new FusedLocationProviderCallback(this);
 
-            _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Activity);
+            //_fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Activity);
 
 
             return view;
@@ -137,7 +140,7 @@ namespace FamiliaXamarin.Asistenta_sociala {
             await Task.Run(async () => {
                 try {
                     //Utils.GetDefaults("QrId")
-                    var response = await WebServices.Get($"{Constants.PublicServerAddress}/api/getBenefits", Utils.GetDefaults("Token"));
+                    var response = await WebServices.Get($"{Constants.PublicServerAddress}/api/getUserBenefits/{Utils.GetDefaults("Id")}", Utils.GetDefaults("Token"));
                     Log.Error("Debug Log in " + nameof(AsistentForm), "Response: " + response);
                     var jsonResponse = new JSONObject(response);
                     Log.Error("ASISTEN FORM BENEFITS", jsonResponse.ToString());
@@ -192,7 +195,7 @@ namespace FamiliaXamarin.Asistenta_sociala {
                                 _progressBarDialog.Show();
                                 _dateTimeStart = currentDateandTime;
                                 _dateTimeEnd = null;
-                                Activity.StartForegroundService(_medicalAsistanceService);
+                                //Activity.StartForegroundService(_medicalAsistanceService);
 
                                 _latitude = double.Parse(Utils.GetDefaults("Latitude"));
                                 _longitude = double.Parse(Utils.GetDefaults("Longitude"));
@@ -230,51 +233,11 @@ namespace FamiliaXamarin.Asistenta_sociala {
                                 //DateTimeStart = null;
                                 _dateTimeEnd = currentDateandTime;
                                 if (ContextCompat.CheckSelfPermission(Activity, Manifest.Permission.AccessFineLocation) == Permission.Granted) {
-                                    await GetLastLocationFromDevice();
+                                    //await GetLastLocationFromDevice();
+                                    location.LocationRequested += LocationRequested;
+                                    await location.StartRequestingLocation();
                                 }
-                                _location = new JSONObject().Put("latitude", _latitude).Put("longitude", _longitude);
-                                _benefitsArray = new JSONArray();
-                                foreach (var t in SelectedBenefits)
-                                    _benefitsArray.Put(t.Id);
-
-                                _details = new JSONObject().Put("benefit", _benefitsArray).Put("details", _tbDetails.Text);
-                                Log.Error("Details", _details.ToString());
-
-                                //Activity.StopService(_distanceCalculatorService);
-
-                                await Task.Run(async () => {
-                                    //GetLastLocationButtonOnClick();
-                                    _latitude = double.Parse(Utils.GetDefaults("Latitude"));
-                                    _longitude = double.Parse(Utils.GetDefaults("Longitude"));
-
-                                    Utils.SetDefaults("ConsultLat", _latitude.ToString());
-                                    Utils.SetDefaults("ConsultLong", _longitude.ToString());
-                                    var dataToSend = new JSONObject().Put("dateTimeStart", _dateTimeStart)
-                                        .Put("dateTimeStop", _dateTimeEnd).Put("qrCodeData", _qrJsonData)
-                                        .Put("location", _location).Put("details", _details);
-                                    var response = await WebServices.Post(Constants.PublicServerAddress + "/api/consult", dataToSend, Utils.GetDefaults("Token"));
-                                    if (response != null) {
-                                        var responseJson = new JSONObject(response);
-                                        switch (responseJson.GetInt("status")) {
-                                            case 0:
-                                                Snackbar.Make(_formContainer, "Nu sunteti la pacient!", Snackbar.LengthLong).Show();
-                                                break;
-                                            case 1:
-                                                Snackbar.Make(_formContainer, "Eroare conectare la server", Snackbar.LengthLong).Show();
-                                                break;
-                                            case 2:
-                                                break;
-                                        }
-                                        Activity.RunOnUiThread(_progressBarDialog.Dismiss);
-                                    } else
-                                        Snackbar.Make(_formContainer, "Nu se poate conecta la server!", Snackbar.LengthLong).Show();
-                                });
-                                Activity.StopService(_medicalAsistanceService);
-                                Activity.StopService(_distanceCalculatorService);
-                                _tbDetails.Text = string.Empty;
-                                SelectedBenefits.Clear();
-                                _btnScan.Enabled = true;
-                                _btnBenefits.Text = "Selecteaza beneficii";
+                               
                             } catch (JSONException ex) {
                                 ex.PrintStackTrace();
                             }
@@ -296,22 +259,75 @@ namespace FamiliaXamarin.Asistenta_sociala {
             }
         }
 
-        private async Task GetLastLocationFromDevice() {
-            var location = await _fusedLocationProviderClient.GetLastLocationAsync();
-
-            if (location == null) {
-                // Seldom happens, but should code that handles this scenario
-                Log.Error("Location is null", "******************");
-            } else {
-                Log.Debug("Sample", "The Latitude is " + location.Latitude);
-                Log.Debug("Sample", "The Longitude is " + location.Longitude);
-                Utils.SetDefaults("ConsultLat", location.Latitude.ToString());
-                Utils.SetDefaults("ConsultLong", location.Longitude.ToString());
-                _latitude = location.Latitude;
-                _longitude = location.Longitude;
-
+        private async void LocationRequested(object source, EventArgs args) {
+            if(Utils.IsServiceRunning(typeof(DistanceCalculator), Activity)) {
+                await location.StopRequestionLocationUpdates();
+                location.LocationRequested -= LocationRequested;
+                return;
             }
+            using JSONObject locationObj = new JSONObject();
+            locationObj.Put("latitude", (args as Familia.Location.LocationEventArgs).Location.Latitude);
+            locationObj.Put("longitude", (args as Familia.Location.LocationEventArgs).Location.Longitude);
+            _location = new JSONObject().Put("latitude", _latitude).Put("longitude", _longitude);
+            _benefitsArray = new JSONArray();
+            foreach (var t in SelectedBenefits)
+                _benefitsArray.Put(t.Id);
+
+            _details = new JSONObject().Put("benefit", _benefitsArray).Put("details", _tbDetails.Text);
+            Log.Error("Details", _details.ToString());
+
+            //Activity.StopService(_distanceCalculatorService);
+
+            await Task.Run(async () => {
+                //GetLastLocationButtonOnClick();
+                _latitude = double.Parse(Utils.GetDefaults("Latitude"));
+                _longitude = double.Parse(Utils.GetDefaults("Longitude"));
+
+                Utils.SetDefaults("ConsultLat", _latitude.ToString());
+                Utils.SetDefaults("ConsultLong", _longitude.ToString());
+                var dataToSend = new JSONObject().Put("dateTimeStart", _dateTimeStart)
+                    .Put("dateTimeStop", _dateTimeEnd).Put("qrCodeData", _qrJsonData)
+                    .Put("location", _location).Put("details", _details);
+                var response = await WebServices.Post(Constants.PublicServerAddress + "/api/consult", dataToSend, Utils.GetDefaults("Token"));
+                if (response != null) {
+                    var responseJson = new JSONObject(response);
+                    switch (responseJson.GetInt("status")) {
+                        case 0:
+                            Snackbar.Make(_formContainer, "Nu sunteti la pacient!", Snackbar.LengthLong).Show();
+                            break;
+                        case 1:
+                            Snackbar.Make(_formContainer, "Eroare conectare la server", Snackbar.LengthLong).Show();
+                            break;
+                        case 2:
+                            break;
+                    }
+                    Activity.RunOnUiThread(_progressBarDialog.Dismiss);
+                } else
+                    Snackbar.Make(_formContainer, "Nu se poate conecta la server!", Snackbar.LengthLong).Show();
+            });
+            //Activity.StopService(_medicalAsistanceService);
+            Activity.StopService(_distanceCalculatorService);
+            _tbDetails.Text = string.Empty;
+            SelectedBenefits.Clear();
+            _btnScan.Enabled = true;
+            _btnBenefits.Text = "Selecteaza beneficii";
         }
+        //private async Task GetLastLocationFromDevice() {
+        //    var location = await _fusedLocationProviderClient.GetLastLocationAsync();
+
+        //    if (location == null) {
+        //        // Seldom happens, but should code that handles this scenario
+        //        Log.Error("Location is null", "******************");
+        //    } else {
+        //        Log.Debug("Sample", "The Latitude is " + location.Latitude);
+        //        Log.Debug("Sample", "The Longitude is " + location.Longitude);
+        //        Utils.SetDefaults("ConsultLat", location.Latitude.ToString());
+        //        Utils.SetDefaults("ConsultLong", location.Longitude.ToString());
+        //        _latitude = location.Latitude;
+        //        _longitude = location.Longitude;
+
+        //    }
+        //}
 
         public override void OnActivityResult(int requestCode, int resultCode, Intent data) {
             base.OnActivityResult(requestCode, resultCode, data);
@@ -327,9 +343,6 @@ namespace FamiliaXamarin.Asistenta_sociala {
             }
         }
 
-        public void OnLocationRequested(object source, EventArgs args) {
-            // throw new NotImplementedException();
-        }
     }
 
 }

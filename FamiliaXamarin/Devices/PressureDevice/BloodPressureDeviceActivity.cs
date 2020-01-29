@@ -42,6 +42,7 @@ namespace FamiliaXamarin.Devices.PressureDevice {
         internal BloodPressureScanCallback _scanCallback;
         internal BloodPressureGattCallBack _gattCallback;
         private SqlHelper<DevicesRecords> _bleDevicesDataRecords;
+        private string Imei;
 
         protected override void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
@@ -50,6 +51,10 @@ namespace FamiliaXamarin.Devices.PressureDevice {
             InitEvents();
             //test();
             IEnumerable<BluetoothDeviceRecords> list = null;
+            Imei = Intent.GetStringExtra("Imei");
+            if (string.IsNullOrEmpty(Imei)) {
+                Imei = Utils.GetDeviceIdentificator(this);
+            }
             Task.Run(async () => {
                 _bleDevicesDataRecords = await SqlHelper<DevicesRecords>.CreateAsync();
                 var bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
@@ -157,7 +162,7 @@ namespace FamiliaXamarin.Devices.PressureDevice {
 
                 if (!Utils.CheckNetworkAvailability()) {
                     await _bleDevicesDataRecords.Insert(new DevicesRecords() {
-                        Imei = Utils.GetDeviceIdentificator(this),
+                        Imei = Imei,
                         DateTime = ft.Format(new Date()),
                         BloodPresureSystolic = data.Systolic,
                         BloodPresureDiastolic = data.Diastolic,
@@ -193,7 +198,7 @@ namespace FamiliaXamarin.Devices.PressureDevice {
                     }
                     jsonObject = new JSONObject();
                     jsonObject
-                        .Put("imei", Utils.GetDeviceIdentificator(this))
+                        .Put("imei", Imei)
                         .Put("dateTimeISO", ft.Format(new Date()))
                         .Put("geolocation", string.Empty)
                         .Put("lastLocation", string.Empty)
