@@ -151,7 +151,7 @@ namespace FamiliaXamarin.Medicatie.Alarm {
                     .SetContentText(content)
                     .SetContentTitle(title)
                     .SetAutoCancel(false)
-                    // .SetContentIntent(piNotification)
+                    .SetContentIntent(piNotification)
                     .SetPriority(NotificationCompat.PriorityHigh);
                     //.SetOngoing(true);
 

@@ -147,8 +147,8 @@ namespace FamiliaXamarin.Medicatie.Data
             return listMedSch;
         }
 
-        // will be removed
-        public async void removeMedSer(string UUIDmed)
+        
+        public async Task removeMedSer(string UUIDmed)
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
             var list = await _db.QueryValuations($"delete from MedicineServerRecords where Uuid ='{UUIDmed}'");
@@ -156,7 +156,52 @@ namespace FamiliaXamarin.Medicatie.Data
             _medicationSchedules.Remove(await getElementByUUID(UUIDmed));
         }
 
-        // will be removed
+        public async Task deleteStinkyItems(List<MedicationSchedule> medications)
+        {
+            List<MedicationSchedule> localList = await readMedSer();
+           /* Log.Error("Storage", "whats in local db right now " + localList.Count);
+
+            foreach (MedicationSchedule item in localList) {
+                Log.Error("Storage ", item.Title + ", " + item.Timestampstring + ", idNotification " + item.IdNotification + ", " + item.Postpone + ", UUID: " + item.Uuid);
+            }
+            Log.Error("Storage", "that's all. ");
+
+            Log.Error("Storage", "what should be: " + medications.Count);
+            foreach (MedicationSchedule item in medications)
+            {
+                Log.Error("Storage ", item.Title + ", " + item.Timestampstring + ", idNotification " + item.IdNotification + ", " + item.Postpone + ", UUID: " + item.Uuid);
+            }
+            Log.Error("Storage", "that's all. ");
+            Log.Error("Storage", "find stinky data");
+            */
+            
+            foreach (MedicationSchedule itemLocal in localList) {
+                if (itemLocal.IdNotification!=0 && !isItemInListOrListIsEmpty(itemLocal, medications)) {
+                    Log.Error("Storage ", "this item will be deleted " + itemLocal.Title + ", " + itemLocal.Timestampstring + ", idNotification " + itemLocal.IdNotification + ", " + itemLocal.Postpone + ", UUID: " + itemLocal.Uuid);
+                    await removeMedSer(itemLocal.Uuid);
+                }
+            }
+          //  Log.Error("Storage", "done with stinky data");
+            //localList = await readMedSer();
+           // Log.Error("Storage", "now in db is " + localList.Count) ;
+        }
+
+        private bool isItemInListOrListIsEmpty( MedicationSchedule item, List<MedicationSchedule> list) {
+
+            if (list.Count == 0) {
+                return false;
+            }
+
+            foreach (MedicationSchedule ms in list) {
+                if (ms.Uuid == item.Uuid) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        
         public async Task<bool> isHere(string UUIDmed)
         {
             var ok = false;
