@@ -6,12 +6,12 @@ using Android.Media;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
-using Familia;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie.Data;
-using FamiliaXamarin.Medicatie.Entities;
+using Familia.Helpers;
+using Familia.Medicatie.Data;
+using Familia.Medicatie.Entities;
+using Uri = Android.Net.Uri;
 
-namespace FamiliaXamarin.Medicatie.Alarm {
+namespace Familia.Medicatie.Alarm {
     [BroadcastReceiver(Enabled = true, Exported = true)]
 
     class AlarmBroadcastReceiver : BroadcastReceiver {
@@ -25,9 +25,9 @@ namespace FamiliaXamarin.Medicatie.Alarm {
 
 
         public override void OnReceive(Context context, Intent intent) {
-            var medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
-            var boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
-            var hourId = intent.GetStringExtra(DiseaseActivity.HOUR_ID);
+            string medId = intent.GetStringExtra(DiseaseActivity.MED_ID);
+            string boalaId = intent.GetStringExtra(DiseaseActivity.BOALA_ID);
+            string hourId = intent.GetStringExtra(DiseaseActivity.HOUR_ID);
             Storage.GetInstance().GetListOfDiseasesFromFile(context);
             _mDisease = Storage.GetInstance().GetDisease(boalaId);
 
@@ -46,15 +46,15 @@ namespace FamiliaXamarin.Medicatie.Alarm {
 
         private async void LaunchAlarm(Context context, string medId, string boalaId) {
             const string channel = "channelabsolut";
-            var now = DateTime.Now;
+            DateTime now = DateTime.Now;
 
 
             CreateNotificationChannel(channel, "title from app", "content from app");
 
-            var notificationManager =
+            NotificationManagerCompat notificationManager =
                 NotificationManagerCompat.From(context);
 
-            Random random = new Random();
+            var random = new Random();
             int randomNumber = random.Next(0, 5000);
 
             NotifyId += randomNumber;
@@ -72,16 +72,16 @@ namespace FamiliaXamarin.Medicatie.Alarm {
             context.StartActivity(okIntent);
 
             var boli = Storage.GetInstance().GetListOfDiseasesFromFile(context);
-            var mBoala = Storage.GetInstance().GetDisease(boalaId);
+            Disease mBoala = Storage.GetInstance().GetDisease(boalaId);
             if (mBoala != null) {
-                var mMed = mBoala.GetMedicineById(medId);
+                Medicine mMed = mBoala.GetMedicineById(medId);
             }
 
             BuildNotification(context, NotifyId, channel, _mMed.Name, "medicament", okIntent);
 
             try {
                 var powerManager = (PowerManager)context.GetSystemService(Context.PowerService);
-                var wakeLock = powerManager.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "simple tag");
+                PowerManager.WakeLock wakeLock = powerManager.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "simple tag");
                 wakeLock.Acquire();
                 await Task.Delay(1000);
                 wakeLock.Release();
@@ -91,9 +91,9 @@ namespace FamiliaXamarin.Medicatie.Alarm {
         }
 
         private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent) {
-            var description = mContent;
+            string description = mContent;
             long[] vibrationPattern = { 100, 200, 300, 400, 500, 400, 300, 200, 400 };
-            Android.Net.Uri sound = Android.Net.Uri.Parse(ContentResolver.SchemeAndroidResource + "://" + Application.Context.PackageName + "/" + Resource.Raw.alarm);  //Here is FILE_NAME is the name of file that you want to play
+            Uri sound = Uri.Parse(ContentResolver.SchemeAndroidResource + "://" + Application.Context.PackageName + "/" + Resource.Raw.alarm);  //Here is FILE_NAME is the name of file that you want to play
             AudioAttributes attributes = new AudioAttributes.Builder()
                 .SetUsage(AudioUsageKind.Alarm)
                 .Build();
@@ -113,8 +113,8 @@ namespace FamiliaXamarin.Medicatie.Alarm {
         }
 
         private static void BuildNotification(Context context, int notifyId, string channel, string title, string content, Intent intent) {
-            var piNotification = PendingIntent.GetActivity(context, notifyId, intent, PendingIntentFlags.UpdateCurrent);
-            var mBuilder =
+            PendingIntent piNotification = PendingIntent.GetActivity(context, notifyId, intent, PendingIntentFlags.UpdateCurrent);
+            NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context, channel)
                     .SetSmallIcon(Resource.Drawable.logo)
                     .SetContentText(content)
@@ -123,7 +123,7 @@ namespace FamiliaXamarin.Medicatie.Alarm {
                     .SetContentIntent(piNotification)
                     .SetPriority(NotificationCompat.PriorityHigh);
 
-            var notificationManager = NotificationManagerCompat.From(context);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
             notificationManager.Notify(notifyId, mBuilder.Build());
         }
     }

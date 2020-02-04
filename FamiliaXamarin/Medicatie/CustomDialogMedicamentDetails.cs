@@ -1,23 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
 using Android.App;
 using Android.Content;
-using Android.Graphics;
-using Android.Graphics.Drawables;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Familia;
-using FamiliaXamarin.Medicatie.Entities;
+using Familia.Medicatie.Entities;
 using Java.Util;
+using AlertDialog = Android.Support.V7.App.AlertDialog;
 
-namespace FamiliaXamarin.Medicatie
+namespace Familia.Medicatie
 {
     class CustomDialogMedicamentDetails : Dialog, View.IOnClickListener,
         DatePickerDialog.IOnDateSetListener, HourAdapter.OnHourClickListener
@@ -67,8 +61,8 @@ namespace FamiliaXamarin.Medicatie
         {
             if (_isEdited)
             {
-                Android.Support.V7.App.AlertDialog.Builder alert =
-                    new Android.Support.V7.App.AlertDialog.Builder(activity);
+                var alert =
+                    new AlertDialog.Builder(activity);
                 alert.SetTitle("Avertisment");
                 alert.SetMessage("Esti pe cale sa renunti la modificarile facute. Renuntati?");
                 alert.SetPositiveButton("Da", (senderAlert, args) => { base.OnBackPressed(); });
@@ -92,7 +86,7 @@ namespace FamiliaXamarin.Medicatie
 
         private DateTime getCurrentDate()
         {
-            Calendar cal = Calendar.Instance;
+            var cal = Calendar.Instance;
             int year = cal.Get(CalendarField.Year);
             int month = cal.Get(CalendarField.Month);
             int day = cal.Get(CalendarField.DayOfMonth);
@@ -172,8 +166,8 @@ namespace FamiliaXamarin.Medicatie
         private void SetIntervalOfHours(int i)
         {
             hourAdapter.ClearList();
-            int idHour = 0;
-            int inceput = 6;
+            var idHour = 0;
+            var inceput = 6;
             int interval = 24 / (i + 1);
             if (i == 0)
             {
@@ -181,7 +175,7 @@ namespace FamiliaXamarin.Medicatie
             }
             else
             {
-                for (int j = 1; j < i + 2; j++)
+                for (var j = 1; j < i + 2; j++)
                 {
                     idHour++;
                     if (j == 1)
@@ -228,14 +222,14 @@ namespace FamiliaXamarin.Medicatie
                 hourAdapter.NotifyDataSetChanged();
             };
 
-            List<string> categories = new List<string>();
+            var categories = new List<string>();
             categories.Add("o data pe zi");
-            for (int i = 2; i < 13; i++)
+            for (var i = 2; i < 13; i++)
             {
                 categories.Add("de " + i + " ori pe zi");
             }
 
-            ArrayAdapter<string> dataAdapter = new ArrayAdapter<string>(Context,
+            var dataAdapter = new ArrayAdapter<string>(Context,
                 Android.Resource.Layout.SimpleSpinnerItem, categories);
             dataAdapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
             spinner.Adapter = dataAdapter;
@@ -243,8 +237,8 @@ namespace FamiliaXamarin.Medicatie
 
         private void SetupRvHours()
         {
-            RecyclerView rvHours = FindViewById<RecyclerView>(Resource.Id.rv_hours);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(Context);
+            var rvHours = FindViewById<RecyclerView>(Resource.Id.rv_hours);
+            var layoutManager = new LinearLayoutManager(Context);
             rvHours.SetLayoutManager(layoutManager);
 
             hourAdapter = new HourAdapter();
@@ -338,7 +332,7 @@ namespace FamiliaXamarin.Medicatie
                     string zile = etNumarZile.Text;
                     if (!zile.Equals(string.Empty))
                     {
-                        var canParse = int.TryParse(zile, out int nrZile);
+                        bool canParse = int.TryParse(zile, out int nrZile);
                         if (canParse)
                         {
                             medicament.NumberOfDays = nrZile;
@@ -386,11 +380,11 @@ namespace FamiliaXamarin.Medicatie
 
         private void OnTimeClicked(Hour myHour)
         {
-            Calendar mcurrentTime = Calendar.Instance;
+            var mcurrentTime = Calendar.Instance;
             int hour = mcurrentTime.Get(CalendarField.HourOfDay);
             int minute = mcurrentTime.Get(CalendarField.Minute);
 
-            TimePickerDialog mTimePicker = new TimePickerDialog(Context,
+            var mTimePicker = new TimePickerDialog(Context,
                 delegate(object sender, TimePickerDialog.TimeSetEventArgs args)
                 {
                     OnTimeSelected(sender as TimePicker, args.HourOfDay, args.Minute, myHour);

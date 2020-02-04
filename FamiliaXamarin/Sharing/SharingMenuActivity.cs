@@ -7,8 +7,6 @@ using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using FamiliaXamarin;
-using FamiliaXamarin.Sharing;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace Familia.Sharing
@@ -43,7 +41,7 @@ namespace Familia.Sharing
             btnBloodGlucose = FindViewById<Button>(Resource.Id.BloodGlucoseButton);
             btnSmartBand = FindViewById<Button>(Resource.Id.SmartbandButton);
 
-            CardView cvSmartBand = FindViewById<CardView>(Resource.Id.card_view2);
+            var cvSmartBand = FindViewById<CardView>(Resource.Id.card_view2);
             cvSmartBand.Visibility = ViewStates.Gone;
 
         }
@@ -62,7 +60,7 @@ namespace Familia.Sharing
 
         private void BtnBloodGlucoseOnClick(object sender, EventArgs e)
         {
-            Intent intent = new Intent(this, typeof(PressureAndGlucoseActivity));
+            var intent = new Intent(this, typeof(PressureAndGlucoseActivity));
             intent.PutExtra("DataType", "BloodGlucose");
             intent.PutExtra("Name", _name);
             intent.PutExtra("Email", _email);
@@ -72,7 +70,7 @@ namespace Familia.Sharing
 
         private void BtnBloodPressureOnClick(object sender, EventArgs e)
         {
-            Intent intent = new Intent(this, typeof(PressureAndGlucoseActivity));
+            var intent = new Intent(this, typeof(PressureAndGlucoseActivity));
             intent.PutExtra("DataType", "BloodPressure");
             intent.PutExtra("Name", _name);
             intent.PutExtra("Email", _email);

@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Android.Bluetooth;
 using Android.Content;
-using Familia.Devices.BluetoothEvents;
+using Familia.Devices.Bluetooth.Events;
 
-namespace Familia.Devices.BroadcastReceivers {
+namespace Familia.Devices.Bluetooth.Receivers {
     [BroadcastReceiver]
     public class BondingBroadcastReceiver : BroadcastReceiver {
 

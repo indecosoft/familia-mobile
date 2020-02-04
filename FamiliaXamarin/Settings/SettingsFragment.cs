@@ -1,28 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
+using System.Diagnostics.Contracts;
 using Android.OS;
-using Android.Runtime;
-using Android.Util;
+using Android.Support.V4.App;
+using Android.Support.V4.Hardware.Fingerprint;
 using Android.Views;
 using Android.Widget;
-using System.Diagnostics.Contracts;
-using Android.Preferences;
-using Android.Support.V4.Hardware.Fingerprint;
-using Familia;
-using Familia.Devices;
-using FamiliaXamarin.Devices;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie;
-using Familia.Settings;
+using Familia.Devices.DevicesManagement;
+using Familia.Helpers;
 
-namespace FamiliaXamarin.Settings
+namespace Familia.Settings
 {
-    public class SettingsFragment : Android.Support.V4.App.Fragment, View.IOnClickListener
+    public class SettingsFragment : Fragment, View.IOnClickListener
     {
         private Spinner spinner;
         private int optionOfSnooze;
@@ -50,13 +38,13 @@ namespace FamiliaXamarin.Settings
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var v = inflater.Inflate(Resource.Layout.fragment_settings, container, false);
+            View v = inflater.Inflate(Resource.Layout.fragment_settings, container, false);
             spinner = (Spinner)v.FindViewById(Resource.Id.alarmSpinner);
             SetupSpinner(v);
             enablefingerprint = v.FindViewById<Switch>(Resource.Id.fingerPrintSwitch);
             enablePin = v.FindViewById<Switch>(Resource.Id.pin_switch);
             _version = v.FindViewById<TextView>(Resource.Id.tv_version);
-            var ver = Context.PackageManager.GetPackageInfo(Context.PackageName, 0).VersionName;
+            string ver = Context.PackageManager.GetPackageInfo(Context.PackageName, 0).VersionName;
             _version.Text = "Versiunea " + ver;
             _tvDevicesManagement = v.FindViewById<TextView>(Resource.Id.devices);
             _rlMedicineTitle = v.FindViewById<RelativeLayout>(Resource.Id.medicine_relative);
@@ -69,7 +57,7 @@ namespace FamiliaXamarin.Settings
             checkHardware = FingerprintManagerCompat.From(Activity);
 
 
-            bool fingerprint = Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
+            var fingerprint = Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
 
             if (!checkHardware.IsHardwareDetected)
                 enablefingerprint.Enabled = false;
@@ -78,11 +66,15 @@ namespace FamiliaXamarin.Settings
             enablePin.Checked = !string.IsNullOrEmpty(Utils.GetDefaults("UserPin"));
             enablefingerprint.CheckedChange += Enablefingerprint_CheckedChange;
             enablePin.CheckedChange += EnablePin_CheckedChange;
-            if (int.Parse(Utils.GetDefaults("UserType")) == 2 || int.Parse(Utils.GetDefaults("UserType")) == 1)
+            if (int.Parse(Utils.GetDefaults("UserType")) == 2)
             {
+                _tvDevicesManagement.Visibility = ViewStates.Visible;
+                _tvDeviceTitle.Visibility = ViewStates.Visible;
+
+            }
+            if(int.Parse(Utils.GetDefaults("UserType")) == 1) {
                 _tvDevicesManagement.Visibility = ViewStates.Gone;
                 _tvDeviceTitle.Visibility = ViewStates.Gone;
-
             }
             if (int.Parse(Utils.GetDefaults("UserType")) == 2)
             {
@@ -105,7 +97,7 @@ namespace FamiliaXamarin.Settings
             _btnDailyTargetSave.SetOnClickListener(this);
             _tvDailyTargetValue = v.FindViewById<TextView>(Resource.Id.tv_daily_target_value_displayed);
 
-            var storedValue = Utils.GetDefaults("ActivityTrackerDailyTarget");
+            string storedValue = Utils.GetDefaults("ActivityTrackerDailyTarget");
             if (storedValue == null)
             {
                 storedValue = 5000 + "";
@@ -167,7 +159,7 @@ namespace FamiliaXamarin.Settings
 
             string[] categories = {"5 min", "10 min", "15 min", "30 min"};
 
-            ArrayAdapter<string> adapter = new ArrayAdapter<string>(Context, Android.Resource.Layout.SimpleSpinnerItem, categories);
+            var adapter = new ArrayAdapter<string>(Context, Android.Resource.Layout.SimpleSpinnerItem, categories);
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
             spinner.Adapter = adapter;
         }
@@ -191,7 +183,7 @@ namespace FamiliaXamarin.Settings
                     _etDailyTargetValue.Text = _tvDailyTargetValue.Text;
                     break;
                 case Resource.Id.btn_daily_target_save:
-                    var newValue = _etDailyTargetValue.Text;
+                    string newValue = _etDailyTargetValue.Text;
                     if (newValue != null)
                     {
                         _tvDailyTargetValue.Text = newValue;

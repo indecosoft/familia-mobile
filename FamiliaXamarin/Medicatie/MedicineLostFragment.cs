@@ -1,33 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using FamiliaXamarin;
-using FamiliaXamarin.DataModels;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie.Data;
-using FamiliaXamarin.Medicatie.Entities;
-using FamiliaXamarin.Services;
+using Familia.DataModels;
+using Familia.Helpers;
+using Familia.Medicatie.Data;
+using Familia.Medicatie.Entities;
+using Familia.Services;
 using Java.Text;
 using Org.Json;
 using SQLite;
-
-using System.IO;
-using Familia.Medicatie.Data;
-
+using AlertDialog = Android.Support.V7.App.AlertDialog;
+using Environment = System.Environment;
+using Fragment = Android.Support.V4.App.Fragment;
+using TimeZone = Java.Util.TimeZone;
 
 namespace Familia.Medicatie
 {
-    class MedicineLostFragment : Android.Support.V4.App.Fragment, IOnMedLostListener
+    class MedicineLostFragment : Fragment, IOnMedLostListener
     {
         private MedicineLostAdapter _medicineLostAdapter;
         private List<MedicationSchedule> _medicationsLost;
@@ -74,7 +72,7 @@ namespace Familia.Medicatie
             {
                 rvMedLost.HasFixedSize = true;
                 var onScrollListener = new MedicineServerRecyclerViewOnScrollListener(layoutManager);
-                onScrollListener.LoadMoreEvent += async (object sender, EventArgs e) =>
+                onScrollListener.LoadMoreEvent += async (sender, e) =>
                 {
                     countReq++;
                     if (countReq == 1)
@@ -91,7 +89,7 @@ namespace Familia.Medicatie
                             {
                                 for (var ms = 0; ms <= newItems.Count; ms++)
                                 {
-                                    var date = parseTimestampStringToDate(newItems[ms]);
+                                    DateTime date = parseTimestampStringToDate(newItems[ms]);
                                     newItems[ms].Timestampstring = date.ToString();
                                     _medicineLostAdapter.AddItem(newItems[ms]);
                                 }
@@ -113,7 +111,7 @@ namespace Familia.Medicatie
 
         private async void LoadType4()
         {
-            ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
+            var dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
             dialog.Show();
             var listWithAllElements = new List<MedicationSchedule>();
             if (Storage.GetInstance().GetListOfDiseasesFromFile(Context) != null)
@@ -141,9 +139,9 @@ namespace Familia.Medicatie
         public void OnMedLostClick(MedicationSchedule med)
         {
             Log.Error("MEDICINE LOST", "med clicked: " + med.ToString());
-            var alert = new Android.Support.V7.App.AlertDialog.Builder(Activity);
+            var alert = new AlertDialog.Builder(Activity);
             var medDate = Convert.ToDateTime(med.Timestampstring);
-            var currentDate = DateTime.Now;
+            DateTime currentDate = DateTime.Now;
 
             if (medDate < currentDate)
             {
@@ -155,10 +153,10 @@ namespace Familia.Medicatie
                     {
                         case 3:
                             //LoadType3();
-                            bool isSent = false;
+                            var isSent = false;
                             if (med.Uuid.Contains("disease"))
                             {
-                                var isDeleted = await Storage.GetInstance().RemoveItemFromDBTask(med);
+                                bool isDeleted = await Storage.GetInstance().RemoveItemFromDBTask(med);
                                 if (isDeleted)
                                 {
                                     Log.Error("MEDICINE LOST STORAGE", "deleted succesfully");
@@ -171,8 +169,8 @@ namespace Familia.Medicatie
                             }
                             else
                             {
-                                var now = DateTime.Now;
-                                var mArray = new JSONArray().Put(new JSONObject().Put("uuid", med.Uuid)
+                                DateTime now = DateTime.Now;
+                                JSONArray mArray = new JSONArray().Put(new JSONObject().Put("uuid", med.Uuid)
                                     .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
                                 isSent =  SendMedicationTask(mArray, med, now);
                             }
@@ -187,8 +185,8 @@ namespace Familia.Medicatie
                             break;
                         case 4:
                             // LoadType4();
-                            bool isMarked = false;
-                            var isAdministrated = await Storage.GetInstance().RemoveItemFromDBTask(med);
+                            var isMarked = false;
+                            bool isAdministrated = await Storage.GetInstance().RemoveItemFromDBTask(med);
                             if (isAdministrated)
                             {
                                 Log.Error("MEDICINE LOST STORAGE", "deleted succesfully");
@@ -314,7 +312,7 @@ namespace Familia.Medicatie
         #endregion
         private async void GetData()
         {
-            ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
+            var dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
             dialog.Show();
             Log.Error("NetworkingData lost", "task getting data..");
             var dataMedicationSchedules = await networking.ReadPastDataTask(0);
@@ -325,7 +323,7 @@ namespace Familia.Medicatie
             if (Storage.GetInstance().GetListOfDiseasesFromFile(Context) != null)
             {
                 listWithAllElements = await Storage.GetInstance().GetPersonalMedicationConverted();
-                foreach (var item in dataMedicationSchedules)
+                foreach (MedicationSchedule item in dataMedicationSchedules)
                 {
                     listWithAllElements.Add(item);
                 }
@@ -360,26 +358,26 @@ namespace Familia.Medicatie
         {
             var listMedSchPersonal = new List<MedicationSchedule>();
 
-            foreach (var item in LD)
+            foreach (Disease item in LD)
             {
-                foreach (var itemMed in item.ListOfMedicines)
+                foreach (Medicine itemMed in item.ListOfMedicines)
                 {
-                    foreach (var itemHour in itemMed.Hours)
+                    foreach (Hour itemHour in itemMed.Hours)
                     {
                         if (itemHour.HourName.Equals("24:00"))
                         {
                             itemHour.HourName = "23:59";
                         }
-                        var tspan = TimeSpan.Parse(itemHour.HourName);
+                        TimeSpan tspan = TimeSpan.Parse(itemHour.HourName);
                         Log.Error("TIME SPAN: ", tspan.ToString());
                         var dtMed = new DateTime(itemMed.Date.Year, itemMed.Date.Month, itemMed.Date.Day, tspan.Hours, tspan.Minutes, tspan.Seconds);
                         Log.Error("MEDICINE LOST", "item med: " + dtMed);
 
-                        var currentDate = DateTime.Now;
+                        DateTime currentDate = DateTime.Now;
                         if (dtMed < currentDate)
                         {
                             TimeSpan difference = DateTime.Now.Subtract(dtMed);
-                            var days = (int)difference.TotalDays + 1;
+                            int days = (int)difference.TotalDays + 1;
                             Log.Error("MEDICINE LOST DAYS", "days betweet 2 dates: " + days);
                             if (itemMed.NumberOfDays != 0)
                             {
@@ -391,7 +389,7 @@ namespace Familia.Medicatie
                             Log.Error("MEDICINE LOST DAYS", "days: " + days);
                             var objMedSch = new MedicationSchedule("disease" + item.Id + "med" + itemMed.IdMed + "hour" + itemHour.Id, dtMed.ToString(), item.DiseaseName, itemMed.Name, 5, 0);
                             listMedSchPersonal.Add(objMedSch);
-                            for (int j = 1; j < days; j++)
+                            for (var j = 1; j < days; j++)
                             {
                                 dtMed = dtMed.AddDays(1);
                                 objMedSch = new MedicationSchedule("disease" + item.Id + "med" + itemMed.IdMed + "hour" + itemHour.Id, dtMed.ToString(), item.DiseaseName, itemMed.Name, 5, 0);
@@ -419,10 +417,10 @@ namespace Familia.Medicatie
                 for (var i = 0; i < results.Length(); i++)
                 {
                     var obj = (JSONObject)results.Get(i);
-                    var uuid = obj.GetString("uuid");
-                    var timestampString = obj.GetString("timestamp");
-                    var title = obj.GetString("title");
-                    var content = obj.GetString("content");
+                    string uuid = obj.GetString("uuid");
+                    string timestampString = obj.GetString("timestamp");
+                    string title = obj.GetString("title");
+                    string content = obj.GetString("content");
                     var postpone = Convert.ToInt32(obj.GetString("postpone"));
 
                     medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone, 0));
@@ -438,16 +436,16 @@ namespace Familia.Medicatie
         {
             DateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             {
-                TimeZone = Java.Util.TimeZone.GetTimeZone("UTC")
+                TimeZone = TimeZone.GetTimeZone("UTC")
             };
 
-            DateTime date = new DateTime();
+            var date = new DateTime();
             try
             {
                 date = DateTime.Parse(ms.Timestampstring);
                 DateFormat pstFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
                 {
-                    TimeZone = Java.Util.TimeZone.GetTimeZone("PST")
+                    TimeZone = TimeZone.GetTimeZone("PST")
                 };
                 Log.Error("TIMESTAMPSTRING", date.ToLocalTime().ToString());
             }
@@ -479,7 +477,7 @@ namespace Familia.Medicatie
 
         private static async Task<bool> SendData(Context context, JSONArray mArray)
         {
-            var result = await WebServices.Post(
+            string result = await WebServices.WebServices.Post(
                 $"{Constants.PublicServerAddress}/api/medicine", mArray,
                 Utils.GetDefaults("Token"));
             if (!Utils.CheckNetworkAvailability()) return false;
@@ -495,12 +493,11 @@ namespace Familia.Medicatie
 
         private static async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now)
         {
-            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             var nameDb = "devices_data.db";
             db = new SQLiteAsyncConnection(Path.Combine(path, nameDb));
             await db.CreateTableAsync<MedicineRecords>();
-            await db.InsertAsync(new MedicineRecords()
-            {
+            await db.InsertAsync(new MedicineRecords {
                 Uuid = uuid,
                 DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
             });

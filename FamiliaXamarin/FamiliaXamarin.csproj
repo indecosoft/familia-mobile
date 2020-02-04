@@ -24,7 +24,8 @@
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
-    <AndroidLinkSkip></AndroidLinkSkip>
+    <AndroidLinkSkip>
+    </AndroidLinkSkip>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -40,7 +41,8 @@
     <ExternalConsole>false</ExternalConsole>
     <RunWithWarnings>true</RunWithWarnings>
     <AndroidManagedSymbols>false</AndroidManagedSymbols>
-    <MandroidExtraArgs></MandroidExtraArgs>
+    <MandroidExtraArgs>
+    </MandroidExtraArgs>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -90,7 +92,6 @@
     <Compile Include="DataModels\MedicineServerRecords.cs" />
     <Compile Include="DataModels\SmartBandRecords.cs" />
     <Compile Include="Devices\DevicesAsistent\AsistentHealthDevicesFragment.cs" />
-    <Compile Include="Devices\Models\BluetoothDeviceModel.cs" />
     <Compile Include="Games\GameActivity.cs" />
     <Compile Include="Games\GameCenterActivity.cs" />
     <Compile Include="Games\Sensors\GyroSensor.cs" />
@@ -109,7 +110,6 @@
     <Compile Include="Location\ILocationEvents.cs" />
     <Compile Include="Location\LocationEventArgs.cs" />
     <Compile Include="Location\LocationManager.cs" />
-    <Compile Include="Location\MedicalAsistanceFusedLocationProviderCallback.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Medicatie\Alarm\AlarmActivity.cs" />
     <Compile Include="Medicatie\Alarm\AlarmBroadcastReceiver.cs" />
@@ -152,7 +152,6 @@
     <Compile Include="Chat\ChatModel.cs" />
     <Compile Include="Services\MedicationServerService.cs" />
     <Compile Include="Services\MedicationService.cs" />
-    <Compile Include="Services\MedicalAsistanceService.cs" />
     <Compile Include="Services\TrackerActivityService.cs" />
     <Compile Include="Sharing\CustomDialogProfileSharingData.cs" />
     <Compile Include="Sharing\MonitoringFragment.cs" />
@@ -201,14 +200,12 @@
     <Compile Include="Asistenta sociala\SearchListActivity.cs" />
     <Compile Include="Asistenta sociala\SearchListAdapter.cs" />
     <Compile Include="WebSocket\WebSocketLocation.cs" />
-
     <Compile Include="Devices\Models\GlucoseRecord.cs" />
     <Compile Include="Devices\Helpers\DeviceTypes.cs" />
     <Compile Include="Devices\DevicesManagement\BloodPressure\AddNewBloodPressureDeviceActivity.cs" />
     <Compile Include="Devices\DevicesManagement\Glucose\AddNewGucoseDeviceActivity.cs" />
     <Compile Include="Devices\DevicesManagement\DeviceManufactureSelector\DeviceManufactureSelectorActivity.cs" />
     <Compile Include="Devices\DevicesManagement\DeviceManufactureSelector\DeviceManufactureSelectorRecyclerViewAdapter.cs" />
-    <Compile Include="Devices\DevicesManagement\DeviceManufactureSelector\DeviceTypeSelectorModel.cs" />
     <Compile Include="Devices\DevicesManagement\Dialogs\DeleteDeviceDialog.cs" />
     <Compile Include="Devices\DevicesManagement\Dialogs\DeviceEditingDialog.cs" />
     <Compile Include="Devices\DevicesManagement\Dialogs\AddNewDeviceDialog.cs" />
@@ -226,7 +223,6 @@
     <Compile Include="Devices\Bluetooth\Callbacks\BluetoothScanCallback.cs" />
     <Compile Include="Devices\DevicesManagement\DevicesManagementActivity.cs" />
     <Compile Include="Devices\DevicesManagement\DevicesManagementAdapter.cs" />
-    <Compile Include="Devices\DevicesManagement\DevicesManagementRecyclerViewAdapter.cs" />
     <Compile Include="Devices\DevicesRecyclerViewAdapter.cs" />
     <Compile Include="Devices\Helpers\SupportedManufacturers.cs" />
     <Compile Include="Devices\Helpers\SupportedDevices.cs" />
@@ -275,12 +271,16 @@
     <AndroidResource Include="Resources\raw\walk.json" />
     <AndroidResource Include="Resources\raw\walking_animation.json" />
     <AndroidResource Include="Resources\layout\activity_device_selector.axml">
-      <SubType></SubType>
-      <Generator></Generator>
+      <SubType>
+      </SubType>
+      <Generator>
+      </Generator>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\item_device_selector.axml">
-      <SubType></SubType>
-      <Generator></Generator>
+      <SubType>
+      </SubType>
+      <Generator>
+      </Generator>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
@@ -332,7 +332,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Com.Airbnb.Android.Lottie">
-      <Version>3.0.3</Version>
+      <Version>3.0.5</Version>
     </PackageReference>
     <PackageReference Include="Glide.Xamarin">
       <Version>4.1.1</Version>
@@ -344,7 +344,7 @@
       <Version>3.0.3</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.2</Version>
+      <Version>12.0.3</Version>
     </PackageReference>
     <PackageReference Include="Refractored.Controls.CircleImageView">
       <Version>1.0.1</Version>
@@ -353,32 +353,32 @@
       <Version>1.0.0</Version>
     </PackageReference>
     <PackageReference Include="sqlite-net-pcl">
-      <Version>1.5.231</Version>
+      <Version>1.6.292</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Constraint.Layout">
       <Version>1.1.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.CustomTabs">
-      <Version>28.0.0.1</Version>
+      <Version>28.0.0.3</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.1" />
+    <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.3" />
     <PackageReference Include="Xamarin.Android.Support.v4">
-      <Version>28.0.0.1</Version>
+      <Version>28.0.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
-      <Version>28.0.0.1</Version>
+      <Version>28.0.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.CardView">
-      <Version>28.0.0.1</Version>
+      <Version>28.0.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.RecyclerView">
-      <Version>28.0.0.1</Version>
+      <Version>28.0.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.GooglePlayServices.Location">
-      <Version>60.1142.1</Version>
+      <Version>71.1600.0</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.GooglePlayServices.Maps">
-      <Version>60.1142.1</Version>
+      <Version>71.1610.0</Version>
     </PackageReference>
     <PackageReference Include="XamarinCardStackView">
       <Version>1.0.0</Version>

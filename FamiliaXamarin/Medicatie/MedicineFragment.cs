@@ -1,28 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
-using Android.Widget;
-using Familia;
-using FamiliaXamarin.DataModels;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie.Alarm;
-using FamiliaXamarin.Medicatie.Data;
-using FamiliaXamarin.Medicatie.Entities;
-using Java.Text;
-using Java.Util;
-using Org.Json;
+using Familia.Medicatie.Alarm;
+using Familia.Medicatie.Data;
+using Familia.Medicatie.Entities;
 using SQLite;
+using Fragment = Android.Support.V4.App.Fragment;
 
-namespace FamiliaXamarin.Medicatie
+namespace Familia.Medicatie
 {
-    public class MedicineFragment : Android.Support.V4.App.Fragment ,View.IOnClickListener, IOnBoalaClickListener, CustomDialogDeleteDisease.ICustomDialogDeleteDiseaseListener
+    public class MedicineFragment : Fragment ,View.IOnClickListener, IOnBoalaClickListener, CustomDialogDeleteDisease.ICustomDialogDeleteDiseaseListener
     {
 
 //        private ProgressBarDialog _progressBarDialog;
@@ -73,8 +64,8 @@ namespace FamiliaXamarin.Medicatie
 
         private void setupRecycleView(View view)
         {
-            RecyclerView rvBoli = view.FindViewById<RecyclerView>(Resource.Id.rv_notes);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(Activity);
+            var rvBoli = view.FindViewById<RecyclerView>(Resource.Id.rv_notes);
+            var layoutManager = new LinearLayoutManager(Activity);
             rvBoli.SetLayoutManager(layoutManager);
             _boalaAdapter = new DiseaseAdapter();
             _boalaAdapter.SetListenerBoala(this);
@@ -94,14 +85,14 @@ namespace FamiliaXamarin.Medicatie
 
         public void OnBoalaClick(Disease boala)
         {
-            Intent intent = new Intent(Application.Context, typeof(DiseaseActivity));
+            var intent = new Intent(Application.Context, typeof(DiseaseActivity));
             intent.PutExtra(IdBoala, boala.Id);
             StartActivity(intent);
         }
 
         public void OnBoalaDelete(Disease boala)
         {
-            CustomDialogDeleteDisease cddb = new CustomDialogDeleteDisease(Activity);
+            var cddb = new CustomDialogDeleteDisease(Activity);
             cddb.SetListener(this);
             cddb.SetBoala(boala);
             cddb.Show();
@@ -114,7 +105,7 @@ namespace FamiliaXamarin.Medicatie
             if (result.Equals("yes"))
             {
                 Storage.GetInstance().removeBoala(Activity, boala);
-                List<Medicine> meds = boala.ListOfMedicines;
+                var meds = boala.ListOfMedicines;
                 CancelAlarms(meds);
 
                 _boalaAdapter.removeBoala(boala);
@@ -125,15 +116,15 @@ namespace FamiliaXamarin.Medicatie
 
         private void CancelAlarms(List<Medicine> meds)
         {
-            foreach (var med in meds)
+            foreach (Medicine med in meds)
             {
                 if (med.Alarms != null)
                 {
-                    foreach (var alarm in med.Alarms)
+                    foreach (int alarm in med.Alarms)
                     {
-                        AlarmManager am = (AlarmManager) Context.GetSystemService(Context.AlarmService);
+                        var am = (AlarmManager) Context.GetSystemService(Context.AlarmService);
 
-                        Intent i = new Intent(Activity, typeof(AlarmBroadcastReceiver));
+                        var i = new Intent(Activity, typeof(AlarmBroadcastReceiver));
                         PendingIntent pi =
                             PendingIntent.GetActivity(Context, alarm, i, PendingIntentFlags.UpdateCurrent);
                         am.Cancel(pi);

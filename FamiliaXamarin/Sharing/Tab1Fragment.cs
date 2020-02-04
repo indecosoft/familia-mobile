@@ -1,28 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Familia;
-using Android.Support.V4.App;
-using Android.Content;
+using System.Threading.Tasks;
 using Android.OS;
-using Android.Runtime;
+using Android.Support.V4.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using System.Threading.Tasks;
-using ZXing.Mobile;
-using System.Threading;
-using Android.App;
 using Com.Bumptech.Glide;
-using FamiliaXamarin.Helpers;
-using Org.Json;
-using Resource = Familia.Resource;
 using Familia.Helpers;
+using Org.Json;
 
-namespace FamiliaXamarin.Sharing
+namespace Familia.Sharing
 {
-    public class Tab1Fragment : Android.Support.V4.App.Fragment
+    public class Tab1Fragment : Fragment
     {
 
         private Button btnScan;
@@ -43,11 +32,11 @@ namespace FamiliaXamarin.Sharing
         }
         private async void BtnScan_Click(object sender, EventArgs e)
         {
-            var qrJsonData = await Utils.ScanEncryptedQRCode(Activity);
+            JSONObject qrJsonData = await Utils.ScanEncryptedQrCode(Activity);
             if (qrJsonData == null) return;
             try
             {
-                var dialog = OpenMiniProfileDialog();
+                CustomDialogProfileSharingData dialog = OpenMiniProfileDialog();
                 dialog.Name.Text = qrJsonData.GetString("Name");
                 Glide.With(this).Load(qrJsonData.GetString("Avatar")).Into(dialog.Image);
                 dialog.ButtonConfirm.Click += (o, args) =>
@@ -86,9 +75,9 @@ namespace FamiliaXamarin.Sharing
 
         private CustomDialogProfileSharingData OpenMiniProfileDialog()
         {
-            CustomDialogProfileSharingData cdd = new CustomDialogProfileSharingData(Activity);
+            var cdd = new CustomDialogProfileSharingData(Activity);
 
-            WindowManagerLayoutParams lp = new WindowManagerLayoutParams();
+            var lp = new WindowManagerLayoutParams();
             lp.CopyFrom(cdd.Window.Attributes);
             lp.Width = ViewGroup.LayoutParams.MatchParent;
             lp.Height = ViewGroup.LayoutParams.MatchParent;

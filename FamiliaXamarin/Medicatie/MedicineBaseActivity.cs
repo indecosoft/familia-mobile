@@ -1,29 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
-using Android.Support.V7.App;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using FamiliaXamarin.Sharing;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+﻿using Android.App;
 using Android.Content.PM;
+using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Support.V4.View;
+using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Util;
-using Familia;
-using FamiliaXamarin;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie;
-using String = Java.Lang.String;
+using Android.Views;
+using Familia.Helpers;
+using Familia.Sharing;
+using Java.Lang;
 
 namespace Familia.Medicatie
 {
@@ -33,8 +19,8 @@ namespace Familia.Medicatie
     class MedicineBaseActivity : AppCompatActivity
     {
         private ViewPager viewPager;
-        private Android.Support.Design.Widget.BottomNavigationView bottomNavigation;
-        private Android.Support.Design.Widget.BottomNavigationView bottomNavigationTip4;
+        private BottomNavigationView bottomNavigation;
+        private BottomNavigationView bottomNavigationTip4;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -43,12 +29,12 @@ namespace Familia.Medicatie
             SetToolbar();
 
             bottomNavigation =
-                FindViewById<Android.Support.Design.Widget.BottomNavigationView>(Resource.Id.bottom_navigation);
+                FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation);
 
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
 
             bottomNavigationTip4 =
-                FindViewById<Android.Support.Design.Widget.BottomNavigationView>(Resource.Id.bottom_navigation_tip4);
+                FindViewById<BottomNavigationView>(Resource.Id.bottom_navigation_tip4);
 
             bottomNavigationTip4.NavigationItemSelected += BottomNavigation_NavigationItemSelectedTip4;
 
@@ -56,7 +42,7 @@ namespace Familia.Medicatie
 
 
             viewPager = (ViewPager)FindViewById(Resource.Id.pager);
-            SharingPagerAdapter myPagerAdapter = new SharingPagerAdapter(SupportFragmentManager);
+            var myPagerAdapter = new SharingPagerAdapter(SupportFragmentManager);
 
             if (int.Parse(Utils.GetDefaults("UserType")) == 3)
             {
@@ -131,14 +117,14 @@ namespace Familia.Medicatie
       
 
         private void BottomNavigation_NavigationItemSelected(object sender,
-            Android.Support.Design.Widget.BottomNavigationView.NavigationItemSelectedEventArgs e)
+            BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
             LoadFragment(e.Item.ItemId);
             Log.Error("LOAD FRAGMENT", e.Item.ItemId + "");
         }
 
         private void BottomNavigation_NavigationItemSelectedTip4(object sender,
-            Android.Support.Design.Widget.BottomNavigationView.NavigationItemSelectedEventArgs e)
+            BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
             LoadFragmentTip4(e.Item.ItemId);
             Log.Error("LOAD FRAGMENT", e.Item.ItemId + "");

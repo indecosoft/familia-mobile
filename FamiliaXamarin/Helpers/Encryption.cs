@@ -28,7 +28,7 @@ namespace Familia.Helpers {
                 Mode = CipherMode.CBC,
                 Padding = PaddingMode.PKCS7
             };
-            using var encryptor = symmetricKey.CreateEncryptor(keyBytes, ivStringBytes);
+            using ICryptoTransform encryptor = symmetricKey.CreateEncryptor(keyBytes, ivStringBytes);
             using var memoryStream = new MemoryStream();
             using var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write);
             cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
@@ -60,11 +60,11 @@ namespace Familia.Helpers {
                 Mode = CipherMode.CBC,
                 Padding = PaddingMode.PKCS7
             };
-            using var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes);
+            using ICryptoTransform decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes);
             using var memoryStream = new MemoryStream(cipherTextBytes);
             using var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
             var plainTextBytes = new byte[cipherTextBytes.Length];
-            var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+            int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
             memoryStream.Close();
             cryptoStream.Close();
             return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);

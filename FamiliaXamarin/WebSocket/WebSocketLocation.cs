@@ -3,14 +3,11 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Util;
+using Familia.Helpers;
 using Familia.Location;
-using FamiliaXamarin.Helpers;
 using Org.Json;
 using SocketIO.Client;
-using Exception = System.Exception;
 using Object = Java.Lang.Object;
-using Socket = SocketIO.Client.Socket;
-using FamiliaXamarin;
 
 namespace Familia.WebSocket {
     public class WebSocketLocation : IWebSocketClient {
@@ -76,7 +73,7 @@ namespace Familia.WebSocket {
         }
 
         private void LocationRequested(object source, EventArgs args) {
-            using JSONObject locationObj = new JSONObject();
+            using var locationObj = new JSONObject();
             locationObj.Put("latitude", (args as LocationEventArgs).Location.Latitude);
             locationObj.Put("longitude", (args as LocationEventArgs).Location.Longitude);
             _socket.Emit("send-location", locationObj);

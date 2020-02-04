@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -15,17 +15,15 @@ using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
 using Com.Bumptech.Glide;
-using Familia;
-using FamiliaXamarin.DataModels;
-using FamiliaXamarin.Helpers;
+using Familia.DataModels;
+using Familia.Devices.Helpers;
+using Familia.Helpers;
 using Java.Util.Concurrent;
 using Org.Json;
 using Refractored.Controls;
-using SQLite;
-using Task = System.Threading.Tasks.Task;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
-namespace FamiliaXamarin.Devices.SmartBand
+namespace Familia.Devices.SmartBand
 {
     [Activity(Label = "SmartBandDeviceActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     [IntentFilter(new[] { Intent.ActionView },
@@ -47,7 +45,7 @@ namespace FamiliaXamarin.Devices.SmartBand
 
         private void RefreshToken()
         {
-            var refreshToken = Utils.GetDefaults("FitbitRefreshToken");
+            string refreshToken = Utils.GetDefaults("FitbitRefreshToken");
             Task.Run(async () =>
             {
                 try
@@ -60,13 +58,13 @@ namespace FamiliaXamarin.Devices.SmartBand
                             {
                                 {"grant_type", "refresh_token"}, {"refresh_token", refreshToken}
                             };
-                        var response = await WebServices.Post("https://api.fitbit.com/oauth2/token", dict);
+                        string response = await WebServices.WebServices.Post("https://api.fitbit.com/oauth2/token", dict);
                         if (response != null)
                         {
                             var obj = new JSONObject(response);
                             _token = obj.GetString("access_token");
-                            var newRefreshToken = obj.GetString("refresh_token");
-                            var userId = obj.GetString("user_id");
+                            string newRefreshToken = obj.GetString("refresh_token");
+                            string userId = obj.GetString("user_id");
                             Utils.SetDefaults(GetString(Resource.String.smartband_device), _token);
                             Utils.SetDefaults("FitbitToken", _token);
                             Utils.SetDefaults("RitbitRefreshToken", newRefreshToken);
@@ -113,7 +111,6 @@ namespace FamiliaXamarin.Devices.SmartBand
             _avatarImage = FindViewById<CircleImageView>(Resource.Id.FitBitprofileImage);
             _loadingScreen = FindViewById<ConstraintLayout>(Resource.Id.loading);
 
-
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             var animationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
@@ -130,7 +127,7 @@ namespace FamiliaXamarin.Devices.SmartBand
             if (_url != null)
             {
 
-                var code = _url.Substring(_url.IndexOf("&access_token", StringComparison.Ordinal) + 24).Replace("#_=_", string.Empty);
+                string code = _url.Substring(_url.IndexOf("&access_token", StringComparison.Ordinal) + 24).Replace("#_=_", string.Empty);
 
                 await Task.Run(async () =>
                 {
@@ -138,20 +135,20 @@ namespace FamiliaXamarin.Devices.SmartBand
                     {
                         {"code", code}, {"grant_type", "authorization_code"}, {"redirect_uri", Constants.CallbackUrl}
                     };
-                    var response = await WebServices.Post("https://api.fitbit.com/oauth2/token", dict);
+                    string response = await WebServices.WebServices.Post("https://api.fitbit.com/oauth2/token", dict);
                     if (response != null)
                     {
                         var obj = new JSONObject(response);
                         _token = obj.GetString("access_token");
-                        var refreshToken = obj.GetString("refresh_token");
-                        var userId = obj.GetString("user_id");
+                        string refreshToken = obj.GetString("refresh_token");
+                        string userId = obj.GetString("user_id");
                         var bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
                         await bleDevicesRecords.Insert(
                             new BluetoothDeviceRecords
                             {
                                 Name = "SmartBand", 
                                 Address = _token,
-                                DeviceType = GetString(Resource.String.smartband_device)
+                                DeviceType = DeviceType.SmartBand
                             });
                         Utils.SetDefaults(GetString(Resource.String.smartband_device), _token);
                         Utils.SetDefaults("FitbitToken", _token);
@@ -181,22 +178,21 @@ namespace FamiliaXamarin.Devices.SmartBand
             await GetHeartRatePulse();
         }
 
-
         private async Task GetProfileData()
         {
-            var data = await WebServices.Get("https://api.fitbit.com/1/user/-/profile.json", _token);
+            string data = await WebServices.WebServices.Get("https://api.fitbit.com/1/user/-/profile.json", _token);
             if (!string.IsNullOrEmpty(data))
             {
                 Log.Error("Profile result", data);
 
                 try
                 {
-                    var displayName = new JSONObject(data).GetJSONObject("user").GetString("displayName");
+                    string displayName = new JSONObject(data).GetJSONObject("user").GetString("displayName");
 
-                    var fullName = new JSONObject(data).GetJSONObject("user").GetString("fullName");
+                    string fullName = new JSONObject(data).GetJSONObject("user").GetString("fullName");
 
 
-                    var avatarUrl = new JSONObject(data).GetJSONObject("user").GetString("avatar640");
+                    string avatarUrl = new JSONObject(data).GetJSONObject("user").GetString("avatar640");
                     Log.Error("Fitbit Avatar", avatarUrl);
 
                     RunOnUiThread(() =>
@@ -224,18 +220,18 @@ namespace FamiliaXamarin.Devices.SmartBand
 
         private async Task GetSteps()
         {
-            var data = await WebServices.Get("https://api.fitbit.com/1/user/-/activities/date/today.json", _token);
+            string data = await WebServices.WebServices.Get("https://api.fitbit.com/1/user/-/activities/date/today.json", _token);
             if (!string.IsNullOrEmpty(data))
             {
                 Log.Error("Steps Result", data);
 
                 try
                 {
-                    var fairlyActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("fairlyActiveMinutes");
-                    var veryActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("veryActiveMinutes");
-                    var activeMinutes = fairlyActiveMinutes + veryActiveMinutes;
+                    int fairlyActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("fairlyActiveMinutes");
+                    int veryActiveMinutes = new JSONObject(data).GetJSONObject("summary").GetInt("veryActiveMinutes");
+                    int activeMinutes = fairlyActiveMinutes + veryActiveMinutes;
 
-                    var steps = new JSONObject(data).GetJSONObject("summary").GetInt("steps");
+                    int steps = new JSONObject(data).GetJSONObject("summary").GetInt("steps");
 
                     RunOnUiThread(() =>
                     {
@@ -252,15 +248,15 @@ namespace FamiliaXamarin.Devices.SmartBand
 
         private async Task GetSleepData()
         {
-            var data = await WebServices.Get("https://api.fitbit.com/1.2/user/-/sleep/date/today.json", _token);
+            string data = await WebServices.WebServices.Get("https://api.fitbit.com/1.2/user/-/sleep/date/today.json", _token);
             Log.Error("Sleep Result", data);
             if (!string.IsNullOrEmpty(data))
             {
                 try
                 {
-                    var totalMinutesAsleep = new JSONObject(data).GetJSONObject("summary").GetInt("totalMinutesAsleep");
+                    int totalMinutesAsleep = new JSONObject(data).GetJSONObject("summary").GetInt("totalMinutesAsleep");
                     var h = (int)TimeUnit.Minutes.ToHours(totalMinutesAsleep);
-                    var min = (int)(((float)totalMinutesAsleep / 60 - h) * 100) * 60 / 100;
+                    int min = (int)(((float)totalMinutesAsleep / 60 - h) * 100) * 60 / 100;
 
 
                     RunOnUiThread(() =>
@@ -277,14 +273,14 @@ namespace FamiliaXamarin.Devices.SmartBand
 
         private async Task GetHeartRatePulse()
         {
-            var data = await WebServices.Get("https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json", _token);
+            string data = await WebServices.WebServices.Get("https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json", _token);
             if (!string.IsNullOrEmpty(data))
             {
                 Log.Error("Heartrate Result", data);
                 try
                 {
-                    var bpm = ((JSONObject)new JSONObject(data).GetJSONArray("activities-heart").Get(0)).GetJSONObject("value").GetInt("restingHeartRate");
-                    var bmpText = $"{bpm} bpm";
+                    int bpm = ((JSONObject)new JSONObject(data).GetJSONArray("activities-heart").Get(0)).GetJSONObject("value").GetInt("restingHeartRate");
+                    string bmpText = $"{bpm} bpm";
 
                     RunOnUiThread(() =>
                     {

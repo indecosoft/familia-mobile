@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
 
 namespace Familia.Medicatie
 {
@@ -30,9 +20,9 @@ namespace Familia.Medicatie
         {
             base.OnScrolled(recyclerView, dx, dy);
 
-            var visibleItemCount = recyclerView.ChildCount;
-            var totalItemCount = recyclerView.GetAdapter().ItemCount;
-            var pastVisiblesItems = LayoutManager.FindFirstVisibleItemPosition();
+            int visibleItemCount = recyclerView.ChildCount;
+            int totalItemCount = recyclerView.GetAdapter().ItemCount;
+            int pastVisiblesItems = LayoutManager.FindFirstVisibleItemPosition();
 
             if ((visibleItemCount + pastVisiblesItems) >= totalItemCount)
             {

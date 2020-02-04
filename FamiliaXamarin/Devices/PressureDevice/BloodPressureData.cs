@@ -1,7 +1,6 @@
 ﻿using System;
-using Java.Util;
 
-namespace FamiliaXamarin.Devices.PressureDevice
+namespace Familia.Devices.PressureDevice
 {
     public class BloodPressureData
     {

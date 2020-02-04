@@ -1,8 +1,8 @@
-using FamiliaXamarin.DataModels;
+using Familia.DataModels;
 
-namespace FamiliaXamarin.Devices
+namespace Familia.Devices.DevicesManagement.Dialogs.Models
 {
-    public class DeviceEditingManagementModel
+    public struct DeviceEditingManagementModel
     {
         public int ItemType { get; set; }
         public string ItemValue { get; set; }

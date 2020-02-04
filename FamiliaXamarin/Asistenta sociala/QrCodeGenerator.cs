@@ -1,16 +1,17 @@
-﻿using Familia;
+﻿using System.Threading.Tasks;
+using Android.Graphics;
 using Android.OS;
+using Android.Support.V4.App;
 using Android.Views;
 using Android.Widget;
-using FamiliaXamarin.Helpers;
-using System.Threading.Tasks;
+using Familia.Helpers;
 
-namespace FamiliaXamarin {
-    public class QrCodeGenerator : Android.Support.V4.App.Fragment {
+namespace Familia.Asistenta_sociala {
+    public class QrCodeGenerator : Fragment {
         public override void OnCreate(Bundle savedInstanceState) => base.OnCreate(savedInstanceState);
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            var view = inflater.Inflate(Resource.Layout.fragment_qr_code_generator, container, false);
+            View view = inflater.Inflate(Resource.Layout.fragment_qr_code_generator, container, false);
 
             var imageViewQrCode = view.FindViewById<ImageView>(Resource.Id.qrCode);
             LoadQRCode(imageViewQrCode);
@@ -28,7 +29,7 @@ namespace FamiliaXamarin {
             progressBarDialog.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimaryDark);
             progressBarDialog.Show();
             Task.Run(() => {
-                var qrBitmap = Utils.GenQrCode();
+                Bitmap qrBitmap = Utils.GenQrCode();
                 if (qrBitmap != null) {
                     Activity.RunOnUiThread(() => imageViewQrCode.SetImageBitmap(qrBitmap));
                 }

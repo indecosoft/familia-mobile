@@ -1,4 +1,4 @@
-﻿namespace FamiliaXamarin
+﻿namespace Familia.Chat
 {
     public class ChatModel
     {

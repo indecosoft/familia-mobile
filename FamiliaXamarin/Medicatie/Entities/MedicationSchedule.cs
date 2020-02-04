@@ -1,4 +1,4 @@
-﻿namespace FamiliaXamarin.Medicatie.Entities
+﻿namespace Familia.Medicatie.Entities
 {
     public class MedicationSchedule
     {

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Timers;
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
 using Familia.Activity_Tracker;
-using FamiliaXamarin.Helpers;
-using Exception = System.Exception;
-using Java.Lang;
+using Familia.Helpers;
 
 namespace Familia.Services
 {
@@ -39,19 +36,19 @@ namespace Familia.Services
             try
             {
                 Log.Error("TrackerActivityService", "started");
-                StepCounterSensor sensor = new StepCounterSensor(this);
+                var sensor = new StepCounterSensor(this);
                 sensor.SetListener(this);
 
-                var am = (AlarmManager)GetSystemService(Context.AlarmService);
+                var am = (AlarmManager)GetSystemService(AlarmService);
                 var i = new Intent(this, typeof(TrackerActivityReceiver));
-                var pi = PendingIntent.GetBroadcast(this, TrackerActivityReceiver.TRACKER_ACTIVITY_RECEIVER_PENDING_INTENT_ID_USER, i, PendingIntentFlags.UpdateCurrent);
+                PendingIntent pi = PendingIntent.GetBroadcast(this, TrackerActivityReceiver.TRACKER_ACTIVITY_RECEIVER_PENDING_INTENT_ID_USER, i, PendingIntentFlags.UpdateCurrent);
 
                 if (am != null)
                 {
                     am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + 100, AlarmManager.IntervalDay, pi);
                 }
 
-                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Step Counter",
+                var channel = new NotificationChannel(CHANNEL_ID, "Step Counter",
                     NotificationImportance.High);
 
                 ((NotificationManager)GetSystemService(NotificationService))
@@ -105,7 +102,7 @@ namespace Familia.Services
         public void OnStepCounterSensorChanged(long count)
         {
             Log.Error("TrackerActivityService", "stepsFromSensor: " + count);
-            var hour = DateTime.Now.Hour;
+            int hour = DateTime.Now.Hour;
             KeepCountingInRange(count, hour);
             Log.Error("TrackerActivityService", "TotalDailySteps: " + TotalDailySteps);
             _stepsFromSensor = count;

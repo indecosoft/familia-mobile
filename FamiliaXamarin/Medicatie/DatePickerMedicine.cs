@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Util;
-using Android.Views;
 using Android.Widget;
-using FamiliaXamarin.Helpers;
+using Familia.Helpers;
+using DialogFragment = Android.Support.V4.App.DialogFragment;
 
-namespace FamiliaXamarin.Medicatie
+namespace Familia.Medicatie
 {
-    class DatePickerMedicine : Android.Support.V4.App.DialogFragment, DatePickerDialog.IOnDateSetListener
+    class DatePickerMedicine : DialogFragment, DatePickerDialog.IOnDateSetListener
     {
         public static readonly string TAG = "X:" + typeof(DatePickerFragment).Name.ToUpper();
 
@@ -22,7 +16,7 @@ namespace FamiliaXamarin.Medicatie
 
         public static DatePickerMedicine NewInstance(Action<DateTime> onDateSelected)
         {
-            DatePickerMedicine frag = new DatePickerMedicine {_dateSelectedHandler = onDateSelected};
+            var frag = new DatePickerMedicine {_dateSelectedHandler = onDateSelected};
             Log.Error("FRAGUL", frag.ToString());
             return frag;
         }
@@ -30,7 +24,7 @@ namespace FamiliaXamarin.Medicatie
         public override Dialog OnCreateDialog(Bundle savedInstanceState)
         {
             DateTime currently = DateTime.Now;
-            DatePickerDialog dialog = new DatePickerDialog(Activity,
+            var dialog = new DatePickerDialog(Activity,
                 this,
                 currently.Year,
                 currently.Month-1,
@@ -41,7 +35,7 @@ namespace FamiliaXamarin.Medicatie
 
         public void OnDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
         {
-            DateTime selectedDate = new DateTime(year, monthOfYear + 1, dayOfMonth);
+            var selectedDate = new DateTime(year, monthOfYear + 1, dayOfMonth);
             Log.Debug(TAG, selectedDate.ToLongDateString());
             _dateSelectedHandler(selectedDate);
         }

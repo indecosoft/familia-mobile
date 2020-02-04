@@ -1,35 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
-using Familia.Profile.Data;
-using FamiliaXamarin.Helpers;
-using Java.Util;
-using Refractored.Controls;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
-using Utils = FamiliaXamarin.Helpers.Utils;
-using System.Threading.Tasks;
-using Android.Provider;
-using Android.Support.Design.Widget;
-using Com.Bumptech.Glide.Load.Engine;
 using Com.Bumptech.Glide.Request;
 using Com.Bumptech.Glide.Signature;
-using FamiliaXamarin;
+using Familia.Helpers;
+using Familia.Profile.Data;
 using Org.Json;
-
+using Refractored.Controls;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace Familia.Profile
 {
@@ -74,7 +62,7 @@ namespace Familia.Profile
             var layoutManager = new LinearLayoutManager(this);
             rv.SetLayoutManager(layoutManager);
 
-            TextView tvDeviceId = FindViewById<TextView>(Resource.Id.tv_device_id_value);
+            var tvDeviceId = FindViewById<TextView>(Resource.Id.tv_device_id_value);
             string deviceId = Utils.GetDeviceIdentificator(this);
             if (!string.IsNullOrEmpty(deviceId))
             {
@@ -93,7 +81,7 @@ namespace Familia.Profile
             {
                 try
                 {
-                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/myProfile", Utils.GetDefaults("Token"));
+                    string res = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/myProfile", Utils.GetDefaults("Token"));
                     if (res != null)
                     {
                         Log.Error("ProfileActivity", res);
@@ -122,19 +110,19 @@ namespace Familia.Profile
             {
                 var result = new JSONObject(res);
 
-                var name = result.GetString("nume");
-                var email = result.GetString("email");
-                var birthdate = result.GetString("dataNastere");
-                var gender = result.GetString("sex");
-                var avatar = Utils.GetDefaults("Avatar");
+                string name = result.GetString("nume");
+                string email = result.GetString("email");
+                string birthdate = result.GetString("dataNastere");
+                string gender = result.GetString("sex");
+                string avatar = Utils.GetDefaults("Avatar");
                 var list = new List<PersonalDisease>();
 
                 JSONArray jsonList = result.GetJSONArray("afectiuni");
                 for (var i = 0; i < jsonList.Length(); i++)
                 {
                     var jsonObj = (JSONObject)jsonList.Get(i);
-                    var cod = jsonObj.GetInt("id");
-                    var nameDisease = jsonObj.GetString("denumire");
+                    int cod = jsonObj.GetInt("id");
+                    string nameDisease = jsonObj.GetString("denumire");
 
                     list.Add(new PersonalDisease(cod, nameDisease));
                 }
@@ -168,10 +156,10 @@ namespace Familia.Profile
 
         public async void LoadModel(bool updated)
         {
-            ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
+            var dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
             dialog.Show();
-            var person = await CallServerToGetData();
-            DiseasesAdapter adapter = new DiseasesAdapter(this);
+            PersonView person = await CallServerToGetData();
+            var adapter = new DiseasesAdapter(this);
 
             if (person != null)
             {
@@ -238,7 +226,7 @@ namespace Familia.Profile
 
             if (int.Parse(Utils.GetDefaults("UserType")) == 2)
             {
-                RelativeLayout rlCWAfectiuni = FindViewById<RelativeLayout>(Resource.Id.cw_diseases);
+                var rlCWAfectiuni = FindViewById<RelativeLayout>(Resource.Id.cw_diseases);
                 rlCWAfectiuni.Visibility = ViewStates.Gone;
             }
 
@@ -263,10 +251,10 @@ namespace Familia.Profile
             
             try
             {
-                DateTime birthdate = Convert.ToDateTime(dateString);
+                var birthdate = Convert.ToDateTime(dateString);
          
-                var today = DateTime.Today;
-                var age = today.Year - birthdate.Year;
+                DateTime today = DateTime.Today;
+                int age = today.Year - birthdate.Year;
                 if (birthdate.Date > today.AddYears(-age)) age--;
                
                 return age;
@@ -281,9 +269,9 @@ namespace Familia.Profile
                     var time = Convert.ToDateTime(refactor[1] + "/" + refactor[0] + "/" + refactor[2]);
                     dateString = time.ToString("MM/dd/yyyy");
 
-                    DateTime birthdate = Convert.ToDateTime(dateString);
-                    var today = DateTime.Today;
-                    var age = today.Year - birthdate.Year;
+                    var birthdate = Convert.ToDateTime(dateString);
+                    DateTime today = DateTime.Today;
+                    int age = today.Year - birthdate.Year;
                     if (birthdate.Date > today.AddYears(-age)) age--;
 
                     return age;
@@ -303,7 +291,7 @@ namespace Familia.Profile
             try
             {
                 //format datetime de pe server
-                DateTime birthdate = Convert.ToDateTime(dateString);
+                var birthdate = Convert.ToDateTime(dateString);
                 return birthdate.Day + "/" + birthdate.Month + "/" + birthdate.Year;
             }
             catch (Exception e)
@@ -349,7 +337,7 @@ namespace Familia.Profile
             try
             {
                 //format datetime de pe server
-                DateTime birthdate = Convert.ToDateTime(dateString);
+                var birthdate = Convert.ToDateTime(dateString);
                 return birthdate.Month + "/" + birthdate.Day + "/" + birthdate.Year;
             }
             catch (Exception e)
@@ -381,7 +369,7 @@ namespace Familia.Profile
             switch (v.Id)
             {
                 case Resource.Id.btn_update:
-                    Intent intent = new Intent(this, typeof(UpdateProfileActivity));
+                    var intent = new Intent(this, typeof(UpdateProfileActivity));
                     intent.PutExtra("name", tvName.Text);
                     intent.PutExtra("birthdate", tvDateOftBirth.Text);
                     intent.PutExtra("gender", tvGender.Text);
@@ -397,7 +385,7 @@ namespace Familia.Profile
             {
                 if (resultCode == Result.Ok)
                 {
-                    ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
+                    var dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
                     dialog.Show();
 
                     Log.Error("ProfileActivity", "birthdate: " + data.GetStringExtra("birthdate"));
@@ -439,7 +427,7 @@ namespace Familia.Profile
 
         private async Task RefreshAdapter()
         {
-            DiseasesAdapter adapter = new DiseasesAdapter(this);
+            var adapter = new DiseasesAdapter(this);
            
             if (personalData != null)
             {
@@ -462,10 +450,10 @@ namespace Familia.Profile
                 if (personalData != null && personalData.listOfPersonalDiseases != null)
                 {
 
-                    JSONArray jsonArray = new JSONArray();
+                    var jsonArray = new JSONArray();
 
 
-                    foreach (var item in list)
+                    foreach (PersonalDisease item in list)
                     {
                         JSONObject disease = new JSONObject().Put("cod", item.Cod);
                         jsonArray.Put(disease);
@@ -485,7 +473,7 @@ namespace Familia.Profile
 
                     if (Utils.CheckNetworkAvailability())
                     {
-                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/myProfile", jsonObject, Utils.GetDefaults("Token"));
+                        string result = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/myProfile", jsonObject, Utils.GetDefaults("Token"));
                         if (result != null)
                         {
                             Log.Error("ProfileActivity data", result);

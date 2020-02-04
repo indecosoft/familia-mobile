@@ -2,7 +2,7 @@
 using Android.Content;
 using Org.Json;
 
-namespace FamiliaXamarin {
+namespace Familia.WebSocket {
     public interface IWebSocketClient {
         Task ConnectAsync(string hostname, int port, Context context) => null;
         void Connect(string hostname, int port, Context context) {

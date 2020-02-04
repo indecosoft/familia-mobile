@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-namespace FamiliaXamarin.Medicatie.Entities
+
+namespace Familia.Medicatie.Entities
 {
     public class Disease
     {
@@ -33,7 +34,7 @@ namespace FamiliaXamarin.Medicatie.Entities
 
         public Medicine GetMedicineById(string idMed)
         {
-            foreach (var item in ListOfMedicines)
+            foreach (Medicine item in ListOfMedicines)
             {
                 if (item.IdMed.Equals(idMed))
                 {
@@ -60,7 +61,7 @@ namespace FamiliaXamarin.Medicatie.Entities
                 return false;
             }
 
-            Disease m = (Disease)obj;
+            var m = (Disease)obj;
 
             return DiseaseName.Equals(m?.DiseaseName);
         }

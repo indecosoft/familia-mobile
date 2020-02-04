@@ -3,9 +3,7 @@ using Android.Support.V4.App;
 using Android.Util;
 using Java.Lang;
 
-
-
-namespace FamiliaXamarin.Sharing
+namespace Familia.Sharing
 {
     public class SharingPagerAdapter: FragmentStatePagerAdapter
     {

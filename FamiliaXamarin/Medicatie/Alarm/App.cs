@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
+﻿using Android.App;
 using Android.OS;
-using Android.Runtime;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
 
-namespace FamiliaXamarin.Medicatie.Alarm
+namespace Familia.Medicatie.Alarm
 {
 
     
@@ -40,23 +31,23 @@ namespace FamiliaXamarin.Medicatie.Alarm
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
                 string name = Constants.ChannelId;
-                string description = "my channel desc";
+                var description = "my channel desc";
 #pragma warning disable CS0618 // Type or member is obsolete
-                var importance = NotificationManager.ImportanceHigh;
+                NotificationImportance importance = NotificationManager.ImportanceHigh;
 #pragma warning restore CS0618 // Type or member is obsolete
-                NotificationChannel channel = new NotificationChannel(Constants.ChannelId, name, importance)
+                var channel = new NotificationChannel(Constants.ChannelId, name, importance)
                 {
                     Description = description
                 };
 
-                var notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
+                var notificationManager = (NotificationManager)Context.GetSystemService(NotificationService);
                 notificationManager.CreateNotificationChannel(channel);
 
             }
         }
 
         private void createSimpleChannelForServices() {
-            NotificationChannel channel = new NotificationChannel(SimpleChannelIdForServices, "Test simple channel",
+            var channel = new NotificationChannel(SimpleChannelIdForServices, "Test simple channel",
                 NotificationImportance.Default);
             ((NotificationManager)GetSystemService(NotificationService))
                 .CreateNotificationChannel(channel);
@@ -64,7 +55,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
         }
 
         private void createNonstopChannelForServices() {
-            NotificationChannel channel = new NotificationChannel(NonStopChannelIdForServices, "Test nonstop channel",
+            var channel = new NotificationChannel(NonStopChannelIdForServices, "Test nonstop channel",
                   NotificationImportance.Default);
             ((NotificationManager)GetSystemService(NotificationService))
                 .CreateNotificationChannel(channel);
@@ -72,7 +63,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
         }
 
         private void createAlarmMedicationChannel() {
-            NotificationChannel channel = new NotificationChannel(AlarmMedicationChannelId, "Test alarm medication channel",
+            var channel = new NotificationChannel(AlarmMedicationChannelId, "Test alarm medication channel",
                NotificationImportance.High);
             ((NotificationManager)GetSystemService(NotificationService))
                 .CreateNotificationChannel(channel);

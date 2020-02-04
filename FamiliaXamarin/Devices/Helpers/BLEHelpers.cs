@@ -1,198 +1,51 @@
-﻿using System;
-using Java.Util;
+﻿using Java.Util;
 
-namespace Familia.Devices {
-    public class BLEHelpers {
-        public static string ACTIVITY_ACTION_SETUP = "android.intent.action.SETUP_USER";
-        public static string ACTIVITY_ACTION_WEB_SYNC = "android.intent.action.WEB_SYNC";
-        public static int ACTIVITY_RINGTONE = 1001;
-        public static int ACTIVITY_SPLASH = 0;
-        public static string AGREEMENT_ACTIVITY = "air.SmartLog.android.AgreementActivity";
-        public static string BALANCE_DATEFORMAT = "yyyy-MM-dd'T'HH:mm:ss";
-        public static UUID BLE_CHAR_BATTERY_LEVEL_BP = UUID.FromString("00002a19-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_CHAR_CURRENT_TIME_BP = UUID.FromString("00002a2b-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_CHAR_CUSTOM_TIME_MC = UUID.FromString("01020304-0506-0708-0900-0A0B0C0D0E0F");
-        public static UUID BLE_CHAR_CUSTOM_TIME_TI = UUID.FromString("0000FFF1-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_CHAR_CUSTOM_TIME_TI_NEW = UUID.FromString("C4DEA3BC-5A9D-11E9-8647-D663BD873D93");
-        public static UUID BLE_CHAR_FEATURE_BP = UUID.FromString("00002a49-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_CHAR_FIRMWARE_REV = UUID.FromString("00002A26-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_CHAR_GLUCOSE_CONTEXT = UUID.FromString("00002A34-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_CHAR_GLUCOSE_MANUFACTURE = UUID.FromString("00002A29-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_CHAR_GLUCOSE_MEASUREMENT = UUID.FromString("00002A18-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_CHAR_GLUCOSE_RACP = UUID.FromString("00002A52-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_CHAR_GLUCOSE_SERIALNUM = UUID.FromString("00002A25-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_CHAR_MEASUREMENT_BP = UUID.FromString("00002a35-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_CHAR_MODEL_NUMBER = UUID.FromString("00002A24-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_CHAR_SOFTWARE_REVISION = UUID.FromString("00002A28-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_DESCRIPTOR = UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_DESCRIPTOR_BP = UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
-        public static int BLE_SCAN_DURATION = 5000;
-        public static UUID BLE_SERVICE_CURRENT_TIME_BP = UUID.FromString("00001805-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_SERVICE_CUSTOM_TIME_MC = UUID.FromString("11223344-5566-7788-9900-AABBCCDDEEFF");
-        public static UUID BLE_SERVICE_CUSTOM_TIME_TI = UUID.FromString("0000FFF0-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_SERVICE_CUSTOM_TIME_TI_NEW = UUID.FromString("C4DEA010-5A9D-11E9-8647-D663BD873D93");
-        public static UUID BLE_SERVICE_DEVICE_INFO = UUID.FromString("0000180A-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_SERVICE_GLUCOSE = UUID.FromString("00001808-0000-1000-8000-00805f9b34fb");
-        public static UUID BLE_SERVICE_PRESSURE = UUID.FromString("00001810-0000-1000-8000-00805f9b34fb");
-        public static string CARESENS_N_IOT_PRODUCT_ID = "caresens_n_iot";
-        public static string DEFAULT_DATEFORMAT = "yyyy-MM-dd";
-        public static string DEFAULT_TIMEFORMAT = "aa hh:mm";
-        public static int DOWNLOADING = 0;
-        public static int DOWNLOAD_COMPLETED = 4;
-        public static int DOWNLOAD_DEVICEID = 2;
-        public static int DOWNLOAD_ERROR = -1;
-        public static int DOWNLOAD_ERROR_POSITION = -4;
-        public static int DOWNLOAD_ERROR_SERIAL = -3;
-        public static int DOWNLOAD_ERROR_SERIAL_MAX = -5;
-        public static int DOWNLOAD_ERROR_TIMESYNC = -2;
-        public static int DOWNLOAD_GLUCOSE = 3;
-        public static string DOWNLOAD_RESULT_DATEFORMAT = "MM.dd HH:mm";
-        public static int DOWNLOAD_TIMESYNC = 1;
-        public static int ID_DATEPICKER_DIALOG = 1001;
-        public static int ID_SELECT_CAMERA = 2002;
-        public static int ID_SELECT_GALLERY = 2001;
-        public static int ID_TIMEPICKER_DIALOG = 1002;
-        public static string IMPORT_BALANCE = "Balance";
-        public static string IMPORT_SENSDIARY = "SensDiary";
-        public static string IMPORT_SHEALTH = "sHealth";
-        public static string INSULIN_PASSWORD = "isens2015";
-        public static string INTENT_ACTIVITY_PAUSE = "air.SmartLog.android.INTENT_ACTIVITY_PAUSE";
-        public static string INTENT_ACTIVITY_RESUME = "air.SmartLog.android.INTENT_ACTIVITY_RESUME";
-        public static string INTENT_AGREEMENT_CHECK_CHANGED = "air.SmartLog.android.INTENT_AGREEMENT_CHECK_CHANGED";
-        public static string INTENT_ALARM = "air.SmartLog.android.receiver.Alarm";
-        public static string INTENT_BLE_BONDED = "air.SmartLog.android.ble.BLE_BONDED";
-        public static string INTENT_BLE_BOND_NONE = "air.SmartLog.android.ble.BLE_BOND_NONE";
-        public static string INTENT_BLE_COMPLETED_LOLIIPOP = "air.SmartLog.android.ble.BLE_COMPLETED_LOLIIPOP";
-        public static string INTENT_BLE_CONNECTED_DEVICE = "air.SmartLog.android.ble.BLE_CONNECTED_DEVICE";
-        public static string INTENT_BLE_DATASETCHANGED = "air.SmartLog.android.ble.BLE_DATASETCHANGED";
-        public static string INTENT_BLE_DEVICECONNECTED = "air.SmartLog.android.ble.BLE_DEVICECONNECTED";
-        public static string INTENT_BLE_DEVICEDISCONNECTED = "air.SmartLog.android.ble.BLE_DEVICEDISCONNECTED";
-        public static string INTENT_BLE_DEVICENOTSUPPORTED = "air.SmartLog.android.ble.BLE_DEVICENOTSUPPORTED";
-        public static string INTENT_BLE_ERROR = "air.SmartLog.android.ble.BLE_ERROR";
-        public static string INTENT_BLE_EXTRA_DATA = "air.SmartLog.android.ble.BLE_EXTRA_DATA";
-        public static string INTENT_BLE_OPERATECOMPLETED = "air.SmartLog.android.ble.BLE_OPERATECOMPLETED";
-        public static string INTENT_BLE_OPERATEFAILED = "air.SmartLog.android.ble.BLE_OPERATEFAILED";
-        public static string INTENT_BLE_OPERATENOTSUPPORTED = "air.SmartLog.android.ble.BLE_OPERATENOTSUPPORTED";
-        public static string INTENT_BLE_OPERATESTARTED = "air.SmartLog.android.ble.BLE_OPERATESTARTED";
-        public static string INTENT_BLE_RACPINDICATIONENABLED = "air.SmartLog.android.ble.BLE_RACPINDICATIONENABLED";
-        public static string INTENT_BLE_READCOMPLETED = "air.SmartLog.android.ble.BLE_READCOMPLETED";
-        public static string INTENT_BLE_READCOMPLETED_BP = "air.SmartLog.android.ble.BLE_READCOMPLETED_BP";
-        public static string INTENT_BLE_READ_MANUFACTURER = "air.SmartLog.android.ble.BLE_READ_MANUFACTURER";
-        public static string INTENT_BLE_READ_SERIALNUMBER = "air.SmartLog.android.ble.BLE_READ_SERIALNUMBER";
-        public static string INTENT_BLE_READ_SOFTWARE_REV = "air.SmartLog.android.ble.BLE_READ_SOFTWARE_REVISION";
-        public static string INTENT_BLE_REQUEST_COUNT = "air.SmartLog.android.ble.BLE_REQUESTCOUNT";
-        public static string INTENT_BLE_SEQUENCECOMPLETED = "air.SmartLog.android.ble.BLE_SEQUENCECOMPLETED";
-        public static string INTENT_BLE_SERVICEDISCOVERED = "air.SmartLog.android.ble.BLE_SERVICEDISCOVERED";
-        public static string INTENT_CANCEL_SYNC_TIMER = "air.SmartLog.android.CANCEL_SYNC_TIMER";
-        public static string INTENT_DEVICE_NOT_REGISTERED = "air.SmartLog.android.INTENT_DEVICE_NOT_REGISTERED";
-        public static string INTENT_DEVICE_REGISTERED = "air.SmartLog.android.INTENT_DEVICE_REGISTERED";
-        public static string INTENT_IOT_DEVICE_EXIST = "air.SmartLog.android.INTENT_IOT_DEVICE_EXIST";
-        public static string INTENT_IOT_DEVICE_UNEXIST = "air.SmartLog.android.INTENT_IOT_DEVICE_UNEXIST";
-        public static string INTENT_LOGIN_FAIL = "air.SmartLog.android.INTENT_LOGIN_FAIL";
-        public static string INTENT_MAIN_REFRESH = "air.SmartLog.android.share.Refresh";
-        public static string INTENT_RESET_SYNC_TIMER = "air.SmartLog.android.RESET_SYNC_TIMER";
-        public static string INTENT_START_BLE_SERVICE = "air.SmartLog.android.INTENT_START_BLE_SERVICE";
-        public static string INTENT_START_PEDOMETER_SERVICE = "air.SmartLog.android.INTENT_START_PEDOMETER_SERVICE";
-        public static string INTENT_STEP_UPDATE = "air.SmartLog.android.INTENT_STEP_UPDATE";
-        public static string INTENT_STOP_BLE_SERVICE = "air.SmartLog.android.INTENT_STOP_BLE_SERVICE";
-        public static string INTENT_STOP_PEDOMETER_SERVICE = "air.SmartLog.android.INTENT_STOP_PEDOMETER_SERVICE";
-        public static string INTENT_SYNC_SUCCESS = "air.SmartLog.android.INTENT_SYNC_SUCCESS";
-        public static string INTENT_UNPAIR_DEVICE = "air.SmartLog.android.INTENT_UNPAIR_DEVICE";
-        public static string LASTSYNC_DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
-        public static string MAIN_ACTIVITY = "air.SmartLog.android.MainActivity";
-        public static int MAX_FILE_SIZE = 5242880;
-        public static int MAX_SMS = 100;
-        public static int PAGE_SIZE = 20;
-        public static string PARAM_DATETIME = "datetime";
-        public static string PARAM_FRIEND = "friend_id";
-        public static string PARAM_GLUCOSE = "glucose";
-        public static string PARAM_LASTID = "last_id";
-        public static string PARAM_MENDOR_BALANCE_ID = "username";
-        public static string PARAM_MENDOR_BALANCE_PW = "password";
-        public static string PARAM_MESSAGE = "message";
-        public static string PARAM_NKCKNAME = "name";
-        public static string PARAM_SENSDIARY_DATE = "dg_date_str";
-        public static string PARAM_SENSDIARY_ID = "uid";
-        public static string PARAM_SENSDIARY_NEW = "smartlog_data";
-        public static string PARAM_SENSDIARY_PW = "pw";
-        public static string PARAM_SENSDIARY_TIME = "dg_time";
-        public static string PARAM_SENSDIARY_USERID = "dg_userid";
-        public static string PARAM_SENSDIARY_VALUE = "glucose_data";
-        public static string PARAM_USERID = "user_id";
-        public static string PREF_AGREEMENT = "agreement_new";
-        public static string PREF_ALARM_NOTIFICATION_CHANNEL_LAST_ID = "PREF_ALARM_NOTIFICATION_CHANNEL_LAST_ID";
-        public static string PREF_APP_ID = "app_id";
-        public static string PREF_APP_ID_VALUE = "apple00002";
-        public static string PREF_APP_SECRET = "app_secret";
-        public static string PREF_APP_SECRET_VALUE = "ib2kajsdn8";
-        public static string PREF_BALANCE_DOWNLOAD_LASTSYNC = "balance_download_last_sync";
-        public static string PREF_BALANCE_UPLOAD_LASTSYNC = "balance_upload_last_sync";
-        public static string PREF_BLE_DEFAULT_FLAG = "ble_meter_default_flag";
-        public static string PREF_BLE_LAST_GLUCOSE_DATA = "PREF_BLE_LAST_GLUCOSE_DATA";
-        public static string PREF_BLE_METER_FASTING = "ble_meter_fasting_on";
-        public static string PREF_BLE_METER_POSTMEAL = "ble_meter_postmeal_on";
-        public static string PREF_BLE_METER_PREMEAL = "ble_meter_premeal_on";
-        public static string PREF_BLE_SERVICE_ON = "ble_service_on";
-        public static string PREF_CHART_DISPLAY_KETONE_ON = "PREF_CHART_DISPLAY_KETONE_ON";
-        public static string PREF_CLOUD_ACCESS_TOKEN = "access_token";
-        public static string PREF_CLOUD_AUTO_CHECKBOX = "cloud_auto_check";
-        public static string PREF_CLOUD_AUTO_SAVE_ID = "cloud_auto_save_id";
-        public static string PREF_CLOUD_AUTO_SAVE_PW = "cloud_auto_save_pw";
-        public static string PREF_CLOUD_DOWNLOAD_LASTSYNC = "cloud_download_last_sync";
-        public static string PREF_CLOUD_LASTSYNC = "cloud_last_sync";
-        public static string PREF_CLOUD_ONCE_SYNCED = "cloud_once_synced";
-        public static string PREF_CLOUD_REFRESH_TOKEN = "refresh_token";
-        public static string PREF_CLOUD_UPLOAD_LASTSYNC = "cloud_upload_last_sync";
-        public static string PREF_CLOUD_WIFI_CHECKBOX = "cloud_wifi_check";
-        public static string PREF_DEVICE_UUID = "device_uuid";
-        public static string PREF_GCMID = "gcm_id";
-        public static string PREF_INSULIN_CAL_CARB_RATIO = "insulin_cal_carb_ratio";
-        public static string PREF_INSULIN_CAL_SENSITIVITY = "insulin_cal_sensitivity";
-        public static string PREF_INSULIN_TARGET_GLUCOSE = "insulin_target_glucose";
-        public static string PREF_INSULIN_TYPE1 = "insulin_type1";
-        public static string PREF_INSULIN_TYPE2 = "insulin_type2";
-        public static string PREF_INSULIN_UNLOCK = "insulin_unlock";
-        public static string PREF_IOT_DEVICE_ACTIVATION_URL = "PREF_IOT_DEVICE_ACTIVATION_URL";
-        public static string PREF_IOT_DEVICE_SERIAL_NUMBER = "iot_device_serial_number";
-        public static string PREF_IS_BLE_TIMESYNC_UTC_TZ = "PREF_IS_BLE_TIMESYNC_UTC_TZ";
-        public static string PREF_IS_OTHER_METER_ENABLE = "PREF_IS_OTHER_METER_ENABLE";
-        public static string PREF_IS_PEDOMETER_ENABLE = "PREF_IS_PEDOMETER_ENABLE";
-        public static string PREF_LASTSYNC = "last_sync";
-        public static string PREF_LAST_NEWS = "last_news";
-        public static string PREF_MCC = "mcc";
-        public static string PREF_MENDOR_AGREEMENT_STATUS = "PREF_MENDOR_AGREEMENT_STATUS";
-        public static string PREF_MENDOR_AUTO_CHECKBOX = "mendor_auto_check";
-        public static string PREF_MENDOR_AUTO_SAVE_ID = "mendor_auto_save_id";
-        public static string PREF_MENDOR_AUTO_SAVE_PW = "mendor_auto_save_pw";
-        public static string PREF_MENDOR_ID_CHECKBOX = "mendor_id_check";
-        public static string PREF_MENDOR_PW_CHECKBOX = "mendor_pw_check";
-        public static string PREF_MENDOR_SAVE_ID = "mendor_save_id";
-        public static string PREF_MENDOR_SAVE_PW = "mendor_save_pw";
-        public static string PREF_PUSHID = "push_clientid";
-        public static string PREF_PUSHNICK = "push_nickname";
-        public static string PREF_PUSHON = "push_on";
-        public static string PREF_PUSH_COUNT = "push_count";
-        public static string PREF_SAVE_ID = "save_sens_id";
-        public static string PREF_SAVE_PW = "save_sens_pw";
-        public static string PREF_SENSDIARY_ID = "sens_id";
-        public static string PREF_SENSDIARY_PW = "sens_pw";
-        public static string PREF_SHEALTH_PERMISSION = "shealth_permission";
-        public static string PREF_SMS_COUNT = "sms_count";
-        public static string PREF_SMS_DATE = "sms_date";
-        public static string PREF_SMS_NOTIFY = "sms_notify";
-        public static string PREF_SMS_SHARE = "sms_share";
-        public static string PREF_THINGPLUG_ACCESS_TOKEN = "thingplug_access_token";
-        public static string PREF_THINGPLUG_ENCRYPTED_IMEI = "thingplug_encrypted_imei";
-        public static string PREF_THINGPLUG_PASSWORD = "PREF_THINGPLUG_PASSWORD";
-        public static string PREF_THINGPLUG_REFRESH_TOKEN = "thingplug_refresh_token";
-        public static string PREF_THINGPLUG_USERNAME = "PREF_THINGPLUG_USERNAME";
-        public static string PREF_TODAY_STEP_COUNT = "PREF_TODAY_STEP_COUNT_";
-        public static string PREF_TTSON = "tts_on";
-        public static string PUSH_DATEFORMAT = "yyyy-MM-dd a hh:mm";
-        public static string SERVER_DATEFORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
-        public static string SKT_IOT_IMEI_ENCRYPTION_KEY = "01j7QLc9KyWJ4X79";
-        public static string THINGPLUG_BP_CODE = "olIW6SuF9j";
-        public static string TYPE_BG = "gl";
-        public static string TYPE_BP = "bp";
-    }
+namespace Familia.Devices.Helpers {
+	public class BLEHelpers {
+		#region CaresensGlucometer
+
+		public static UUID BLE_CHAR_CUSTOM_TIME_MC = UUID.FromString("01020304-0506-0708-0900-0A0B0C0D0E0F");
+		public static UUID BLE_CHAR_CUSTOM_TIME_TI = UUID.FromString("0000FFF1-0000-1000-8000-00805f9b34fb");
+		public static UUID BLE_CHAR_CUSTOM_TIME_TI_NEW = UUID.FromString("C4DEA3BC-5A9D-11E9-8647-D663BD873D93");
+		public static UUID BLE_CHAR_GLUCOSE_CONTEXT = UUID.FromString("00002A34-0000-1000-8000-00805f9b34fb");
+		public static UUID BLE_CHAR_GLUCOSE_MANUFACTURE = UUID.FromString("00002A29-0000-1000-8000-00805f9b34fb");
+		public static UUID BLE_CHAR_GLUCOSE_MEASUREMENT = UUID.FromString("00002A18-0000-1000-8000-00805f9b34fb");
+		public static UUID BLE_CHAR_GLUCOSE_RACP = UUID.FromString("00002A52-0000-1000-8000-00805f9b34fb");
+		public static UUID BLE_CHAR_GLUCOSE_SERIALNUM = UUID.FromString("00002A25-0000-1000-8000-00805f9b34fb");
+		public static UUID BLE_CHAR_SOFTWARE_REVISION = UUID.FromString("00002A28-0000-1000-8000-00805f9b34fb");
+		public static UUID BLE_DESCRIPTOR = UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
+		public static UUID BLE_SERVICE_CUSTOM_TIME_MC = UUID.FromString("11223344-5566-7788-9900-AABBCCDDEEFF");
+		public static UUID BLE_SERVICE_CUSTOM_TIME_TI = UUID.FromString("0000FFF0-0000-1000-8000-00805f9b34fb");
+		public static UUID BLE_SERVICE_CUSTOM_TIME_TI_NEW = UUID.FromString("C4DEA010-5A9D-11E9-8647-D663BD873D93");
+		public static UUID BLE_SERVICE_DEVICE_INFO = UUID.FromString("0000180A-0000-1000-8000-00805f9b34fb");
+		public static UUID BLE_SERVICE_GLUCOSE = UUID.FromString("00001808-0000-1000-8000-00805f9b34fb");
+
+		#endregion
+
+		#region MedisanaBloodPressure
+
+		public static UUID UuidBloodPressureService { get; } = UUID.FromString("00001810-0000-1000-8000-00805f9b34fb");
+
+		public static UUID UuidBloodPressureMeasurementChar { get; } =
+			UUID.FromString("00002a35-0000-1000-8000-00805f9b34fb");
+
+		public static UUID ClientCharacteristicConfig { get; } =
+			UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
+
+		#endregion
+
+		#region MedisanaGlucometer
+
+		public static UUID UuidGlucMeasurementChar { get; } = UUID.FromString("00002a18-0000-1000-8000-00805f9b34fb");
+
+		public static UUID UuidGlucMeasurementContextChar { get; } =
+			UUID.FromString("00002a34-0000-1000-8000-00805f9b34fb");
+
+		public static UUID UuidGlucRecordAccessControlPointChar { get; } =
+			UUID.FromString("00002a52-0000-1000-8000-00805f9b34fb");
+
+		public static UUID UuidGlucServ { get; } = UUID.FromString("00001808-0000-1000-8000-00805f9b34fb");
+
+		#endregion
+	}
 }

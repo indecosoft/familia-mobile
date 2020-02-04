@@ -7,9 +7,10 @@ using Android.Views;
 using Android.Views.Animations;
 using Android.Widget;
 using Java.Lang;
+using Java.Lang.Reflect;
 using Exception = System.Exception;
 
-namespace FamiliaXamarin.Login_System
+namespace Familia.Login_System
 {
     public class FirstSetupViewPager : ViewPager, View.IOnTouchListener
     {
@@ -51,10 +52,10 @@ namespace FamiliaXamarin.Login_System
         {
             try
             {
-                var viewpager = Class.FromType(typeof(ViewPager));
+                Class viewpager = Class.FromType(typeof(ViewPager));
 
 
-                var scroller = viewpager.GetDeclaredField("mScroller");
+                Field scroller = viewpager.GetDeclaredField("mScroller");
                 scroller.Accessible = true;
                 scroller.Set(this, new MyScroller(Context));
             }

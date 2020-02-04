@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Database;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Provider;
 using Android.Support.Constraints;
@@ -17,14 +18,11 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
-using Com.Bumptech.Glide.Util;
-using Familia;
-using Familia.Asistentasociala;
+using Familia.Asistenta_sociala;
+using Familia.Helpers;
+using Familia.JsonModels;
 using Familia.Profile;
 using Familia.Profile.Data;
-using FamiliaXamarin.Asistenta_sociala;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.JsonModels;
 using Java.Text;
 using Java.Util;
 using Newtonsoft.Json;
@@ -33,16 +31,17 @@ using Refractored.Controls;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Environment = Android.OS.Environment;
 using File = Java.IO.File;
+using Fragment = Android.Support.V4.App.Fragment;
 using FragmentManager = Android.Support.V4.App.FragmentManager;
-using FragmentPagerAdapter = Android.Support.V4.App.FragmentPagerAdapter;
+using Uri = Android.Net.Uri;
 
-namespace FamiliaXamarin.Login_System
+namespace Familia.Login_System
 {
     [Activity(Label = "FirstSetup", Theme = "@style/AppTheme.Dark",
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class FirstSetup : FragmentActivity
     {
-        private File Dir;
+        private File _dir;
         private SectionsPagerAdapter _sectionsPagerAdapter;
         private FirstSetupViewPager _viewPager;
 
@@ -83,11 +82,11 @@ namespace FamiliaXamarin.Login_System
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            var id = item.ItemId;
+            int id = item.ItemId;
             return base.OnOptionsItemSelected(item);
         }
 
-        public class PlaceholderFragment : Android.Support.V4.App.Fragment, View.IOnTouchListener
+        public class PlaceholderFragment : Fragment, View.IOnTouchListener
         {
             private const string ArgSectionNumber = "section_number";
             private Button _btnNext;
@@ -101,7 +100,7 @@ namespace FamiliaXamarin.Login_System
             private ToggleButton _femaleToggleButton;
             private CircleImageView _profileImage;
             private bool _imageValidator;
-            private Android.Net.Uri _photoUri;
+            private Uri _photoUri;
             private FileInfo _fileInformations;
             private string _imageExtension, _imagePath;
             private List<SearchListModel> _selectedDiseases = new List<SearchListModel>();
@@ -156,12 +155,12 @@ namespace FamiliaXamarin.Login_System
 
             private static void CreateDirectoryForPictures()
             {
-                FragmentContext.Dir = new File(
+                FragmentContext._dir = new File(
                     Environment.GetExternalStoragePublicDirectory(
                         Environment.DirectoryPictures), "Familia");
-                if (!FragmentContext.Dir.Exists())
+                if (!FragmentContext._dir.Exists())
                 {
-                    FragmentContext.Dir.Mkdirs();
+                    FragmentContext._dir.Mkdirs();
                 }
             }
 
@@ -177,9 +176,9 @@ namespace FamiliaXamarin.Login_System
             private File CreateImageFile()
             {
                 // Create an image file name
-                var timeStamp = new SimpleDateFormat("yyyy.MM.dd_HH:mm").Format(new Date());
-                var imageFileName = $"Avatar_" + timeStamp + "";
-                var storageDir = Activity.GetExternalFilesDir(Environment.DirectoryPictures);
+                string timeStamp = new SimpleDateFormat("yyyy.MM.dd_HH:mm").Format(new Date());
+                string imageFileName = "Avatar_" + timeStamp + "";
+                File storageDir = Activity.GetExternalFilesDir(Environment.DirectoryPictures);
                 //File storageDir = new File(Environment.GetExternalStoragePublicDirectory(
                 //Environment.DirectoryDcim), "Camera");
                 var image = File.CreateTempFile(
@@ -209,14 +208,14 @@ namespace FamiliaXamarin.Login_System
                 StartActivityForResult(intent, Constants.RequestCamera);
             }
 
-            private static string GetPathToImage(Android.Net.Uri uri)
+            private static string GetPathToImage(Uri uri)
             {
                 string docId;
-                using (var c1 = FragmentContext.ContentResolver.Query(uri,
+                using (ICursor c1 = FragmentContext.ContentResolver.Query(uri,
                     null, null, null, null))
                 {
                     c1.MoveToFirst();
-                    var documentId = c1.GetString(0);
+                    string documentId = c1.GetString(0);
                     docId = documentId.Substring(
                         documentId.LastIndexOf(":", StringComparison.Ordinal) + 1);
                 }
@@ -225,12 +224,12 @@ namespace FamiliaXamarin.Login_System
 
                 // The projection contains the columns we want to return in our query.
                 const string selection = MediaStore.Images.Media.InterfaceConsts.Id + " =? ";
-                using (var cursor = FragmentContext.ContentResolver.Query(
+                using (ICursor cursor = FragmentContext.ContentResolver.Query(
                     MediaStore.Images.Media.ExternalContentUri, null, selection, new[] { docId },
                     null))
                 {
                     if (cursor == null) return null;
-                    var columnIndex =
+                    int columnIndex =
                         cursor.GetColumnIndexOrThrow(MediaStore.Images.Media.InterfaceConsts.Data);
                     cursor.MoveToFirst();
                     path = cursor.GetString(columnIndex);
@@ -264,7 +263,7 @@ namespace FamiliaXamarin.Login_System
 
                             break;
                         case 2:
-                            var uri = data.Data;
+                            Uri uri = data.Data;
 
 
                             _imagePath = GetPathToImage(uri);
@@ -320,12 +319,12 @@ namespace FamiliaXamarin.Login_System
                 var resourcePath =
                     "@drawable/profile"; // where myresource (without the extension) is the file
 
-                var imageResource =
+                int imageResource =
                     Activity.Resources.GetIdentifier(resourcePath, null, Activity.PackageName);
 
 
                 //Drawable res = Activity.Resources.GetDrawable(imageResource);
-                var res = ContextCompat.GetDrawable(Activity, imageResource);
+                Drawable res = ContextCompat.GetDrawable(Activity, imageResource);
                 _profileImage.SetImageDrawable(res);
             }
 
@@ -333,7 +332,7 @@ namespace FamiliaXamarin.Login_System
             {
                 var mediaScanIntent = new Intent(Intent.ActionMediaScannerScanFile);
                 var f = new File(_photoUri.Path);
-                var contentUri = Android.Net.Uri.FromFile(f);
+                Uri contentUri = Uri.FromFile(f);
                 mediaScanIntent.SetData(contentUri);
                 FragmentContext.SendBroadcast(mediaScanIntent);
             }
@@ -372,7 +371,7 @@ namespace FamiliaXamarin.Login_System
                 View rootView = null;
                 try
                 {
-                    var index = Arguments.GetInt(ArgSectionNumber) - 1;
+                    int index = Arguments.GetInt(ArgSectionNumber) - 1;
                     switch (index)
                     {
                         case 0:
@@ -468,7 +467,7 @@ namespace FamiliaXamarin.Login_System
                 progressBarDialog.Show();
                 Task.Run(async () =>
                 {
-                    var result = await WebServices.Get(Constants.PublicServerAddress + "/api/getDisease", Utils.GetDefaults("Token"));
+                    string result = await WebServices.WebServices.Get(Constants.PublicServerAddress + "/api/getDisease", Utils.GetDefaults("Token"));
                     if (result == null) return;
 
                     var arrayOfDiseases = new JSONArray(result);
@@ -485,7 +484,7 @@ namespace FamiliaXamarin.Login_System
                         });
                     }
 
-                    Intent intent = new Intent(Activity, typeof(SearchListActivity));
+                    var intent = new Intent(Activity, typeof(SearchListActivity));
                     intent.PutExtra("Items", JsonConvert.SerializeObject(items));
                     intent.PutExtra("SelectedItems", JsonConvert.SerializeObject(_selectedDiseases));
                     StartActivityForResult(intent, 3);
@@ -518,7 +517,7 @@ namespace FamiliaXamarin.Login_System
                             Utils.GetDefaults("Email");
 
 
-                        foreach (var el in _selectedDiseases)
+                        foreach (SearchListModel el in _selectedDiseases)
                         {
                             if (!el.IsSelected) continue;
                             FragmentContext._firstSetupModel.Disease.Add(el.Id);
@@ -526,12 +525,12 @@ namespace FamiliaXamarin.Login_System
                         }
                         await Task.Run(async () =>
                         {
-                            var jsonData =
+                            string jsonData =
                                 JsonConvert.SerializeObject(FragmentContext._firstSetupModel);
 
                             Log.Error("data to send", jsonData);
 
-                            var response = await WebServices.Post(
+                            string response = await WebServices.WebServices.Post(
                                 Constants.PublicServerAddress + "/api/firstSetup",
                                 new JSONObject(jsonData), Utils.GetDefaults("Token"));
                             if (response != null)
@@ -614,7 +613,7 @@ namespace FamiliaXamarin.Login_System
 
             public override int Count { get; } = 3;
 
-            public override Android.Support.V4.App.Fragment GetItem(int position)
+            public override Fragment GetItem(int position)
             {
                 return PlaceholderFragment.NewInstance(position + 1);
             }

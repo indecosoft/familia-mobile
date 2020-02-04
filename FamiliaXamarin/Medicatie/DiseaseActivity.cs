@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Familia;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
-using Android.Gms.Location;
-using Android.Media;
 using Android.OS;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
@@ -13,15 +10,14 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Familia.Medicatie;
-using FamiliaXamarin.Medicatie.Alarm;
-using FamiliaXamarin.Medicatie.Data;
-using FamiliaXamarin.Medicatie.Entities;
+using Familia.Medicatie.Alarm;
+using Familia.Medicatie.Data;
+using Familia.Medicatie.Entities;
 using Java.Util;
+using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
-using Calendar = Java.Util.Calendar;
 
-namespace FamiliaXamarin.Medicatie
+namespace Familia.Medicatie
 {
     [Activity(Label = "BoalaActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class DiseaseActivity : AppCompatActivity, View.IOnClickListener, CustomDialogMedicamentDetails.IMedSaveListener, OnMedicamentClickListener, CustomDialogDeleteMedicament.ICustomDialogDeleteMedicamentListener
@@ -64,7 +60,7 @@ namespace FamiliaXamarin.Medicatie
             save.Click += delegate { AddNewBoala(); };
             update = FindViewById<Button>(Resource.Id.btn_update);
             update.Click += delegate { UpdateBoala(); };
-            FloatingActionButton addMed = FindViewById<FloatingActionButton>(Resource.Id.fab_add_med);
+            var addMed = FindViewById<FloatingActionButton>(Resource.Id.fab_add_med);
             addMed.Click += delegate { OpenMedDialog(null); };
             etNumeBoala = FindViewById<EditText>(Resource.Id.et_nume_boala);
          
@@ -76,7 +72,7 @@ namespace FamiliaXamarin.Medicatie
         {
             if (_isEdited)
             {
-                var alert = new Android.Support.V7.App.AlertDialog.Builder(this);
+                var alert = new AlertDialog.Builder(this);
                 alert.SetTitle("Avertisment");
                 alert.SetMessage("Esti pe cale sa renunti la modificarile facute. Renuntati?");
                 alert.SetPositiveButton("Da", (senderAlert, args) => {
@@ -102,8 +98,8 @@ namespace FamiliaXamarin.Medicatie
 
         private void SetRecyclerView()
         {
-            RecyclerView rvMeds = FindViewById<RecyclerView>(Resource.Id.rv_meds);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            var rvMeds = FindViewById<RecyclerView>(Resource.Id.rv_meds);
+            var layoutManager = new LinearLayoutManager(this);
             rvMeds.SetLayoutManager(layoutManager);
             medicamentAdapter = new MedicineAdapter();
             medicamentAdapter.SetListener(this);
@@ -161,7 +157,7 @@ namespace FamiliaXamarin.Medicatie
         }
         private void OpenMedDialog(Medicine medicament)
         {
-            CustomDialogMedicamentDetails cdd = new CustomDialogMedicamentDetails(this, medicament);
+            var cdd = new CustomDialogMedicamentDetails(this, medicament);
             cdd.SetListener(this);
             
             cdd.Show();
@@ -217,12 +213,12 @@ namespace FamiliaXamarin.Medicatie
 
         private void SetupAlarm()
         {
-            List<Medicine> meds = disease.ListOfMedicines;
+            var meds = disease.ListOfMedicines;
             foreach (Medicine med in meds)
             {
-                List<Hour> hours = med.Hours;
-                List<int> alarms = new List<int>();
-                for (int i = 0; i < hours.Count; i++)
+                var hours = med.Hours;
+                var alarms = new List<int>();
+                for (var i = 0; i < hours.Count; i++)
                 {
                     Log.Error("AAAAA", "inainte de setupt alarm");
                     SetAlarm(hours[i], med, disease, ref alarms, i);
@@ -244,7 +240,7 @@ namespace FamiliaXamarin.Medicatie
         {
             var am = (AlarmManager)GetSystemService(AlarmService);
             
-            var idAlarm = DateTime.Now.Millisecond ;
+            int idAlarm = DateTime.Now.Millisecond ;
             var id = 0;
             var days = 0;
             var i = new Intent(this, typeof(AlarmBroadcastReceiver));
@@ -258,10 +254,10 @@ namespace FamiliaXamarin.Medicatie
             alarms.Add(id);
             i.PutExtra(ALARM_ID, id);
            Log.Error("AAAAAaA", med.Name);
-            var pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
+            PendingIntent pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
             if (am == null) return;
 
-            var hourString = hour.HourName;
+            string hourString = hour.HourName;
             var parts = hourString.Split(':');
             var timeHour = Convert.ToInt32(parts[0]);
             var timeMinute = Convert.ToInt32(parts[1]);
@@ -293,7 +289,7 @@ namespace FamiliaXamarin.Medicatie
             if (med.NumberOfDays != 0)
             {
                 days = med.NumberOfDays - days;
-                for (int j = 0; j < days; j++)
+                for (var j = 0; j < days; j++)
                 {
                         idAlarm = DateTime.Now.Millisecond ;
                         pi = PendingIntent.GetBroadcast(this, idAlarm, i, PendingIntentFlags.OneShot);
@@ -341,7 +337,7 @@ namespace FamiliaXamarin.Medicatie
 
         public void OnMedicamentDeleteClick(Medicine medicament)
         {
-            CustomDialogDeleteMedicament cddb = new CustomDialogDeleteMedicament(this);
+            var cddb = new CustomDialogDeleteMedicament(this);
             cddb.setListener(this);
             cddb.setMedicament(medicament);
             cddb.Show();

@@ -1,20 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Familia" t="IncludeFlat">
+    <e p="/Library/Frameworks/Xamarin.Android.framework/Libraries/xbuild/Xamarin/Android" t="Include">
+      <e p="android-support-multidex.jar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/.nuget/packages/xamarin.android.arch.lifecycle.runtime/1.1.1.3/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.android.arch.lifecycle.viewmodel/1.1.1.3/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.animated.vector.drawable/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.compat/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.coordinaterlayout/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.design/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.media.compat/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.transition/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.v7.appcompat/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.v7.recyclerview/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.versionedparcelable/28.0.0.3/proguard/monoandroid90" t="Include">
+      <e p="proguard.txt" t="Include" />
+    </e>
+    <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.base/71.1610.0/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.basement/71.1620.0/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="FamiliaXamarin" t="IncludeRecursive">
         <e p="Active Conversations" t="Include">
           <e p="ConvAdapter.cs" t="Include" />
           <e p="ConversationsFragment.cs" t="Include" />
         </e>
+        <e p="Activity Tracker" t="Include">
+          <e p="StepCounterSensor.cs" t="Include" />
+          <e p="TrackerActivity.cs" t="Include" />
+          <e p="TrackerActivityReceiver.cs" t="Include" />
+        </e>
         <e p="Asistenta sociala" t="Include">
           <e p="AsistentForm.cs" t="Include" />
           <e p="BenefitAdapter.cs" t="Include" />
-          <e p="BenefitSpinnerState.cs" t="Include" />
           <e p="QrCodeGenerator.cs" t="Include" />
+          <e p="SearchListActivity.cs" t="Include" />
+          <e p="SearchListAdapter.cs" t="Include" />
+          <e p="SearchListModel.cs" t="Include" />
         </e>
         <e p="Assets" t="Include">
           <e p="AboutAssets.txt" t="Include" />
+          <e p="images" t="Include">
+            <e p="layer1.png" t="Include" />
+            <e p="layer2.png" t="Include" />
+            <e p="layer3.png" t="Include" />
+            <e p="layer4.png" t="Include" />
+            <e p="layer5.png" t="Include" />
+            <e p="layer6.png" t="Include" />
+          </e>
+          <e p="interactive.html" t="Include" />
+          <e p="jquery.keyframes.min.js" t="Include" />
+          <e p="p5.js" t="Include" />
+          <e p="test.css" t="Include" />
+          <e p="test.html" t="Include" />
+          <e p="test.js" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
         <e p="Chat" t="Include">
@@ -28,6 +67,7 @@
         <e p="Constants.cs" t="Include" />
         <e p="DataModels" t="Include">
           <e p="BluetoothDeviceRecords.cs" t="Include" />
+          <e p="ConversationsRecord.cs" t="Include" />
           <e p="DeviceConfigRecords.cs" t="Include" />
           <e p="DevicesRecords.cs" t="Include" />
           <e p="MedicineRecords.cs" t="Include" />
@@ -35,22 +75,75 @@
           <e p="SmartBandRecords.cs" t="Include" />
         </e>
         <e p="Devices" t="Include">
-          <e p="AddNewDeviceDialog.cs" t="Include" />
-          <e p="DeleteDeviceDialog.cs" t="Include" />
-          <e p="DeviceManagementDialog.cs" t="Include" />
-          <e p="DevicesManagementActivity.cs" t="Include" />
-          <e p="DevicesManagementAdapter.cs" t="Include" />
-          <e p="DevicesManagementModel.cs" t="Include" />
-          <e p="DevicesManagementRecyclerViewAdapter.cs" t="Include" />
+          <e p="Bluetooth" t="Include">
+            <e p="Callbacks" t="Include">
+              <e p="BloodPressure" t="Include">
+                <e p="BloodPressureGattCallBack.cs" t="Include" />
+                <e p="BloodPressureScanCallBack.cs" t="Include" />
+              </e>
+              <e p="BluetoothScanCallback.cs" t="Include" />
+              <e p="Glucose" t="Include">
+                <e p="GlucoseGattCallBack.cs" t="Include" />
+                <e p="GlucoseScanCallback.cs" t="Include" />
+                <e p="MedisanaGattCallback.cs" t="Include" />
+              </e>
+            </e>
+            <e p="Events" t="Include">
+              <e p="BluetoothScanCallbackEventArgs.cs" t="Include" />
+              <e p="BondingStatusEventArgs.cs" t="Include" />
+            </e>
+            <e p="Receivers" t="Include">
+              <e p="BondingBroadcastReceiver.cs" t="Include" />
+            </e>
+          </e>
+          <e p="DevicesAsistent" t="Include">
+            <e p="AsistentHealthDevicesFragment.cs" t="Include" />
+          </e>
+          <e p="DevicesManagement" t="Include">
+            <e p="BloodPressure" t="Include">
+              <e p="AddNewBloodPressureDeviceActivity.cs" t="Include" />
+            </e>
+            <e p="DeviceManufactureSelector" t="Include">
+              <e p="DeviceManufactureSelectorActivity.cs" t="Include" />
+              <e p="DeviceManufactureSelectorRecyclerViewAdapter.cs" t="Include" />
+            </e>
+            <e p="DevicesManagementActivity.cs" t="Include" />
+            <e p="DevicesManagementAdapter.cs" t="Include" />
+            <e p="Dialogs" t="Include">
+              <e p="AddNewDeviceDialog.cs" t="Include" />
+              <e p="DeleteDeviceDialog.cs" t="Include" />
+              <e p="DeviceEditingDialog.cs" t="Include" />
+              <e p="Events" t="Include">
+                <e p="DialogStateEventArgs.cs" t="Include" />
+              </e>
+              <e p="Helpers" t="Include">
+                <e p="DialogStatuses.cs" t="Include" />
+              </e>
+              <e p="Models" t="Include">
+                <e p="DeviceEditingManagementModel.cs" t="Include" />
+              </e>
+            </e>
+            <e p="Glucose" t="Include">
+              <e p="AddNewGucoseDeviceActivity.cs" t="Include" />
+            </e>
+          </e>
           <e p="DevicesRecyclerViewAdapter.cs" t="Include" />
           <e p="GlucoseDevice" t="Include">
-            <e p="AddNewGucoseDeviceActivity.cs" t="Include" />
             <e p="GlucoseDeviceActivity.cs" t="Include" />
             <e p="GlucoseDeviceData.cs" t="Include" />
           </e>
           <e p="HealthDevicesFragment.cs" t="Include" />
+          <e p="Helpers" t="Include">
+            <e p="BLEHelpers.cs" t="Include" />
+            <e p="DeviceTypes.cs" t="Include" />
+            <e p="SupportedDevices.cs" t="Include" />
+            <e p="SupportedManufacturers.cs" t="Include" />
+          </e>
+          <e p="Models" t="Include">
+            <e p="GlucoseRecord.cs" t="Include" />
+            <e p="SupportedDeviceModel.cs" t="Include" />
+          </e>
           <e p="PressureDevice" t="Include">
-            <e p="AddNewBloodPressureDeviceActivity.cs" t="Include" />
             <e p="BloodPressureData.cs" t="Include" />
             <e p="BloodPressureDeviceActivity.cs" t="Include" />
           </e>
@@ -59,11 +152,19 @@
           </e>
         </e>
         <e p="FamiliaXamarin.csproj" t="IncludeRecursive" />
+        <e p="Games" t="Include">
+          <e p="GameActivity.cs" t="Include" />
+          <e p="GameCenterActivity.cs" t="Include" />
+          <e p="Sensors" t="Include">
+            <e p="GyroSensor.cs" t="Include" />
+          </e>
+        </e>
         <e p="Helpers" t="Include">
           <e p="AlarmDeviceReceiver.cs" t="Include" />
           <e p="BiometricUtils.cs" t="Include" />
           <e p="ChargerReceiver.cs" t="Include" />
           <e p="DatePickerFragment.cs" t="Include" />
+          <e p="Encryption.cs" t="Include" />
           <e p="FingerprintHandler.cs" t="Include" />
           <e p="ProgressBarDialog.cs" t="Include" />
           <e p="RejectChatBroadcastReceiver.cs" t="Include" />
@@ -79,7 +180,9 @@
         </e>
         <e p="Location" t="Include">
           <e p="FusedLocationProviderCallback.cs" t="Include" />
-          <e p="MedicalAsistanceFusedLocationProviderCallback.cs" t="Include" />
+          <e p="ILocationEvents.cs" t="Include" />
+          <e p="LocationEventArgs.cs" t="Include" />
+          <e p="LocationManager.cs" t="Include" />
         </e>
         <e p="Login System" t="Include">
           <e p="FirstSetup.cs" t="Include" />
@@ -123,7 +226,43 @@
           <e p="MedicineServerFragment.cs" t="Include" />
           <e p="MedicineServerRecyclerViewOnScrollListener.cs" t="Include" />
         </e>
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="lp" t="Include">
+              <e p="11" t="Include">
+                <e p="nl" t="Include">
+                  <e p="arm64-v8a" t="Include">
+                    <e p="libe_sqlite3.so" t="Include" />
+                  </e>
+                  <e p="armeabi-v7a" t="Include">
+                    <e p="libe_sqlite3.so" t="Include" />
+                  </e>
+                  <e p="x86" t="Include">
+                    <e p="libe_sqlite3.so" t="Include" />
+                  </e>
+                  <e p="x86_64" t="Include">
+                    <e p="libe_sqlite3.so" t="Include" />
+                  </e>
+                </e>
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Profile" t="Include">
+          <e p="Data" t="Include">
+            <e p="db" t="Include">
+              <e p="DiseaseDataModel.cs" t="Include" />
+              <e p="ProfileDataModel.cs" t="Include" />
+            </e>
+            <e p="PersonalData.cs" t="Include" />
+            <e p="PersonalDisease.cs" t="Include" />
+            <e p="PersonView.cs" t="Include" />
+            <e p="ProfileStorage.cs" t="Include" />
+          </e>
+          <e p="DiseasesAdapter.cs" t="Include" />
+          <e p="ProfileActivity.cs" t="Include" />
+          <e p="UpdateProfileActivity.cs" t="Include" />
+        </e>
         <e p="Properties" t="Include">
           <e p="AndroidManifest.xml" t="Include" />
           <e p="AssemblyInfo.cs" t="Include" />
@@ -141,18 +280,24 @@
             <e p="at.xml" t="Include" />
             <e p="background_black_gradation.xml" t="Include" />
             <e p="bluetooth.xml" t="Include" />
+            <e p="bottle_tonic_plus.xml" t="Include" />
             <e p="button_style.xml" t="Include" />
             <e p="buttonshape.xml" t="Include" />
             <e p="calendar.xml" t="Include" />
+            <e p="calendar_age.xml" t="Include" />
             <e p="calendar_date.xml" t="Include" />
             <e p="calendar_multiselect.xml" t="Include" />
             <e p="card.png" t="Include" />
+            <e p="check.xml" t="Include" />
             <e p="chevron_left.xml" t="Include" />
             <e p="chevron_right.xml" t="Include" />
+            <e p="circle_edit_outline.xml" t="Include" />
             <e p="close.xml" t="Include" />
+            <e p="close_notsaved.xml" t="Include" />
             <e p="delete_circle.xml" t="Include" />
             <e p="delete_circle_white.xml" t="Include" />
             <e p="delete_empty.xml" t="Include" />
+            <e p="disease_bag.xml" t="Include" />
             <e p="disease_spinner.xml" t="Include" />
             <e p="dislike.xml" t="Include" />
             <e p="doctor.xml" t="Include" />
@@ -164,6 +309,8 @@
             <e p="fitbit_activity_badge.xml" t="Include" />
             <e p="fitbit_bpm_badge.xml" t="Include" />
             <e p="fitbit_sleep_badge.xml" t="Include" />
+            <e p="full_secondary_button_style.xml" t="Include" />
+            <e p="gamepad_variant.xml" t="Include" />
             <e p="gender.xml" t="Include" />
             <e p="gender_female.xml" t="Include" />
             <e p="gender_male.xml" t="Include" />
@@ -173,6 +320,8 @@
             <e p="health_button.xml" t="Include" />
             <e p="heart.xml" t="Include" />
             <e p="heart_pulse.xml" t="Include" />
+            <e p="human_female.xml" t="Include" />
+            <e p="human_male.xml" t="Include" />
             <e p="ic_menu_manage.xml" t="Include" />
             <e p="image_1.png" t="Include" />
             <e p="image_10.png" t="Include" />
@@ -189,6 +338,7 @@
             <e p="logo.png" t="Include" />
             <e p="logo_fAMILIA.png" t="Include" />
             <e p="logout.xml" t="Include" />
+            <e p="magnify.xml" t="Include" />
             <e p="main_button_style.xml" t="Include" />
             <e p="medical_bag.xml" t="Include" />
             <e p="message.xml" t="Include" />
@@ -199,6 +349,7 @@
             <e p="nav_item_colors.xml" t="Include" />
             <e p="nav_sharing_item_color.xml" t="Include" />
             <e p="nimic.jpg" t="Include" />
+            <e p="pencil.xml" t="Include" />
             <e p="pill.xml" t="Include" />
             <e p="pill_lost.xml" t="Include" />
             <e p="pill_lost_pers.xml" t="Include" />
@@ -210,8 +361,11 @@
             <e p="qrcode.xml" t="Include" />
             <e p="qrcode_scan.xml" t="Include" />
             <e p="round_button.xml" t="Include" />
+            <e p="rounded_button.xml" t="Include" />
+            <e p="save_check.xml" t="Include" />
             <e p="search_person.xml" t="Include" />
             <e p="secondary_button_style.xml" t="Include" />
+            <e p="secondary_disease_bag.xml" t="Include" />
             <e p="send.xml" t="Include" />
             <e p="setup_button.xml" t="Include" />
             <e p="share_layout_bg.axml" t="Include" />
@@ -221,6 +375,7 @@
             <e p="sharing_day_button_color_state_list_checked.axml" t="Include" />
             <e p="sharing_round_button_activ.axml" t="Include" />
             <e p="sharing_round_button_inactiv.axml" t="Include" />
+            <e p="shoe_print.xml" t="Include" />
             <e p="side_nav_bar.xml" t="Include" />
             <e p="snooze_button.xml" t="Include" />
             <e p="swipe_left_button.xml" t="Include" />
@@ -248,17 +403,24 @@
             <e p="activity_blood_pressure_device.axml" t="Include" />
             <e p="activity_boala.axml" t="Include" />
             <e p="activity_chat.axml" t="Include" />
+            <e p="activity_device_selector.axml" t="Include" />
             <e p="activity_devices_management.axml" t="Include" />
+            <e p="activity_diseases.axml" t="Include" />
             <e p="activity_finger.axml" t="Include" />
             <e p="activity_first_setup.axml" t="Include" />
+            <e p="activity_game.axml" t="Include" />
+            <e p="activity_game_center.axml" t="Include" />
             <e p="activity_login.axml" t="Include" />
             <e p="activity_main.axml" t="Include" />
             <e p="activity_pin_lockscreen.axml" t="Include" />
             <e p="activity_pressure_and_glucose.axml" t="Include" />
+            <e p="activity_profile.axml" t="Include" />
             <e p="activity_pwdreset.axml" t="Include" />
             <e p="activity_register.axml" t="Include" />
             <e p="activity_sharing_menu.axml" t="Include" />
             <e p="activity_smart_band_device.axml" t="Include" />
+            <e p="activity_tracker.axml" t="Include" />
+            <e p="activity_update_profile.axml" t="Include" />
             <e p="add_new_blood_glucose_device.axml" t="Include" />
             <e p="app_bar_main.axml" t="Include" />
             <e p="blood_glucose_device.axml" t="Include" />
@@ -271,6 +433,7 @@
             <e p="dialog_devices_management.axml" t="Include" />
             <e p="find_users_fragment.axml" t="Include" />
             <e p="fragment_asistent_form.axml" t="Include" />
+            <e p="fragment_asistent_health_devices.xml" t="Include" />
             <e p="fragment_conversations.axml" t="Include" />
             <e p="fragment_health_devices.axml" t="Include" />
             <e p="fragment_medicine.axml" t="Include" />
@@ -288,6 +451,7 @@
             <e p="item_boala.axml" t="Include" />
             <e p="item_conversation.axml" t="Include" />
             <e p="item_conversations.xml" t="Include" />
+            <e p="item_device_selector.axml" t="Include" />
             <e p="item_device_type.xml" t="Include" />
             <e p="item_hour.axml" t="Include" />
             <e p="item_log.xml" t="Include" />
@@ -297,10 +461,12 @@
             <e p="item_medser.axml" t="Include" />
             <e p="item_message.xml" t="Include" />
             <e p="item_my_message.xml" t="Include" />
+            <e p="item_profile_disease.axml" t="Include" />
             <e p="item_sharing.axml" t="Include" />
             <e p="item_tourist_spot_card.xml" t="Include" />
             <e p="layout_tab1.axml" t="Include" />
             <e p="layout_tab2.axml" t="Include" />
+            <e p="layout_tab2.xml" t="Include" />
             <e p="MedicineFragmentBase.axml" t="Include" />
             <e p="nav_header_main.axml" t="Include" />
             <e p="overlay_left.xml" t="Include" />
@@ -362,6 +528,9 @@
             <e p="map_loading.json" t="Include" />
             <e p="new_notification.json" t="Include" />
             <e p="notification.json" t="Include" />
+            <e p="steps_progress.json" t="Include" />
+            <e p="walk.json" t="Include" />
+            <e p="walking_animation.json" t="Include" />
           </e>
           <e p="Resource.Designer.cs" t="Include" />
           <e p="values" t="Include">
@@ -383,10 +552,10 @@
         <e p="Services" t="Include">
           <e p="DistanceCalculator.cs" t="Include" />
           <e p="LocationService.cs" t="Include" />
-          <e p="MedicalAsistanceService.cs" t="Include" />
           <e p="MedicationServerService.cs" t="Include" />
           <e p="MedicationService.cs" t="Include" />
           <e p="SmartBandService.cs" t="Include" />
+          <e p="TrackerActivityService.cs" t="Include" />
           <e p="WebSocketService.cs" t="Include" />
         </e>
         <e p="Settings" t="Include">
@@ -410,13 +579,14 @@
         <e p="WebSocket" t="Include">
           <e p="IWebSocketClient.cs" t="Include" />
           <e p="WebSocketClient.cs" t="Include" />
+          <e p="WebSocketLocation.cs" t="Include" />
         </e>
       </e>
       <e p="FamiliaXamarin.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />
     </e>
-    <e p="C:\Program Files (x86)\Android\android-sdk\platforms\android-28\Data\res" t="IncludeRecursive" />
-    <e p="C:\Users\patricia.mic\.Rider2018.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\patricia.mic\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_FamiliaXamarin.1180245397.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/Rider2019.3/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/Rider2019.3/resharper-host/local/Transient/ReSharperHost/v193/SolutionCaches/_FamiliaXamarin.843005714.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/Library/Developer/Xamarin/android-sdk-macosx/platforms/android-28/Data/res" t="IncludeRecursive" />
   </component>
 </project>

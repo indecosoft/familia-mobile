@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Android.Content;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using Android.Support.V7.Widget;
-using Familia;
-using FamiliaXamarin.JsonModels;
+using Familia.JsonModels;
 
-namespace FamiliaXamarin.Sharing
+namespace Familia.Sharing
 {
     class SharingAdapter : RecyclerView.Adapter
     {
@@ -32,11 +32,11 @@ namespace FamiliaXamarin.Sharing
 //            var vh = new SharingAdapterViewHolder(itemView, OnClick, OnLongClick);
            // return vh;
 
-            var context = parent.Context;
-            var inflater = LayoutInflater.From(context);
+            Context context = parent.Context;
+            LayoutInflater inflater = LayoutInflater.From(context);
 
             // Inflate the custom layout
-            var contactView = inflater.Inflate(Resource.Layout.item_sharing, parent, false);
+            View contactView = inflater.Inflate(Resource.Layout.item_sharing, parent, false);
 
             // Return a new holder instance
             var viewHolder = new SharingAdapterViewHolder(contactView, OnClick, OnLongClick);
@@ -46,7 +46,7 @@ namespace FamiliaXamarin.Sharing
         // Replace the contents of a view (invoked by the layout manager)
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            var item = items[position];
+            SharingModel item = items[position];
 
              if (holder is SharingAdapterViewHolder viewHolder)
 

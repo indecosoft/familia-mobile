@@ -1,15 +1,15 @@
 using Familia.Devices.Helpers;
 using SQLite;
 
-namespace FamiliaXamarin.DataModels
+namespace Familia.DataModels
 {
-    public class BluetoothDeviceRecords
+    public struct BluetoothDeviceRecords
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
         public SupportedManufacturers DeviceManufacturer { get; set; }
-        public string DeviceType { get; set; }
+        public DeviceType DeviceType { get; set; }
     }
 }

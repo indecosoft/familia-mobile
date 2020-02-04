@@ -5,59 +5,61 @@ using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
 using Android.Util;
-using FamiliaXamarin;
-using FamiliaXamarin.DataModels;
-using FamiliaXamarin.Devices.PressureDevice;
+using Familia.DataModels;
+using Familia.Devices.Helpers;
+using Familia.Devices.PressureDevice;
+using Java.Lang;
 using Java.Util;
+using Exception = System.Exception;
 
-namespace Familia.Devices.BluetoothCallbacks.BloodPressure {
+namespace Familia.Devices.Bluetooth.Callbacks.BloodPressure {
     public class BloodPressureGattCallBack : BluetoothGattCallback {
-        private readonly Context context;
-        private readonly Handler handler = new Handler();
-        internal List<BloodPressureData> records = new List<BloodPressureData>();
-        private readonly IEnumerable<BluetoothDeviceRecords> ListOfSavedDevices;
+        private readonly Context _context;
+        private readonly Handler _handler = new Handler();
+        internal List<BloodPressureData> Records = new List<BloodPressureData>();
+        private readonly IEnumerable<BluetoothDeviceRecords> _listOfSavedDevices;
         public BloodPressureGattCallBack(Context context , IEnumerable<BluetoothDeviceRecords> listOfSavedDevices) {
-            this.context = context;
-            ListOfSavedDevices = listOfSavedDevices;
+            _context = context;
+            _listOfSavedDevices = listOfSavedDevices;
         }
-        private void DisplayMessageToUI(string message) {
-            ((BloodPressureDeviceActivity)context).RunOnUiThread(() => ((BloodPressureDeviceActivity)context)._lbStatus.Text = message);
+        private void DisplayMessageToUi(string message) {
+            ((BloodPressureDeviceActivity)_context).RunOnUiThread(() => ((BloodPressureDeviceActivity)_context).LbStatus.Text = message);
         }
         public override void OnConnectionStateChange(BluetoothGatt gatt, GattStatus status, ProfileState newState) {
-            var devicesDataNormalized = from c in ListOfSavedDevices
+            var devicesDataNormalized = from c in _listOfSavedDevices
                                         where c.Address == gatt.Device.Address
                                         select new { c.Name, c.Address, c.DeviceType };
             switch (newState) {
                 case ProfileState.Connected:
-                    DisplayMessageToUI($"S-a conectat la {devicesDataNormalized.FirstOrDefault().Name}...");
+                    DisplayMessageToUi($"S-a conectat la {devicesDataNormalized.FirstOrDefault()?.Name}...");
                     gatt.DiscoverServices();
                     break;
                 case ProfileState.Connecting:
-                    DisplayMessageToUI($"Se conecteaza la {devicesDataNormalized.FirstOrDefault().Name}...");
+                    DisplayMessageToUi($"Se conecteaza la {devicesDataNormalized.FirstOrDefault()?.Name}...");
                     break;
                 case ProfileState.Disconnecting:
-                    DisplayMessageToUI($"Se deconecteaza de la {devicesDataNormalized.FirstOrDefault().Name}...");
+                    DisplayMessageToUi($"Se deconecteaza de la {devicesDataNormalized.FirstOrDefault()?.Name}...");
                     break;
                 case ProfileState.Disconnected: {
                         gatt.Disconnect();
                         gatt.Close();
-                        if (records.Count > 0) {
-                            DisplayMessageToUI("Citirea s-a efectuat cu success");
-                            var result = records.Where(e => e != null).ToList().OrderByDescending(v => v.RecordDateTime).ToList();
-                            foreach (var record in result) {
-                                Log.Error("Data sorted", "Sistola: " + record.PulseRate + ", Diastola: " + record.Systolic +
-                                     ", Puls: " + record.PulseRate +
-                                     ", DateTime: " + record.RecordDateTime);
-                            }
-                            (context as BloodPressureDeviceActivity).RunOnUiThread(() => {
-                                (context as BloodPressureDeviceActivity)._animationView
-                                    .CancelAnimation();
-                                if (records.Count > 0) {
-                                    ((BloodPressureDeviceActivity)context).UpdateUi(result[0]);
+                        if (Records.Count > 0) {
+                            DisplayMessageToUi("Citirea s-a efectuat cu success");
+                            var result = Records.Where(e => e != null).ToList().OrderByDescending(v => v.RecordDateTime).ToList();
+                            (_context as BloodPressureDeviceActivity)?.RunOnUiThread(() => {
+                                if (Records.Count > 0) {
+                                    ((BloodPressureDeviceActivity)_context).UpdateUi(result[0]);
                                 }
+                                (_context as BloodPressureDeviceActivity)?.AnimationView
+                                    .CancelAnimation();
                             });
                         } else {
-                            DisplayMessageToUI("Nu s-au gasit date");
+                            DisplayMessageToUi("Nu s-au gasit date");
+                            (_context as BloodPressureDeviceActivity)?.RunOnUiThread(() => {
+                                (_context as BloodPressureDeviceActivity)?.AnimationView
+                                    .CancelAnimation();
+                                    ((BloodPressureDeviceActivity)_context).UpdateUi(null);
+                            });
                         }
                         break;
                     }
@@ -68,7 +70,7 @@ namespace Familia.Devices.BluetoothCallbacks.BloodPressure {
             if (status != 0) return;
 
             if (HasCurrentTimeService(gatt)) {
-                var timeCharacteristic =
+                BluetoothGattCharacteristic timeCharacteristic =
                     gatt.GetService(UUID.FromString("00001805-0000-1000-8000-00805f9b34fb"))
                         .GetCharacteristic(
                             UUID.FromString("00002A2B-0000-1000-8000-00805f9b34fb"));
@@ -89,10 +91,10 @@ namespace Familia.Devices.BluetoothCallbacks.BloodPressure {
         public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             var record = new BloodPressureData();
             var offset = 0;
-            var flags = characteristic.GetIntValue(GattFormat.Uint8, offset++);
+            Integer flags = characteristic.GetIntValue(GattFormat.Uint8, offset++);
             // See BPMManagerCallbacks.UNIT_* for unit options
-            var timestampPresent = ((int)flags & 0x02) > 0;
-            var pulseRatePresent = ((int)flags & 0x04) > 0;
+            bool timestampPresent = ((int)flags & 0x02) > 0;
+            bool pulseRatePresent = ((int)flags & 0x04) > 0;
 
             // following bytes - systolic, diastolic and mean arterial pressure
             record.Systolic = characteristic.GetFloatValue(GattFormat.Sfloat, offset).FloatValue();
@@ -112,7 +114,7 @@ namespace Familia.Devices.BluetoothCallbacks.BloodPressure {
             if (pulseRatePresent) {
                 record.PulseRate = characteristic.GetFloatValue(GattFormat.Sfloat, offset).FloatValue();
             }
-            records.Add(record);
+            Records.Add(record);
         }
         private bool HasCurrentTimeService(BluetoothGatt gatt) {
             return gatt.Services.Any(service =>
@@ -135,7 +137,7 @@ namespace Familia.Devices.BluetoothCallbacks.BloodPressure {
             time[4] = (byte)now.Get(CalendarField.HourOfDay);
             time[5] = (byte)now.Get(CalendarField.Minute);
             time[6] = (byte)now.Get(CalendarField.Second);
-            var dayOfWeek = now.Get(CalendarField.DayOfWeek);
+            int dayOfWeek = now.Get(CalendarField.DayOfWeek);
             if (dayOfWeek == 1) {
                 dayOfWeek = 7;
             } else {
@@ -148,9 +150,9 @@ namespace Familia.Devices.BluetoothCallbacks.BloodPressure {
             return time;
         }
         private void ListenToMeasurements(BluetoothGatt gatt) {
-            DisplayMessageToUI("Se preiau date...");
-            SetCharacteristicNotification(gatt, Constants.UuidBloodPressureService,
-                Constants.UuidBloodPressureMeasurementChar);
+            DisplayMessageToUi("Se preiau date...");
+            SetCharacteristicNotification(gatt, BLEHelpers.UuidBloodPressureService,
+                BLEHelpers.UuidBloodPressureMeasurementChar);
         }
 
         private void SetCharacteristicNotification(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid) {
@@ -159,7 +161,7 @@ namespace Familia.Devices.BluetoothCallbacks.BloodPressure {
         }
         private void SetCharacteristicNotificationWithDelay(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid) {
             try {
-                handler.PostDelayed(() => {
+                _handler.PostDelayed(() => {
                     SetCharacteristicNotification_private(gatt, serviceUuid, characteristicUuid);
                 }, 300);
             } catch (Exception ex) {
@@ -169,10 +171,10 @@ namespace Familia.Devices.BluetoothCallbacks.BloodPressure {
         }
         private static void SetCharacteristicNotification_private(BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid) {
             try {
-                var characteristic = gatt.GetService(serviceUuid).GetCharacteristic(characteristicUuid);
+                BluetoothGattCharacteristic characteristic = gatt.GetService(serviceUuid).GetCharacteristic(characteristicUuid);
                 gatt.SetCharacteristicNotification(characteristic, true);
-                var descriptor = characteristic.GetDescriptor(Constants.ClientCharacteristicConfig);
-                var indication = (Convert.ToInt32(characteristic.Properties) & 32) != 0;
+                BluetoothGattDescriptor descriptor = characteristic.GetDescriptor(BLEHelpers.ClientCharacteristicConfig);
+                bool indication = (Convert.ToInt32(characteristic.Properties) & 32) != 0;
                 descriptor.SetValue(indication
                     ? BluetoothGattDescriptor.EnableIndicationValue.ToArray()
                     : BluetoothGattDescriptor.EnableNotificationValue.ToArray());

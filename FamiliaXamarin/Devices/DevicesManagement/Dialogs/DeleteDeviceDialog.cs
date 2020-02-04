@@ -1,26 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Views;
 using Android.Widget;
-using Familia;
-using Familia.Devices.DevicesManagement.Dialogs.DialogEvents;
-using Familia.Devices.DevicesManagement.Dialogs.DialogHelpers;
-using FamiliaXamarin.DataModels;
-using FamiliaXamarin.Helpers;
+using Familia.DataModels;
+using Familia.Devices.DevicesManagement.Dialogs.Events;
+using Familia.Devices.DevicesManagement.Dialogs.Helpers;
+using Familia.Devices.DevicesManagement.Dialogs.Models;
+using Familia.Helpers;
 
-namespace FamiliaXamarin.Devices
+namespace Familia.Devices.DevicesManagement.Dialogs
 {
     class DeleteDeviceDialog : Dialog
     {
-        private Context _context;
-        private readonly DeviceEditingManagementModel _model;
+        private readonly DeviceEditingManagementModel? _model;
         public EventHandler<DialogStateEventArgs> DialogState;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -32,17 +25,12 @@ namespace FamiliaXamarin.Devices
 
         private void InitUi()
         {
-            FindViewById<Button>(Resource.Id.btn_confirm).Click += async delegate(object sender, EventArgs args)
-            {
-                var sqlHelper =
-                    await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
-                await sqlHelper.QueryValuations($"DELETE FROM BluetoothDeviceRecords WHERE Id ='{_model.Device.Id}'");
+            FindViewById<Button>(Resource.Id.btn_confirm).Click += async (sender, args) => {
+                var sqlHelper = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
+                await sqlHelper.QueryValuations($"DELETE FROM BluetoothDeviceRecords WHERE Id ='{_model?.Device.Id}'");
                 Dismiss();
             };
-            FindViewById<Button>(Resource.Id.btn_cancel).Click += delegate (object sender, EventArgs args)
-            {
-                Dismiss();
-            };
+            FindViewById<Button>(Resource.Id.btn_cancel).Click += (sender, args) => Dismiss();
         }
 
         public override void Dismiss()
@@ -58,9 +46,8 @@ namespace FamiliaXamarin.Devices
             DialogState.Invoke(this, new DialogStateEventArgs
                 { Status = DialogStatuses.Showing });
         }
-        public DeleteDeviceDialog(Context context, DeviceEditingManagementModel model) : base(context)
+        public DeleteDeviceDialog(Context context, DeviceEditingManagementModel? model) : base(context)
         {
-            _context = context;
             _model = model;
         }
     }

@@ -1,5 +1,5 @@
-﻿using System;
-using Familia.Devices.Helpers;
+﻿using Familia.Devices.Helpers;
+
 namespace Familia.Devices.Models {
     public class SupportedDeviceModel {
 		public string DeviceName { get; set; }

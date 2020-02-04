@@ -1,7 +1,6 @@
-﻿using System;
-using SQLite;
+﻿using SQLite;
 
-namespace FamiliaXamarin.DataModels
+namespace Familia.DataModels
 {
     public class DevicesRecords
     {
@@ -17,7 +16,7 @@ namespace FamiliaXamarin.DataModels
         public float BloodPresureSystolic { get; set; }
         public float BloodPresureDiastolic { get; set; }
         public float BloodPresurePulsRate { get; set; }
-        public int BloodGlucose { get; set; }
+        public int? BloodGlucose { get; set; }
         public int OxygenSaturation { get; set; }
         public string Extension { get; set; }
         public string MinutesOfActivity { get; set; }

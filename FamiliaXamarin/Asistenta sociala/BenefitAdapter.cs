@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using Familia;
+﻿using System;
+using System.Collections.Generic;
 using Android.Content;
 using Android.Views;
 using Android.Widget;
 using Object = Java.Lang.Object;
 
-namespace FamiliaXamarin.Asistenta_sociala
+namespace Familia.Asistenta_sociala
 {
     class BenefitAdapter : ArrayAdapter<SearchListModel>
     {
@@ -39,7 +38,7 @@ namespace FamiliaXamarin.Asistenta_sociala
         {
             if (parent == null)
             {
-                throw new System.ArgumentNullException(nameof(parent));
+                throw new ArgumentNullException(nameof(parent));
             }
 
 //            Contract.Ensures(Contract.Result<View>() != null);

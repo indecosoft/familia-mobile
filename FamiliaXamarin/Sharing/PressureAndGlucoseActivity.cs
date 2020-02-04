@@ -9,14 +9,12 @@ using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.Design.Widget;
-using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using FamiliaXamarin;
-using FamiliaXamarin.Helpers;
+using Familia.Helpers;
 using MikePhil.Charting.Charts;
 using MikePhil.Charting.Components;
 using MikePhil.Charting.Data;
@@ -144,7 +142,7 @@ namespace Familia.Sharing
                 if (dataType)
                 {
                     _bloodPressureDataList.Clear();
-                    var bloodPressureResult = await WebServices.Post($"{Constants.PublicServerAddress}/api/getUsersDataSharing",
+                    string bloodPressureResult = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/getUsersDataSharing",
                         new JSONObject().Put("dataType", "bloodPressure").Put("imei", _imei)
                             .Put("date", startDate.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(bloodPressureResult))
@@ -165,7 +163,7 @@ namespace Familia.Sharing
                 else
                 {
                     _bloodGlucoseDataList.Clear();
-                    var bloodGlucoseResult = await WebServices.Post($"{Constants.PublicServerAddress}/api/getUsersDataSharing",
+                    string bloodGlucoseResult = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/getUsersDataSharing",
                         new JSONObject().Put("dataType", "bloodGlucose").Put("imei", _imei)
                             .Put("date", startDate.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(bloodGlucoseResult))
@@ -312,7 +310,7 @@ namespace Familia.Sharing
 
         private void SetLegend()
         {
-            var l = _lineChart.Legend;
+            Legend l = _lineChart.Legend;
             l.FormSize = 10f; // set the size of the legend forms/shapes
             l.Form = Legend.LegendForm.Circle; // set what type of form/shape should be used
             l.VerticalAlignment = Legend.LegendVerticalAlignment.Bottom;
@@ -325,9 +323,9 @@ namespace Familia.Sharing
 
         private void LoadDataInScrollLayouts(DateTime date, bool pressure = true)
         {
-            var bloodPressureIconDrawable = Resources.GetDrawable(Resource.Drawable.heart, Theme);
-            var pulseRateIconDrawable = Resources.GetDrawable(Resource.Drawable.heart_pulse, Theme);
-            var glucoseIconDrawable = Resources.GetDrawable(Resource.Drawable.water, Theme);
+            Drawable bloodPressureIconDrawable = Resources.GetDrawable(Resource.Drawable.heart, Theme);
+            Drawable pulseRateIconDrawable = Resources.GetDrawable(Resource.Drawable.heart_pulse, Theme);
+            Drawable glucoseIconDrawable = Resources.GetDrawable(Resource.Drawable.water, Theme);
             verticalScrollLinearLayout.RemoveAllViewsInLayout();
             horizontalScrollLinearLayout.RemoveAllViewsInLayout();
             horizontalScrollLinearLayout.Invalidate();
@@ -361,17 +359,17 @@ namespace Familia.Sharing
                 {
                     Task.Run(async () =>
                     {
-                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/getDayRec", new JSONObject().Put("imei", _imei).Put("dataType", "bloodPressure").Put("date", date.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
+                        string result = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/getDayRec", new JSONObject().Put("imei", _imei).Put("dataType", "bloodPressure").Put("date", date.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
 
                         if (!string.IsNullOrEmpty(result))
                         {
                             try
                             {
                                 var array = new JSONArray(result);
-                                for (int i = 0; i < array.Length(); i++)
+                                for (var i = 0; i < array.Length(); i++)
                                 {
                                     var obj = new JSONObject(array.Get(i).ToString());
-                                    DateTime time = Convert.ToDateTime(obj.GetString("date"));
+                                    var time = Convert.ToDateTime(obj.GetString("date"));
                                     RunOnUiThread(() =>
                                     {
                                         verticalScrollLinearLayout.AddView(CreateCard(bloodPressureIconDrawable, $"{obj.GetString("systolic")}/{obj.GetString("diastolic")}", "mmHg", time.ToShortTimeString(), verticalScrollLayoutParams));
@@ -412,17 +410,17 @@ namespace Familia.Sharing
                 {
                     Task.Run(async () =>
                     {
-                        var result = await WebServices.Post($"{Constants.PublicServerAddress}/api/getDayRec", new JSONObject().Put("imei", _imei).Put("dataType", "bloodGlucose").Put("date", date.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
+                        string result = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/getDayRec", new JSONObject().Put("imei", _imei).Put("dataType", "bloodGlucose").Put("date", date.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
 
                         if (!string.IsNullOrEmpty(result))
                         {
                             try
                             {
                                 var array = new JSONArray(result);
-                                for (int i = 0; i < array.Length(); i++)
+                                for (var i = 0; i < array.Length(); i++)
                                 {
                                     var obj = new JSONObject(array.Get(i).ToString());
-                                    DateTime time = Convert.ToDateTime(obj.GetString("date"));
+                                    var time = Convert.ToDateTime(obj.GetString("date"));
                                     RunOnUiThread(() =>
                                     {
                                         verticalScrollLinearLayout.AddView(CreateCard(glucoseIconDrawable, $"{obj.GetInt("bloodGlucose")}", "mg/dL", time.ToShortTimeString(), verticalScrollLayoutParams));
@@ -457,16 +455,16 @@ namespace Familia.Sharing
                 Height = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 40, Resources.DisplayMetrics),
                 MarginEnd = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 5, Resources.DisplayMetrics)
             };
-            var dayIndex = ReturnDayIndex();
-            var baseDate = DateTime.Today;
+            int dayIndex = ReturnDayIndex();
+            DateTime baseDate = DateTime.Today;
 
 //            var today = baseDate;
 //            var yesterday = baseDate.AddDays(-1);
-            var thisWeekStart = baseDate.AddDays(-dayIndex);
+            DateTime thisWeekStart = baseDate.AddDays(-dayIndex);
 //            var thisWeekEnd = thisWeekStart.AddDays(7).AddSeconds(-1);
 //            var lastWeekStart = thisWeekStart.AddDays(-7);
 //            var lastWeekEnd = thisWeekStart.AddSeconds(-1);
-            var thisMonthStart = baseDate.AddDays(1 - baseDate.Day);
+            DateTime thisMonthStart = baseDate.AddDays(1 - baseDate.Day);
 //            var thisMonthEnd = thisMonthStart.AddMonths(1).AddSeconds(-1);
 //            var lastMonthStart = thisMonthStart.AddMonths(-1);
 //            var lastMonthEnd = thisMonthStart.AddSeconds(-1);
@@ -489,15 +487,15 @@ namespace Familia.Sharing
             if (type != 3)
             {
                 string[] days = { "L", "M", "M", "J", "V", "S", "D" };
-                var dayOfMonth = DateTime.Now.Day;
+                int dayOfMonth = DateTime.Now.Day;
                 int numberOfDaysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
                 int size = type == 1 && type != 3 ? days.Length : numberOfDaysInMonth;
 
                 var activeButton = new AppCompatButton(this);
-                for (int i = 0; i < size; i++)
+                for (var i = 0; i < size; i++)
                 {
                     bool isActive = type == 1 && type != 3 ? i == dayIndex : i+1 == dayOfMonth;
-                    var btn = DaySelectorButton(isActive);
+                    AppCompatButton btn = DaySelectorButton(isActive);
                     btn.Id = i + 1;
                     btn.Text = type == 1 && type != 3 ? i < days.Length ? days[i] : i.ToString() : (i + 1).ToString();
                     btn.LayoutParameters = layoutButtonParams;
@@ -525,12 +523,12 @@ namespace Familia.Sharing
             }
             else
             {
-                var img = Resources.GetDrawable(Resource.Drawable.calendar_date, Theme);
+                Drawable img = Resources.GetDrawable(Resource.Drawable.calendar_date, Theme);
                 img.SetBounds(0, 0, 50, 50);
                 var btn = new AppCompatButton(this)
                 {
                     Id = 1,
-                    Text = "Data",
+                    Text = "Data"
                     //Background = buttonBackgroundA,
                     //LayoutParameters = layoutButtonParams
                 };
@@ -617,29 +615,29 @@ namespace Familia.Sharing
             DateTime selectionDate = DateTime.Now;
             if(bottomNavigation.SelectedItemId == Resource.Id.week_tab)
             {
-                var dayIndex = ReturnDayIndex();
+                int dayIndex = ReturnDayIndex();
 
-                var baseDate = DateTime.Today;
+                DateTime baseDate = DateTime.Today;
 
-                var today = baseDate;
-                var yesterday = baseDate.AddDays(-1);
-                var thisWeekStart = baseDate.AddDays(-dayIndex);
+                DateTime today = baseDate;
+                DateTime yesterday = baseDate.AddDays(-1);
+                DateTime thisWeekStart = baseDate.AddDays(-dayIndex);
 
-                var customWeekStart = baseDate.AddDays(-(dayIndex - (btn.Id - 1)));
+                DateTime customWeekStart = baseDate.AddDays(-(dayIndex - (btn.Id - 1)));
 
-                var thisWeekEnd = thisWeekStart.AddDays(7).AddSeconds(-1);
-                var lastWeekStart = thisWeekStart.AddDays(-7);
-                var lastWeekEnd = thisWeekStart.AddSeconds(-1);
-                var thisMonthStart = baseDate.AddDays(1 - baseDate.Day);
-                var thisMonthEnd = thisMonthStart.AddMonths(1).AddSeconds(-1);
-                var lastMonthStart = thisMonthStart.AddMonths(-1);
-                var lastMonthEnd = thisMonthStart.AddSeconds(-1);
+                DateTime thisWeekEnd = thisWeekStart.AddDays(7).AddSeconds(-1);
+                DateTime lastWeekStart = thisWeekStart.AddDays(-7);
+                DateTime lastWeekEnd = thisWeekStart.AddSeconds(-1);
+                DateTime thisMonthStart = baseDate.AddDays(1 - baseDate.Day);
+                DateTime thisMonthEnd = thisMonthStart.AddMonths(1).AddSeconds(-1);
+                DateTime lastMonthStart = thisMonthStart.AddMonths(-1);
+                DateTime lastMonthEnd = thisMonthStart.AddSeconds(-1);
                 _tvDate.Text = customWeekStart.ToString("dd.MM.yyyy");
                 selectionDate = customWeekStart;
             }
             else if(bottomNavigation.SelectedItemId == Resource.Id.month_tab)
             {
-                var baseDate = DateTime.Today;
+                DateTime baseDate = DateTime.Today;
 
                 var month = baseDate.Month.ToString();
                 if (baseDate.Month < 10) month = $"0{month}";
@@ -647,7 +645,7 @@ namespace Familia.Sharing
                 var day = btn.Id.ToString();
                 if (btn.Id < 10) day = $"0{day}";
 
-                var date = $"{baseDate.Year}-{month}-{day}";
+                string date = $"{baseDate.Year}-{month}-{day}";
                 _tvDate.Text = $"{day}.{month}.{baseDate.Year}";
                 selectionDate = Convert.ToDateTime(date);
             }

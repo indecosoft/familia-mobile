@@ -1,19 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
 using Familia.DataModels;
-using FamiliaXamarin;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie.Entities;
+using Familia.Helpers;
+using Familia.Medicatie.Entities;
 using Org.Json;
 
 namespace Familia.Medicatie.Data
@@ -28,7 +20,7 @@ namespace Familia.Medicatie.Data
         public NetworkingData()
         {
             _medicationSchedules = new List<MedicationSchedule>();
-            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             var numeDB = "devices_data.db";
         }
 
@@ -52,7 +44,7 @@ namespace Familia.Medicatie.Data
             {
                 try
                 {
-                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("Id")}/{size}", Utils.GetDefaults("Token")); //this should be here
+                    string res = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("Id")}/{size}", Utils.GetDefaults("Token")); //this should be here
                     if (res != null)
                     {
                         Log.Error("Networking data future", " RESULT_FOR_MEDICATIE" + res);
@@ -76,7 +68,7 @@ namespace Familia.Medicatie.Data
             {
                 try
                 {
-                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/missedMedicine/{Utils.GetDefaults("Id")}/{size}", Utils.GetDefaults("Token")); //this should be here
+                    string res = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/missedMedicine/{Utils.GetDefaults("Id")}/{size}", Utils.GetDefaults("Token")); //this should be here
                     if (res != null)
                     {
                         Log.Error("Networking data", " RESULT_FOR_MEDICATIE" + res);
@@ -149,21 +141,20 @@ namespace Familia.Medicatie.Data
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
 
-            foreach (var element in list)
+            foreach (MedicationSchedule element in list)
             {
                 Log.Error("NetworkingData class saving..", element.ToString());
                 if (!(await SearchItemTask(element.Uuid)))
                 {
                     
 
-                    var objMed = await getElementByUUID(element.Uuid);
+                    MedicationSchedule objMed = await getElementByUUID(element.Uuid);
                     if (objMed != null && element.IdNotification == 0)
                     {
                         element.IdNotification = objMed.IdNotification;
                     }
                     Log.Error("NetworkingData class", "inserting in db..");
-                    await _db.Insert(new MedicineServerRecords()
-                    {
+                    await _db.Insert(new MedicineServerRecords {
                         Title = element.Title,
                         Content = element.Content,
                         DateTime = element.Timestampstring,
@@ -189,10 +180,10 @@ namespace Familia.Medicatie.Data
                 for (var i = 0; i < results.Length(); i++)
                 {
                     var obj = (JSONObject)results.Get(i);
-                    var uuid = obj.GetString("uuid");
-                    var timestampString = obj.GetString("timestamp");
-                    var title = obj.GetString("title");
-                    var content = obj.GetString("content");
+                    string uuid = obj.GetString("uuid");
+                    string timestampString = obj.GetString("timestamp");
+                    string title = obj.GetString("title");
+                    string content = obj.GetString("content");
                     var postpone = Convert.ToInt32(obj.GetString("postpone"));
                     medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone, 0));
                 }
@@ -210,7 +201,7 @@ namespace Familia.Medicatie.Data
 
             if (list.Count() != 0)
             {
-                foreach (var item in list)
+                foreach (MedicineServerRecords item in list)
                 {
                     return new MedicationSchedule(item.Uuid, item.DateTime, item.Title, item.Content, int.Parse(item.Postpone), int.Parse(item.IdNotification));
                 }
@@ -222,10 +213,10 @@ namespace Familia.Medicatie.Data
         public async Task<List<MedicationSchedule>> ReadListFromDbFutureDataTask()
         {
             var list = await GetDataFromDb();
-            var currentDate = DateTime.Now;
+            DateTime currentDate = DateTime.Now;
             var listMedSch = new List<MedicationSchedule>();
 
-            foreach (var elem in list)
+            foreach (MedicineServerRecords elem in list)
             {
                 try
                 {
@@ -248,10 +239,10 @@ namespace Familia.Medicatie.Data
 
         private static List<MedicationSchedule> ExtractFutureData(List<MedicationSchedule> list)
         {
-            var currentDate = DateTime.Now;
+            DateTime currentDate = DateTime.Now;
             var listMedSch = new List<MedicationSchedule>();
 
-            foreach (var elem in list)
+            foreach (MedicationSchedule elem in list)
             {
                 try
                 {
@@ -275,10 +266,10 @@ namespace Familia.Medicatie.Data
         public async Task<List<MedicationSchedule>> ReadListFromDbPastDataTask()
         {
             var list = await GetDataFromDb();
-            var currentDate = DateTime.Now;
+            DateTime currentDate = DateTime.Now;
             var listMedSch = new List<MedicationSchedule>();
 
-            foreach (var elem in list)
+            foreach (MedicineServerRecords elem in list)
             {
                 try
                 {
