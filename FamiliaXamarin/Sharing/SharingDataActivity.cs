@@ -1,24 +1,20 @@
-﻿using System;
-using Android.Support.V7.App;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using FamiliaXamarin.Sharing;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+﻿using Android.App;
 using Android.Content.PM;
+using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Support.V4.View;
-using Familia;
-using String = Java.Lang.String;
-using FamiliaXamarin.Helpers;
+using Android.Support.V7.App;
+using Android.Support.V7.Widget;
+using Java.Lang;
 
-namespace FamiliaXamarin.Services
+namespace Familia.Sharing
 {
     [Activity(Label = "SharingDataActivity", Theme = "@style/AppTheme.Dark",
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class SharingDataActivity : AppCompatActivity
     {
         private ViewPager viewPager;
-        private Android.Support.Design.Widget.BottomNavigationView bottomNavigation;
+        private BottomNavigationView bottomNavigation;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -28,14 +24,14 @@ namespace FamiliaXamarin.Services
             SetToolbar();
 
             bottomNavigation =
-                FindViewById<Android.Support.Design.Widget.BottomNavigationView>(Resource.Id
+                FindViewById<BottomNavigationView>(Resource.Id
                     .bottom_navigation);
 
             bottomNavigation.NavigationItemSelected += BottomNavigation_NavigationItemSelected;
             
 
             viewPager = (ViewPager) FindViewById(Resource.Id.pager);
-            SharingPagerAdapter myPagerAdapter = new SharingPagerAdapter(SupportFragmentManager);
+            var myPagerAdapter = new SharingPagerAdapter(SupportFragmentManager);
             myPagerAdapter.AddFragment(new Tab1Fragment(), new String("Cauta persoana"));
             myPagerAdapter.AddFragment(new Tab2Fragment(), new String("Lista conexiuni"));
             viewPager.Adapter = myPagerAdapter;
@@ -69,7 +65,7 @@ namespace FamiliaXamarin.Services
         }
 
         private void BottomNavigation_NavigationItemSelected(object sender,
-            Android.Support.Design.Widget.BottomNavigationView.NavigationItemSelectedEventArgs e)
+            BottomNavigationView.NavigationItemSelectedEventArgs e)
         {
             LoadFragment(e.Item.ItemId);
         }

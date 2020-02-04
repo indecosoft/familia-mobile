@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Android.Content;
+using Android.Graphics.Drawables;
 using Android.Support.V7.Widget;
+using Android.Text;
 using Android.Views;
 using Android.Widget;
-using FamiliaXamarin;
-using System.Linq;
-using Android.Graphics.Drawables;
-using Android.Content.Res;
-using Android.Support.V4.Content;
 
-namespace Familia.Asistentasociala
+namespace Familia.Asistenta_sociala
 {
     public class SearchListAdapter : RecyclerView.Adapter
     {
@@ -31,7 +29,7 @@ namespace Familia.Asistentasociala
         {
             int layout = Resource.Layout.item_benefit;
 
-            var itemView = mInflater.Inflate(layout, parent, false);
+            View itemView = mInflater.Inflate(layout, parent, false);
 
             var viewHolder = new SucHolder(itemView, OnClick);
             return viewHolder;
@@ -41,7 +39,7 @@ namespace Familia.Asistentasociala
         {
             var viewHolder = holder as SucHolder;
 
-            var benefit = _benefits[position];
+            SearchListModel benefit = _benefits[position];
             if (viewHolder == null) return;
             viewHolder.Name.Text = benefit.Title.Substring(0, 1).ToUpper() + benefit.Title.Substring(1);
             if (!benefit.IsSelected)
@@ -90,7 +88,7 @@ namespace Familia.Asistentasociala
                 Name = itemView.FindViewById<TextView>(Resource.Id.name);
                 IsSelected = itemView.FindViewById<TextView>(Resource.Id.isSelected);
 
-                Name.JustificationMode = Android.Text.JustificationMode.InterWord;
+                Name.JustificationMode = JustificationMode.InterWord;
 
             }
 

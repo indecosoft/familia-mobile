@@ -10,8 +10,8 @@ using Android.Widget;
 using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
+using Familia.Helpers;
 using Familia.Services;
-using FamiliaXamarin.Helpers;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace Familia.Activity_Tracker
@@ -45,7 +45,7 @@ namespace Familia.Activity_Tracker
             
             dailyTarget = getDailyTarget();
             tvDailyTarget.Text = dailyTarget + "";
-            var hht = dailyTarget / 15;
+            int hht = dailyTarget / 15;
             tvHHT.Text = hht + "";
 
             InitProgressAnimation();
@@ -105,7 +105,7 @@ namespace Familia.Activity_Tracker
         public void OnStepCounterSensorChanged(long count)
         {
             tvSteps.Text = TrackerActivityService.TotalDailySteps + "";
-            var progress = getProgressInPercent(dailyTarget, (int)TrackerActivityService.TotalDailySteps);//count
+            int progress = getProgressInPercent(dailyTarget, (int)TrackerActivityService.TotalDailySteps);//count
 
             if (currentProgres != progress)
             {

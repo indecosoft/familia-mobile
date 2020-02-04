@@ -5,7 +5,7 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using Com.Goodiebag.Pinview;
-using FamiliaXamarin.Helpers;
+using Familia.Helpers;
 
 namespace Familia.Settings
 {
@@ -43,7 +43,7 @@ namespace Familia.Settings
 
         private void ClearPin()
         {
-            for (int i = 0; i < pin.PinLength; i++)
+            for (var i = 0; i < pin.PinLength; i++)
             {
                 pin.OnKey(pin.FocusedChild, Keycode.Del, new KeyEvent(KeyEventActions.Up, Keycode.Del));
             }

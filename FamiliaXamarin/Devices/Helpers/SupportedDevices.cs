@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Familia.Devices.Models;
+
 namespace Familia.Devices.Helpers {
     public class SupportedDevices {
         public static readonly List<SupportedDeviceModel> GlucoseDevices = new List<SupportedDeviceModel> {

@@ -1,10 +1,11 @@
 ﻿using Android.Content;
 using Android.Hardware;
 using Android.Util;
+using Java.Lang;
 
 namespace Familia.Activity_Tracker
 {
-    class StepCounterSensor : Java.Lang.Object, ISensorEventListener
+    class StepCounterSensor : Object, ISensorEventListener
     {
         private Context context;
         private SensorManager sensorManager;

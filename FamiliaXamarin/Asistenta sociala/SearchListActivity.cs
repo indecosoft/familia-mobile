@@ -1,20 +1,17 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Android.App;
 using Android.Content;
-using Android.OS;
-using Android.Support.V7.App;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Android.Content.PM;
-using Android.Support.V7.Widget;
-using FamiliaXamarin;
+using Android.OS;
 using Android.Support.Design.Widget;
+using Android.Support.V7.App;
+using Android.Support.V7.Widget;
+using Android.Text;
 using Newtonsoft.Json;
 
-namespace Familia.Asistentasociala {
+namespace Familia.Asistenta_sociala {
     [Activity(Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class SearchListActivity : AppCompatActivity
     {
@@ -24,7 +21,7 @@ namespace Familia.Asistentasociala {
         public override void OnBackPressed()
         {
             base.OnBackPressed();
-            Intent returnIntent = new Intent();
+            var returnIntent = new Intent();
             returnIntent.PutExtra("result", string.Empty);
             SetResult(Result.Canceled, returnIntent);
             Finish();
@@ -43,7 +40,7 @@ namespace Familia.Asistentasociala {
             Title = "Inapoi";
             var benefitsArray = JsonConvert.DeserializeObject<List<SearchListModel>>(Intent.GetStringExtra("Items"));
             var selectedBenefits = JsonConvert.DeserializeObject<List<SearchListModel>>(Intent.GetStringExtra("SelectedItems"));
-            foreach (var benefit in benefitsArray)
+            foreach (SearchListModel benefit in benefitsArray)
             {
                 list.Add(new SearchListModel
                 {
@@ -69,7 +66,7 @@ namespace Familia.Asistentasociala {
             recyclerView.AddItemDecoration(new DividerItemDecoration(recyclerView.Context, DividerItemDecoration.Vertical));
         }
 
-        private void EtSearch_TextChanged(object sender, Android.Text.TextChangedEventArgs e)
+        private void EtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             mAdapter.Search(e.Text.ToString());
         }
@@ -82,8 +79,8 @@ namespace Familia.Asistentasociala {
         }
         private void SubmitBtn(object sender, EventArgs e)
         {
-            Intent returnIntent = new Intent();
-            var selectedItems = list.Where(el => el.IsSelected == true).ToList();
+            var returnIntent = new Intent();
+            var selectedItems = list.Where(el => el.IsSelected).ToList();
             returnIntent.PutExtra("result", JsonConvert.SerializeObject(selectedItems));
             SetResult(selectedItems.Count != 0 ? Result.Ok : Result.Canceled, returnIntent);
             Finish();

@@ -4,12 +4,11 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Util;
-using EngineIO;
 using EngineIO.Client;
+using Familia.Chat;
 using Familia.DataModels;
-using FamiliaXamarin.Chat;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.JsonModels;
+using Familia.Helpers;
+using Familia.JsonModels;
 using Java.Lang;
 using Newtonsoft.Json;
 using Org.Json;
@@ -19,7 +18,7 @@ using Exception = System.Exception;
 using Object = Java.Lang.Object;
 using Socket = SocketIO.Client.Socket;
 
-namespace FamiliaXamarin {
+namespace Familia.WebSocket {
     public class WebSocketClient : Object, IWebSocketClient, IListener {
         Socket _socket;
         public static Socket Client;
@@ -36,7 +35,7 @@ namespace FamiliaXamarin {
                 var options = new IO.Options {
                     ForceNew = true,
                     Reconnection = true,
-                    //Secure = false,
+                    Secure = false,
                     //Transports = new string[] { EngineIO.Client.Transports.PollingXHR.TransportName},
                     Query = $"token={Utils.GetDefaults("Token")}&imei={Utils.GetDeviceIdentificator(Application.Context)}"
 
@@ -91,7 +90,7 @@ namespace FamiliaXamarin {
             Log.Error("WebSocket", "Connection Timeout");
         }
         private void OnTransport(Object[] obj) {
-            Transport transport = (Transport)obj[0];
+            var transport = (Transport)obj[0];
             transport.On(Transport.EventRequestHeaders, this);
 
         }
@@ -121,9 +120,9 @@ namespace FamiliaXamarin {
 
                     });
                 }
-                Utils.CreateChannels("1", "1");
+                Utils.CreateChannels("ConversationChannel", "ConversationChannel");
                 //CAZUL 1 chat simplu intre 2 useri
-                var c = Utils.IsActivityRunning(Class.FromType(typeof(ChatActivity)));
+                bool c = Utils.IsActivityRunning(Class.FromType(typeof(ChatActivity)));
                 if (c && ChatActivity.RoomName.Equals(room)) {
                     Log.Error("Caz 1", "*********************");
                     ChatActivity.AddMessage(message, ChatModel.TypeMessage);
@@ -132,7 +131,7 @@ namespace FamiliaXamarin {
                 else if (!c && ChatActivity.RoomName.Equals(room)) {
                     Log.Error("Caz 2", "*********************");
 
-                    var nb = Utils.CreateChatNotification(username, message, username, room, _context, 3, "Vizualizare");
+                    Notification nb = Utils.CreateChatNotification(username, message, username, room, _context, 3, "Vizualizare");
 
                     var ids = room.Split(':');
                     Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("Id") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
@@ -141,7 +140,7 @@ namespace FamiliaXamarin {
                 else if (!ChatActivity.RoomName.Equals(room)) {
 
                     Log.Error("Caz 3", "*********************");
-                    var nb = Utils.CreateChatNotification(username, message, username, room, _context, 3, "Vizualizare");
+                    Notification nb = Utils.CreateChatNotification(username, message, username, room, _context, 3, "Vizualizare");
                     var ids = room.Split(':');
                     Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("Id") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
                 }
@@ -170,8 +169,8 @@ namespace FamiliaXamarin {
                 if (SharedRooms != null) {
                     var model = JsonConvert.DeserializeObject<List<ConverstionsModel>>(SharedRooms);
                     var currentModel = new ConverstionsModel { Username = email, Room = room };
-                    bool existingElement = false;
-                    foreach (var conversation in model) {
+                    var existingElement = false;
+                    foreach (ConverstionsModel conversation in model) {
                         if (conversation.Username.Equals(currentModel.Username)) {
                             existingElement = true;
                             break;
@@ -185,7 +184,7 @@ namespace FamiliaXamarin {
                     string serialized = JsonConvert.SerializeObject(model);
                     Utils.SetDefaults("Rooms", serialized);
                 } else {
-                    List<ConverstionsModel> model = new List<ConverstionsModel>();
+                    var model = new List<ConverstionsModel>();
                     var currentModel = new ConverstionsModel { Username = email, Room = room };
                     model.Add(currentModel);
 
@@ -196,7 +195,7 @@ namespace FamiliaXamarin {
             } catch (Exception e) {
                 Log.Error("Error OnConversation", e.Message);
             }
-            var nb = Utils.CreateChatNotification("Cerere acceptata", $"{email} ti-a acceptat cererea de chat!", email, room, _context, 2);
+            Notification nb = Utils.CreateChatNotification("Cerere acceptata", $"{email} ti-a acceptat cererea de chat!", email, room, _context, 2);
             var ids = room.Split(':');
             Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("Id") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
         }
@@ -218,7 +217,7 @@ namespace FamiliaXamarin {
             Utils.CreateChannels(email, email);
 
             //var nb = Utils.GetAndroidChannelNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
-            var nb = Utils.CreateChatNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", email, room, _context);
+            Notification nb = Utils.CreateChatNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", email, room, _context);
             var ids = room.Split(':');
             Utils.GetManager().Notify(ids[0] == Utils.GetDefaults("Id") ? int.Parse(ids[1]) : int.Parse(ids[0]), nb);
         }
@@ -237,7 +236,7 @@ namespace FamiliaXamarin {
             Utils.CreateChannels(email, email);
 
             //var nb = Utils.GetAndroidChannelNotification("Cerere de convorbire", $"{email} doreste sa ia legatura cu tine!", "Accept", 1, _context, room);
-            var nb = Utils.CreateChatNotification(email, "Ti-a respins cererea de convorbire!", email, null, _context, 1);
+            Notification nb = Utils.CreateChatNotification(email, "Ti-a respins cererea de convorbire!", email, null, _context, 1);
             Utils.GetManager().Notify(1000, nb);
         }
 

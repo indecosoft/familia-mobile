@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using Familia;
-using FamiliaXamarin.Medicatie.Entities;
+using Familia.Medicatie.Entities;
 
-namespace FamiliaXamarin.Medicatie
+namespace Familia.Medicatie
 {
     class CustomDialogDeleteMedicament :Dialog, View.IOnClickListener
     {
@@ -56,7 +49,7 @@ namespace FamiliaXamarin.Medicatie
             switch (v.Id)
             {
                 case Resource.Id.btn_da_delete_medicament:
-                    listener.onYesClicked("yes", this.medicament);
+                    listener.onYesClicked("yes", medicament);
                     Dismiss();
                     break;
                 case Resource.Id.btn_nu_delete_medicament:

@@ -1,22 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
-using Android.OS;
-using Android.Runtime;
 using Android.Support.V4.App;
-using Android.Util;
-using Android.Views;
-using Android.Widget;
-using Familia;
-using FamiliaXamarin.Devices;
-using FamiliaXamarin.Devices.GlucoseDevice;
-using FamiliaXamarin.Devices.PressureDevice;
 
-namespace FamiliaXamarin.Helpers {
+namespace Familia.Helpers {
     [BroadcastReceiver(Enabled = true, Exported = true)]
     public class AlarmDeviceReceiver : BroadcastReceiver {
         public static readonly string INTERVAL_CONTENT = "INTERVAL_CONTENT";
@@ -29,8 +15,8 @@ namespace FamiliaXamarin.Helpers {
 
 
         public override void OnReceive(Context context, Intent intent) {
-            var content = intent.GetStringExtra(INTERVAL_CONTENT);
-            var intervalMilis = intent.GetStringExtra("IntervalMilis");
+            string content = intent.GetStringExtra(INTERVAL_CONTENT);
+            string intervalMilis = intent.GetStringExtra("IntervalMilis");
 
             //Log.Error("PPPAAAAAAAAAAAAAAAAAA", "receiver " + content);
 
@@ -57,7 +43,7 @@ namespace FamiliaXamarin.Helpers {
         }
 
         private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent) {
-            var description = mContent;
+            string description = mContent;
 
             var channel =
                 new NotificationChannel(mChannel, mTitle, NotificationImportance.Default) {
@@ -76,8 +62,8 @@ namespace FamiliaXamarin.Helpers {
 
             //Log.Error("PPPAAAAAAAAAAAAAAAAAA", "build notification for " + title + " with id: " + notifyId);
 
-            var piNotification = PendingIntent.GetActivity(context, notifyId, intent, PendingIntentFlags.UpdateCurrent);
-            var mBuilder =
+            PendingIntent piNotification = PendingIntent.GetActivity(context, notifyId, intent, PendingIntentFlags.UpdateCurrent);
+            NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context, channel)
                     .SetSmallIcon(Resource.Drawable.water)
                     .SetContentText(content)
@@ -92,7 +78,7 @@ namespace FamiliaXamarin.Helpers {
                 mBuilder.SetSmallIcon(Resource.Drawable.water);
             }
 
-            var notificationManager = NotificationManagerCompat.From(context);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
 
             notificationManager.Notify(notifyId, mBuilder.Build());
         }

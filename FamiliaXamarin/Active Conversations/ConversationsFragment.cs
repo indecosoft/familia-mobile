@@ -4,28 +4,28 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Views;
-using FamiliaXamarin.Active_Conversations;
-using FamiliaXamarin.Chat;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.JsonModels;
+using Familia.Chat;
+using Familia.Helpers;
+using Familia.JsonModels;
 using Java.Lang;
 using Newtonsoft.Json;
+using Fragment = Android.Support.V4.App.Fragment;
 
 namespace Familia.Active_Conversations
 {
-    public class ConversationsFragment : Android.Support.V4.App.Fragment
+    public class ConversationsFragment : Fragment
     {
         private RecyclerView _conversationsRecyclerView;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
         {
-            var view = inflater.Inflate(Resource.Layout.fragment_conversations, container, false);
+            View view = inflater.Inflate(Resource.Layout.fragment_conversations, container, false);
             _conversationsRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.conversations);
             try
             {
                 // Initialize contacts
-                var conv = Utils.GetDefaults("Rooms");
+                string conv = Utils.GetDefaults("Rooms");
                 if (conv != null)
                 {
                     var contacts = JsonConvert.DeserializeObject<List<ConverstionsModel>>(conv);
@@ -37,17 +37,17 @@ namespace Familia.Active_Conversations
                     _conversationsRecyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
                     adapter.ItemClick += (sender, args) =>
                     {
-                        var name = contacts[args.Position].Username;
-                        var room = contacts[args.Position].Room;
+                        string name = contacts[args.Position].Username;
+                        string room = contacts[args.Position].Room;
                         var intent = new Intent(Activity, typeof(ChatActivity));
                         intent.PutExtra("Room", room);
                         intent.PutExtra("EmailFrom", name);
-                        intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
+                        // intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
                         StartActivity(intent);
                     };
                     adapter.ItemLongClick += delegate(object sender, ConvAdapterClickEventArgs args)
                     {
-                        var alertDialog =
+                        AlertDialog alertDialog =
                             new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dialog)
                                 .Create();
                         alertDialog.SetTitle("Avertisment");
@@ -56,7 +56,7 @@ namespace Familia.Active_Conversations
                         {
                             adapter.DeleteConversation(args.Position);
                             adapter.NotifyDataSetChanged();
-                            var serialized = JsonConvert.SerializeObject(contacts);
+                            string serialized = JsonConvert.SerializeObject(contacts);
                             Utils.SetDefaults("Rooms", serialized);
                         });
                         alertDialog.SetButton2("Nu", delegate { });

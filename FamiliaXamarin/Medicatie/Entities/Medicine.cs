@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Java.Util;
-using Object = System.Object;
 
-namespace FamiliaXamarin.Medicatie.Entities
+namespace Familia.Medicatie.Entities
 {
     public class Medicine
     {
@@ -45,7 +42,7 @@ namespace FamiliaXamarin.Medicatie.Entities
 
         public Hour FindHourById(string mId)
         {
-            foreach (var hour in Hours)
+            foreach (Hour hour in Hours)
             {
                 if (hour.Id.Equals(mId))
                 {
@@ -69,7 +66,7 @@ namespace FamiliaXamarin.Medicatie.Entities
                 return false;
             }
 
-            Medicine m = (Medicine)obj;
+            var m = (Medicine)obj;
 
             return Name.Equals(m.Name);
         }

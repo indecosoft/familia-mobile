@@ -1,5 +1,4 @@
-﻿using System;
-namespace Familia.Devices.DevicesManagement.Dialogs.DialogHelpers {
+﻿namespace Familia.Devices.DevicesManagement.Dialogs.Helpers {
 	public enum DialogStatuses
 	{
 		Dismissed = 1,

@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Android.Bluetooth.LE;
 using Android.Content;
 using Android.Runtime;
-using FamiliaXamarin.DataModels;
-using FamiliaXamarin.Devices.PressureDevice;
-using FamiliaXamarin.Helpers;
+using Familia.DataModels;
+using Familia.Devices.PressureDevice;
 
-namespace Familia.Devices.BluetoothCallbacks.BloodPressure {
-	public class BloodPressureScanCallback : ScanCallback
+namespace Familia.Devices.Bluetooth.Callbacks.BloodPressure {
+    public class BloodPressureScanCallback : ScanCallback
 	{
 		private readonly Context _context;
         private readonly IEnumerable<BluetoothDeviceRecords> ListOfSavedDevices;
@@ -27,9 +25,9 @@ namespace Familia.Devices.BluetoothCallbacks.BloodPressure {
             if (!devicesDataNormalized.Any())
                 return;
             result.Device.ConnectGatt(_context, false,
-				(_context as BloodPressureDeviceActivity)?._gattCallback);
-			(_context as BloodPressureDeviceActivity)?._bluetoothScanner.StopScan(
-				((BloodPressureDeviceActivity)_context)?._scanCallback);
+				(_context as BloodPressureDeviceActivity)?.GattCallback);
+			(_context as BloodPressureDeviceActivity)?.BluetoothScanner.StopScan(
+				((BloodPressureDeviceActivity)_context)?.ScanCallback);
 		}
 	}
 }

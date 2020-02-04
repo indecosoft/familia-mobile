@@ -2,26 +2,21 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
-using Familia;
-using FamiliaXamarin.DataModels;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie.Alarm;
+using Familia.DataModels;
+using Familia.Helpers;
+using Familia.Medicatie.Alarm;
 using Org.Json;
 using SQLite;
+using Environment = System.Environment;
 
-namespace FamiliaXamarin.Services
+namespace Familia.Services
 {
     [Service]
     class MedicationService : Service
@@ -29,7 +24,7 @@ namespace FamiliaXamarin.Services
         private SQLiteAsyncConnection _db;
         private const int ServiceRunningNotificationId = 20000;
         Timer aTimer = new Timer(2000);
-        private int interval = 2000, counter = 0;
+        private int interval = 2000, counter;
 
 
         public override void OnDestroy()
@@ -77,7 +72,7 @@ namespace FamiliaXamarin.Services
             base.OnCreate();
             Log.Error("Medication Service:", "STARTED");
 
-            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             var numeDB = "devices_data.db";
             _db = new SQLiteAsyncConnection(Path.Combine(path, numeDB));
            
@@ -90,18 +85,18 @@ namespace FamiliaXamarin.Services
             await _db.CreateTableAsync<MedicineRecords>();
             var myList = await EvaluateQuery(_db, "Select * FROM MedicineRecords");
             Log.Error("Medication Service:", " count from myList" + myList.Count());
-            JSONArray jsonList = new JSONArray();
+            var jsonList = new JSONArray();
             if (myList.Count() == 0) return false;
-            foreach (var el in myList)
+            foreach (MedicineRecords el in myList)
             {
                 JSONObject element = new JSONObject().Put("uuid", el.Uuid).Put("date", el.DateTime);
                 jsonList.Put(element);
             }
-            Log.Error("Medication Service:", "sending object.. " + jsonList.ToString());
+            Log.Error("Medication Service:", "sending object.. " + jsonList);
             if (Utils.CheckNetworkAvailability())
             {
                 Log.Error("Medication Service:", "network checked");
-                string result = await WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", jsonList, Utils.GetDefaults("Token"));
+                string result = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", jsonList, Utils.GetDefaults("Token"));
                 Log.Error("Medication Service", result);
                 switch (result)
                 {
@@ -119,11 +114,9 @@ namespace FamiliaXamarin.Services
 
                 }
             }
-            else
-            {
-                aTimer.Start();
-                return false;
-            }
+
+            aTimer.Start();
+            return false;
         }
 
       
@@ -138,7 +131,7 @@ namespace FamiliaXamarin.Services
         {
             Log.Error("Medication Service", "Started");
 
-            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            aTimer.Elapsed += OnTimedEvent;
             aTimer.Start();
 
             try

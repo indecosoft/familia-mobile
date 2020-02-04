@@ -1,9 +1,8 @@
-﻿using System;
-namespace Familia.Devices.Helpers {
+﻿namespace Familia.Devices.Helpers {
     public enum DeviceType {
-        Unknown,
-        Glucose,
-        BloodPressure,
-        SmartBand
+        Unknown = 0,
+        Glucose = 1,
+        BloodPressure = 2,
+        SmartBand = 3
     }
 }

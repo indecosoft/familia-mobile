@@ -2,37 +2,37 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
-using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using Android;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Database;
+using Android.Graphics.Drawables;
 using Android.OS;
+using Android.Provider;
+using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
-using Familia.Profile.Data;
-using FamiliaXamarin;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie;
-using Org.Json;
-using Refractored.Controls;
-using Exception = System.Exception;
-using System.Threading.Tasks;
-using Android;
-using Android.Provider;
-using Android.Support.V4.Content;
 using Com.Bumptech.Glide.Request;
 using Com.Bumptech.Glide.Signature;
-using Familia.Asistentasociala;
+using Familia.Asistenta_sociala;
+using Familia.Helpers;
+using Familia.Medicatie;
+using Familia.Profile.Data;
 using Java.Text;
 using Java.Util;
 using Newtonsoft.Json;
+using Org.Json;
+using Refractored.Controls;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Environment = Android.OS.Environment;
 using File = Java.IO.File;
+using Uri = Android.Net.Uri;
 
 namespace Familia.Profile
 {
@@ -55,7 +55,7 @@ namespace Familia.Profile
         private string name;
         private string birthdate;
         private File Dir;
-        private Android.Net.Uri _photoUri;
+        private Uri _photoUri;
         private FileInfo _fileInformations;
         private string _imageExtension, _imagePath;
         private List<SearchListModel> _selectedDiseases = new List<SearchListModel>();
@@ -159,12 +159,12 @@ namespace Familia.Profile
 
                     name = tvName.Text;
 
-                    if (FindViewById<RadioButton>(Resource.Id.rb_female).Checked == true)
+                    if (FindViewById<RadioButton>(Resource.Id.rb_female).Checked)
                     {
                         gender = "Feminin";
                     }
 
-                    if (FindViewById<RadioButton>(Resource.Id.rb_male).Checked == true)
+                    if (FindViewById<RadioButton>(Resource.Id.rb_male).Checked)
                     {
                         gender = "Masculin";
                     }
@@ -226,7 +226,7 @@ namespace Familia.Profile
             if (listToBeSaved != null)
             {
                 Log.Error("UpdateProfileActivity", "diseases count: " + listToBeSaved.Count);
-                foreach (var element in listToBeSaved)
+                foreach (PersonalDisease element in listToBeSaved)
                 {
                     var slm = new SearchListModel();
                     slm.Id = element.Cod;
@@ -240,7 +240,7 @@ namespace Familia.Profile
                 if (personalData.listOfPersonalDiseases.Count != 0)
                 {
                     Log.Error("UpdateProfileActivity", "diseases count: " + personalData.listOfPersonalDiseases.Count);
-                    foreach (var element in personalData.listOfPersonalDiseases)
+                    foreach (PersonalDisease element in personalData.listOfPersonalDiseases)
                     {
                         var slm = new SearchListModel();
                         slm.Id = element.Cod;
@@ -251,7 +251,7 @@ namespace Familia.Profile
                 }
             }
 
-            Intent intent = new Intent(this, typeof(SearchListActivity));
+            var intent = new Intent(this, typeof(SearchListActivity));
             intent.PutExtra("Items", JsonConvert.SerializeObject(await GetDiseaseList()));
             intent.PutExtra("SelectedItems", JsonConvert.SerializeObject(list));
             StartActivityForResult(intent, 3);
@@ -263,7 +263,7 @@ namespace Familia.Profile
             var items = new List<SearchListModel>();
             await Task.Run(async () =>
             {
-                var result = await WebServices.Get(Constants.PublicServerAddress + "/api/getDisease", Utils.GetDefaults("Token"));
+                string result = await WebServices.WebServices.Get(Constants.PublicServerAddress + "/api/getDisease", Utils.GetDefaults("Token"));
                 if (result != null)
                 {
                     Log.Error("UpdateProfileActivity", "RESULT " + result);
@@ -321,7 +321,7 @@ namespace Familia.Profile
                     case 2:
                         try
                         {
-                        var uri = data.Data;
+                        Uri uri = data.Data;
                         _imagePath = GetPathToImage(uri);
                         Glide.With(this).Load(new File(_imagePath)).Into(ciwProfileImage);
                         _fileInformations = new FileInfo(_imagePath);
@@ -353,7 +353,7 @@ namespace Familia.Profile
                         Log.Error("UpdateProfileActivity", "result updated: " + data.GetStringExtra("result"));
                         _selectedDiseases = JsonConvert.DeserializeObject<List<SearchListModel>>(data.GetStringExtra("result"));
                         listToBeSaved = new List<PersonalDisease>();
-                        foreach (var item in _selectedDiseases)
+                        foreach (SearchListModel item in _selectedDiseases)
                         {
                             listToBeSaved.Add(new PersonalDisease(item.Id, item.Title));
                         }
@@ -387,7 +387,7 @@ namespace Familia.Profile
 
         public async void LoadModel()
         {
-            ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
+            var dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
             dialog.Show(); try
             {
                 Log.Error("UpdateProfileActivity ERR load model", "load picture");
@@ -448,7 +448,7 @@ namespace Familia.Profile
             try
             {
                 //format datetime de pe server
-                DateTime birthdate = Convert.ToDateTime(dateString);
+                var birthdate = Convert.ToDateTime(dateString);
                 return birthdate.Day + "/" + birthdate.Month + "/" + birthdate.Year;
             }
             catch (Exception e)
@@ -564,8 +564,8 @@ namespace Familia.Profile
         {
             Toast.MakeText(this, "Fotografie prea mare! Dimensiunea maxima acceptata este de 10 Mb.", ToastLength.Long).Show();
             var resourcePath = "@drawable/profile"; // where myresource (without the extension) is the file
-            var imageResource = Resources.GetIdentifier(resourcePath, null, PackageName);
-            var res = ContextCompat.GetDrawable(this, imageResource);
+            int imageResource = Resources.GetIdentifier(resourcePath, null, PackageName);
+            Drawable res = ContextCompat.GetDrawable(this, imageResource);
             ciwProfileImage.SetImageDrawable(res);
         }
 
@@ -573,7 +573,7 @@ namespace Familia.Profile
         {
             var mediaScanIntent = new Intent(Intent.ActionMediaScannerScanFile);
             var f = new File(_photoUri.Path);
-            var contentUri = Android.Net.Uri.FromFile(f);
+            Uri contentUri = Uri.FromFile(f);
             mediaScanIntent.SetData(contentUri);
             SendBroadcast(mediaScanIntent);
         }
@@ -589,9 +589,9 @@ namespace Familia.Profile
 
         private File CreateImageFile()
         {
-            var timeStamp = new SimpleDateFormat("yyyy.MM.dd_HH:mm").Format(new Date());
-            var imageFileName = $"Avatar_" + timeStamp + "";
-            var storageDir = GetExternalFilesDir(Environment.DirectoryPictures);
+            string timeStamp = new SimpleDateFormat("yyyy.MM.dd_HH:mm").Format(new Date());
+            string imageFileName = "Avatar_" + timeStamp + "";
+            File storageDir = GetExternalFilesDir(Environment.DirectoryPictures);
             var image = File.CreateTempFile(
                 imageFileName, /* prefix */
                 ".jpg", /* suffix */
@@ -615,26 +615,26 @@ namespace Familia.Profile
             StartActivityForResult(intent, Constants.RequestCamera);
         }
 
-        private string GetPathToImage(Android.Net.Uri uri)
+        private string GetPathToImage(Uri uri)
         {
             string docId;
-            using (var c1 = ContentResolver.Query(uri,
+            using (ICursor c1 = ContentResolver.Query(uri,
                 null, null, null, null))
             {
                 c1.MoveToFirst();
-                var documentId = c1.GetString(0);
+                string documentId = c1.GetString(0);
                 docId = documentId.Substring(
                     documentId.LastIndexOf(":", StringComparison.Ordinal) + 1);
             }
 
             string path;
             const string selection = MediaStore.Images.Media.InterfaceConsts.Id + " =? ";
-            using (var cursor = ContentResolver.Query(
+            using (ICursor cursor = ContentResolver.Query(
                 MediaStore.Images.Media.ExternalContentUri, null, selection, new[] { docId },
                 null))
             {
                 if (cursor == null) return null;
-                var columnIndex =
+                int columnIndex =
                     cursor.GetColumnIndexOrThrow(MediaStore.Images.Media.InterfaceConsts.Data);
                 cursor.MoveToFirst();
                 path = cursor.GetString(columnIndex);

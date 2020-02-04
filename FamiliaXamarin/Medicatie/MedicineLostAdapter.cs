@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Android.Content;
-using Android.Content.Res;
 using Android.Graphics;
-using Android.Support.V4.Content;
-using Android.Views;
-using Android.Widget;
 using Android.Support.V7.Widget;
 using Android.Util;
-using FamiliaXamarin.Medicatie.Entities;
-using RelativeLayout = Android.Widget.RelativeLayout;
+using Android.Views;
+using Android.Widget;
+using Familia.Medicatie.Entities;
 
 namespace Familia.Medicatie
 {

@@ -1,35 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Media;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Familia;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie.Data;
-using FamiliaXamarin.Medicatie.Entities;
-using FamiliaXamarin.Settings;
-
+using Familia.DataModels;
+using Familia.Helpers;
+using Familia.Medicatie.Data;
+using Familia.Medicatie.Entities;
+using Familia.Services;
 using Org.Json;
 using SQLite;
-using System.IO;
-using System.Threading.Tasks;
-using System.Linq;
+using Environment = System.Environment;
 
-
-using FamiliaXamarin.DataModels;
-using FamiliaXamarin.Services;
-
-
-namespace FamiliaXamarin.Medicatie.Alarm
+namespace Familia.Medicatie.Alarm
 {
     [Activity(Label = "AlarmActivity")]
     public class AlarmActivity : AppCompatActivity, View.IOnClickListener
@@ -118,8 +109,8 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     NotifyId = intent.GetIntExtra("notifyId", 5);
                     tvMedName.Text = "Pentru afectiunea " + title + " trebuie luat medicamentul " + content;
                     Log.Error("alarm activity", postpone + " ");
-                    var path =
-                        System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+                    string path =
+                        Environment.GetFolderPath(Environment.SpecialFolder.Personal);
                     var nameDb = "devices_data.db";
                     _db = new SQLiteAsyncConnection(Path.Combine(path, nameDb));
                     await _db.CreateTableAsync<MedicineRecords>();
@@ -136,9 +127,9 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
                     if (extraMessage == AlarmBroadcastReceiverServer.FROM_SERVER)
                     {   
-                        var now = DateTime.Now;
+                        DateTime now = DateTime.Now;
 
-                        var mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid)
+                        JSONArray mArray = new JSONArray().Put(new JSONObject().Put("uuid", uuid)
                             .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
 
                                 AddMedicine(_db, uuid, now);
@@ -147,11 +138,11 @@ namespace FamiliaXamarin.Medicatie.Alarm
                                 new Intent(this, typeof(MedicationService));
                                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                                 {
-                                    this.StartForegroundService(_medicationServiceIntent);
+                                    StartForegroundService(_medicationServiceIntent);
                                 }
                                 else
                                 {
-                                    this.StartService(_medicationServiceIntent);
+                                    StartService(_medicationServiceIntent);
                                 }
                                  Storage.GetInstance().removeMedSer(uuid);
 
@@ -159,7 +150,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
                     }
 
                     Log.Error("ID NOTIFICARE", NotifyId +"");
-                        NotificationManager notificationManager = (NotificationManager)ApplicationContext.GetSystemService(Context.NotificationService);
+                        var notificationManager = (NotificationManager)ApplicationContext.GetSystemService(NotificationService);
                         notificationManager.Cancel(NotifyId);
 
                     Toast.MakeText(this, "Medicament luat.", ToastLength.Short).Show();
@@ -177,7 +168,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
         {
             Log.Error("Alarm activity", "snoozed");
             Intent i;
-            var snoozeInMilisec = postpone * 60000;
+            int snoozeInMilisec = postpone * 60000;
             PendingIntent pi;
             if (extraMessage == AlarmBroadcastReceiver.FROM_APP)
             {
@@ -196,7 +187,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
                 pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
 
-                NotificationManager notificationManager = (NotificationManager)ApplicationContext.GetSystemService(Context.NotificationService);
+                var notificationManager = (NotificationManager)ApplicationContext.GetSystemService(NotificationService);
                 notificationManager.Cancel(NotifyId);
             }
             else
@@ -214,7 +205,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
                 pi = PendingIntent.GetBroadcast(this, NotifyId, i, PendingIntentFlags.OneShot);
 
-                NotificationManager notificationManager = (NotificationManager)ApplicationContext.GetSystemService(Context.NotificationService);
+                var notificationManager = (NotificationManager)ApplicationContext.GetSystemService(NotificationService);
                 notificationManager.Cancel(NotifyId);
             }
 
@@ -229,7 +220,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         private static bool IsServiceRunning(Type classTypeof, Context context)
         {
-            var manager = (ActivityManager)context.GetSystemService(Context.ActivityService);
+            var manager = (ActivityManager)context.GetSystemService(ActivityService);
 #pragma warning disable 618
             return manager.GetRunningServices(int.MaxValue).Any(service =>
                 service.Service.ShortClassName == classTypeof.ToString());
@@ -237,8 +228,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         private static async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now)
         {
-            await db.InsertAsync(new MedicineRecords()
-            {
+            await db.InsertAsync(new MedicineRecords {
                 Uuid = uuid,
                 DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
             });
@@ -246,7 +236,7 @@ namespace FamiliaXamarin.Medicatie.Alarm
 
         private static async Task<bool> SendData(Context context, JSONArray mArray)
         {
-            var result = await WebServices.Post(
+            string result = await WebServices.WebServices.Post(
                 $"{Constants.PublicServerAddress}/api/medicine", mArray,
                 Utils.GetDefaults("Token"));
             if (!Utils.CheckNetworkAvailability()) return false;

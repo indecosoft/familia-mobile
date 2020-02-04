@@ -12,21 +12,18 @@ using Android.Support.V4.Content;
 using Android.Support.V4.Hardware.Fingerprint;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Widget;
 using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
-using FamiliaXamarin;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Login_System;
+using Familia.Helpers;
 using Java.Security;
 using Javax.Crypto;
 using Org.Json;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
-using Exception = System.Exception;
+using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Permission = Android.Content.PM.Permission;
-using Android.Util;
-using Familia.LoginSystem;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace Familia.Login_System
 {
@@ -43,30 +40,21 @@ namespace Familia.Login_System
         private Cipher _cipher;
         private readonly string _keyName = "EDMTDev";
         private ProgressBarDialog _progressBarDialog;
-
-        private readonly string[] _permissionsArray =
-        {
-            Manifest.Permission.ReadPhoneState,
-            Manifest.Permission.AccessCoarseLocation,
-            Manifest.Permission.AccessFineLocation,
-            Manifest.Permission.Camera,
-            Manifest.Permission.ReadExternalStorage,
-            Manifest.Permission.WriteExternalStorage
-        };
+        
 
         protected override void OnResume()
         {
             base.OnResume();
 
-            var fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint")) &&
-                              Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
+            bool fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint")) &&
+                               Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
 
             if (!fingerprint && !string.IsNullOrEmpty(Utils.GetDefaults("UserPin")))
             {
                 StartActivity(typeof(PinActivity));
                 return;
             }
-            var checkHardware = FingerprintManagerCompat.From(this);
+            FingerprintManagerCompat checkHardware = FingerprintManagerCompat.From(this);
             var keyguardManager1 = (KeyguardManager)GetSystemService(KeyguardService);
             if (!fingerprint || !checkHardware.IsHardwareDetected ||
                 !keyguardManager1.IsKeyguardSecure) return;
@@ -159,15 +147,15 @@ namespace Familia.Login_System
 
         private void InitLogin()
         {
-            var fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint")) &&
-                              Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
+            bool fingerprint = !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint")) &&
+                               Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
 
             if (!fingerprint && !string.IsNullOrEmpty(Utils.GetDefaults("UserPin")))
             {
                 StartActivity(typeof(PinActivity));
                 return;
             }
-            var checkHardware = FingerprintManagerCompat.From(this);
+            FingerprintManagerCompat checkHardware = FingerprintManagerCompat.From(this);
             var keyguardManager1 = (KeyguardManager)GetSystemService(KeyguardService);
 
             if (fingerprint && checkHardware.IsHardwareDetected &&
@@ -240,7 +228,7 @@ namespace Familia.Login_System
                                 animationView.AddValueCallback(new KeyPath("**"),
                                     LottieProperty.ColorFilter,
                                     new LottieValueCallback(filterError));
-                                Vibrator vibrator = (Vibrator)GetSystemService(VibratorService);
+                                var vibrator = (Vibrator)GetSystemService(VibratorService);
                                 vibrator?.Vibrate(VibrationEffect.CreateOneShot(100,
                                     VibrationEffect.DefaultAmplitude));
                                 if (args.ErrorsCount != 5) return;
@@ -282,7 +270,7 @@ namespace Familia.Login_System
             const string permission = Manifest.Permission.ReadPhoneState;
             if (CheckSelfPermission(permission) != (int)Permission.Granted)
             {
-                RequestPermissions(_permissionsArray, 0);
+                RequestPermissions(Constants.PermissionsArray, 0);
             }
 
 
@@ -309,7 +297,7 @@ namespace Familia.Login_System
                                              + "/"
                                              + KeyProperties.EncryptionPaddingPkcs7);
                 _keyStore.Load(null);
-                var key = _keyStore.GetKey(_keyName, null);
+                IKey key = _keyStore.GetKey(_keyName, null);
                 _cipher.Init(CipherMode.EncryptMode, key);
                 return true;
             }
@@ -376,7 +364,7 @@ namespace Familia.Login_System
             _progressBarDialog =
                 new ProgressBarDialog(
                     "Va rugam asteptati", "Autentificare...", this, false);
-            _progressBarDialog.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimaryDark);
+            // _progressBarDialog.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimaryDark);
         }
 
         private void InitListeners()
@@ -404,18 +392,18 @@ namespace Familia.Login_System
             {
                 try
                 {
-                    var dataToSend = new JSONObject().Put("email", _usernameEditText.Text)
+                    JSONObject dataToSend = new JSONObject().Put("email", _usernameEditText.Text)
                     .Put("password", _passwordEditText.Text).Put("imei",
                         Utils.GetDeviceIdentificator(this));
 
-                    var response =
-                        await WebServices.Post(Constants.PublicServerAddress + "/api/login",
+                    string response =
+                        await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/login",
                             dataToSend);
                     Log.Error("LoginActivity", response);
                     if (response != null)
                     {
                         var responseJson = new JSONObject(response);
-                        Log.Error("LoginActivity", "req response: " + responseJson.ToString());
+                        Log.Error("LoginActivity", "req response: " + responseJson);
                         switch (responseJson.GetInt("status"))
                         {
                             case 0:
@@ -427,14 +415,14 @@ namespace Familia.Login_System
                                     Snackbar.LengthLong).Show();
                                 break;
                             case 2:
-                                var token = new JSONObject(response).GetString("token");
-                                var nume = new JSONObject(response).GetString("nume");
-                                var logins = new JSONObject(response).GetBoolean("logins");
-                                var avatar = new JSONObject(response).GetString("avatar");
-                                var id = new JSONObject(response).GetString("id");
-                                var idClient = new JSONObject(response).GetString("idClient");
-                                var idPersoana = new JSONObject(response).GetString("idPersAsisoc");
-                                var type = new JSONObject(response).GetString("tip");
+                                string token = new JSONObject(response).GetString("token");
+                                string nume = new JSONObject(response).GetString("nume");
+                                bool logins = new JSONObject(response).GetBoolean("logins");
+                                string avatar = new JSONObject(response).GetString("avatar");
+                                string id = new JSONObject(response).GetString("id");
+                                string idClient = new JSONObject(response).GetString("idClient");
+                                string idPersoana = new JSONObject(response).GetString("idPersAsisoc");
+                                string type = new JSONObject(response).GetString("tip");
 
                                 Utils.SetDefaults("Token", token);
                                 Utils.SetDefaults("Imei", Utils.GetDeviceIdentificator(this));
@@ -460,7 +448,7 @@ namespace Familia.Login_System
                                     Snackbar.LengthLong).Show();
                                 break;
                             case 5:
-                                var cod = new JSONObject(response).GetString("codActiv");
+                                string cod = new JSONObject(response).GetString("codActiv");
                                 ShowInactiveUserDialog(cod);
                                 break;
                         }
@@ -485,7 +473,7 @@ namespace Familia.Login_System
         {
             RunOnUiThread(() =>
             {
-                var alert = new Android.Support.V7.App.AlertDialog.Builder(this);
+                var alert = new AlertDialog.Builder(this);
                 alert.SetMessage(
                     "Nu puteti utiliza aplicatia in momentul de fata pentru ca dispozitivul este asignat unui alt cont." +
                     "Verificati setarile din Sistemul de Monitorizare Pacienti - id:  " + cod);

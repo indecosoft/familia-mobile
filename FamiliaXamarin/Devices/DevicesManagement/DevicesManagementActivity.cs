@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Android;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -11,20 +10,21 @@ using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Widget;
-using Familia.Devices.DevicesManagement.Dialogs.DialogEvents;
-using Familia.Devices.DevicesManagement.Dialogs.DialogHelpers;
+using Familia.DataModels;
+using Familia.Devices.DevicesManagement.BloodPressure;
+using Familia.Devices.DevicesManagement.DeviceManufactureSelector;
+using Familia.Devices.DevicesManagement.Dialogs;
+using Familia.Devices.DevicesManagement.Dialogs.Events;
+using Familia.Devices.DevicesManagement.Dialogs.Helpers;
+using Familia.Devices.DevicesManagement.Dialogs.Models;
+using Familia.Devices.DevicesManagement.Glucose;
 using Familia.Devices.Helpers;
 using Familia.Devices.Models;
-using FamiliaXamarin;
-using FamiliaXamarin.DataModels;
-using FamiliaXamarin.Devices;
-using FamiliaXamarin.Devices.GlucoseDevice;
-using FamiliaXamarin.Devices.PressureDevice;
-using FamiliaXamarin.Helpers;
+using Familia.Helpers;
 using Newtonsoft.Json;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
-namespace Familia.Devices {
+namespace Familia.Devices.DevicesManagement {
     [Activity(Label = "Familia", Theme = "@style/AppTheme.Dark",
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class DevicesManagementActivity : AppCompatActivity {
@@ -33,7 +33,6 @@ namespace Familia.Devices {
         private List<DeviceEditingManagementModel> _devicesList = new List<DeviceEditingManagementModel>();
         private DevicesManagementAdapter _adapter;
         private SqlHelper<BluetoothDeviceRecords> _sqlHelper;
-
 
         protected override void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
@@ -76,7 +75,7 @@ namespace Familia.Devices {
                                 ClearRecyclerView();
                                 await InitDatabaseConnection();
                             });
-                            Intent intent = new Intent(this, typeof(DeviceManufactureSelectorActivity));
+                            var intent = new Intent(this, typeof(DeviceManufactureSelectorActivity));
                             var list = new List<SupportedDeviceModel>();
                             if (eventArgs.DeviceType == DeviceType.BloodPressure) {
                                 list = SupportedDevices.BloodPressureDevices;
@@ -105,12 +104,33 @@ namespace Familia.Devices {
 
         private void LoadDataInRecyclerViewer(IReadOnlyList<BluetoothDeviceRecords> list) {
             ClearRecyclerView();
+
+            var divType = DeviceType.Unknown;
+            foreach (BluetoothDeviceRecords device in list) {
+                if (!divType.Equals(device.DeviceType)) {
+                    _devicesList.Add(new DeviceEditingManagementModel {
+                        ItemType = 0,
+                        Device = device
+                    });
+                    divType = device.DeviceType;
+
+                    _devicesList.Add(new DeviceEditingManagementModel {
+                        ItemType = 1,
+                        Device = device
+                    });
+                } else {
+                    _devicesList.Add(new DeviceEditingManagementModel {
+                        ItemType = 1,
+                        Device = device
+                    });
+                }
+            }
+
             _adapter = new DevicesManagementAdapter(_devicesList);
             _recyclerViewDevices.SetLayoutManager(new LinearLayoutManager(this));
             _recyclerViewDevices.SetAdapter(_adapter);
 
             _adapter.ItemClick += (sender, args) => {
-                //Toast.MakeText(this, _adapter?.GetItemModel(args.Position)?.Device?.Name, ToastLength.Short).Show();
                 var model = _adapter.GetItemModel(args.Position);
                 if (model == null) return;
                 var cdd = new DeviceEditingDialog(this, model);
@@ -122,41 +142,18 @@ namespace Familia.Devices {
                 cdd.Show();
                 cdd.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimaryDark);
             };
-            _adapter.ItemLongClick += delegate (object sender, DevicesManagementAdapterClickEventArgs args) {
+            _adapter.ItemLongClick += (sender, args) => {
                 var model = _adapter.GetItemModel(args.Position);
                 if (model == null) return;
                 var cdd = new DeleteDeviceDialog(this, model);
-                cdd.DialogState += async delegate (object o, DialogStateEventArgs eventArgs) {
+                cdd.DialogState += async (o, eventArgs) => {
                     if (eventArgs.Status != DialogStatuses.Dismissed) return;
                     ClearRecyclerView();
                     await InitDatabaseConnection();
                 };
                 cdd.Show();
                 cdd.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimaryDark);
-
-
             };
-
-            var divType = string.Empty;
-            for (var i = 0; i < list.Count(); i++) {
-                if (!divType.Equals(list[i].DeviceType)) {
-                    _adapter.AddMessage(new DeviceEditingManagementModel {
-                        ItemType = 0,
-                        ItemValue = list[i].DeviceType,
-                        Device = list[i]
-                    });
-                    _adapter.NotifyDataSetChanged();
-                    divType = list[i].DeviceType;
-                    i--;
-                } else {
-                    _adapter.AddMessage(new DeviceEditingManagementModel {
-                        ItemType = 1,
-                        ItemValue = list[i].Name,
-                        Device = list[i]
-                    });
-                    _adapter.NotifyDataSetChanged();
-                }
-            }
         }
         private async Task InitDatabaseConnection() {
             _sqlHelper =
@@ -178,10 +175,6 @@ namespace Familia.Devices {
                         var intent = new Intent(this, typeof(AddNewGlucoseDeviceActivity));
                         intent.PutExtra("RegisterOnly", true);
                         intent.PutExtra("Device", data.GetStringExtra("result"));
-                        if (item.Manufacturer == SupportedManufacturers.Medisana) {
-
-                            Log.Error("Selected Device", "You have selected Medisana Glucometer");
-                        }
                         StartActivity(intent);
 
                     } else if (item.DeviceType == DeviceType.BloodPressure) {

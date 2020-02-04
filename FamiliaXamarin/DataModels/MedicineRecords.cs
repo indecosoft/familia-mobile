@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace FamiliaXamarin.DataModels
+namespace Familia.DataModels
 {
     class MedicineRecords
     {

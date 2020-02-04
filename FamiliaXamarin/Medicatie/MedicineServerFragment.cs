@@ -1,38 +1,29 @@
 ﻿using System;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
-using Android.Opengl;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Familia;
 using Familia.DataModels;
+using Familia.Helpers;
 using Familia.Medicatie.Data;
-using FamiliaXamarin;
-using FamiliaXamarin.DataModels;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie;
-using FamiliaXamarin.Medicatie.Alarm;
-using FamiliaXamarin.Medicatie.Data;
-using FamiliaXamarin.Medicatie.Entities;
-using FamiliaXamarin.Services;
-using Java.Lang;
+using Familia.Medicatie.Entities;
+using Familia.Services;
 using Java.Text;
-using Java.Util;
 using Org.Json;
 using SQLite;
-using Exception = System.Exception;
+using AlertDialog = Android.Support.V7.App.AlertDialog;
+using Fragment = Android.Support.V4.App.Fragment;
+using TimeZone = Java.Util.TimeZone;
 
 namespace Familia.Medicatie
 {
-    public class MedicineServerFragment : Android.Support.V4.App.Fragment, IOnMedSerListener
+    public class MedicineServerFragment : Fragment, IOnMedSerListener
     {
 
         private MedicineServerAdapter _medicineServerAdapter;
@@ -54,17 +45,17 @@ namespace Familia.Medicatie
 
         public void OnMedSerClick(MedicationSchedule med)
         {
-            var alert = new Android.Support.V7.App.AlertDialog.Builder(Activity);
+            var alert = new AlertDialog.Builder(Activity);
             var medDate = Convert.ToDateTime(med.Timestampstring);
-            var currentDate = DateTime.Now;
+            DateTime currentDate = DateTime.Now;
 
             if (medDate < currentDate)
             {
                 alert.SetMessage("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " se va marca administrat.");
                 alert.SetPositiveButton("Da", async (senderAlert, args) =>
                 {
-                    var now = DateTime.Now;
-                    var mArray = new JSONArray().Put(new JSONObject().Put("uuid", med.Uuid)
+                    DateTime now = DateTime.Now;
+                    JSONArray mArray = new JSONArray().Put(new JSONObject().Put("uuid", med.Uuid)
                         .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
 
                     if (await SendMedicationTask(mArray, med, now))
@@ -88,10 +79,10 @@ namespace Familia.Medicatie
         }
         private void setupRecycleView(View view)
         {
-            RecyclerView rvMedSer = view.FindViewById<RecyclerView>(Resource.Id.rv_medser);
+            var rvMedSer = view.FindViewById<RecyclerView>(Resource.Id.rv_medser);
             cwEmpty = view.FindViewById<CardView>(Resource.Id.cw_empty);
             cwEmpty.Visibility = ViewStates.Gone;
-            LinearLayoutManager layoutManager = new LinearLayoutManager(Activity);
+            var layoutManager = new LinearLayoutManager(Activity);
             rvMedSer.SetLayoutManager(layoutManager);
 
             _medications = new List<MedicationSchedule>();
@@ -104,7 +95,7 @@ namespace Familia.Medicatie
             {
                 rvMedSer.HasFixedSize = true;
                 var onScrollListener = new MedicineServerRecyclerViewOnScrollListener(layoutManager);
-                onScrollListener.LoadMoreEvent += async (object sender, EventArgs e) =>
+                onScrollListener.LoadMoreEvent += async (sender, e) =>
                 {
                     countReq++;
                     Log.Error("MEDICATION SERVER", _medications.Count + "");
@@ -119,7 +110,7 @@ namespace Familia.Medicatie
                                     for (var ms = 0; ms <= newItems.Count; ms++)
                                     {
                                         Log.Error("MSSSSSTRING", newItems[ms].Timestampstring);
-                                        var date = parseTimestampStringToDate(newItems[ms]);
+                                        DateTime date = parseTimestampStringToDate(newItems[ms]);
                                         newItems[ms].Timestampstring = date.ToString();
                                         _medicineServerAdapter.AddItem(newItems[ms]);
                                     }
@@ -163,7 +154,7 @@ namespace Familia.Medicatie
 
         private async void GetData()
         {
-            ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
+            var dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
             dialog.Show();
             Log.Error("NetworkingData", "task getting data..");
             var dataMedicationSchedules = await networking.ReadFutureDataTask(0);
@@ -197,16 +188,16 @@ namespace Familia.Medicatie
         {
             DateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             {
-                TimeZone = Java.Util.TimeZone.GetTimeZone("UTC")
+                TimeZone = TimeZone.GetTimeZone("UTC")
             };
-            DateTime date = new DateTime();
+            var date = new DateTime();
             try
             {
                 date = DateTime.Parse(ms.Timestampstring);
 
                 DateFormat pstFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
                 {
-                    TimeZone = Java.Util.TimeZone.GetTimeZone("PST")
+                    TimeZone = TimeZone.GetTimeZone("PST")
                 };
             }
             catch (ParseException e)
@@ -219,7 +210,7 @@ namespace Familia.Medicatie
         #region send data to medication service
         public async Task<bool> SendMedicationTask(JSONArray mArray, MedicationSchedule med, DateTime now)
         {
-            bool isOk = false;
+            var isOk = false;
             await Task.Run(async () =>
             {
                 if (await SendData(Context, mArray))
@@ -249,7 +240,7 @@ namespace Familia.Medicatie
 
         private static async Task<bool> SendData(Context context, JSONArray mArray)
         {
-            var result = await WebServices.Post(
+            string result = await WebServices.WebServices.Post(
                 $"{Constants.PublicServerAddress}/api/medicine", mArray,
                 Utils.GetDefaults("Token"));
             if (!Utils.CheckNetworkAvailability()) return false;
@@ -273,8 +264,7 @@ namespace Familia.Medicatie
 
         private static async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now)
         {
-            await db.InsertAsync(new MedicineRecords()
-            {
+            await db.InsertAsync(new MedicineRecords {
                 Uuid = uuid,
                 DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
             });

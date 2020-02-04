@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using Android.OS;
-using Android.Runtime;
-using Java.Interop;
-
-namespace FamiliaXamarin
+﻿namespace Familia.Asistenta_sociala
 { 
     public class SearchListModel
     {

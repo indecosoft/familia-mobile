@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using Familia;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -9,16 +10,15 @@ using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Widget;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.JsonModels;
+using Familia.DataModels;
+using Familia.Helpers;
+using Familia.JsonModels;
+using Familia.WebSocket;
 using Newtonsoft.Json;
 using Org.Json;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
-using System.Threading.Tasks;
-using System;
-using Familia.DataModels;
 
-namespace FamiliaXamarin.Chat
+namespace Familia.Chat
 {
     public class MessagesModel
     {
@@ -110,7 +110,7 @@ namespace FamiliaXamarin.Chat
             
             if (savedInstanceState == null)
             {
-                var extras = Intent.Extras;
+                Bundle extras = Intent.Extras;
                 RoomName = Intent.GetStringExtra("Room");
                 mUsername = Intent.GetStringExtra("EmailFrom");
                 var ids = RoomName.Split(':');
@@ -129,7 +129,7 @@ namespace FamiliaXamarin.Chat
                     try
                     {
                         //adaugare la lista de prieteni
-                        var sharedRooms = Utils.GetDefaults("Rooms");
+                        string sharedRooms = Utils.GetDefaults("Rooms");
                         if (sharedRooms != null)
                         {
                             var model =
@@ -138,7 +138,7 @@ namespace FamiliaXamarin.Chat
                             var currentModel = new ConverstionsModel
                                 {Username = mUsername, Room = RoomName};
                             var existingElement = false;
-                            foreach (var conversation in model)
+                            foreach (ConverstionsModel conversation in model)
                             {
                                 if (!conversation.Username.Equals(currentModel.Username)) continue;
                                 existingElement = true;
@@ -150,7 +150,7 @@ namespace FamiliaXamarin.Chat
                                 model.Add(currentModel);
                             }
 
-                            var serialized = JsonConvert.SerializeObject(model);
+                            string serialized = JsonConvert.SerializeObject(model);
                             Utils.SetDefaults("Rooms", serialized);
                         }
                         else
@@ -161,7 +161,7 @@ namespace FamiliaXamarin.Chat
 
                             model.Add(currentModel);
 
-                            var serialized = JsonConvert.SerializeObject(model);
+                            string serialized = JsonConvert.SerializeObject(model);
                             Utils.SetDefaults("Rooms", serialized);
                         }
                     }
@@ -170,11 +170,11 @@ namespace FamiliaXamarin.Chat
                         Log.Error("Error", e.Message);
                     }
 
-                    var emailFrom = Utils.GetDefaults("Email");
+                    string emailFrom = Utils.GetDefaults("Email");
                     try
                     {
-                        var dest = extras.GetString("EmailFrom");
-                        var mailObject = new JSONObject().Put("dest", dest)
+                        string dest = extras.GetString("EmailFrom");
+                        JSONObject mailObject = new JSONObject().Put("dest", dest)
                             .Put("from", emailFrom)
                             .Put("accepted", true).Put("room", RoomName);
                         Log.Error("aici", mailObject.ToString());
@@ -192,7 +192,7 @@ namespace FamiliaXamarin.Chat
                 {
                     _conversationsRecords = await SqlHelper<ConversationsRecords>.CreateAsync();
                     var conversations = await _conversationsRecords.QueryValuations($"SELECT * FROM ConversationsRecords WHERE Room = '{RoomName}'");
-                    foreach (var message in conversations)
+                    foreach (ConversationsRecords message in conversations)
                     {
                         AddMessage(message.Message, message.MessageType == 0 ? 3 : 0);
                     }
@@ -208,7 +208,7 @@ namespace FamiliaXamarin.Chat
         private void AttemptSend()
         {
             if (mInputMessageView.Text.Equals("")) return;
-            var message = mInputMessageView.Text;
+            string message = mInputMessageView.Text;
             mInputMessageView.Text = string.Empty;
             AddMessage(message, ChatModel.TypeMyMessage);
             JSONObject messageToSend = null;

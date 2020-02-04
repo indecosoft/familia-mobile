@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Familia;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Constraints;
 using Android.Views;
 using Android.Widget;
 using Refractored.Controls;
 
-namespace FamiliaXamarin.Sharing
+namespace Familia.Sharing
 {
     class CustomDialogProfileSharingData : Dialog
     {
@@ -37,10 +32,9 @@ namespace FamiliaXamarin.Sharing
             Image = FindViewById<CircleImageView>(Resource.Id.round_image);
             ButtonConfirm = FindViewById<Button>(Resource.Id.btn_confirm);
             ButtonCancel = FindViewById<Button>(Resource.Id.btn_cancel);
-            Window.SetBackgroundDrawable(new ColorDrawable(Android.Graphics.Color.Transparent));
+            Window.SetBackgroundDrawable(new ColorDrawable(Color.Transparent));
             var bg = FindViewById<ConstraintLayout>(Resource.Id.bg);
-            bg.Click += delegate(object sender, EventArgs args)
-            {
+            bg.Click += delegate {
                 Dismiss();
             };
         }

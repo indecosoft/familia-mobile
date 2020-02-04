@@ -1,21 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Android.App;
-using Android.Content;
-using Android.Database;
-using Android.OS;
-using Android.Runtime;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
-using Familia.Profile.Data;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.JsonModels;
+using Familia.Helpers;
+using Familia.JsonModels;
+using Familia.Profile.Data.db;
 
-namespace Familia.Profile
+namespace Familia.Profile.Data
 {
 
 
@@ -33,7 +25,7 @@ namespace Familia.Profile
         private ProfileStorage()
         {
             personalData = new PersonalData();
-            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             var numeDB = "devices_data.db";
         }
 
@@ -81,8 +73,7 @@ namespace Familia.Profile
                         Log.Error("ProfileStorage", "saving data ...");
                         _dbProfile = await SqlHelper<ProfileDataModel>.CreateAsync();
 
-                        await _dbProfile.Insert(new ProfileDataModel()
-                        {
+                        await _dbProfile.Insert(new ProfileDataModel {
                             Base64Image = personalData.Base64Image,
                             DateOfBirth = personalData.DateOfBirth,
                             Gender = personalData.Gender,
@@ -92,11 +83,10 @@ namespace Familia.Profile
 
                         if (await DropDiseasesTableTask())
                         {
-                            foreach (var item in personalData.listOfPersonalDiseases)
+                            foreach (PersonalDisease item in personalData.listOfPersonalDiseases)
                             {
                                 _dbProfileDisease = await SqlHelper<DiseaseDataModel>.CreateAsync();
-                                await _dbProfileDisease.Insert(new DiseaseDataModel()
-                                {
+                                await _dbProfileDisease.Insert(new DiseaseDataModel {
                                     Name = item.Name,
                                     Cod = item.Cod
                                 });
@@ -129,11 +119,10 @@ namespace Familia.Profile
                 {
                     _dbProfileDisease = await SqlHelper<DiseaseDataModel>.CreateAsync();
                     
-                    foreach (var item in list)
+                    foreach (PersonalDisease item in list)
                     {
                             Log.Error("ProfileStorage", "inserting in db..");
-                            await _dbProfileDisease.Insert(new DiseaseDataModel()
-                            {
+                            await _dbProfileDisease.Insert(new DiseaseDataModel {
                                 Name = item.Name,
                                 Cod = item.Cod
                             });
@@ -215,7 +204,7 @@ namespace Familia.Profile
                 var listDiseases = new List<PersonalDisease>();
                 if (list == null) return null;
                 Log.Error("ProfileStorage", " start adding item in list");
-                foreach (var item in list)
+                foreach (DiseaseDataModel item in list)
                 {
                     var obj = new PersonalDisease(item.Cod, item.Name);
                     obj.Id = item.Id;
@@ -227,7 +216,7 @@ namespace Familia.Profile
                 if (listProfile == null) return null;
                 Log.Error("ProfileStorage", " start adding item in list for profile");
 
-                foreach (var item in listProfile)
+                foreach (ProfileDataModel item in listProfile)
                 {
                     personalData = new PersonalData(
                         listDiseases,
@@ -285,7 +274,7 @@ namespace Familia.Profile
         {
 
             Log.Error("ProfileStorage ", "Personal diseases:");
-            foreach (var item in personalData.listOfPersonalDiseases)
+            foreach (PersonalDisease item in personalData.listOfPersonalDiseases)
             {
                 Log.Error("Disease: ", item.Name + item.Cod);
             }

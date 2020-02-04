@@ -3,18 +3,18 @@ using System.Threading.Tasks;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.V4.App;
 using Android.Support.V7.Widget;
 using Android.Views;
-using FamiliaXamarin;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.JsonModels;
-using FamiliaXamarin.Sharing;
+using Familia.Helpers;
+using Familia.JsonModels;
+using Java.Lang;
 using Newtonsoft.Json;
 using Org.Json;
 
 namespace Familia.Sharing
 {
-    public class MonitoringFragment : Android.Support.V4.App.Fragment
+    public class MonitoringFragment : Fragment
     {
         private RecyclerView _sharingRecyclerView;
         public override void OnCreate(Bundle savedInstanceState)
@@ -28,13 +28,13 @@ namespace Familia.Sharing
         {
             try
             {
-                ProgressBarDialog dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
+                var dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
                 dialog.Show();
                 // Initialize contacts
                 List<SharingModel> contacts = null;
                 await Task.Run(async () =>
                 {
-                    var response = await WebServices.Post($"{Constants.PublicServerAddress}/api/getSharingPeople",
+                    string response = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/getSharingPeople",
                         new JSONObject().Put("email", Utils.GetDefaults("Email")),
                             Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(response))
@@ -50,9 +50,9 @@ namespace Familia.Sharing
                     _sharingRecyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
                     adapter.ItemClick += delegate (object sender, SharingAdapterClickEventArgs args)
                     {
-                        var name = contacts[args.Position].Name;
-                        var email = contacts[args.Position].Email;
-                        var imei = contacts[args.Position].Imei;
+                        string name = contacts[args.Position].Name;
+                        string email = contacts[args.Position].Email;
+                        string imei = contacts[args.Position].Imei;
                         var intent = new Intent(Activity, typeof(SharingMenuActivity));
                         intent.PutExtra("Name", name);
                         intent.PutExtra("Email", email);
@@ -69,25 +69,25 @@ namespace Familia.Sharing
 
 
             }
-            catch (Java.Lang.Exception e)
+            catch (Exception e)
             {
                 e.PrintStackTrace();
             }
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            var view = inflater.Inflate(Resource.Layout.fragment_monitoring, container, false);
+            View view = inflater.Inflate(Resource.Layout.fragment_monitoring, container, false);
             _sharingRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.rv_persons);
             LoadData();
             return view;
         }
         private CustomDialogProfileSharingData OpenMiniProfileDialog()
         {
-            CustomDialogProfileSharingData cdd = new CustomDialogProfileSharingData(Activity);
+            var cdd = new CustomDialogProfileSharingData(Activity);
 
-            IWindowManager windowManager = Context.GetSystemService(Context.WindowService).JavaCast<IWindowManager>();
+            var windowManager = Context.GetSystemService(Context.WindowService).JavaCast<IWindowManager>();
 
-            WindowManagerLayoutParams lp = new WindowManagerLayoutParams();
+            var lp = new WindowManagerLayoutParams();
             lp.CopyFrom(cdd.Window.Attributes);
             lp.Width = ViewGroup.LayoutParams.MatchParent;
             lp.Height = ViewGroup.LayoutParams.MatchParent;

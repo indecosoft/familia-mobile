@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.Content;
 using Android.Runtime;
-using FamiliaXamarin.DataModels;
-using FamiliaXamarin.Devices.GlucoseDevice;
+using Familia.DataModels;
+using Familia.Devices.GlucoseDevice;
+using Familia.Devices.Helpers;
 
-namespace Familia.Devices.BluetoothCallbacks.Glucose {
+namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
     public class GlucoseScanCallback : ScanCallback {
         private readonly Context Context;
         private readonly IEnumerable<BluetoothDeviceRecords> ListOfSavedDevices;
@@ -24,17 +24,17 @@ namespace Familia.Devices.BluetoothCallbacks.Glucose {
             if (!devicesDataNormalized.Any())
                 return;
             switch(devicesDataNormalized.FirstOrDefault().DeviceManufacturer) {
-                case Helpers.SupportedManufacturers.Medisana:
+                case SupportedManufacturers.Medisana:
                     result.Device.ConnectGatt(Context, true,
-                ((GlucoseDeviceActivity)Context)._medisanaGattCallback, BluetoothTransports.Le);
-                    ((GlucoseDeviceActivity)Context)._bluetoothScanner.StopScan(
-                ((GlucoseDeviceActivity)Context)._scanCallback);
+                ((GlucoseDeviceActivity)Context).MedisanaGattCallback, BluetoothTransports.Le);
+                    ((GlucoseDeviceActivity)Context).BluetoothScanner.StopScan(
+                ((GlucoseDeviceActivity)Context).ScanCallback);
                     break;
-                case Helpers.SupportedManufacturers.Caresens:
+                case SupportedManufacturers.Caresens:
                     result.Device.ConnectGatt(Context, true,
-                ((GlucoseDeviceActivity)Context)._gattCallback, BluetoothTransports.Le);
-                    ((GlucoseDeviceActivity)Context)._bluetoothScanner.StopScan(
-                ((GlucoseDeviceActivity)Context)._scanCallback);
+                ((GlucoseDeviceActivity)Context).GattCallback, BluetoothTransports.Le);
+                    ((GlucoseDeviceActivity)Context).BluetoothScanner.StopScan(
+                ((GlucoseDeviceActivity)Context).ScanCallback);
                     break;
             }
             

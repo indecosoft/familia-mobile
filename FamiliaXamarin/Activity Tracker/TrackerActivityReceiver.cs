@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
 using Familia.Services;
 
 namespace Familia.Activity_Tracker
@@ -33,7 +26,7 @@ namespace Familia.Activity_Tracker
         {
             Log.Error("TrackerActivityReceiver", "arrived");
             string content;
-            var hour = DateTime.Now.Hour;
+            int hour = DateTime.Now.Hour;
 
             switch (hour)
             {
@@ -114,7 +107,7 @@ namespace Familia.Activity_Tracker
         private void Schedule(Context context, long milisec) {
             var am = (AlarmManager)context.GetSystemService(Context.AlarmService);
             var i = new Intent(context, typeof(TrackerActivityReceiver));
-            var pi = PendingIntent.GetBroadcast(context, TRACKER_ACTIVITY_RECEIVER_PENDING_INTENT_ID_USER, i, PendingIntentFlags.UpdateCurrent);
+            PendingIntent pi = PendingIntent.GetBroadcast(context, TRACKER_ACTIVITY_RECEIVER_PENDING_INTENT_ID_USER, i, PendingIntentFlags.UpdateCurrent);
             if (am == null) return;
             am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + milisec, AlarmManager.IntervalDay, pi);
         }
@@ -133,7 +126,7 @@ namespace Familia.Activity_Tracker
 
         private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent)
         {
-            var description = mContent;
+            string description = mContent;
 
             var channel =
                 new NotificationChannel(mChannel, mTitle, NotificationImportance.Default)

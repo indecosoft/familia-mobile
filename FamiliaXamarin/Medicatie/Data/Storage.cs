@@ -1,31 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Android.App;
 using Android.Content;
-using Android.Gms.Tasks;
-using Android.OS;
-using Android.Runtime;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
 using Familia.DataModels;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie.Entities;
+using Familia.Helpers;
+using Familia.Medicatie.Entities;
 using Java.IO;
-using Javax.Security.Auth;
 using Org.Json;
-using SQLite;
 using File = Java.IO.File;
 using IOException = Java.IO.IOException;
-using Task = System.Threading.Tasks.Task;
 
-namespace FamiliaXamarin.Medicatie.Data
+namespace Familia.Medicatie.Data
 {
     class Storage
     {
@@ -39,10 +28,10 @@ namespace FamiliaXamarin.Medicatie.Data
         private List<MedicationSchedule> _medicationSchedules;
         private Storage()
         {
-            this.DiseaseList = new List<Disease>();
+            DiseaseList = new List<Disease>();
             // will be removed
             _medicationSchedules = new List<MedicationSchedule>();
-            var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             var numeDB = "devices_data.db";
         }
 
@@ -63,9 +52,9 @@ namespace FamiliaXamarin.Medicatie.Data
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
             _medicationSchedules = list;
-            foreach (var element in _medicationSchedules)
+            foreach (MedicationSchedule element in _medicationSchedules)
             {
-                var objMed = await getElementByUUID(element.Uuid);
+                MedicationSchedule objMed = await getElementByUUID(element.Uuid);
                 if (objMed != null && element.IdNotification == 0)
                 {
                     element.IdNotification = objMed.IdNotification;
@@ -75,8 +64,7 @@ namespace FamiliaXamarin.Medicatie.Data
                 if (c.Count() == 0)
                 {
                     Log.Error("STORAGE", "se introduc date in DB..");
-                    await _db.Insert(new MedicineServerRecords()
-                    {
+                    await _db.Insert(new MedicineServerRecords {
                         Title = element.Title,
                         Content = element.Content,
                         DateTime = element.Timestampstring,
@@ -100,8 +88,7 @@ namespace FamiliaXamarin.Medicatie.Data
                 if (c.Count() == 0)
                 {
                     Log.Error("STORAGE", "se introduc date in DB..");
-                    await _db.Insert(new MedicineServerRecords()
-                    {
+                    await _db.Insert(new MedicineServerRecords {
                         Title = med.Title,
                         Content = med.Content,
                         DateTime = med.Timestampstring,
@@ -125,9 +112,9 @@ namespace FamiliaXamarin.Medicatie.Data
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
             var list = await _db.QueryValuations("select * from MedicineServerRecords");
-            var currentDate = DateTime.Now;
+            DateTime currentDate = DateTime.Now;
             var listMedSch = new List<MedicationSchedule>();
-            foreach (var elem in list)
+            foreach (MedicineServerRecords elem in list)
             {
                 try
                 {
@@ -184,7 +171,7 @@ namespace FamiliaXamarin.Medicatie.Data
             var list = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{UUIDmed}'");
             if (list.Count() != 0)
             {
-                foreach (var item in list)
+                foreach (MedicineServerRecords item in list)
                 {
                     return new MedicationSchedule(item.Uuid, item.DateTime, item.Title, item.Content, int.Parse(item.Postpone), int.Parse(item.IdNotification));
                 }
@@ -213,16 +200,16 @@ namespace FamiliaXamarin.Medicatie.Data
         {
             var listWithRemovedItems = new List<MedicationSchedule>(listFromLocalDb.Where(c => c.Uuid.Contains("removed")).ToList());
             var finalList = new List<MedicationSchedule>();
-            foreach (var fileItem in listFromFileConverted)
+            foreach (MedicationSchedule fileItem in listFromFileConverted)
             {
-                var diseasemedFile = fileItem.Uuid.Split("hour")[0];
-                var hourFile = fileItem.Uuid.Split("hour")[1];
+                string diseasemedFile = fileItem.Uuid.Split("hour")[0];
+                string hourFile = fileItem.Uuid.Split("hour")[1];
 
                 for (var i = 0; i < listFromLocalDb.Count; i++)
                 {
-                    var dbItem = listFromLocalDb[i];
-                    var diseasemedDB = dbItem.Uuid.Split("hour")[0];
-                    var hourDB = dbItem.Uuid.Split("hour")[1];
+                    MedicationSchedule dbItem = listFromLocalDb[i];
+                    string diseasemedDB = dbItem.Uuid.Split("hour")[0];
+                    string hourDB = dbItem.Uuid.Split("hour")[1];
 
                     if (IsItemRemoved(listWithRemovedItems, fileItem)) continue;
                     if (diseasemedFile.Equals(diseasemedDB))
@@ -237,7 +224,7 @@ namespace FamiliaXamarin.Medicatie.Data
                             if (ItemInListFound(fileItem, listFromLocalDb)) continue;
                             if (fileItem.Uuid.Contains("removed")) continue;
                             Log.Error("STORAGE class UPDATE", "element to save: " + fileItem.ToString());
-                            var currentDate = DateTime.Now;
+                            DateTime currentDate = DateTime.Now;
                             var medDate = Convert.ToDateTime(fileItem.Timestampstring);
                             if (medDate > currentDate) continue;
                             if (await SaveItemInDBTask(fileItem))
@@ -252,10 +239,10 @@ namespace FamiliaXamarin.Medicatie.Data
                     {
                         if (ItemInListFound(fileItem, listFromLocalDb)) continue;
                         Log.Error("STORAGE class", "element to save: " + fileItem.ToString());
-                        var currentDate = DateTime.Now;
+                        DateTime currentDate = DateTime.Now;
                         var medDate = Convert.ToDateTime(fileItem.Timestampstring);
                         if (medDate > currentDate) continue;
-                        var isSaved = await SaveItemInDBTask(fileItem);
+                        bool isSaved = await SaveItemInDBTask(fileItem);
                         if (isSaved)
                         {
                             listFromLocalDb.Add(fileItem);
@@ -271,7 +258,7 @@ namespace FamiliaXamarin.Medicatie.Data
 
         private bool IsItemRemoved(List<MedicationSchedule> listWithRemovedItems, MedicationSchedule fileItem)
         {
-            bool isItemRemoved = false;
+            var isItemRemoved = false;
             if (listWithRemovedItems.Count != 0)
             {
                 var itemToFind = new MedicationSchedule(fileItem.Uuid, fileItem.Timestampstring, fileItem.Title,
@@ -294,7 +281,7 @@ namespace FamiliaXamarin.Medicatie.Data
 
                 if (item.Uuid.Contains("removed")) return false;
                 _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
-                var newUuid = item.Uuid + "removed";
+                string newUuid = item.Uuid + "removed";
                 await _db.QueryValuations($"update MedicineServerRecords set Uuid='{newUuid}' where Uuid ='{item.Uuid}'");
                 Log.Error("STORAGE class deleted item new UUid: ", (await getElementByUUID(newUuid)).ToString());
             }
@@ -308,7 +295,7 @@ namespace FamiliaXamarin.Medicatie.Data
 
         private bool ItemInListFound(MedicationSchedule item, List<MedicationSchedule> list)
         {
-            foreach (var variable in list)
+            foreach (MedicationSchedule variable in list)
             {
                 if (variable.Uuid.Equals(item.Uuid))
                 {
@@ -321,10 +308,10 @@ namespace FamiliaXamarin.Medicatie.Data
         public async Task<List<MedicationSchedule>> ReadListFromDbPastDataTask()
         {
             var list = await GetDataFromDb();
-            var currentDate = DateTime.Now;
+            DateTime currentDate = DateTime.Now;
             var listMedSch = new List<MedicationSchedule>();
 
-            foreach (var elem in list)
+            foreach (MedicineServerRecords elem in list)
             {
                 try
                 {
@@ -360,8 +347,7 @@ namespace FamiliaXamarin.Medicatie.Data
                 if (!(await SearchItemTask(element.Uuid)))
                 {
                     Log.Error("Storage class", "inserting in db..");
-                    await _db.Insert(new MedicineServerRecords()
-                    {
+                    await _db.Insert(new MedicineServerRecords {
                         Title = element.Title,
                         Content = element.Content,
                         DateTime = element.Timestampstring,
@@ -385,21 +371,20 @@ namespace FamiliaXamarin.Medicatie.Data
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
 
-            foreach (var element in list)
+            foreach (MedicationSchedule element in list)
             {
                 Log.Error("Storage class saving..", element.ToString());
                 if (!(await SearchItemTask(element.Uuid)))
                 {
 
 
-                    var objMed = await getElementByUUID(element.Uuid);
+                    MedicationSchedule objMed = await getElementByUUID(element.Uuid);
                     if (objMed != null && element.IdNotification == 0)
                     {
                         element.IdNotification = objMed.IdNotification;
                     }
                     Log.Error("Storage class", "inserting in db..");
-                    await _db.Insert(new MedicineServerRecords()
-                    {
+                    await _db.Insert(new MedicineServerRecords {
                         Title = element.Title,
                         Content = element.Content,
                         DateTime = element.Timestampstring,
@@ -433,26 +418,26 @@ namespace FamiliaXamarin.Medicatie.Data
         {
             var listMedSchPersonal = new List<MedicationSchedule>();
 
-            foreach (var item in LD)
+            foreach (Disease item in LD)
             {
-                foreach (var itemMed in item.ListOfMedicines)
+                foreach (Medicine itemMed in item.ListOfMedicines)
                 {
-                    foreach (var itemHour in itemMed.Hours)
+                    foreach (Hour itemHour in itemMed.Hours)
                     {
                         if (itemHour.HourName.Equals("24:00"))
                         {
                             itemHour.HourName = "23:59";
                         }
-                        var tspan = TimeSpan.Parse(itemHour.HourName);
+                        TimeSpan tspan = TimeSpan.Parse(itemHour.HourName);
                         Log.Error("TIME SPAN: ", tspan.ToString());
                         var dtMed = new DateTime(itemMed.Date.Year, itemMed.Date.Month, itemMed.Date.Day, tspan.Hours, tspan.Minutes, tspan.Seconds);
                         Log.Error("MEDICINE LOST", "item med: " + dtMed);
 
-                        var currentDate = DateTime.Now;
+                        DateTime currentDate = DateTime.Now;
                         if (dtMed < currentDate)
                         {
                             TimeSpan difference = DateTime.Now.Subtract(dtMed);
-                            var days = (int)difference.TotalDays + 1;
+                            int days = (int)difference.TotalDays + 1;
                             Log.Error("MEDICINE LOST DAYS", "days betweet 2 dates: " + days);
                             if (itemMed.NumberOfDays != 0)
                             {
@@ -462,12 +447,12 @@ namespace FamiliaXamarin.Medicatie.Data
                             }
 
                             Log.Error("MEDICINE LOST DAYS", "days: " + days);
-                            var objMedSch = new MedicationSchedule("disease" + item.Id + "med" + itemMed.IdMed + "hour" + itemHour.Id + "time" + dtMed.ToString(), dtMed.ToString(), item.DiseaseName, itemMed.Name, 5, 0);
+                            var objMedSch = new MedicationSchedule("disease" + item.Id + "med" + itemMed.IdMed + "hour" + itemHour.Id + "time" + dtMed, dtMed.ToString(), item.DiseaseName, itemMed.Name, 5, 0);
                             listMedSchPersonal.Add(objMedSch);
-                            for (int j = 1; j < days; j++)
+                            for (var j = 1; j < days; j++)
                             {
                                 dtMed = dtMed.AddDays(1);
-                                objMedSch = new MedicationSchedule("disease" + item.Id + "med" + itemMed.IdMed + "hour" + itemHour.Id + "time" + dtMed.ToString(), dtMed.ToString(), item.DiseaseName, itemMed.Name, 5, 0);
+                                objMedSch = new MedicationSchedule("disease" + item.Id + "med" + itemMed.IdMed + "hour" + itemHour.Id + "time" + dtMed, dtMed.ToString(), item.DiseaseName, itemMed.Name, 5, 0);
                                 listMedSchPersonal.Add(objMedSch);
                             }
                         }
@@ -483,31 +468,31 @@ namespace FamiliaXamarin.Medicatie.Data
             var listFromLocalDb = await ReadListFromDbPastDataTask();
             var listForCurrentDisease = listFromLocalDb.Where(c => c.Uuid.Contains("disease" + disease.Id));
             Log.Error("STORAGE class", "items for this disease");
-            foreach (var item in listForCurrentDisease)
+            foreach (MedicationSchedule item in listForCurrentDisease)
             {
                 Log.Error("STORAGE class", "item: " + item.ToString());
             }
             Log.Error("STORAGE class", "splitting items....");
             //----------------------------------------------- beta
             var list = new List<MedicationSchedule>();
-            foreach (var item in listFromLocalDb)
+            foreach (MedicationSchedule item in listFromLocalDb)
             {
-                MedicationSchedule obj = new MedicationSchedule(item.Uuid, item.Timestampstring, item.Title, item.Content, item.Postpone, item.IdNotification);
-                var diseaseId = item.Uuid.Split("med")[0].Split("disease")[1];
-                var medId = item.Uuid.Split("med")[1].Split("hour")[0];
-                var hourId = item.Uuid.Split("med")[1].Split("hour")[1].Split("time")[0];
-                var time = item.Timestampstring;
+                var obj = new MedicationSchedule(item.Uuid, item.Timestampstring, item.Title, item.Content, item.Postpone, item.IdNotification);
+                string diseaseId = item.Uuid.Split("med")[0].Split("disease")[1];
+                string medId = item.Uuid.Split("med")[1].Split("hour")[0];
+                string hourId = item.Uuid.Split("med")[1].Split("hour")[1].Split("time")[0];
+                string time = item.Timestampstring;
                 Log.Error("STORAGE class", "item splitted " + "disease: " + diseaseId + " medId: " + medId + " hourId: " + hourId + " time " + time);
                 var isModified = false;
                 if (disease.Id.Equals(diseaseId))
                 {
-                    foreach (var med in disease.ListOfMedicines)
+                    foreach (Medicine med in disease.ListOfMedicines)
                     {
                         if (med.IdMed.Equals(medId))
                         {
-                            foreach (var hour in med.Hours)
+                            foreach (Hour hour in med.Hours)
                             {
-                                var tspan = TimeSpan.Parse(hour.HourName);
+                                TimeSpan tspan = TimeSpan.Parse(hour.HourName);
                                 var dtMed = new DateTime(med.Date.Year, med.Date.Month, med.Date.Day, tspan.Hours, tspan.Minutes, tspan.Seconds);
 
                                 if (hour.Id.Equals(hourId))
@@ -516,11 +501,11 @@ namespace FamiliaXamarin.Medicatie.Data
                                     {
                                         Log.Error("STORAGE class", "same datetime" + item.ToString());
                                     }
-                                    var dt = DateTime.Parse(time);
+                                    DateTime dt = DateTime.Parse(time);
                                     if (!(dt.TimeOfDay.Equals(tspan)))
                                     {
                                         Log.Error("STORAGE class", "different hour" + item.ToString());
-                                        obj = new MedicationSchedule("disease" + disease.Id + "med" + med.IdMed + "hour" + hour.Id + "time" + dtMed.ToString(), dtMed.ToString(), disease.DiseaseName, med.Name, 5, 0);
+                                        obj = new MedicationSchedule("disease" + disease.Id + "med" + med.IdMed + "hour" + hour.Id + "time" + dtMed, dtMed.ToString(), disease.DiseaseName, med.Name, 5, 0);
                                         list.Add(obj);
                                         isModified = true;
                                     }
@@ -532,7 +517,7 @@ namespace FamiliaXamarin.Medicatie.Data
                                 else
                                 {
                                     Log.Error("STORAGE class", "different idHour");
-                                    obj = new MedicationSchedule("disease" + disease.Id + "med" + med.IdMed + "hour" + hour.Id + "time" + dtMed.ToString(), dtMed.ToString(), disease.DiseaseName, med.Name, 5, 0);
+                                    obj = new MedicationSchedule("disease" + disease.Id + "med" + med.IdMed + "hour" + hour.Id + "time" + dtMed, dtMed.ToString(), disease.DiseaseName, med.Name, 5, 0);
                                     list.Add(obj);
                                     isModified = true;
                                 }
@@ -549,7 +534,7 @@ namespace FamiliaXamarin.Medicatie.Data
 
             Log.Error("STORAGE class", "new list");
 
-            foreach (var el in list)
+            foreach (MedicationSchedule el in list)
             {
                 Log.Error("STORAGE class", "item: " + el.ToString());
             }
@@ -614,8 +599,8 @@ namespace FamiliaXamarin.Medicatie.Data
         {
             try
             {
-                File file = new File(context.FilesDir, Constants.MedicationFile);
-                JSONArray data = new JSONArray();
+                var file = new File(context.FilesDir, Constants.MedicationFile);
+                var data = new JSONArray();
 
                 if (DiseaseList.Count == 0)
                 {
@@ -623,13 +608,13 @@ namespace FamiliaXamarin.Medicatie.Data
                     file = new File(context.FilesDir, Constants.MedicationFile);
                 }
 
-                for (int i = 0; i < DiseaseList.Count; i++)
+                for (var i = 0; i < DiseaseList.Count; i++)
                 {
                     data.Put(CreateJsonObject(DiseaseList[i]));
                 }
 
-                FileWriter fileWriter = new FileWriter(file);
-                BufferedWriter outBufferedWriter = new BufferedWriter(fileWriter);
+                var fileWriter = new FileWriter(file);
+                var outBufferedWriter = new BufferedWriter(fileWriter);
                 outBufferedWriter.Write(data.ToString());
                 outBufferedWriter.Close();
             }
@@ -641,24 +626,24 @@ namespace FamiliaXamarin.Medicatie.Data
 
         private JSONObject CreateJsonObject(Disease disease)
         {
-            JSONObject jsonObject = new JSONObject();
+            var jsonObject = new JSONObject();
             try
             {
                 jsonObject.Put("idBoala", disease.Id);
                 jsonObject.Put("numeBoala", disease.DiseaseName);
-                JSONArray listOfMedicines = new JSONArray();
+                var listOfMedicines = new JSONArray();
 
-                for (int i = 0; i < disease.ListOfMedicines.Count; i++)
+                for (var i = 0; i < disease.ListOfMedicines.Count; i++)
                 {
-                    JSONObject medicament = new JSONObject();
+                    var medicament = new JSONObject();
                     medicament.Put("idMedicament", disease.ListOfMedicines[i].IdMed);
                     medicament.Put("numeMedicament", disease.ListOfMedicines[i].Name);
                     medicament.Put("dataMedicament", disease.ListOfMedicines[i].Date.ToString());
                     medicament.Put("nrZileMedicament", disease.ListOfMedicines[i].NumberOfDays);
                     medicament.Put("intervalZi", disease.ListOfMedicines[i].IntervalOfDay);
-                    JSONArray arrayOfHours = new JSONArray();
+                    var arrayOfHours = new JSONArray();
 
-                    for (int j = 0; j < disease.ListOfMedicines[i].Hours.Count; j++)
+                    for (var j = 0; j < disease.ListOfMedicines[i].Hours.Count; j++)
                     {
                         arrayOfHours.Put(new JSONObject().Put("idOra", disease.ListOfMedicines[i].Hours[j].Id).Put("numeOra", disease.ListOfMedicines[i].Hours[j].HourName));
                     }
@@ -684,9 +669,9 @@ namespace FamiliaXamarin.Medicatie.Data
 
                 listOfDiseases.Put(CreateJsonObject(disease));
 
-                File file = new File(context.FilesDir, Constants.MedicationFile);
-                FileWriter fileWriter = new FileWriter(file);
-                BufferedWriter outBufferedWriter = new BufferedWriter(fileWriter);
+                var file = new File(context.FilesDir, Constants.MedicationFile);
+                var fileWriter = new FileWriter(file);
+                var outBufferedWriter = new BufferedWriter(fileWriter);
                 outBufferedWriter.Write(listOfDiseases.ToString());
                 outBufferedWriter.Close();
             }
@@ -705,9 +690,9 @@ namespace FamiliaXamarin.Medicatie.Data
             try
             {
                 Stream fis = context.OpenFileInput(Constants.MedicationFile);
-                InputStreamReader isr = new InputStreamReader(fis);
-                BufferedReader bufferedReader = new BufferedReader(isr);
-                StringBuilder sb = new StringBuilder();
+                var isr = new InputStreamReader(fis);
+                var bufferedReader = new BufferedReader(isr);
+                var sb = new StringBuilder();
                 string line;
                 while ((line = bufferedReader.ReadLine()) != null)
                 {
@@ -731,20 +716,20 @@ namespace FamiliaXamarin.Medicatie.Data
                 string data = ReadData(context);
                 JSONArray diseases = data != null ? new JSONArray(data) : new JSONArray();
 
-                for (int i = 0; i < diseases.Length(); i++)
+                for (var i = 0; i < diseases.Length(); i++)
                 {
-                    Disease b = new Disease();
-                    JSONObject bTemp = (JSONObject)diseases.Get(i);
+                    var b = new Disease();
+                    var bTemp = (JSONObject)diseases.Get(i);
 
                     b.Id = bTemp.GetString("idBoala");
                     b.DiseaseName = bTemp.GetString("numeBoala");
 
-                    List<Medicine> listOfMedicines = new List<Medicine>();
-                    JSONArray arrayOfMedicines = (JSONArray)bTemp.Get("listaMedicamente");
+                    var listOfMedicines = new List<Medicine>();
+                    var arrayOfMedicines = (JSONArray)bTemp.Get("listaMedicamente");
 
-                    for (int j = 0; j < arrayOfMedicines.Length(); j++)
+                    for (var j = 0; j < arrayOfMedicines.Length(); j++)
                     {
-                        Medicine m = new Medicine();
+                        var m = new Medicine();
                         m.IdMed = (string)((JSONObject)arrayOfMedicines.Get(j)).Get("idMedicament");
                         m.Name = (string)((JSONObject)arrayOfMedicines.Get(j)).Get("numeMedicament");
                         Log.Error("Storage conversion date", (string)((JSONObject)arrayOfMedicines.Get(j)).Get("dataMedicament"));
@@ -753,11 +738,11 @@ namespace FamiliaXamarin.Medicatie.Data
                         m.NumberOfDays = (int)((JSONObject)arrayOfMedicines.Get(j)).Get("nrZileMedicament");
                         m.IntervalOfDay = (int)((JSONObject)arrayOfMedicines.Get(j)).Get("intervalZi");
 
-                        List<Hour> ListOfHours = new List<Hour>();
-                        JSONArray arrayOfHours = (JSONArray)((JSONObject)arrayOfMedicines.Get(j)).Get("listaOre");
-                        for (int k = 0; k < arrayOfHours.Length(); k++)
+                        var ListOfHours = new List<Hour>();
+                        var arrayOfHours = (JSONArray)((JSONObject)arrayOfMedicines.Get(j)).Get("listaOre");
+                        for (var k = 0; k < arrayOfHours.Length(); k++)
                         {
-                            Hour h = new Hour();
+                            var h = new Hour();
                             h.Id = (string)((JSONObject)arrayOfHours.Get(k)).Get("idOra");
                             h.HourName = (string)((JSONObject)arrayOfHours.Get(k)).Get("numeOra");
                             ListOfHours.Add(h);

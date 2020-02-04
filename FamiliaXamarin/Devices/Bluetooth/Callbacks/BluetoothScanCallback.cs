@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Android.Bluetooth.LE;
+﻿using Android.Bluetooth.LE;
 using Android.Runtime;
-using Familia.Devices.BluetoothEvents;
+using Familia.Devices.Bluetooth.Events;
 
-namespace Familia.Devices {
+namespace Familia.Devices.Bluetooth.Callbacks {
     public class BluetoothScanCallback : ScanCallback {
         public delegate void ScanResultEventHandler(object source, BluetoothScanCallbackEventArgs args);
         public event ScanResultEventHandler OnScanResultChanged;

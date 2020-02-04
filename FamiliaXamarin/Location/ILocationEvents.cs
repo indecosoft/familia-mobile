@@ -1,8 +1,7 @@
 ﻿using System;
-namespace Familia.Helpers
-{
-    public interface ILocationEvents
-    {
-        void OnLocationRequested(object source, EventArgs args);
-    }
+
+namespace Familia.Location {
+	public interface ILocationEvents {
+		void OnLocationRequested(EventArgs args);
+	}
 }

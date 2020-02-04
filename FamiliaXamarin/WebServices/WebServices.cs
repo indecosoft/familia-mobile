@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Android.Util;
 using Org.Json;
 
-namespace FamiliaXamarin
+namespace Familia.WebServices
 {
     public class WebServices
     {
@@ -19,11 +19,11 @@ namespace FamiliaXamarin
             {
                 using (var client = new HttpClient())
                 {
-                    using (var response = await client.GetAsync(url))
+                    using (HttpResponseMessage response = await client.GetAsync(url))
                     {
-                        using (var content = response.Content)
+                        using (HttpContent content = response.Content)
                         {
-                            var httpContent = await content.ReadAsStringAsync();
+                            string httpContent = await content.ReadAsStringAsync();
                             return httpContent;
                         }
                     }
@@ -42,13 +42,13 @@ namespace FamiliaXamarin
             {
                 try
                 {
-                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                    using (var response = await client.GetAsync(url))
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    using (HttpResponseMessage response = await client.GetAsync(url))
                     {
 
-                        using (var content = response.Content)
+                        using (HttpContent content = response.Content)
                         {
-                            var httpContent = await content.ReadAsStringAsync();
+                            string httpContent = await content.ReadAsStringAsync();
 
                             return httpContent;
                         }
@@ -74,7 +74,7 @@ namespace FamiliaXamarin
 
                 using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
                 {
-                    string json = obj.ToString();
+                    var json = obj.ToString();
 
                     streamWriter.Write(json);
                     streamWriter.Flush();
@@ -83,7 +83,7 @@ namespace FamiliaXamarin
                 var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
                 using (var streamReader = new StreamReader(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
                 {
-                    var result = await streamReader.ReadToEndAsync();
+                    string result = await streamReader.ReadToEndAsync();
                     return result;
                 }
             }
@@ -106,7 +106,7 @@ namespace FamiliaXamarin
 
                 using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
                 {
-                    string json = obj.ToString();
+                    var json = obj.ToString();
 
                     streamWriter.Write(json);
                     streamWriter.Flush();
@@ -115,7 +115,7 @@ namespace FamiliaXamarin
                 var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
                 using (var streamReader = new StreamReader(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
                 {
-                    var result = await streamReader.ReadToEndAsync();
+                    string result = await streamReader.ReadToEndAsync();
                     return result;
                 }
             }
@@ -136,7 +136,7 @@ namespace FamiliaXamarin
 
                 using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
                 {
-                    string json = obj.ToString();
+                    var json = obj.ToString();
 
                     streamWriter.Write(json);
                     streamWriter.Flush();
@@ -145,7 +145,7 @@ namespace FamiliaXamarin
                 var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
                 using (var streamReader = new StreamReader(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
                 {
-                    var result = await streamReader.ReadToEndAsync();
+                    string result = await streamReader.ReadToEndAsync();
                     return result;
                 }
             }
@@ -168,7 +168,7 @@ namespace FamiliaXamarin
 
                 using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
                 {
-                    string json = obj.ToString();
+                    var json = obj.ToString();
 
                     streamWriter.Write(json);
                     streamWriter.Flush();
@@ -177,7 +177,7 @@ namespace FamiliaXamarin
                 var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
                 using (var streamReader = new StreamReader(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
                 {
-                    var result = await streamReader.ReadToEndAsync();
+                    string result = await streamReader.ReadToEndAsync();
                     return result;
                 }
             }
@@ -198,7 +198,7 @@ namespace FamiliaXamarin
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    var response = await client.PostAsync(url, new FormUrlEncodedContent(dict));
+                    HttpResponseMessage response = await client.PostAsync(url, new FormUrlEncodedContent(dict));
                     return await response.Content.ReadAsStringAsync();
 
                 }

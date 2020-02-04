@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Familia;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using Android.Support.V7.Widget;
-using FamiliaXamarin.Medicatie.Entities;
+using Familia.Medicatie.Entities;
 
-namespace FamiliaXamarin.Medicatie
+namespace Familia.Medicatie
 {
     class HourAdapter : RecyclerView.Adapter
     {
@@ -53,7 +52,7 @@ namespace FamiliaXamarin.Medicatie
 
         public void SetList(List<Hour> list)
         {
-            this.hours = list;
+            hours = list;
         }
 
         public void SetListener(OnHourClickListener listener)

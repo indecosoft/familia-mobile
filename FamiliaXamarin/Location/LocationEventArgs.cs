@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace Familia.Location
 {
 	public class LocationEventArgs : EventArgs

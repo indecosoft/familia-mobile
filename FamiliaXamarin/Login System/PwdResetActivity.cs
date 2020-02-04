@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
@@ -10,13 +9,11 @@ using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Familia;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie.Entities;
+using Familia.Helpers;
 using Org.Json;
 using V7Widget = Android.Support.V7.Widget;
 
-namespace FamiliaXamarin.Login_System
+namespace Familia.Login_System
 {
     [Activity(Label = "PwdResetActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class PwdResetActivity : AppCompatActivity, View.IOnClickListener
@@ -102,7 +99,7 @@ namespace FamiliaXamarin.Login_System
                 case Resource.Id.btnReset:
                     if (FormValidator())
                     {
-                         sendData();
+                         SendData();
                     }
                     break;
                 case Resource.Id.btnCancel:
@@ -111,13 +108,13 @@ namespace FamiliaXamarin.Login_System
             }
         }
 
-        private async void sendData()
+        private async void SendData()
         {
-            ProgressBarDialog dialog = new ProgressBarDialog("Va rugam asteptati", "Resetare...", this, false);
+            var dialog = new ProgressBarDialog("Va rugam asteptati", "Resetare...", this, false);
             dialog.Show();
 
-            var dataToSent = new JSONObject().Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text);
-            var res = await WebServices.Post(Constants.PublicServerAddress + "/api/passwordReset", dataToSent);
+            JSONObject dataToSent = new JSONObject().Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text);
+            string res = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/passwordReset", dataToSent);
 
             if (res != null)
             {

@@ -1,26 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
-using FamiliaXamarin;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie.Alarm;
-using FamiliaXamarin.Medicatie.Data;
-using FamiliaXamarin.Medicatie.Entities;
+using Familia.Helpers;
+using Familia.Medicatie.Alarm;
+using Familia.Medicatie.Data;
+using Familia.Medicatie.Entities;
 using Java.Lang;
 using Java.Text;
 using Java.Util;
 using Org.Json;
 using Exception = System.Exception;
+using Random = System.Random;
+using TimeZone = Java.Util.TimeZone;
 
 namespace Familia.Services
 {
@@ -62,7 +58,7 @@ namespace Familia.Services
             await Task.Run(async () => {
                 try
                 {
-                    var res = await WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("Id")}", Utils.GetDefaults("Token"));
+                    string res = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("Id")}", Utils.GetDefaults("Token"));
 
                     if (res != null)
                     {
@@ -101,11 +97,11 @@ namespace Familia.Services
                     else
                     {
                         var medDate = Convert.ToDateTime(_medications[ms].Timestampstring);
-                        var currentDate = DateTime.Now;
+                        DateTime currentDate = DateTime.Now;
 
                         if (medDate >= currentDate)
                         {
-                            var medObj = await Storage.GetInstance().getElementByUUID(_medications[ms].Uuid);
+                            MedicationSchedule medObj = await Storage.GetInstance().getElementByUUID(_medications[ms].Uuid);
                             if (medObj.IdNotification == 0)
                             {
                                 SetupAlarm(ms, _medications[ms].IdNotification);
@@ -133,14 +129,14 @@ namespace Familia.Services
                 for (var i = 0; i < results.Length(); i++)
                 {
                     var obj = (JSONObject)results.Get(i);
-                    var uuid = obj.GetString("uuid");
-                    var timestampString = obj.GetString("timestamp");
-                    var title = obj.GetString("title");
-                    var content = obj.GetString("content");
+                    string uuid = obj.GetString("uuid");
+                    string timestampString = obj.GetString("timestamp");
+                    string title = obj.GetString("title");
+                    string content = obj.GetString("content");
                     var postpone = Convert.ToInt32(obj.GetString("postpone"));
 
-                    var random = new System.Random();
-                    var id = CurrentTimeMillis() * random.Next();
+                    var random = new Random();
+                    int id = CurrentTimeMillis() * random.Next();
 
                     medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone, id));
                     Log.Error("MedicationSS MEDICATIONSTRING", timestampString);
@@ -154,7 +150,7 @@ namespace Familia.Services
         private void SetupAlarm(int ms, int id)
         {
             Log.Error("MedicationSS setuAlarm method", _medications[ms].Timestampstring);
-            var am = (AlarmManager)this.GetSystemService(AlarmService);
+            var am = (AlarmManager)GetSystemService(AlarmService);
             var i = new Intent(this, typeof(AlarmBroadcastReceiverServer));
 
             i.PutExtra(AlarmBroadcastReceiverServer.Uuid, _medications[ms].Uuid);
@@ -163,15 +159,15 @@ namespace Familia.Services
             i.PutExtra(AlarmBroadcastReceiverServer.Postpone, _medications[ms].Postpone);
 
             i.SetAction(AlarmBroadcastReceiverServer.ActionReceive);
-            var pi = PendingIntent.GetBroadcast(this, id, i, PendingIntentFlags.UpdateCurrent);
+            PendingIntent pi = PendingIntent.GetBroadcast(this, id, i, PendingIntentFlags.UpdateCurrent);
 
             if (am == null) return;
 
-            var date = parseTimestampStringToDate(_medications[ms]);
+            DateTime date = parseTimestampStringToDate(_medications[ms]);
 
             _medications[ms].Timestampstring = date.ToString();
-            Calendar calendar = Calendar.Instance;
-            Calendar setcalendar = Calendar.Instance;
+            var calendar = Calendar.Instance;
+            var setcalendar = Calendar.Instance;
 
             setcalendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, date.Second);
             Log.Error("DATE ", date.Year + ", " + date.Month + ", " + date.Day + ", " + date.Second);
@@ -183,15 +179,15 @@ namespace Familia.Services
         {
             DateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             {
-                TimeZone = Java.Util.TimeZone.GetTimeZone("UTC")
+                TimeZone = TimeZone.GetTimeZone("UTC")
             };
-            DateTime date = new DateTime();
+            var date = new DateTime();
             try
             {
                 date = DateTime.Parse(ms.Timestampstring);
                 DateFormat pstFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
                 {
-                    TimeZone = Java.Util.TimeZone.GetTimeZone("PST")
+                    TimeZone = TimeZone.GetTimeZone("PST")
                 };
                 Log.Error("MedicationSS TIMESTAMPSTRING", date.ToLocalTime().ToString());
             }
@@ -231,7 +227,7 @@ namespace Familia.Services
                 ((NotificationManager)GetSystemService(NotificationService)).CreateNotificationChannel(channel);
                 */
 
-                var notification = new NotificationCompat.Builder(this, App.NonStopChannelIdForServices)
+                Notification notification = new NotificationCompat.Builder(this, App.NonStopChannelIdForServices)
                     .SetContentTitle("Familia")
                     .SetContentText("Ruleaza in fundal")
                     .SetSmallIcon(Resource.Drawable.logo)

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Familia;
+﻿using System.Collections.Generic;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using Android.Support.V7.Widget;
-using FamiliaXamarin.Medicatie.Entities;
+using Familia.Medicatie.Entities;
 
-namespace FamiliaXamarin.Medicatie
+namespace Familia.Medicatie
 {
     class DiseaseAdapter : RecyclerView.Adapter
     {

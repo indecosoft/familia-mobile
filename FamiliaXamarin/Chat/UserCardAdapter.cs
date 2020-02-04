@@ -3,8 +3,7 @@ using Android.Content;
 using Android.Views;
 using Android.Widget;
 using Com.Bumptech.Glide;
-using FamiliaXamarin;
-using Object = Java.Lang.Object;
+using Java.Lang;
 
 namespace Familia.Chat
 {

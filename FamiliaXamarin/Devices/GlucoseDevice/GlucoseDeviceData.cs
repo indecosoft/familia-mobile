@@ -1,4 +1,4 @@
-﻿namespace FamiliaXamarin.Devices.GlucoseDevice
+﻿namespace Familia.Devices.GlucoseDevice
 {
     internal class GlucoseDeviceData
     {

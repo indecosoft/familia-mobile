@@ -3,17 +3,16 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.Constraints;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Text;
 using Android.Widget;
-using Familia;
-using FamiliaXamarin.Helpers;
+using Familia.Helpers;
 using Org.Json;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
 
-namespace FamiliaXamarin
+namespace Familia.Login_System
 {
     [Activity(Label = "RegisterActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
     public class RegisterActivity : AppCompatActivity
@@ -49,7 +48,7 @@ namespace FamiliaXamarin
 
         private void InitUi()
         {
-            Android.Support.V7.Widget.Toolbar toolbar =FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            var toolbar =FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             Title = string.Empty;
 
@@ -70,7 +69,7 @@ namespace FamiliaXamarin
             _bntCancel = FindViewById<AppCompatButton>(Resource.Id.btn_cancel);
             
 
-            TextView tvDeviceId = FindViewById<TextView>(Resource.Id.tv_device_id_value);
+            var tvDeviceId = FindViewById<TextView>(Resource.Id.tv_device_id_value);
             string deviceId = Utils.GetDeviceIdentificator(this);
             if (!string.IsNullOrEmpty(deviceId))
             {
@@ -213,16 +212,16 @@ namespace FamiliaXamarin
 
             await Task.Run(async () => {
 
-                var dataToSend = new JSONObject().Put("name", $"{_nameEditText.Text} {_firstNameEditText.Text}").Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text).Put("type", 4).Put("imei", Utils.GetDeviceIdentificator(this));
+                JSONObject dataToSend = new JSONObject().Put("name", $"{_nameEditText.Text} {_firstNameEditText.Text}").Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text).Put("type", 4).Put("imei", Utils.GetDeviceIdentificator(this));
 
-                var response = await WebServices.Post(Constants.PublicServerAddress + "/api/register", dataToSend);
+                string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/register", dataToSend);
                 if (response != null)
                 {
                     Snackbar snack = new JSONObject(response).GetInt("status") switch
                     {
                         0 => Snackbar.Make(_layout, "Date incorecte", Snackbar.LengthLong),
                         1 => Snackbar.Make(_layout, "Eroare server", Snackbar.LengthLong),
-                        2 => Snackbar.Make(_layout, "Cont creat cu succes", Snackbar.LengthIndefinite).SetAction("Ok", (v) =>
+                        2 => Snackbar.Make(_layout, "Cont creat cu succes", Snackbar.LengthIndefinite).SetAction("Ok", v =>
                         {
                             Finish();
                         }),

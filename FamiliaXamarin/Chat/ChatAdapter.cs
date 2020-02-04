@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Familia;
 using Android.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 
-namespace FamiliaXamarin.Chat
+namespace Familia.Chat
 {
     class ChatAdapter : RecyclerView.Adapter
     {
@@ -52,7 +51,7 @@ namespace FamiliaXamarin.Chat
             }
             //            layout = Resource.Layout.item_my_message;
 
-            var itemView = mInflater.Inflate(layout, parent, false);
+            View itemView = mInflater.Inflate(layout, parent, false);
 
             var viewHolder = new SucHolder(itemView);
             return viewHolder;
@@ -62,7 +61,7 @@ namespace FamiliaXamarin.Chat
         {
             var holder = viewHolder as SucHolder;
 
-            var message = _messages[position];
+            ChatModel message = _messages[position];
             if (holder == null) return;
             holder.Time.Text = DateTime.Now.ToShortTimeString();
             holder.MessageView.Text = message.Message;

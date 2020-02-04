@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
@@ -8,16 +7,14 @@ using Android.Media;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
-using Android.Views;
-using Familia;
-using FamiliaXamarin.DataModels;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Medicatie.Data;
-using FamiliaXamarin.Services;
+using Familia.DataModels;
+using Familia.Helpers;
+using Familia.Medicatie.Data;
 using Org.Json;
 using SQLite;
+using Uri = Android.Net.Uri;
 
-namespace FamiliaXamarin.Medicatie.Alarm {
+namespace Familia.Medicatie.Alarm {
     [BroadcastReceiver(Enabled = true, Exported = true)]
     class AlarmBroadcastReceiverServer : BroadcastReceiver {
 
@@ -45,10 +42,10 @@ namespace FamiliaXamarin.Medicatie.Alarm {
 
             if (string.IsNullOrEmpty(Utils.GetDefaults("Token"))) return;
 
-            var uuid = intent.GetStringExtra(Uuid);
-            var title = intent.GetStringExtra(Title);
-            var content = intent.GetStringExtra(Content);
-            var postpone = intent.GetIntExtra(Postpone, 5);
+            string uuid = intent.GetStringExtra(Uuid);
+            string title = intent.GetStringExtra(Title);
+            string content = intent.GetStringExtra(Content);
+            int postpone = intent.GetIntExtra(Postpone, 5);
 
             if (await Storage.GetInstance().isHere(uuid) == false) {
                 Log.Error("MSS Alarm BRECEIVER", "med is not here anymore");
@@ -61,7 +58,7 @@ namespace FamiliaXamarin.Medicatie.Alarm {
 
             //CreateNotificationChannel(channel, title, content);
 
-            Random random = new Random();
+            var random = new Random();
             int randomNumber = random.Next(1, 3333) * random.Next(1, 3333);
 
             NotifyId += randomNumber;
@@ -81,7 +78,7 @@ namespace FamiliaXamarin.Medicatie.Alarm {
 
             try {
                 var powerManager = (PowerManager)context.GetSystemService(Context.PowerService);
-                var wakeLock = powerManager.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "server tag");
+                PowerManager.WakeLock wakeLock = powerManager.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "server tag");
                 wakeLock.Acquire();
                 wakeLock.Release();
             } catch (Exception e) {
@@ -97,14 +94,14 @@ namespace FamiliaXamarin.Medicatie.Alarm {
         }
 
         private static async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now) {
-            await db.InsertAsync(new MedicineRecords() {
+            await db.InsertAsync(new MedicineRecords {
                 Uuid = uuid,
                 DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
             });
         }
 
         private static async Task<bool> SendData(Context context, JSONArray mArray) {
-            var result = await WebServices.Post(
+            string result = await WebServices.WebServices.Post(
                 $"{Constants.PublicServerAddress}/api/medicine", mArray,
                 Utils.GetDefaults("Token"));
             if (!Utils.CheckNetworkAvailability()) return false;
@@ -120,8 +117,8 @@ namespace FamiliaXamarin.Medicatie.Alarm {
         private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent) {
             Log.Error("MSS Alarm BRECEIVER", mTitle + " " + mContent);
 
-            var description = mContent;
-            Android.Net.Uri sound = Android.Net.Uri.Parse(ContentResolver.SchemeAndroidResource + "://" + Application.Context.PackageName + "/" + Resource.Raw.alarm);  //Here is FILE_NAME is the name of file that you want to play
+            string description = mContent;
+            Uri sound = Uri.Parse(ContentResolver.SchemeAndroidResource + "://" + Application.Context.PackageName + "/" + Resource.Raw.alarm);  //Here is FILE_NAME is the name of file that you want to play
             AudioAttributes attributes = new AudioAttributes.Builder()
                 .SetUsage(AudioUsageKind.Notification)
                 .Build();
@@ -143,9 +140,9 @@ namespace FamiliaXamarin.Medicatie.Alarm {
 
             Log.Error("MSS Alarm BRECEIVER", "build notification");
 
-            var piNotification = PendingIntent.GetActivity(context, notifyId, intent, PendingIntentFlags.UpdateCurrent);
+            PendingIntent piNotification = PendingIntent.GetActivity(context, notifyId, intent, PendingIntentFlags.UpdateCurrent);
 
-            var mBuilder =
+            NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context, channel)
                     .SetSmallIcon(Resource.Drawable.logo)
                     .SetContentText(content)
@@ -155,7 +152,7 @@ namespace FamiliaXamarin.Medicatie.Alarm {
                     .SetPriority(NotificationCompat.PriorityHigh);
                     //.SetOngoing(true);
 
-            var notificationManager = NotificationManagerCompat.From(context);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
 
             notificationManager.Notify(notifyId, mBuilder.Build());
             Log.Error("MSS Alarm BRECEIVER", "notify");

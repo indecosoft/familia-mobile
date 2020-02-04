@@ -3,15 +3,11 @@ using System.Threading.Tasks;
 using Android;
 using Android.App;
 using Android.Content.PM;
-using Android.Gms.Common.Apis;
 using Android.Gms.Location;
 using Android.Support.V4.Content;
 using Android.Util;
 using Android.Widget;
 using Familia.Helpers;
-using FamiliaXamarin;
-using FamiliaXamarin.Helpers;
-using FamiliaXamarin.Location;
 using Org.Json;
 
 namespace Familia.Location {
@@ -46,7 +42,7 @@ namespace Familia.Location {
             _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Application.Context);
             await RequestLocationUpdates();
         }
-        public async void ChangeInterval(int miliseconds) {
+        public async void ChangeInterval(int miliseconds = 1000 * 60 * 30) {
             if(_locationRequest != null) {
                 _locationRequest.SetFastestInterval(miliseconds);
                 _locationRequest.SetInterval(miliseconds);
@@ -71,18 +67,18 @@ namespace Familia.Location {
             }
         }
 
-        public void OnLocationRequested(object source, EventArgs args) {
-            OnLocationRequested((args as LocationEventArgs).Location);
+        public void OnLocationRequested(EventArgs args) {
+            OnLocationRequested(((LocationEventArgs) args).Location);
             if (!Utils.CheckNetworkAvailability()) return;
-            var obj = new JSONObject().Put("latitude", (args as LocationEventArgs).Location.Latitude).Put("longitude", (args as LocationEventArgs).Location.Longitude);
-            var finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("Id")).Put("location", obj);
+            JSONObject obj = new JSONObject().Put("latitude", ((LocationEventArgs) args).Location.Latitude).Put("longitude", (args as LocationEventArgs).Location.Longitude);
+            JSONObject finalObj = new JSONObject().Put("idUser", Utils.GetDefaults("Id")).Put("location", obj);
             try {
                 Task.Run(async () => {
-                    await WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token"));
-                    Utils.SetDefaults("Latitude", (args as LocationEventArgs).Location.Latitude.ToString());
-                    Utils.SetDefaults("Longitude", (args as LocationEventArgs).Location.Longitude.ToString());
-                    Log.Debug("Latitude ", (args as LocationEventArgs).Location.Latitude.ToString());
-                    Log.Debug("Longitude", (args as LocationEventArgs).Location.Longitude.ToString());
+                    await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation", finalObj, Utils.GetDefaults("Token"));
+                    Utils.SetDefaults("Latitude", ((LocationEventArgs) args).Location.Latitude.ToString());
+                    Utils.SetDefaults("Longitude", ((LocationEventArgs) args).Location.Longitude.ToString());
+                    Log.Debug("Latitude ", ((LocationEventArgs) args).Location.Latitude.ToString());
+                    Log.Debug("Longitude", ((LocationEventArgs) args).Location.Longitude.ToString());
                 });
             } catch (Exception e) {
                 Log.Error("Error sending location to server", e.Message);
