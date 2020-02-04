@@ -69,7 +69,7 @@ namespace FamiliaXamarin {
         //   public static string WebSocketLocationAddress { get; } = "http://192.168.101.14:3000/location";
         public static string WebSocketLocationAddress { get; } = "https://gisdev.indecosoft.net/location";
         //  public static string WebSocketAddress { get; } = "http://192.168.101.14:3000/ws";
-        public static string WebSocketAddress { get; } = "https://gisdev.indecosoft.net//ws";
+        public static string WebSocketAddress { get; } = "https://gisdev.indecosoft.net/ws";
         public static int WebSocketPort { get; } = 3000;
         public static int RequestGallery { get; } = 2;
         public static int RequestCamera { get; } = 1;
