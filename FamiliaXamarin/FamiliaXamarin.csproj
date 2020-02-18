@@ -1114,23 +1114,21 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\rounded_button.xml" />
-    <Folder Include="Devices\Models\" />
-    <Folder Include="Devices\Helpers\" />
-    <Folder Include="Devices\DevicesManagement\" />
-    <Folder Include="Devices\DevicesManagement\BloodPressure\" />
-    <Folder Include="Devices\DevicesManagement\Glucose\" />
-    <Folder Include="Devices\DevicesManagement\DeviceManufactureSelector\" />
-    <Folder Include="Devices\DevicesManagement\Dialogs\" />
-    <Folder Include="Devices\DevicesManagement\Dialogs\Events\" />
-    <Folder Include="Devices\DevicesManagement\Dialogs\Helpers\" />
-    <Folder Include="Devices\DevicesManagement\Dialogs\Models\" />
-    <Folder Include="Devices\Bluetooth\" />
-    <Folder Include="Devices\Bluetooth\Callbacks\" />
-    <Folder Include="Devices\Bluetooth\Events\" />
-    <Folder Include="Devices\Bluetooth\Receivers\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\layout_tab2.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\background.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\background2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\planet 5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\planet.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

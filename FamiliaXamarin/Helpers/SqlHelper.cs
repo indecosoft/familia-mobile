@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Android.Util;
+using Familia.Medicatie.Entities;
 using SQLite;
 
 namespace Familia.Helpers {
@@ -78,5 +79,7 @@ namespace Familia.Helpers {
 				Log.Error("IDropTableError", e.Message);
 			}
 		}
-	}
+
+    
+    }
 }

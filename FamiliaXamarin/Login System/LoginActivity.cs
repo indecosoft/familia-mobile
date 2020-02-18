@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Android;
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.Hardware.Fingerprints;
 using Android.OS;
@@ -18,6 +19,7 @@ using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
 using Familia.Helpers;
+using Familia.Services;
 using Java.Security;
 using Javax.Crypto;
 using Org.Json;
@@ -437,7 +439,13 @@ namespace Familia.Login_System
 
                                 StartActivity(logins ? typeof(MainActivity) : typeof(FirstSetup));
 
-                                Finish();
+                                if (int.Parse(Utils.GetDefaults("UserType")) == 3)
+                                {
+                                    var _medicationServerServiceIntent = new Intent(this, typeof(MedicationServerService));
+                                    StartService(_medicationServerServiceIntent);
+                                }
+
+                                    Finish();
                                 break;
                             case 3:
                                 Snackbar.Make(_layout, "Dispozitivul nu este inregistrat!",
@@ -467,6 +475,7 @@ namespace Familia.Login_System
 
             });
             _progressBarDialog.Dismiss();
+           
         }
 
         private void ShowInactiveUserDialog(string cod)

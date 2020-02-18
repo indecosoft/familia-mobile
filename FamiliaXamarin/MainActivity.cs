@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
@@ -27,12 +29,15 @@ using Familia.Helpers;
 using Familia.Login_System;
 using Familia.Medicatie;
 using Familia.Medicatie.Alarm;
+using Familia.Medicatie.Data;
+using Familia.Medicatie.Entities;
 using Familia.Profile;
 using Familia.Services;
 using Familia.Settings;
 using Familia.Sharing;
 using Familia.WebSocket;
 using Refractored.Controls;
+using SQLite;
 using AlertDialog = Android.App.AlertDialog;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Uri = Android.Net.Uri;
@@ -49,6 +54,8 @@ namespace Familia {
 		Intent _smartBandServiceIntent;
 		Intent _medicationServerServiceIntent;
 		Intent _stepCounterService;
+
+		SQLiteAsyncConnection _db;
 
 		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data) {
 			base.OnActivityResult(requestCode, resultCode, data);
@@ -120,8 +127,7 @@ namespace Familia {
 			_loacationServiceIntent = new Intent(this, typeof(LocationService));
 			_webSocketServiceIntent = new Intent(this, typeof(WebSocketService));
 			_smartBandServiceIntent = new Intent(this, typeof(SmartBandService));
-			_medicationServerServiceIntent = new Intent(this, typeof(MedicationServerService));
-			//_medicationServiceIntent = new Intent(this, typeof(MedicationService));
+			//_medicationServerServiceIntent = new Intent(this, typeof(MedicationServerService));
 			IMenu menuNav = navigationView.Menu;
 
 			//Consiliere de activitate ------
@@ -130,8 +136,8 @@ namespace Familia {
 			//-------------
 
 			//            make it hidden for release bc is not done yet
-			menuNav.FindItem(Resource.Id.games).SetVisible(false);
-			menuNav.FindItem(Resource.Id.activity_tracker).SetVisible(false);
+			//menuNav.FindItem(Resource.Id.games).SetVisible(false);
+			//menuNav.FindItem(Resource.Id.activity_tracker).SetVisible(false);
 
 			switch (type) {
 				case 1:
@@ -176,7 +182,7 @@ namespace Familia {
 						.Commit();
 					Title = "Dispozitive de masurare";
 					StartForegroundService(_webSocketServiceIntent);
-					StartService(_medicationServerServiceIntent);
+					//StartService(_medicationServerServiceIntent);
 					//StartService(_medicationServiceIntent);
 
 					break;
@@ -194,8 +200,8 @@ namespace Familia {
 						.Replace(Resource.Id.fragment_container, new FindUsersFragment()).AddToBackStack(null).Commit();
 					Title = "Cauta prieteni";
 					StartForegroundService(_webSocketServiceIntent);
-					StartService(_medicationServerServiceIntent);
-					// StartService(_medicationServiceIntent);
+					//StartService(_medicationServerServiceIntent);
+					
 					break;
 			}
 
@@ -297,7 +303,7 @@ namespace Familia {
 			return base.OnOptionsItemSelected(item);
 		}
 
-		public bool OnNavigationItemSelected(IMenuItem item) {
+		public  bool OnNavigationItemSelected(IMenuItem item) {
 			int id = item.ItemId;
 
 			switch (id) {
@@ -374,9 +380,12 @@ namespace Familia {
 					//Process.KillProcess(Process.MyPid());
 					StopService(_loacationServiceIntent);
 					StopService(_webSocketServiceIntent);
-					StopService(_medicationServerServiceIntent);
+					//StopService(_medicationServerServiceIntent);
 					StopService(_smartBandServiceIntent);
 					//StopService(_medicationServiceIntent);
+
+					
+
 					_ = ClearStorage();
 
 					StartActivity(typeof(LoginActivity));
@@ -390,6 +399,45 @@ namespace Familia {
 			var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
 			drawer.CloseDrawer(GravityCompat.Start);
 			return true;
+		}
+
+		private async Task cancelPendingIntentsForMedicationSchedule()
+		{
+			Log.Error("MainActivity", "start canceling pending intents" );
+			try {
+
+				NetworkingData networking = new NetworkingData();
+				List<MedicationSchedule> list = new List<MedicationSchedule>(await networking.ReadListFromDbFutureDataTask());
+				var am = (AlarmManager)Application.Context.GetSystemService(AlarmService);
+
+				foreach (MedicationSchedule item in list)
+				{
+					Log.Error("MainActivity", "canceling pi .. " + item.IdNotification);
+					var intent = new Intent(Application.Context, typeof(AlarmBroadcastReceiverServer));
+					PendingIntent pi = PendingIntent.GetBroadcast(Application.Context, item.IdNotification, intent, 0);
+
+					if (pi == null)
+					{
+						Log.Error("MainActivity", "pi is null");
+					}
+					else
+					{
+						Log.Error("MainActivity", "pi is not null");
+					}
+
+					//pi.Cancel();
+					am.Cancel(pi);
+					pi.Cancel();
+					//networking.removeMedSer(item.Uuid);
+				}
+
+				Log.Error("MainActivity", "finish canceling pending intents");
+
+			} catch (Exception e) {
+
+				Log.Error("MainActivity", "canceling pi ERROR" + e.Message);
+			}
+			
 		}
 
 		private async Task ClearStorage() {
@@ -412,8 +460,12 @@ namespace Familia {
 
 		private async Task ClearMedicationStorages() {
 			try {
-				var sqlHelper = await SqlHelper<MedicineServerRecords>.CreateAsync();
-				sqlHelper.DropTables(typeof(MedicineServerRecords));
+
+				await cancelPendingIntentsForMedicationSchedule();
+				Log.Error("MainActivity", "start deleting db for medication");
+				//var sqlHelper = await SqlHelper<MedicineServerRecords>.CreateAsync();
+				//sqlHelper.DropTables(typeof(MedicineServerRecords));
+				
 			} catch (Exception e) {
 				Log.Error("Logout Clear Medication Error", e.Message);
 			}

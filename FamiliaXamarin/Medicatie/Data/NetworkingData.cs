@@ -149,9 +149,13 @@ namespace Familia.Medicatie.Data
                     
 
                     MedicationSchedule objMed = await getElementByUUID(element.Uuid);
+
+
+                    Log.Error("NetworkingData class", "saving obj pi id " + element.IdNotification);
                     if (objMed != null && element.IdNotification == 0)
                     {
                         element.IdNotification = objMed.IdNotification;
+                        Log.Error("NetworkingData class", "saving obj pi id " + objMed.IdNotification);
                     }
                     Log.Error("NetworkingData class", "inserting in db..");
                     await _db.Insert(new MedicineServerRecords {
@@ -185,6 +189,7 @@ namespace Familia.Medicatie.Data
                     string title = obj.GetString("title");
                     string content = obj.GetString("content");
                     var postpone = Convert.ToInt32(obj.GetString("postpone"));
+
                     medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone, 0));
                 }
                 return medicationScheduleList;

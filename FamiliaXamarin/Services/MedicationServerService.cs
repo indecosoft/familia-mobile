@@ -23,7 +23,6 @@ namespace Familia.Services
     [Service]
     class MedicationServerService : Service
     {
-        private const int ServiceRunningNotificationId = 10000;
         private readonly Handler _handler = new Handler();
         private int _refreshTime = 1000;
         private readonly Runnable _runnable;
@@ -56,9 +55,11 @@ namespace Familia.Services
         private async void GetData()
         {
 
-            await Task.Run(async () => {
+            await Task.Run(async () =>
+            {
                 try
                 {
+                    await cancelPendingIntentsForMedicationSchedule();//_medications
                     string res = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("Id")}", Utils.GetDefaults("Token"));
 
                     if (res != null)
@@ -66,9 +67,10 @@ namespace Familia.Services
                         Log.Error(Log_Tag, "RESULT_FOR_MEDICATIE" + res);
                         if (res.Equals("[]")) return;
                         _medications = ParseResultFromUrl(res);
-                        Log.Error(Log_Tag, "COUNT MEDICATIE " +  _medications.Count);
+                        Log.Error(Log_Tag, "COUNT MEDICATIE " + _medications.Count);
                     }
-                    else {
+                    else
+                    {
                         Log.Error(Log_Tag, "res is null");
                     }
                 }
@@ -85,10 +87,13 @@ namespace Familia.Services
 
                 Log.Error(Log_Tag, "current count of medications from server " + _medications.Count);
                 Log.Error(Log_Tag, "start showing what it's in medication list after received and parsed from server");
-                foreach (MedicationSchedule item in _medications) {
+                foreach (MedicationSchedule item in _medications)
+                {
                     Log.Error(Log_Tag, item.Title + ", " + item.Timestampstring + ", idNotification " + item.IdNotification + ", " + item.Postpone + ", UUID: " + item.Uuid);
                 }
                 Log.Error(Log_Tag, "the list is finished");
+
+
 
                 var list = new List<MedicationSchedule>();
 
@@ -96,10 +101,11 @@ namespace Familia.Services
                 {
                     Log.Error(Log_Tag, _medications.Count + " in for");
                     bool x = await Storage.GetInstance().isHere(_medications[ms].Uuid);
-                    Log.Error(Log_Tag, "is here? " + x );
+                    Log.Error(Log_Tag, "is here? " + x);
                     if (x == false)
-                    {   list.Add(_medications[ms]);
-                        Log.Error(Log_Tag, "count of meds" + _medications.Count );
+                    {
+                        list.Add(_medications[ms]);
+                        Log.Error(Log_Tag, "count of meds" + _medications.Count);
                         Log.Error(Log_Tag, "setting alarm for an uuid that does not exist in local db");
                         SetupAlarm(ms, _medications[ms].IdNotification);
                     }
@@ -107,6 +113,7 @@ namespace Familia.Services
                     {
                         Log.Error(Log_Tag, "so the uuid is here and start setting the alarm for them");
                         Log.Error(Log_Tag, "the item is: " + _medications[ms].Timestampstring + ", idNotification " + _medications[ms].IdNotification + ", " + _medications[ms].Postpone + ", UUID: " + _medications[ms].Uuid);
+                        
                         var medDate = Convert.ToDateTime(_medications[ms].Timestampstring);
                         DateTime currentDate = DateTime.Now;
 
@@ -119,6 +126,7 @@ namespace Familia.Services
                             }
                             else
                             {
+                                Log.Error(Log_Tag, "set alarm for uuid that is in local db, pi's id  " + medObj.IdNotification + " uuid " + medObj.Uuid);
                                 SetupAlarm(ms, medObj.IdNotification);
                             }
 
@@ -126,10 +134,54 @@ namespace Familia.Services
                         }
                     }
                 }
-               await Storage.GetInstance().saveMedSer(list);
+
+                await Storage.GetInstance().saveMedSer(list);
+
+                //test
+
+                Log.Error(Log_Tag, "start reading what is saved in MedicineServerRecords .. ");
+                var testList = await Storage.GetInstance().readMedSer();
+                foreach (var item in testList)
+                {
+                    Log.Error(Log_Tag, "pi id " + item.IdNotification + " timestamp " + item.Timestampstring + " title  " + item.Title + " content " + item.Content + " uuit " + item.Uuid);
+                }
+                Log.Error(Log_Tag, "read is finished");
 
             }
             await Storage.GetInstance().deleteStinkyItems(_medications);
+        }
+
+
+        private async Task cancelPendingIntentsForMedicationSchedule()//List<MedicationSchedule> _medications
+        {
+            Log.Error(Log_Tag, "start canceling pi");
+            NetworkingData networking = new NetworkingData();
+            List<MedicationSchedule> list = new List<MedicationSchedule>(await networking.ReadListFromDbFutureDataTask());
+
+
+            foreach (MedicationSchedule item in list)
+            {
+                Log.Error(Log_Tag, "canceling pi .. " + item.IdNotification);
+                var am = (AlarmManager)Application.Context.GetSystemService(AlarmService);
+                var intent = new Intent(BaseContext, typeof(AlarmBroadcastReceiverServer));
+                PendingIntent pi = PendingIntent.GetBroadcast(Application.Context, item.IdNotification, intent, 0);
+                //pi.Cancel();
+
+                if (pi == null)
+                {
+                    Log.Error(Log_Tag, "pi is null");
+                }
+                else
+                {
+
+                    Log.Error(Log_Tag, "pi is not null");
+                }
+
+                am.Cancel(pi);
+                pi.Cancel();
+               // networking.removeMedSer(item.Uuid);
+            }
+
         }
 
         private List<MedicationSchedule> ParseResultFromUrl(string res)
@@ -163,16 +215,17 @@ namespace Familia.Services
         private void SetupAlarm(int ms, int id)
         {
             Log.Error(Log_Tag, "setupAlarm method" + _medications[ms].Timestampstring);
-            var am = (AlarmManager)this.GetSystemService(AlarmService);
+            var am = (AlarmManager)Application.Context.GetSystemService(AlarmService);
             var i = new Intent(this, typeof(AlarmBroadcastReceiverServer));
 
             i.PutExtra(AlarmBroadcastReceiverServer.Uuid, _medications[ms].Uuid);
             i.PutExtra(AlarmBroadcastReceiverServer.Title, _medications[ms].Title);
             i.PutExtra(AlarmBroadcastReceiverServer.Content, _medications[ms].Content);
             i.PutExtra(AlarmBroadcastReceiverServer.Postpone, _medications[ms].Postpone);
+            i.PutExtra(AlarmBroadcastReceiverServer.IdPendingIntent, _medications[ms].IdNotification);
 
             i.SetAction(AlarmBroadcastReceiverServer.ActionReceive);
-            PendingIntent pi = PendingIntent.GetBroadcast(this, id, i, PendingIntentFlags.UpdateCurrent);
+            PendingIntent pi = PendingIntent.GetBroadcast(Application.Context, id, i, PendingIntentFlags.UpdateCurrent);
 
             if (am == null) return;
 
@@ -247,7 +300,7 @@ namespace Familia.Services
             {
                 Log.Error(Log_Tag, "error occured " + e.Message);
             }
-    }
+        }
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
