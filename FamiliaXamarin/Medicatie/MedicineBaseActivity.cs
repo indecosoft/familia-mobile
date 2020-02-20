@@ -21,6 +21,7 @@ namespace Familia.Medicatie
         private ViewPager viewPager;
         private BottomNavigationView bottomNavigation;
         private BottomNavigationView bottomNavigationTip4;
+        
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);

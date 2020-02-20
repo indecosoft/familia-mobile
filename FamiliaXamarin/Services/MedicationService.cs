@@ -9,6 +9,7 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
+using Android.Widget;
 using Familia.DataModels;
 using Familia.Helpers;
 using Familia.Medicatie.Alarm;
@@ -81,42 +82,54 @@ namespace Familia.Services
 
         async Task<bool> SendData(Context context)
         {
-            aTimer.Stop();
-            await _db.CreateTableAsync<MedicineRecords>();
-            var myList = await EvaluateQuery(_db, "Select * FROM MedicineRecords");
-            Log.Error("Medication Service:", " count from myList" + myList.Count());
-            var jsonList = new JSONArray();
-            if (myList.Count() == 0) return false;
-            foreach (MedicineRecords el in myList)
-            {
-                JSONObject element = new JSONObject().Put("uuid", el.Uuid).Put("date", el.DateTime);
-                jsonList.Put(element);
-            }
-            Log.Error("Medication Service:", "sending object.. " + jsonList);
-            if (Utils.CheckNetworkAvailability())
-            {
-                Log.Error("Medication Service:", "network checked");
-                string result = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", jsonList, Utils.GetDefaults("Token"));
-                Log.Error("Medication Service", result);
-                switch (result)
+            try {
+
+                aTimer.Stop();
+                await _db.CreateTableAsync<MedicineRecords>();
+                var myList = await EvaluateQuery(_db, "Select * FROM MedicineRecords");
+                Log.Error("Medication Service:", " count from myList" + myList.Count());
+                JSONArray jsonList = new JSONArray();
+                if (myList.Count() == 0) return false;
+                foreach (var el in myList)
                 {
-                    case "Done":
-                    case "done":
-                        Log.Error("Medication Service:", "response done. timer start");
-                        //aTimer.Start();
-
-                        await _db.DropTableAsync<MedicineRecords>();
-                        Log.Error("Medication Service:", "table deleted");
-                        return true;
-                    default:
-                        aTimer.Start();
-                        return false;
-
+                    JSONObject element = new JSONObject().Put("uuid", el.Uuid).Put("date", el.DateTime);
+                    jsonList.Put(element);
                 }
-            }
+                Log.Error("Medication Service:", "sending object.. " + jsonList.ToString());
+                if (Utils.CheckNetworkAvailability())
+                {
+                    Log.Error("Medication Service:", "network checked");
+                    string result = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", jsonList, Utils.GetDefaults("Token"));
+                    Log.Error("Medication Service", result);
+                    switch (result)
+                    {
+                        case "Done":
+                        case "done":
+                            Log.Error("Medication Service:", "response done. timer start");
+                            //aTimer.Start();
 
-            aTimer.Start();
-            return false;
+                            // await _db.DropTableAsync<MedicineRecords>();
+                            await _db.DeleteAllAsync<MedicineRecords>();
+                            Log.Error("Medication Service:", "table deleted");
+                            return true;
+                        default:
+                            aTimer.Start();
+                            return false;
+
+                    }
+                }
+                else
+                {
+                    aTimer.Start();
+                    return false;
+                }
+
+            } catch (Exception e) {
+                Log.Error("Medication Service ", e.Message);
+                Toast.MakeText(context, "Sqlite busy", ToastLength.Long).Show();
+                return false;
+            }
+        
         }
 
       

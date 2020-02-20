@@ -24,6 +24,7 @@ namespace Familia.Medicatie.Alarm {
         public const string Title = "title";
         public const string Content = "content";
         public const string Postpone = "postpone";
+        public const string IdPendingIntent = "idPendingIntent";
 
         private const string Ok = "OK";
         private const string ActionOk = "actionOk";
@@ -33,6 +34,8 @@ namespace Familia.Medicatie.Alarm {
         private Intent _medicationServiceIntent;
         public static readonly string FROM_SERVER = "from_server";
         public static readonly string MEDICATION_NAME = "med_name";
+
+        private string oldUuid;
 
 
         public override async void OnReceive(Context context, Intent intent) {
@@ -46,12 +49,25 @@ namespace Familia.Medicatie.Alarm {
             string title = intent.GetStringExtra(Title);
             string content = intent.GetStringExtra(Content);
             int postpone = intent.GetIntExtra(Postpone, 5);
+            int idPi = intent.GetIntExtra(IdPendingIntent, 1);
 
             if (await Storage.GetInstance().isHere(uuid) == false) {
                 Log.Error("MSS Alarm BRECEIVER", "med is not here anymore");
                 return;
             }
 
+
+            if (oldUuid == null || oldUuid.Equals(""))
+            {
+                oldUuid = uuid;
+            }
+            else {
+                if (oldUuid.Equals(uuid)) {
+                    return;
+                }
+            }
+
+            Log.Error("MSS Alarm BRECEIVER", "id pi.. " + idPi);
 
             //const string channel = "channelabsolut_alarm_medication";
             Log.Error("MSS Alarm BRECEIVER", title + ", " + content + ", " + postpone);
@@ -71,6 +87,7 @@ namespace Familia.Medicatie.Alarm {
             alarmIntent.PutExtra(MEDICATION_NAME, title);
             alarmIntent.PutExtra(Postpone, postpone);
             alarmIntent.PutExtra(Content, content);
+            alarmIntent.PutExtra(IdPendingIntent, idPi);
             alarmIntent.SetFlags(ActivityFlags.NewTask);
             context.StartActivity(alarmIntent);
 
@@ -93,49 +110,6 @@ namespace Familia.Medicatie.Alarm {
                 service.Service.ShortClassName == classTypeof.ToString());
         }
 
-        private static async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now) {
-            await db.InsertAsync(new MedicineRecords {
-                Uuid = uuid,
-                DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
-            });
-        }
-
-        private static async Task<bool> SendData(Context context, JSONArray mArray) {
-            string result = await WebServices.WebServices.Post(
-                $"{Constants.PublicServerAddress}/api/medicine", mArray,
-                Utils.GetDefaults("Token"));
-            if (!Utils.CheckNetworkAvailability()) return false;
-            switch (result) {
-                case "Done":
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-
-        private static void CreateNotificationChannel(string mChannel, string mTitle, string mContent) {
-            Log.Error("MSS Alarm BRECEIVER", mTitle + " " + mContent);
-
-            string description = mContent;
-            Uri sound = Uri.Parse(ContentResolver.SchemeAndroidResource + "://" + Application.Context.PackageName + "/" + Resource.Raw.alarm);  //Here is FILE_NAME is the name of file that you want to play
-            AudioAttributes attributes = new AudioAttributes.Builder()
-                .SetUsage(AudioUsageKind.Notification)
-                .Build();
-            var channel =
-                new NotificationChannel(mChannel, mTitle, NotificationImportance.Default) {
-                    Description = description
-                };
-            channel.SetSound(sound, attributes);
-            channel.Importance = NotificationImportance.High;
-
-            var notificationManager =
-                (NotificationManager)Application.Context.GetSystemService(
-                    Context.NotificationService);
-            notificationManager.CreateNotificationChannel(channel);
-        }
-
-
         private static void BuildNotification(Context context, int notifyId, string channel, string title, string content, Intent intent) {
 
             Log.Error("MSS Alarm BRECEIVER", "build notification");
@@ -148,7 +122,7 @@ namespace Familia.Medicatie.Alarm {
                     .SetContentText(content)
                     .SetContentTitle(title)
                     .SetAutoCancel(false)
-                    // .SetContentIntent(piNotification)
+                    //.SetContentIntent(piNotification)
                     .SetPriority(NotificationCompat.PriorityHigh);
                     //.SetOngoing(true);
 

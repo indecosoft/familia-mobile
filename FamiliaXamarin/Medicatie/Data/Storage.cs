@@ -51,28 +51,34 @@ namespace Familia.Medicatie.Data
         public async Task<bool> saveMedSer(List<MedicationSchedule> list)
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
-            _medicationSchedules = list;
-            foreach (MedicationSchedule element in _medicationSchedules)
+            if (list.Count != 0)
             {
-                MedicationSchedule objMed = await getElementByUUID(element.Uuid);
-                if (objMed != null && element.IdNotification == 0)
+
+                _medicationSchedules = list;
+                foreach (MedicationSchedule element in _medicationSchedules)
                 {
-                    element.IdNotification = objMed.IdNotification;
+                    MedicationSchedule objMed = await getElementByUUID(element.Uuid);
+                    if (objMed != null && element.IdNotification == 0)
+                    {
+                        element.IdNotification = objMed.IdNotification;
+                    }
+                    var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{element.Uuid}'");
+                    Log.Error("Count current saveMedSer", c.Count() + "");
+                    if (c.Count() == 0)
+                    {
+                        Log.Error("STORAGE", "se introduc date in DB..");
+                        await _db.Insert(new MedicineServerRecords
+                        {
+                            Title = element.Title,
+                            Content = element.Content,
+                            DateTime = element.Timestampstring,
+                            Uuid = element.Uuid,
+                            Postpone = element.Postpone + "",
+                            IdNotification = element.IdNotification + ""
+                        });
+                    }
                 }
-                var c = await _db.QueryValuations($"SELECT * from MedicineServerRecords WHERE Uuid ='{element.Uuid}'");
-                Log.Error("Count current saveMedSer", c.Count() + "");
-                if (c.Count() == 0)
-                {
-                    Log.Error("STORAGE", "se introduc date in DB..");
-                    await _db.Insert(new MedicineServerRecords {
-                        Title = element.Title,
-                        Content = element.Content,
-                        DateTime = element.Timestampstring,
-                        Uuid = element.Uuid,
-                        Postpone = element.Postpone + "",
-                        IdNotification = element.IdNotification + ""
-                    });
-                }
+
             }
             Log.Error("STORAGE", "finalizare");
             return true;
@@ -88,7 +94,8 @@ namespace Familia.Medicatie.Data
                 if (c.Count() == 0)
                 {
                     Log.Error("STORAGE", "se introduc date in DB..");
-                    await _db.Insert(new MedicineServerRecords {
+                    await _db.Insert(new MedicineServerRecords
+                    {
                         Title = med.Title,
                         Content = med.Content,
                         DateTime = med.Timestampstring,
@@ -134,8 +141,8 @@ namespace Familia.Medicatie.Data
             return listMedSch;
         }
 
-        // will be removed
-        public async void removeMedSer(string UUIDmed)
+
+        public async Task removeMedSer(string UUIDmed)
         {
             _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
             var list = await _db.QueryValuations($"delete from MedicineServerRecords where Uuid ='{UUIDmed}'");
@@ -143,7 +150,58 @@ namespace Familia.Medicatie.Data
             _medicationSchedules.Remove(await getElementByUUID(UUIDmed));
         }
 
-        // will be removed
+        public async Task deleteStinkyItems(List<MedicationSchedule> medications)
+        {
+            List<MedicationSchedule> localList = await readMedSer();
+            /* Log.Error("Storage", "whats in local db right now " + localList.Count);
+
+             foreach (MedicationSchedule item in localList) {
+                 Log.Error("Storage ", item.Title + ", " + item.Timestampstring + ", idNotification " + item.IdNotification + ", " + item.Postpone + ", UUID: " + item.Uuid);
+             }
+             Log.Error("Storage", "that's all. ");
+
+             Log.Error("Storage", "what should be: " + medications.Count);
+             foreach (MedicationSchedule item in medications)
+             {
+                 Log.Error("Storage ", item.Title + ", " + item.Timestampstring + ", idNotification " + item.IdNotification + ", " + item.Postpone + ", UUID: " + item.Uuid);
+             }
+             Log.Error("Storage", "that's all. ");
+             Log.Error("Storage", "find stinky data");
+             */
+
+            foreach (MedicationSchedule itemLocal in localList)
+            {
+                if (itemLocal.IdNotification != 0 && !isItemInListOrListIsEmpty(itemLocal, medications))
+                {
+                    Log.Error("Storage ", "this item will be deleted " + itemLocal.Title + ", " + itemLocal.Timestampstring + ", idNotification " + itemLocal.IdNotification + ", " + itemLocal.Postpone + ", UUID: " + itemLocal.Uuid);
+                    await removeMedSer(itemLocal.Uuid);
+                }
+            }
+            //  Log.Error("Storage", "done with stinky data");
+            //localList = await readMedSer();
+            // Log.Error("Storage", "now in db is " + localList.Count) ;
+        }
+
+        private bool isItemInListOrListIsEmpty(MedicationSchedule item, List<MedicationSchedule> list)
+        {
+
+            if (list.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (MedicationSchedule ms in list)
+            {
+                if (ms.Uuid == item.Uuid)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
         public async Task<bool> isHere(string UUIDmed)
         {
             var ok = false;
@@ -196,7 +254,7 @@ namespace Familia.Medicatie.Data
             return await GetMergedList(listFromFileConverted, listFromLocalDb);
         }
 
-        private async Task<List<MedicationSchedule>> GetMergedList(List<MedicationSchedule> listFromFileConverted, List<MedicationSchedule> listFromLocalDb )
+        private async Task<List<MedicationSchedule>> GetMergedList(List<MedicationSchedule> listFromFileConverted, List<MedicationSchedule> listFromLocalDb)
         {
             var listWithRemovedItems = new List<MedicationSchedule>(listFromLocalDb.Where(c => c.Uuid.Contains("removed")).ToList());
             var finalList = new List<MedicationSchedule>();
@@ -347,7 +405,8 @@ namespace Familia.Medicatie.Data
                 if (!(await SearchItemTask(element.Uuid)))
                 {
                     Log.Error("Storage class", "inserting in db..");
-                    await _db.Insert(new MedicineServerRecords {
+                    await _db.Insert(new MedicineServerRecords
+                    {
                         Title = element.Title,
                         Content = element.Content,
                         DateTime = element.Timestampstring,
@@ -384,7 +443,8 @@ namespace Familia.Medicatie.Data
                         element.IdNotification = objMed.IdNotification;
                     }
                     Log.Error("Storage class", "inserting in db..");
-                    await _db.Insert(new MedicineServerRecords {
+                    await _db.Insert(new MedicineServerRecords
+                    {
                         Title = element.Title,
                         Content = element.Content,
                         DateTime = element.Timestampstring,

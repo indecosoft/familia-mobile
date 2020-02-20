@@ -108,6 +108,7 @@ namespace Familia.Medicatie.Alarm
                     postpone =intent.GetIntExtra(AlarmBroadcastReceiverServer.Postpone, 5);
                     NotifyId = intent.GetIntExtra("notifyId", 5);
                     tvMedName.Text = "Pentru afectiunea " + title + " trebuie luat medicamentul " + content;
+                    mIdAlarm = intent.GetIntExtra(AlarmBroadcastReceiverServer.IdPendingIntent, -1);
                     Log.Error("alarm activity", postpone + " ");
                     string path =
                         Environment.GetFolderPath(Environment.SpecialFolder.Personal);
@@ -153,7 +154,7 @@ namespace Familia.Medicatie.Alarm
                         var notificationManager = (NotificationManager)ApplicationContext.GetSystemService(NotificationService);
                         notificationManager.Cancel(NotifyId);
 
-                    Toast.MakeText(this, "Medicament luat.", ToastLength.Short).Show();
+                    //Toast.MakeText(this, "Medicament luat.", ToastLength.Short).Show();
                     Finish();
 
                     break;
@@ -176,7 +177,7 @@ namespace Familia.Medicatie.Alarm
                 snoozeInMinutes = int.TryParse(Utils.GetDefaults("snooze"), out snoozeInMinutes) ? int.Parse(Utils.GetDefaults("snooze")) : 5;
                 snoozeInMilisec = snoozeInMinutes * 60000;
 
-                Toast.MakeText(this, "Alarma amanata pentru " + snoozeInMinutes + " minute.", ToastLength.Short).Show();
+             //   Toast.MakeText(this, "Alarma amanata pentru " + snoozeInMinutes + " minute.", ToastLength.Short).Show();
 
                 i = new Intent(this, typeof(AlarmBroadcastReceiver));
 //                i.AddFlags(ActivityFlags.ClearTop);
@@ -185,9 +186,9 @@ namespace Familia.Medicatie.Alarm
                 i.PutExtra(DiseaseActivity.ALARM_ID, mIdAlarm);
 //                i.SetFlags(ActivityFlags.NewTask);
 
-                pi = PendingIntent.GetBroadcast(this, mIdAlarm, i, PendingIntentFlags.OneShot);
+                pi = PendingIntent.GetBroadcast(Application.Context, mIdAlarm, i, PendingIntentFlags.OneShot);
 
-                var notificationManager = (NotificationManager)ApplicationContext.GetSystemService(NotificationService);
+                var notificationManager = (NotificationManager)Application.Context.GetSystemService(NotificationService);
                 notificationManager.Cancel(NotifyId);
             }
             else
@@ -201,11 +202,12 @@ namespace Familia.Medicatie.Alarm
                 i.PutExtra(AlarmBroadcastReceiverServer.Title, title);
                 i.PutExtra(AlarmBroadcastReceiverServer.Content, content);
                 i.PutExtra(AlarmBroadcastReceiverServer.Postpone, postpone);
+                i.PutExtra(AlarmBroadcastReceiverServer.IdPendingIntent, mIdAlarm);
                 Log.Error("Alarm activity", "6");
 
-                pi = PendingIntent.GetBroadcast(this, NotifyId, i, PendingIntentFlags.OneShot);
+                pi = PendingIntent.GetBroadcast(Application.Context, NotifyId, i, PendingIntentFlags.OneShot);
 
-                var notificationManager = (NotificationManager)ApplicationContext.GetSystemService(NotificationService);
+                var notificationManager = (NotificationManager)Application.Context.GetSystemService(NotificationService);
                 notificationManager.Cancel(NotifyId);
             }
 
@@ -213,8 +215,9 @@ namespace Familia.Medicatie.Alarm
 
             if (am != null)
             {
-                am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + snoozeInMilisec,
-                    AlarmManager.IntervalDay, pi);
+                // am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + snoozeInMilisec,
+                //    AlarmManager.IntervalDay, pi);
+                am.SetExact(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + snoozeInMilisec, pi);
             }
         }
 
