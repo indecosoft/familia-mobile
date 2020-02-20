@@ -1,6 +1,6 @@
 ﻿body {
     /* background: linear-gradient(135deg, rgb(0,133,119) 0%,rgb(144,164,174) 100%);*/
-    background-image: url("background2.png");
+    background-image: url("images/background.png");
     background-repeat: no-repeat;
     margin: 0px;
 }
@@ -9,8 +9,8 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    border-radius: 50%;
-    background-image: url("planet.png");
+    /*border-radius: 50%;*/
+    background-image: url("images/planet1.png");
     background-size: cover;
     z-index: 1;
 }
@@ -41,17 +41,16 @@ html {
     position: absolute;
     width: 150px;
     height: 150px;
-    left: 100px;
-    top: 100px;
+    /*left: 100px;
+    top: 100px;*/
     background-size: cover;
     border-radius: 50%;
     background-color: #DA416B; /* #040427;*/
     -webkit-box-shadow: inset 1px 0px 20px #1c1c5f, -3px -1px 11px rgba(51, 87, 185, 0.514), 3px 0px 11px rgba(186, 67, 241, 0.411);
     box-shadow: inset 1px 0px 20px #1c1c5f, -3px -1px 11px rgba(51, 87, 185, 0.514), 3px 0px 11px rgba(186, 67, 241, 0.411);
-
 }
 
-.wrong-place1 {
+.wrong-place {
     display: none;
     position: absolute;
     width: 150px;
@@ -134,7 +133,7 @@ button.button-reset {
     text-align: center;
     width: 250px;
     height: 60px;
-    margin-bottom: 10%;
+    margin-bottom: 30%;
     margin-right: 10%;
     font-size: 25px;
 }
@@ -153,7 +152,7 @@ button.button-next-level {
     text-align: center;
     width: 250px;
     height: 60px;
-    margin-bottom: 10%;
+    margin-bottom: 30%;
     margin-right: 10%;
     font-size: 25px;
 }

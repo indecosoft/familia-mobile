@@ -1036,7 +1036,7 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\test.html">
+    <AndroidAsset Include="Assets\joc1\index.html">
       <SubType>Designer</SubType>
     </AndroidAsset>
   </ItemGroup>
@@ -1067,13 +1067,13 @@
     <AndroidAsset Include="Assets\interactive.html" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\test.js" />
+    <AndroidAsset Include="Assets\joc1\game.js" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\test.css" />
+    <AndroidAsset Include="Assets\joc1\style.css" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\jquery.keyframes.min.js" />
+    <AndroidAsset Include="Assets\joc1\jquery.keyframes.min.js" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\circle_edit_outline.xml" />
@@ -1119,16 +1119,31 @@
     <AndroidResource Include="Resources\layout\layout_tab2.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\background.png" />
+    <AndroidAsset Include="Assets\joc1\images\background.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\background2.png" />
+    <AndroidAsset Include="Assets\joc1\images\planet3.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\planet 5.png" />
+    <AndroidAsset Include="Assets\joc1\images\planet5.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\planet.png" />
+    <AndroidAsset Include="Assets\joc1\images\planet6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc1\images\planet7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc1\images\planet8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc1\images\planet1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc1\images\planet2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc1\images\planet4.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
