@@ -21,6 +21,7 @@ namespace Familia.Games {
 		public float rotationOX;
 		public float rotationOZ;
 		public int score;
+		public int highScore;
 
 		public RelativeLayout rlGame;
 		private GyroSensor gyroSensor;
@@ -37,7 +38,9 @@ namespace Familia.Games {
 			webView = FindViewById<WebView>(Resource.Id.wv_game);
 
 			webView.Settings.JavaScriptEnabled = true;
-			webView.SetWebChromeClient(new WebChromeClient());
+			webView.SetWebViewClient(new MyWebViewClient(this, webView));
+			//webView.SetWebChromeClient(new WebChromeClient());
+			webView.SetRendererPriorityPolicy(RendererPriority.Bound, true);
 
 			WebSettings webSettings = webView.Settings;
 			webSettings.JavaScriptEnabled = true;
@@ -45,7 +48,7 @@ namespace Familia.Games {
 			webSettings.LoadWithOverviewMode = true;
 			webSettings.UseWideViewPort = true;
 
-			webView.AddJavascriptInterface(new WebViewJavascriptInterface(this), "JSHandler");
+			webView.AddJavascriptInterface(new WebViewJavascriptInterface(this), "AndroidJSHandler");
 
 			webView.LoadUrl("file:///android_asset/joc1/index.html");
 			gyroSensor = new GyroSensor(this);
@@ -92,6 +95,11 @@ namespace Familia.Games {
 		[JavascriptInterface]
 		public void saveScore(String score) {
 			((GameActivity) context).score = int.Parse((string) score);
+			if (((GameActivity)context).score > ((GameActivity)context).highScore) {
+			((GameActivity)context).highScore = ((GameActivity)context).score;
+				Log.Error("GameActivity", "high score: " + ((GameActivity)context).highScore);
+			}
+			((GameActivity)context).score = 0;
 			Log.Error("GameActivity", "score: " + ((GameActivity) context).score);
 		}
 
@@ -110,6 +118,8 @@ namespace Familia.Games {
 		[Export]
 		[JavascriptInterface]
 		public string getXYFromSensor() {
+			Log.Error("GameActivity", "get xy from sensor " + ((GameActivity)context).rotationOY + "/" + ((GameActivity)context).rotationOX + "/" +
+				   ((GameActivity)context).rotationOZ);
 			return ((GameActivity) context).rotationOY + "/" + ((GameActivity) context).rotationOX + "/" +
 			       ((GameActivity) context).rotationOZ;
 		}
