@@ -94,6 +94,7 @@
     <Compile Include="Devices\DevicesAsistent\AsistentHealthDevicesFragment.cs" />
     <Compile Include="Games\GameActivity.cs" />
     <Compile Include="Games\GameCenterActivity.cs" />
+    <Compile Include="Games\MyWebViewClient.cs" />
     <Compile Include="Games\Sensors\GyroSensor.cs" />
     <Compile Include="Helpers\AlarmDeviceReceiver.cs" />
     <Compile Include="Helpers\BiometricUtils.cs" />
@@ -1128,15 +1129,6 @@
     <AndroidAsset Include="Assets\joc1\images\planet5.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\joc1\images\planet6.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\joc1\images\planet7.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\joc1\images\planet8.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidAsset Include="Assets\joc1\images\planet1.png" />
   </ItemGroup>
   <ItemGroup>
@@ -1144,6 +1136,21 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\joc1\images\planet4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc1\images\planet8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc1\images\planet6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc1\images\planet7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc1\images\restart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc1\images\next.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

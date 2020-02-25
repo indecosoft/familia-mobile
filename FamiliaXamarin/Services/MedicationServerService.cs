@@ -186,6 +186,8 @@ namespace Familia.Services
 
         private List<MedicationSchedule> ParseResultFromUrl(string res)
         {
+            var random = new System.Random(1);
+            var id = CurrentTimeMillis();
             if (res != null)
             {
                 var medicationScheduleList = new List<MedicationSchedule>();
@@ -200,8 +202,7 @@ namespace Familia.Services
                     string content = obj.GetString("content");
                     var postpone = Convert.ToInt32(obj.GetString("postpone"));
 
-                    var random = new System.Random(1);
-                    var id = CurrentTimeMillis() * random.Next();
+                    id += 10;
 
                     medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone, id));
                     Log.Error(Log_Tag, "MEDICATIONSTRING " + timestampString);

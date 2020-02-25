@@ -31,6 +31,7 @@ namespace Familia.Games.Sensors {
 
 		public void OnSensorChanged(SensorEvent e) {
 			try {
+				Log.Error("GYRO SENSOR", "changed values: " + e.Values[1] + ", " + e.Values[0] + ", " + e.Values[2]);
 				gyroSensorChangedListener.OnGyroSensorChanged(e.Values[1], e.Values[0], e.Values[2]);
 			} catch (Exception ex) {
 				Log.Error("GYRO SENSOR Error", ex.Message);

@@ -78,7 +78,7 @@ namespace Familia.Profile
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_update_profile);
             InitUI();
-            Log.Error("UpdateProfileActivity ERR person view", "oncreat start");
+            Log.Error("UpdateProfileActivity  person view", "oncreat start");
             personView = new PersonView(Intent.GetStringExtra("name"),
                                         Utils.GetDefaults("Email"),
                                         Intent.GetStringExtra("birthdate"),
@@ -86,13 +86,13 @@ namespace Familia.Profile
                                         Intent.GetStringExtra("avatar"),
                                         null, "none");
 
-            Log.Error("UpdateProfileActivity ERR person view", Intent.GetStringExtra("name"));
-            Log.Error("UpdateProfileActivity ERR person view", Utils.GetDefaults("Email"));
-            Log.Error("UpdateProfileActivity ERR person view", Intent.GetStringExtra("birthdate"));
-            Log.Error("UpdateProfileActivity ERR person view", Intent.GetStringExtra("gender"));
-            Log.Error("UpdateProfileActivity ERR person view", Intent.GetStringExtra("avatar"));
+            Log.Error("UpdateProfileActivity  person view", Intent.GetStringExtra("name"));
+            Log.Error("UpdateProfileActivity  person view", Utils.GetDefaults("Email"));
+            Log.Error("UpdateProfileActivity  person view", Intent.GetStringExtra("birthdate"));
+            Log.Error("UpdateProfileActivity  person view", Intent.GetStringExtra("gender"));
+            Log.Error("UpdateProfileActivity  person view", Intent.GetStringExtra("avatar"));
 
-            Log.Error("UpdateProfileActivity ERR person view", "data was extrated from intent");
+            Log.Error("UpdateProfileActivity  person view", "data was extrated from intent");
 
             LoadModel();
         }

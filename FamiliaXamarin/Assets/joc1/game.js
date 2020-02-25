@@ -15,12 +15,12 @@ let isOver;
 let isStarted;
 let refreshIntervalId;
 let durationAnimation = 3;
-let score;
+let score = 0;
 let isPlayingAgain = false;
 let fail = false;
 let level = 1;
 let planetNumber;
-let wrongPlacesArray = [];
+let wrongPlacesArrayUI = [];
 let arrivalPlace;
 let player;
 
@@ -50,7 +50,7 @@ const colors = [
         planet: 5,
         color: '#35932E'
     }
-    /*,
+    ,
     {
         planet: 6,
         color: '#F39CA5'
@@ -62,7 +62,7 @@ const colors = [
     {
         planet: 8,
         color: '#72B7AE'
-    },*/
+    }
 ];
 
 
@@ -96,12 +96,19 @@ scene.init = function () {
     isStarted = false;
     isOver = false;
 
-    score = Number(JSHandler.getScore());
-    // the game will be loaded with the right planet depends on score
-
-    for (let i = 0; i < wrongPlacesArray.length; i++) {
-        wrongPlacesArray[i].remove();
+    if (isPlayingAgain) {
+        score = Number(AndroidJSHandler.getScore());
+        level = 1;
     }
+
+    for (let i = 0; i < wrongPlacesArrayUI.length; i++) {
+        wrongPlacesArrayUI[i].remove();
+    }
+
+    planetNumber = Math.floor(Math.random() * 8) + 1;
+    let arrivalColor = colors.filter((x) => { return x.planet == planetNumber; });
+
+    $(".arrival").css({ 'background-color': "'" + arrivalColor[0].color + "'" });
 
     $(".box_scor").css({ display: 'none', height: Number($(window).height()) + 10 });
     $("#itemsCollected").css({ display: 'none' });
@@ -115,12 +122,14 @@ scene.init = function () {
         'fill-mode': 'forwards',
         complete: function () {
 
-            planetNumber = Math.floor(Math.random() * 5) + 1;
-            let arrivalColor = colors.filter((x) => { return x.planet == planetNumber; });
-
-            $(".arrival").css({ 'background-color': "'" + arrivalColor[0].color + "'" });
+           
             $(".ball").css({ 'background-image': 'url("images/planet' + planetNumber + '.png")' });
             $(".player").css({ top: '0px', left: '0px', position: 'absolute', display: 'block', animation: 'none' });
+
+            let centerY = getRandomBtwn(40, 150);
+            let centerX = getRandomBtwn(40, 400);
+
+            $(".arrival").css({ top: centerY + 'px', left: centerX + 'px', position: 'absolute' });
 
             arrivalPlace = {
                 width: $(".arrival").outerWidth(),
@@ -144,19 +153,14 @@ scene.init = function () {
                 }
             };
 
-            //---level 2
-            if (level >= 2) {
-
-                wrongPlacesArray = generateWrongPlaces(5, player, arrivalPlace);
-
+           
+            if (level > 1) {
+                if (score < 10) {
+                    wrongPlacesArrayUI = generateWrongPlaces(score, player, arrivalPlace);
+                } else {
+                    wrongPlacesArrayUI = generateWrongPlaces(10, player, arrivalPlace);
+                }
             }
-
-            //---level 3
-
-            //  if (level >= 3) {
-            //      $(".wrong-place2").css({ top: '200px', left: '100px', display: 'block' });
-            // }
-
 
 
             isStarted = true;
@@ -174,12 +178,13 @@ scene.init = function () {
 
 scene.update = function () {
     if (isOver === false && isStarted === true) {
-        let values = JSHandler.getXYFromSensor();
+        let values = AndroidJSHandler.getXYFromSensor();
+        sendMessage("aaaaaaaaaaaa", values);
         //landscape orientation
         let currentX = Number(values.split("/")[1]); //Number(values.split("/")[0]);  // portrait orientation
         let currentY = Number(values.split("/")[0]); //Number(values.split("/")[1]);
         let rotationOZ = Number(values.split("/")[2]);
-
+        sendMessage("aaaaaa", currentX + ", " + currentY);
         $(".player").parent().css({ position: 'relative' });
         $(".arrival").css({ position: 'absolute' });
 
@@ -216,12 +221,8 @@ scene.update = function () {
         }
 
         if (level >= 2) {
-            //   level2(player);
+            checkForFinishForWrongPlaces(player);
         }
-
-        // if (level >= 3) {
-        //      level3(player);
-        // }
 
     } else {
 
@@ -234,7 +235,6 @@ scene.update = function () {
             if (!fail) {
                 score++;
             }
-
         scene.finish();
     }
 };
@@ -247,44 +247,30 @@ scene.finish = function () {
     clearInterval(refreshIntervalId);
 }
 
-function level2(player) {
-    const wrongPlace1 = {
-        width: $(".wrong-place").outerWidth(),
-        height: $(".wrong-place").outerHeight(),
-        center: {
-            x: $(".wrong-place").offset().left + ($(".wrong-place").outerWidth() / 2),
-            y: $(".wrong-place").offset().top + ($(".wrong-place").outerHeight() / 2)
-        }
-    };
-    if (checkForFinish(player, wrongPlace1) === true) {
-        fail = true;
-        $(".player").css({ left: wrongPlace1.center.x - (player.width / 2), top: wrongPlace1.center.y - (player.height / 2), position: 'absolute' });
-        $("#nextLevel").css({ display: 'none' });
-        isOver = true;
-    }
-}
+function checkForFinishForWrongPlaces(player) {
 
+    for (let idx = 0; idx < wrongPlacesArrayUI.length; idx++) {
+        let item = {
+            width: wrongPlacesArrayUI[idx].outerWidth(),
+            height: wrongPlacesArrayUI[idx].outerHeight(),
+            center: {
+                x: wrongPlacesArrayUI[idx].offset().left + (wrongPlacesArrayUI[idx].outerWidth() / 2),
+                y: wrongPlacesArrayUI[idx].offset().top + (wrongPlacesArrayUI[idx].outerHeight() / 2)
+            }
+        };
 
-function level3(player) {
-    const wrongPlace2 = {
-        width: $(".wrong-place2").outerWidth(),
-        height: $(".wrong-place2").outerHeight(),
-        center: {
-            x: $(".wrong-place2").offset().left + ($(".wrong-place2").outerWidth() / 2),
-            y: $(".wrong-place2").offset().top + ($(".wrong-place2").outerHeight() / 2)
+        if (checkForFinish(player, item) === true) {
+            fail = true;
+            $(".player").css({ left: item.center.x - (player.width / 2), top: item.center.y - (player.height / 2), position: 'absolute' });
+            $("#nextLevel").css({ display: 'none' });
+            isOver = true;
         }
-    };
-    if (checkForFinish(player, wrongPlace2) === true) {
-        fail = true;
-        $(".player").css({ left: wrongPlace2.center.x - (player.width / 2), top: wrongPlace2.center.y - (player.height / 2), position: 'absolute' });
-        $("#nextLevel").css({ display: 'none' });
-        isOver = true;
     }
 }
 
 function displaySceneForFinish() {
     $("#score").text(score);
-    JSHandler.saveScore(score);
+    AndroidJSHandler.saveScore(score);
     $(".box_scor").css({ display: 'block' });
     displayPlayerForFinish();
 }
@@ -345,23 +331,23 @@ function generateWrongPlaces(noOfItems, player, home) {
 
     while (count < noOfItems) {
 
-        let height = getRandomr(80, Number($(window).height() - home.height - 40));
-        let width = getRandomr(80, Number($(window).width() - home.width - 40));
+        let centerY = getRandomBtwn(80, Number($(window).height() - home.height - 80));
+        let centerX = getRandomBtwn(80, Number($(window).width() - home.width - 80));
         
 
-        if (checkCollision(width, height, player, home, items) == false) {
+        if (checkCollision(centerX, centerY, player, home, items) == false) {
             sendMessage("no of items in copy " + wrongPlacesCopy.length);
             count++;
             if (wrongPlacesCopy.length != 0) {
 
                 let randomIndex = Math.floor(Math.random() * wrongPlacesCopy.length);
-                sendMessage("RANDOM WP H:" + height + " W:" + width + " color " + wrongPlacesCopy[randomIndex].color);
+                sendMessage("RANDOM WP H:" + centerY + " W:" + centerX + " color " + wrongPlacesCopy[randomIndex].color);
 
                 let item = $('<div class="wrong-place"></div>');
-                item.css({ left: width, top: height, 'background-color': "'" + wrongPlacesCopy[randomIndex].color + "'", position: 'absolute', display: 'block' });
+                item.css({ left: centerX, top: centerY, 'background-color': "'" + wrongPlacesCopy[randomIndex].color + "'", position: 'absolute', display: 'block' });
                 items.push(item);
                 $("body").append(item);
-                wrongPlacesCopy = wrongPlacesCopy.filter((x) => { return x.planet != wrongPlacesCopy[randomIndex].planet });
+               // wrongPlacesCopy = wrongPlacesCopy.filter((x) => { return x.planet != wrongPlacesCopy[randomIndex].planet }); 
 
             }
         }
@@ -372,37 +358,11 @@ function generateWrongPlaces(noOfItems, player, home) {
 }
 
 
-function checkCollision(width, height, player, home, items) {
-
-        for (let idxWP = 0; idxWP < items.length; idxWP++) {
-
-            let item = getElementForColor(items[idxWP].css('background-color'), items);
-            if (item != null) {
-
-                let wp = {
-                    width: item.outerWidth(),
-                    height: item.outerHeight(),
-                    center: {
-                        x: item.offset().left + (item.outerWidth() / 2),
-                        y: item.offset().top + (item.outerHeight() / 2)
-                    },
-                    color: item.css('background-color')
-                };
-
-                sendMessage("ITEM FROM LIST selected by color " + wp.color + ", center " + wp.center.x + ", " + wp.center.y + ", dimension " + wp.width + ", " + wp.height);
-
-                // TODO check collision for current wp 
-            }
-        
-        }
-
-    
-    if (checkCollisionForHome(width, height, player, home)) {
+function checkCollision(centerX, centerY, player, home, items) {
+    if (checkCollisionWithItem(centerX, centerY, player, home)) {
         return true;
     }
-
     return false;
-
 }
 
 
@@ -416,14 +376,14 @@ function getElementForColor(color, items) {
 }
 
 
-function checkCollisionForHome(width, height, player, home) {
+function checkCollisionWithItem(centerX, centerY, player, item) {
     const playerWidth = player.width + 40;
     const playerHeight = player.height + 40;
 
-    if (width - playerWidth <= Math.floor(home.center.x + (home.width)) &&
-        width + playerWidth >= Math.floor(home.center.x - (home.width)) &&
-        height - playerHeight <= Math.floor(home.center.y + (home.height)) &&
-        height + playerHeight >= Math.floor(home.center.y - (home.height))) {
+    if (centerX - playerWidth <= Math.floor(item.center.x + (item.width)) &&
+        centerX + playerWidth >= Math.floor(item.center.x - (item.width)) &&
+        centerY - playerHeight <= Math.floor(item.center.y + (item.height)) &&
+        centerY + playerHeight >= Math.floor(item.center.y - (item.height))) {
         return true;
     } else {
         return false;
@@ -431,13 +391,8 @@ function checkCollisionForHome(width, height, player, home) {
 
 }
 
-function checkCollisionForWrongPlaces(items) {
 
-    // TODO move here the logic for collision between items
-}
-
-
-function getRandomr(min, max) {
+function getRandomBtwn(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
@@ -474,11 +429,11 @@ function nextLevel() {
 }
 
 function getFromAndroid() {
-    alert(JSHandler.getFromAndroid());
+    alert(AndroidJSHandler.getFromAndroid());
 }
 
 function sendMessage(message) {
-    JSHandler.receiveMessageFromJS(message);
+    AndroidJSHandler.receiveMessageFromJS(message);
 }
 
 $(document).ready(function () {
