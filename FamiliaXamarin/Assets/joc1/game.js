@@ -179,12 +179,11 @@ scene.init = function () {
 scene.update = function () {
     if (isOver === false && isStarted === true) {
         let values = AndroidJSHandler.getXYFromSensor();
-        sendMessage("aaaaaaaaaaaa", values);
+        sendMessage("Values came from Android " + values);
         //landscape orientation
         let currentX = Number(values.split("/")[1]); //Number(values.split("/")[0]);  // portrait orientation
         let currentY = Number(values.split("/")[0]); //Number(values.split("/")[1]);
         let rotationOZ = Number(values.split("/")[2]);
-        sendMessage("aaaaaa", currentX + ", " + currentY);
         $(".player").parent().css({ position: 'relative' });
         $(".arrival").css({ position: 'absolute' });
 

@@ -50,9 +50,11 @@ namespace Familia.Games {
 
 			webView.AddJavascriptInterface(new WebViewJavascriptInterface(this), "AndroidJSHandler");
 
-			webView.LoadUrl("file:///android_asset/joc1/index.html");
+			
 			gyroSensor = new GyroSensor(this);
 			gyroSensor.SetGyroListener(this);
+
+			webView.LoadUrl("file:///android_asset/joc1/index.html");
 		}
 
 		public void OnGyroSensorChanged(float rotOY, float rotOX, float rotOZ) {
