@@ -3989,31 +3989,34 @@ namespace Familia
 			public const int text_button_style = 2131165437;
 			
 			// aapt resource value: 0x7F0700FE
-			public const int tooltip_frame_dark = 2131165438;
+			public const int thumbnailjoc1 = 2131165438;
 			
 			// aapt resource value: 0x7F0700FF
-			public const int tooltip_frame_light = 2131165439;
+			public const int tooltip_frame_dark = 2131165439;
 			
 			// aapt resource value: 0x7F070100
-			public const int trash = 2131165440;
+			public const int tooltip_frame_light = 2131165440;
 			
 			// aapt resource value: 0x7F070101
-			public const int tv_tint_selector = 2131165441;
+			public const int trash = 2131165441;
 			
 			// aapt resource value: 0x7F070102
-			public const int view_list = 2131165442;
+			public const int tv_tint_selector = 2131165442;
 			
 			// aapt resource value: 0x7F070103
-			public const int walk = 2131165443;
+			public const int view_list = 2131165443;
 			
 			// aapt resource value: 0x7F070104
-			public const int watch = 2131165444;
+			public const int walk = 2131165444;
 			
 			// aapt resource value: 0x7F070105
-			public const int water = 2131165445;
+			public const int watch = 2131165445;
 			
 			// aapt resource value: 0x7F070106
-			public const int wheelchair = 2131165446;
+			public const int water = 2131165446;
+			
+			// aapt resource value: 0x7F070107
+			public const int wheelchair = 2131165447;
 			
 			static Drawable()
 			{
@@ -5132,11 +5135,11 @@ namespace Familia
 			// aapt resource value: 0x7F080176
 			public const int scrollIndicatorUp = 2131231094;
 			
-			// aapt resource value: 0x7F080014
-			public const int ScrollView = 2131230740;
-			
 			// aapt resource value: 0x7F080177
 			public const int scrollView = 2131231095;
+			
+			// aapt resource value: 0x7F080014
+			public const int ScrollView = 2131230740;
 			
 			// aapt resource value: 0x7F080015
 			public const int ScrollViewButtons = 2131230741;
@@ -5391,226 +5394,223 @@ namespace Familia
 			public const int tv_age = 2131231173;
 			
 			// aapt resource value: 0x7F0801C6
-			public const int tv_ball = 2131231174;
+			public const int tv_birthdate = 2131231174;
 			
 			// aapt resource value: 0x7F0801C7
-			public const int tv_birthdate = 2131231175;
+			public const int tv_boala = 2131231175;
 			
 			// aapt resource value: 0x7F0801C8
-			public const int tv_boala = 2131231176;
+			public const int tv_daily_target_label = 2131231176;
 			
 			// aapt resource value: 0x7F0801C9
-			public const int tv_daily_target_label = 2131231177;
+			public const int tv_daily_target_value_displayed = 2131231177;
 			
 			// aapt resource value: 0x7F0801CA
-			public const int tv_daily_target_value_displayed = 2131231178;
+			public const int tv_data_inceput = 2131231178;
 			
 			// aapt resource value: 0x7F0801CB
-			public const int tv_data_inceput = 2131231179;
-			
-			// aapt resource value: 0x7F0801CC
-			public const int tv_device = 2131231180;
-			
-			// aapt resource value: 0x7F0801CF
-			public const int tv_devices = 2131231183;
-			
-			// aapt resource value: 0x7F0801CD
-			public const int tv_device_id = 2131231181;
+			public const int tv_device = 2131231179;
 			
 			// aapt resource value: 0x7F0801CE
-			public const int tv_device_id_value = 2131231182;
+			public const int tv_devices = 2131231182;
+			
+			// aapt resource value: 0x7F0801CC
+			public const int tv_device_id = 2131231180;
+			
+			// aapt resource value: 0x7F0801CD
+			public const int tv_device_id_value = 2131231181;
+			
+			// aapt resource value: 0x7F0801CF
+			public const int tv_durata = 2131231183;
 			
 			// aapt resource value: 0x7F0801D0
-			public const int tv_durata = 2131231184;
+			public const int tv_edit_profile = 2131231184;
 			
 			// aapt resource value: 0x7F0801D1
-			public const int tv_edit_profile = 2131231185;
+			public const int tv_email = 2131231185;
 			
 			// aapt resource value: 0x7F0801D2
-			public const int tv_email = 2131231186;
+			public const int tv_empty = 2131231186;
 			
 			// aapt resource value: 0x7F0801D3
-			public const int tv_empty = 2131231187;
+			public const int tv_first_name = 2131231187;
 			
 			// aapt resource value: 0x7F0801D4
-			public const int tv_first_name = 2131231188;
+			public const int tv_gender = 2131231188;
 			
 			// aapt resource value: 0x7F0801D5
-			public const int tv_gender = 2131231189;
+			public const int tv_header = 2131231189;
 			
 			// aapt resource value: 0x7F0801D6
-			public const int tv_header = 2131231190;
+			public const int tv_hour = 2131231190;
 			
 			// aapt resource value: 0x7F0801D7
-			public const int tv_hour = 2131231191;
+			public const int tv_interval = 2131231191;
 			
 			// aapt resource value: 0x7F0801D8
-			public const int tv_interval = 2131231192;
+			public const int tv_labelAge = 2131231192;
 			
 			// aapt resource value: 0x7F0801D9
-			public const int tv_labelAge = 2131231193;
+			public const int tv_labelDate = 2131231193;
 			
 			// aapt resource value: 0x7F0801DA
-			public const int tv_labelDate = 2131231194;
+			public const int tv_labelDateOfBirth = 2131231194;
 			
 			// aapt resource value: 0x7F0801DB
-			public const int tv_labelDateOfBirth = 2131231195;
+			public const int tv_labelDiseases = 2131231195;
 			
 			// aapt resource value: 0x7F0801DC
-			public const int tv_labelDiseases = 2131231196;
+			public const int tv_labelGender = 2131231196;
 			
 			// aapt resource value: 0x7F0801DD
-			public const int tv_labelGender = 2131231197;
+			public const int tv_label_birthdate = 2131231197;
 			
 			// aapt resource value: 0x7F0801DE
-			public const int tv_label_birthdate = 2131231198;
+			public const int tv_label_daily_target = 2131231198;
 			
 			// aapt resource value: 0x7F0801DF
-			public const int tv_label_daily_target = 2131231199;
+			public const int tv_label_hht_steps = 2131231199;
 			
 			// aapt resource value: 0x7F0801E0
-			public const int tv_label_hht_steps = 2131231200;
-			
-			// aapt resource value: 0x7F0801E1
-			public const int tv_label_hht_target = 2131231201;
-			
-			// aapt resource value: 0x7F0801E3
-			public const int tv_label_medicament = 2131231203;
-			
-			// aapt resource value: 0x7F0801E4
-			public const int tv_label_medicamente = 2131231204;
+			public const int tv_label_hht_target = 2131231200;
 			
 			// aapt resource value: 0x7F0801E2
-			public const int tv_label_med_alarm = 2131231202;
+			public const int tv_label_medicament = 2131231202;
+			
+			// aapt resource value: 0x7F0801E3
+			public const int tv_label_medicamente = 2131231203;
+			
+			// aapt resource value: 0x7F0801E1
+			public const int tv_label_med_alarm = 2131231201;
+			
+			// aapt resource value: 0x7F0801E4
+			public const int tv_label_nume_boala = 2131231204;
 			
 			// aapt resource value: 0x7F0801E5
-			public const int tv_label_nume_boala = 2131231205;
+			public const int tv_label_program = 2131231205;
 			
 			// aapt resource value: 0x7F0801E6
-			public const int tv_label_program = 2131231206;
+			public const int tv_label_steps = 2131231206;
 			
 			// aapt resource value: 0x7F0801E7
-			public const int tv_label_steps = 2131231207;
+			public const int tv_label_steps_from_sensor = 2131231207;
 			
 			// aapt resource value: 0x7F0801E8
-			public const int tv_label_steps_from_sensor = 2131231208;
+			public const int tv_label_title = 2131231208;
 			
 			// aapt resource value: 0x7F0801E9
-			public const int tv_label_title = 2131231209;
-			
-			// aapt resource value: 0x7F0801EA
-			public const int tv_last_name = 2131231210;
-			
-			// aapt resource value: 0x7F0801EC
-			public const int tv_medicine = 2131231212;
-			
-			// aapt resource value: 0x7F0801ED
-			public const int tv_medser = 2131231213;
+			public const int tv_last_name = 2131231209;
 			
 			// aapt resource value: 0x7F0801EB
-			public const int tv_med_name_alarm = 2131231211;
+			public const int tv_medicine = 2131231211;
+			
+			// aapt resource value: 0x7F0801EC
+			public const int tv_medser = 2131231212;
+			
+			// aapt resource value: 0x7F0801EA
+			public const int tv_med_name_alarm = 2131231210;
+			
+			// aapt resource value: 0x7F0801ED
+			public const int tv_name = 2131231213;
 			
 			// aapt resource value: 0x7F0801EE
-			public const int tv_name = 2131231214;
+			public const int tv_partajare = 2131231214;
 			
 			// aapt resource value: 0x7F0801EF
-			public const int tv_partajare = 2131231215;
+			public const int tv_password = 2131231215;
 			
 			// aapt resource value: 0x7F0801F0
-			public const int tv_password = 2131231216;
+			public const int tv_password_forgot = 2131231216;
 			
 			// aapt resource value: 0x7F0801F1
-			public const int tv_password_forgot = 2131231217;
+			public const int tv_password_retype = 2131231217;
 			
 			// aapt resource value: 0x7F0801F2
-			public const int tv_password_retype = 2131231218;
+			public const int tv_person_name = 2131231218;
 			
 			// aapt resource value: 0x7F0801F3
-			public const int tv_person_name = 2131231219;
+			public const int tv_progress = 2131231219;
 			
 			// aapt resource value: 0x7F0801F4
-			public const int tv_progress = 2131231220;
+			public const int tv_progress_procent = 2131231220;
 			
 			// aapt resource value: 0x7F0801F5
-			public const int tv_progress_procent = 2131231221;
+			public const int tv_retype_password = 2131231221;
 			
 			// aapt resource value: 0x7F0801F6
-			public const int tv_retype_password = 2131231222;
+			public const int tv_start_date = 2131231222;
 			
 			// aapt resource value: 0x7F0801F7
-			public const int tv_start_date = 2131231223;
+			public const int tv_steps_daily_target = 2131231223;
 			
 			// aapt resource value: 0x7F0801F8
-			public const int tv_steps_daily_target = 2131231224;
+			public const int tv_steps_from_sensor = 2131231224;
 			
 			// aapt resource value: 0x7F0801F9
-			public const int tv_steps_from_sensor = 2131231225;
+			public const int tv_steps_hht_target = 2131231225;
 			
 			// aapt resource value: 0x7F0801FA
-			public const int tv_steps_hht_target = 2131231226;
+			public const int tv_title = 2131231226;
 			
 			// aapt resource value: 0x7F0801FB
-			public const int tv_title = 2131231227;
+			public const int tv_tracker_activity = 2131231227;
 			
 			// aapt resource value: 0x7F0801FC
-			public const int tv_tracker_activity = 2131231228;
+			public const int tv_txt = 2131231228;
 			
 			// aapt resource value: 0x7F0801FD
-			public const int tv_txt = 2131231229;
+			public const int tv_txt_medicament = 2131231229;
 			
 			// aapt resource value: 0x7F0801FE
-			public const int tv_txt_medicament = 2131231230;
+			public const int tv_version = 2131231230;
 			
 			// aapt resource value: 0x7F0801FF
-			public const int tv_version = 2131231231;
+			public const int txt_dia = 2131231231;
 			
 			// aapt resource value: 0x7F080200
-			public const int txt_dia = 2131231232;
+			public const int uniform = 2131231232;
 			
 			// aapt resource value: 0x7F080201
-			public const int uniform = 2131231233;
+			public const int unlabeled = 2131231233;
 			
 			// aapt resource value: 0x7F080202
-			public const int unlabeled = 2131231234;
+			public const int up = 2131231234;
 			
 			// aapt resource value: 0x7F080203
-			public const int up = 2131231235;
+			public const int useLogo = 2131231235;
 			
 			// aapt resource value: 0x7F080204
-			public const int useLogo = 2131231236;
+			public const int username = 2131231236;
 			
 			// aapt resource value: 0x7F080205
-			public const int username = 2131231237;
+			public const int vertical = 2131231237;
 			
 			// aapt resource value: 0x7F080206
-			public const int vertical = 2131231238;
+			public const int view_offset_helper = 2131231238;
 			
 			// aapt resource value: 0x7F080207
-			public const int view_offset_helper = 2131231239;
+			public const int visible = 2131231239;
 			
 			// aapt resource value: 0x7F080208
-			public const int visible = 2131231240;
+			public const int week_tab = 2131231240;
 			
 			// aapt resource value: 0x7F080209
-			public const int week_tab = 2131231241;
+			public const int wide = 2131231241;
 			
 			// aapt resource value: 0x7F08020A
-			public const int wide = 2131231242;
+			public const int withText = 2131231242;
 			
 			// aapt resource value: 0x7F08020B
-			public const int withText = 2131231243;
+			public const int wrap = 2131231243;
 			
 			// aapt resource value: 0x7F08020C
-			public const int wrap = 2131231244;
+			public const int wrap_content = 2131231244;
 			
 			// aapt resource value: 0x7F08020D
-			public const int wrap_content = 2131231245;
+			public const int wv_game = 2131231245;
 			
 			// aapt resource value: 0x7F08020E
-			public const int wv_game = 2131231246;
-			
-			// aapt resource value: 0x7F08020F
-			public const int year_tab = 2131231247;
+			public const int year_tab = 2131231246;
 			
 			static Id()
 			{
