@@ -11,6 +11,7 @@ using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Widget;
 using Familia.DataModels;
+using Familia.Devices.DevicesAsistent;
 using Familia.Devices.DevicesManagement.BloodPressure;
 using Familia.Devices.DevicesManagement.DeviceManufactureSelector;
 using Familia.Devices.DevicesManagement.Dialogs;
@@ -33,6 +34,7 @@ namespace Familia.Devices.DevicesManagement {
         private List<DeviceEditingManagementModel> _devicesList = new List<DeviceEditingManagementModel>();
         private DevicesManagementAdapter _adapter;
         private SqlHelper<BluetoothDeviceRecords> _sqlHelper;
+        public static readonly string DevicesRoot = "DevicesRoot";
 
         protected override void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
@@ -55,6 +57,28 @@ namespace Familia.Devices.DevicesManagement {
 
             await InitDatabaseConnection();
             InitEvents();
+        }
+
+        public override void OnBackPressed()
+        {
+            base.OnBackPressed();
+
+            var intent = new Intent(this, typeof(MainActivity));
+            intent.PutExtra(DevicesRoot, int.Parse(Utils.GetDefaults("UserType")));
+            StartActivity(intent);
+
+           /* if (int.Parse(Utils.GetDefaults("UserType")) == 2) {
+
+                SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new AsistentHealthDevicesFragment())
+                        .AddToBackStack(null).Commit();
+            }
+            if (int.Parse(Utils.GetDefaults("UserType")) == 3 || int.Parse(Utils.GetDefaults("UserType")) == 4) {
+                SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new HealthDevicesFragment()).AddToBackStack(null)
+                        .Commit();
+            }*/
+              
         }
 
         protected override async void OnResume() {
