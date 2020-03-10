@@ -122,6 +122,7 @@ namespace Familia.Services
                             MedicationSchedule medObj = await Storage.GetInstance().getElementByUUID(_medications[ms].Uuid);
                             if (medObj.IdNotification == 0)
                             {
+                                Log.Error(Log_Tag, "so the uuid is 0, I'm updating the PI'S id and set up alarm for the uuid " + _medications[ms].Uuid);
                                 SetupAlarm(ms, _medications[ms].IdNotification);
                             }
                             else
@@ -136,6 +137,10 @@ namespace Familia.Services
                 }
 
                 await Storage.GetInstance().saveMedSer(list);
+                Log.Error(Log_Tag, "saving this list.. ");
+                foreach (var item in list) {
+                    Log.Error(Log_Tag, "pi id " + item.IdNotification + " timestamp " + item.Timestampstring + " title  " + item.Title + " content " + item.Content + " uuit " + item.Uuid);
+                }
 
                 //test
 

@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -16,14 +17,20 @@ namespace Familia.Games {
 			SetContentView(Resource.Layout.activity_game_center);
 			SetToolbar();
 
-			var rvBall = FindViewById<RelativeLayout>(Resource.Id.rl_ball);
-			rvBall.SetOnClickListener(this);
+			FindViewById<CardView>(Resource.Id.cw_game1).SetOnClickListener(this);
+			FindViewById<CardView>(Resource.Id.cw_game2).SetOnClickListener(this);
 		}
 
 		public void OnClick(View v) {
+			var intent = new Intent(this, typeof(GameActivity));
 			switch (v.Id) {
-				case Resource.Id.rl_ball:
-					StartActivity(new Intent(this, typeof(GameActivity)));
+				case Resource.Id.cw_game1:
+					intent.PutExtra("Game", 1);
+					StartActivity(intent);
+					break;
+				case Resource.Id.cw_game2:
+					intent.PutExtra("Game", 2);
+					StartActivity(intent);
 					break;
 			}
 		}

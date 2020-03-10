@@ -153,22 +153,7 @@ namespace Familia.Medicatie.Data
         public async Task deleteStinkyItems(List<MedicationSchedule> medications)
         {
             List<MedicationSchedule> localList = await readMedSer();
-            /* Log.Error("Storage", "whats in local db right now " + localList.Count);
-
-             foreach (MedicationSchedule item in localList) {
-                 Log.Error("Storage ", item.Title + ", " + item.Timestampstring + ", idNotification " + item.IdNotification + ", " + item.Postpone + ", UUID: " + item.Uuid);
-             }
-             Log.Error("Storage", "that's all. ");
-
-             Log.Error("Storage", "what should be: " + medications.Count);
-             foreach (MedicationSchedule item in medications)
-             {
-                 Log.Error("Storage ", item.Title + ", " + item.Timestampstring + ", idNotification " + item.IdNotification + ", " + item.Postpone + ", UUID: " + item.Uuid);
-             }
-             Log.Error("Storage", "that's all. ");
-             Log.Error("Storage", "find stinky data");
-             */
-
+            Log.Error("Storage ", "stinky items count: " + localList.Count);
             foreach (MedicationSchedule itemLocal in localList)
             {
                 if (itemLocal.IdNotification != 0 && !isItemInListOrListIsEmpty(itemLocal, medications))
@@ -176,10 +161,12 @@ namespace Familia.Medicatie.Data
                     Log.Error("Storage ", "this item will be deleted " + itemLocal.Title + ", " + itemLocal.Timestampstring + ", idNotification " + itemLocal.IdNotification + ", " + itemLocal.Postpone + ", UUID: " + itemLocal.Uuid);
                     await removeMedSer(itemLocal.Uuid);
                 }
+                else {
+                    if (medications.Count == 0) {
+                        await removeMedSer(itemLocal.Uuid);
+                    }
+                }
             }
-            //  Log.Error("Storage", "done with stinky data");
-            //localList = await readMedSer();
-            // Log.Error("Storage", "now in db is " + localList.Count) ;
         }
 
         private bool isItemInListOrListIsEmpty(MedicationSchedule item, List<MedicationSchedule> list)

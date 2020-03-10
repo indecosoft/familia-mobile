@@ -70,6 +70,9 @@ namespace Familia.Medicatie
             countReq = 0;
             if (rvMedLost != null)
             {
+                try {
+
+                
                 rvMedLost.HasFixedSize = true;
                 var onScrollListener = new MedicineServerRecyclerViewOnScrollListener(layoutManager);
                 onScrollListener.LoadMoreEvent += async (sender, e) =>
@@ -106,6 +109,11 @@ namespace Familia.Medicatie
                 };
                 rvMedLost.AddOnScrollListener(onScrollListener);
                 rvMedLost.SetLayoutManager(layoutManager);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("ERRRRR MEDICINE LOST scroll listener", ex.Message);
+                }
             }
         }
 
@@ -244,39 +252,13 @@ namespace Familia.Medicatie
         {
             base.OnPause();
             Log.Error("MEDICINE LOST LIFE CYCLE", "on pause called , count: " + _medicationsLost.Count);
-//            switch (int.Parse(Utils.GetDefaults("UserType")))
-//            {
-//                case 3:
-//                    LoadType3();
-//                    break;
-//                case 4:
-//                    LoadType4();
-//                    break;
-//                default:
-//                    Log.Error("MEDICINE LOST", "wrong type");
-//                    break;
-//            }
+
         }
 
         public override void OnResume()
         {
             base.OnResume();
-            //            switch (int.Parse(Utils.GetDefaults("UserType")))
-            //            {
-            //                case 3:
-            //                    LoadType3();
-            //                    break;
-            //                case 4:
-            //                    LoadType4();
-            //                    break;
-            //                default:
-            //                    Log.Error("MEDICINE LOST", "wrong type");
-            //                    break;
-            //            }
             Log.Error("MEDICINE LOST LIFE CYCLE", "on resume called, count: " + _medicationsLost.Count + " adapter count: " + _medicineLostAdapter.ItemCount);
-
-            _medicineLostAdapter.NotifyDataSetChanged();
-
         }
 
         public override void OnDestroy()
@@ -288,9 +270,7 @@ namespace Familia.Medicatie
 
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
-
             Log.Error("MEDICINE LOST LIFE CYCLE", "on  OnViewCreated called , count: " + _medicationsLost.Count);
-
             base.OnViewCreated(view, savedInstanceState);
         }
 
@@ -314,9 +294,9 @@ namespace Familia.Medicatie
         {
             var dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
             dialog.Show();
-            Log.Error("NetworkingData lost", "task getting data..");
+            Log.Error("MEDICINE LOST ", "task getting data..");
             var dataMedicationSchedules = await networking.ReadPastDataTask(0);
-            Log.Error("NetworkingData lost", "task data received");
+            Log.Error("MEDICINE LOST ", "task data received");
 
             //------------------------------------------------med pers
             var listWithAllElements = new List<MedicationSchedule>();
@@ -337,7 +317,7 @@ namespace Familia.Medicatie
 
             Activity.RunOnUiThread(() =>
             {
-                Log.Error("NetworkingData lost", "uiThread");
+                Log.Error("MEDICINE LOST ", "uiThread");
                 if (dataMedicationSchedules != null && dataMedicationSchedules.Count != 0)
                 {
                     _medicationsLost.Clear();

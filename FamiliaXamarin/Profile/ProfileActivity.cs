@@ -320,20 +320,6 @@ namespace Familia.Profile
         public string GetDate(string dateString)
         {
 
-            //here is the problem
-
-
-//            try
-//            {
-//                DateTime birthdate = Convert.ToDateTime(dateString);
-//                return birthdate.Month + "/" + birthdate.Day + "/" + birthdate.Year;
-//            }
-//            catch (Exception e)
-//            {
-//                Log.Error("ProfileActivity", "birthdate convert: " + e.Message);
-//                return null;
-//            }
-
             try
             {
                 //format datetime de pe server
@@ -388,7 +374,7 @@ namespace Familia.Profile
                     var dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", this, false);
                     dialog.Show();
 
-                    Log.Error("ProfileActivity", "birthdate: " + data.GetStringExtra("birthdate"));
+                    Log.Error("ProfileActivity", "birthdate: get string extra " + data.GetStringExtra("birthdate"));
 
                     personalData = await ProfileStorage.GetInstance().read();
                     await RefreshAdapter();
@@ -460,8 +446,12 @@ namespace Familia.Profile
                     }
 
                     string dt = GetDate(birthdate);
+                    if (dt == null) {
+                        dt = birthdate;
+                    }
 
-                    Log.Error("ProfileActivity data", "date: " + dt);
+                    Log.Error("ProfileActivity data", "date: extra brth" + birthdate);
+                    Log.Error("ProfileActivity data", "date: extra" + dt);
                     JSONObject jsonObject = new JSONObject()
                         .Put("Base64Image", imgBase64)
                         .Put("ImageName", imageName)
@@ -469,7 +459,7 @@ namespace Familia.Profile
                         .Put("dataNastere", dt)
                         .Put("sex", gender)
                         .Put("afectiuni", jsonArray);
-
+                        
 
                     if (Utils.CheckNetworkAvailability())
                     {

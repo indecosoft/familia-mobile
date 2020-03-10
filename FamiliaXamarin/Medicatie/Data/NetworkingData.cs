@@ -24,21 +24,22 @@ namespace Familia.Medicatie.Data
             var numeDB = "devices_data.db";
         }
 
-//        public static NetworkingData GetInstance()
-//        {
-//            lock (Padlock)
-//            {
-//                if (_instance == null)
-//                {
-//                    _instance = new NetworkingData();
-//                }
-//            }
-//
-//            return _instance;
-//        }
+        //        public static NetworkingData GetInstance()
+        //        {
+        //            lock (Padlock)
+        //            {
+        //                if (_instance == null)
+        //                {
+        //                    _instance = new NetworkingData();
+        //                }
+        //            }
+        //
+        //            return _instance;
+        //        }
 
         private async Task<List<MedicationSchedule>> CallServerFutureData(int size)
         {
+            var serverItemsError = false;
             var medications = new List<MedicationSchedule>();
             await Task.Run(async () =>
             {
@@ -47,16 +48,26 @@ namespace Familia.Medicatie.Data
                     string res = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("Id")}/{size}", Utils.GetDefaults("Token")); //this should be here
                     if (res != null)
                     {
-                        Log.Error("Networking data future", " RESULT_FOR_MEDICATIE" + res);
+                        Log.Error("Networking data FUTURE", " RESULT_FOR_MEDICATIE" + res);
                         medications = ParseResultFromUrl(res);
-                        Log.Error("Networking data future", " count: " + medications.Count);
+                        Log.Error("Networking data FUTURE", " count: " + medications.Count);
+                    }
+                    else
+                    {
+                        serverItemsError = true;
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.Error("MEDICATION SERVER ERR", e.Message);
+                    Log.Error("MEDICATION SERVER ERR FUTURE", e.Message);
                 }
             });
+
+            if (serverItemsError)
+            {
+                return null;
+            }
+
             return medications;
         }
 
@@ -75,7 +86,8 @@ namespace Familia.Medicatie.Data
                         medications = ParseResultFromUrl(res);
                         Log.Error("Networking data", " count: " + medications.Count);
                     }
-                    else {
+                    else
+                    {
                         serverItemsError = true;
                     }
                 }
@@ -85,7 +97,8 @@ namespace Familia.Medicatie.Data
                 }
             });
 
-            if (serverItemsError) {
+            if (serverItemsError)
+            {
                 return null;
             }
 
@@ -95,46 +108,68 @@ namespace Familia.Medicatie.Data
         public async Task<List<MedicationSchedule>> ReadFutureDataTask(int size)
         {
             _medicationSchedules = new List<MedicationSchedule>(await CallServerFutureData(size));
-            if (_medicationSchedules.Count != 0)
-            {
-                bool finished = await SaveListInDBTask(_medicationSchedules);
-                Log.Error("NetworkingData class", "saved: " + finished);
 
-            }
-            else
+            if (_medicationSchedules == null)
             {
                 if (size == 0)
                 {
-                    Log.Error("NetworkingData class", "reading from local db..");
+                    Log.Error("NetworkingData class FUTURE", "reading from local db..");
                     _medicationSchedules = new List<MedicationSchedule>(await ReadListFromDbFutureDataTask());
-                    Log.Error("NetworkingData class", "reading is finished");
+                    Log.Error("NetworkingData class FUTURE", "reading finish");
                 }
             }
+            else
+            if (_medicationSchedules.Count != 0)
+            {
+                bool finished = await SaveListInDBTask(_medicationSchedules);
+               // await deleteStinkyItems(_medicationSchedules);
+                Log.Error("NetworkingData class FUTURE", "saved: " + finished);
+            }
 
-            Log.Error("NetworkingData class", "count from reading" + _medicationSchedules.Count);
-            return ExtractFutureData(_medicationSchedules.OrderBy(x => DateTime.Parse(x.Timestampstring)).ToList());
+
+            if (_medicationSchedules != null)
+            {
+                Log.Error("NetworkingData class FUTURE", "count from reading" + _medicationSchedules.Count);
+
+                return ExtractFutureData(_medicationSchedules.OrderBy(x => DateTime.Parse(x.Timestampstring)).ToList());
+            }
+            else {
+                return new List<MedicationSchedule>();
+            }
         }
 
         public async Task<List<MedicationSchedule>> ReadPastDataTask(int size)
         {
             _medicationSchedules = await CallServerPastData(size);
-            if (_medicationSchedules == null) {
+            if (_medicationSchedules == null)
+            {
                 if (size == 0)
                 {
                     Log.Error("NetworkingData class", "reading from local db..");
                     _medicationSchedules = new List<MedicationSchedule>(await ReadListFromDbPastDataTask());
                     Log.Error("NetworkingData class", "reading finish");
                 }
-            }else
+            }
+            else
             if (_medicationSchedules.Count != 0)
             {
                 bool finished = await SaveListInDBTask(_medicationSchedules);
+                await deleteStinkyItems(_medicationSchedules);
                 Log.Error("NetworkingData class", "saved: " + finished);
             }
-      
 
-            Log.Error("NetworkingData class", "count from reading" + _medicationSchedules.Count);
-            return _medicationSchedules.OrderBy(x => DateTime.Parse(x.Timestampstring)).ToList();
+
+
+            if (_medicationSchedules != null) {
+                Log.Error("NetworkingData class", "count from reading" + _medicationSchedules.Count);
+
+                return _medicationSchedules.OrderBy(x => DateTime.Parse(x.Timestampstring)).ToList();
+
+            }
+            else
+            {
+                return new List<MedicationSchedule>();
+            }
         }
 
         public async Task<bool> SaveListInDBTask(List<MedicationSchedule> list)
@@ -146,7 +181,7 @@ namespace Familia.Medicatie.Data
                 Log.Error("NetworkingData class saving..", element.ToString());
                 if (!(await SearchItemTask(element.Uuid)))
                 {
-                    
+
 
                     MedicationSchedule objMed = await getElementByUUID(element.Uuid);
 
@@ -158,7 +193,8 @@ namespace Familia.Medicatie.Data
                         Log.Error("NetworkingData class", "saving obj pi id " + objMed.IdNotification);
                     }
                     Log.Error("NetworkingData class", "inserting in db..");
-                    await _db.Insert(new MedicineServerRecords {
+                    await _db.Insert(new MedicineServerRecords
+                    {
                         Title = element.Title,
                         Content = element.Content,
                         DateTime = element.Timestampstring,
@@ -197,7 +233,7 @@ namespace Familia.Medicatie.Data
             return null;
         }
 
-      
+
 
         public async Task<MedicationSchedule> getElementByUUID(string UUIDmed)
         {
@@ -321,5 +357,39 @@ namespace Familia.Medicatie.Data
             }
             return found;
         }
+
+        public async Task deleteStinkyItems(List<MedicationSchedule> medications)
+        {
+            List<MedicationSchedule> localList = await ReadListFromDbPastDataTask();
+
+            foreach (MedicationSchedule itemLocal in localList)
+            {
+                if (itemLocal.IdNotification != 0 && !isItemInListOrListIsEmpty(itemLocal, medications))
+                {
+                    Log.Error("NetworkingData ", "this item will be deleted " + itemLocal.Title + ", " + itemLocal.Timestampstring + ", idNotification " + itemLocal.IdNotification + ", " + itemLocal.Postpone + ", UUID: " + itemLocal.Uuid);
+                    removeMedSer(itemLocal.Uuid);
+                }
+            }
+        }
+
+        private bool isItemInListOrListIsEmpty(MedicationSchedule item, List<MedicationSchedule> list)
+        {
+
+            if (list.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (MedicationSchedule ms in list)
+            {
+                if (ms.Uuid == item.Uuid)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
     }
 }
