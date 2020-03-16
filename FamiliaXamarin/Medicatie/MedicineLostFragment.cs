@@ -60,9 +60,9 @@ namespace Familia.Medicatie
 
         private void LoadType3()
         {
-            SetScrollListener();
+             SetScrollListener();
 
-            GetData();
+             GetData();
         }
 
         private void SetScrollListener()
@@ -70,45 +70,45 @@ namespace Familia.Medicatie
             countReq = 0;
             if (rvMedLost != null)
             {
-                try {
-
-                
-                rvMedLost.HasFixedSize = true;
-                var onScrollListener = new MedicineServerRecyclerViewOnScrollListener(layoutManager);
-                onScrollListener.LoadMoreEvent += async (sender, e) =>
+                try
                 {
-                    countReq++;
-                    if (countReq == 1)
+
+                    rvMedLost.HasFixedSize = true;
+                    var onScrollListener = new MedicineServerRecyclerViewOnScrollListener(layoutManager);
+                    onScrollListener.LoadMoreEvent += async (sender, e) =>
                     {
-                        if (_medicineLostAdapter.getList().Count <= 7) return;
-
-                        var arr = _medicineLostAdapter.getList().Where(c => !(c.Uuid.Contains("disease"))).ToList();
-
-                        var newItems = await GetMoreData(arr.Count);
-                        if (newItems.Count != 0)
+                        countReq++;
+                        if (countReq == 1)
                         {
-                            Log.Error("MEDICINE LOST", "new items: " + newItems.Count);
-                            try
+                            if (_medicineLostAdapter.getList().Count <= 7) return;
+
+                            var arr = _medicineLostAdapter.getList().Where(c => !(c.Uuid.Contains("disease"))).ToList();
+
+                            var newItems = await GetMoreData(arr.Count);
+                            if (newItems.Count != 0)
                             {
-                                for (var ms = 0; ms <= newItems.Count; ms++)
+                                Log.Error("MEDICINE LOST", "new items: " + newItems.Count);
+                                try
                                 {
-                                    DateTime date = parseTimestampStringToDate(newItems[ms]);
-                                    newItems[ms].Timestampstring = date.ToString();
-                                    _medicineLostAdapter.AddItem(newItems[ms]);
+                                    for (var ms = 0; ms <= newItems.Count; ms++)
+                                    {
+                                        DateTime date = parseTimestampStringToDate(newItems[ms]);
+                                        newItems[ms].Timestampstring = date.ToString();
+                                        _medicineLostAdapter.AddItem(newItems[ms]);
+                                    }
+                                    _medicineLostAdapter.setMedsList(_medicineLostAdapter.getList().OrderBy(x => DateTime.Parse(x.Timestampstring)).ToList());
+                                    _medicineLostAdapter.NotifyDataSetChanged();
+                                    Log.Error("MEDICINE LOST", "new items : " + newItems.Count + " list count: " + _medicationsLost.Count);
                                 }
-                                _medicineLostAdapter.setMedsList(_medicineLostAdapter.getList().OrderBy(x => DateTime.Parse(x.Timestampstring)).ToList());
-                                _medicineLostAdapter.NotifyDataSetChanged();
-                                Log.Error("MEDICINE LOST", "new items : " + newItems.Count + " list count: " + _medicationsLost.Count);
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Error("ERRRRR MEDICINE LOST", ex.Message);
+                                catch (Exception ex)
+                                {
+                                    Log.Error("ERRRRR MEDICINE LOST", ex.Message);
+                                }
                             }
                         }
-                    }
-                };
-                rvMedLost.AddOnScrollListener(onScrollListener);
-                rvMedLost.SetLayoutManager(layoutManager);
+                    };
+                    rvMedLost.AddOnScrollListener(onScrollListener);
+                    rvMedLost.SetLayoutManager(layoutManager);
                 }
                 catch (Exception ex)
                 {
@@ -120,28 +120,39 @@ namespace Familia.Medicatie
         private async void LoadType4()
         {
             var dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
-            dialog.Show();
-            var listWithAllElements = new List<MedicationSchedule>();
-            if (Storage.GetInstance().GetListOfDiseasesFromFile(Context) != null)
+            try
             {
-                listWithAllElements = await Storage.GetInstance().GetPersonalMedicationConverted();
-                listWithAllElements = listWithAllElements.OrderBy(x => DateTime.Parse(x.Timestampstring)).ToList();
-            }
-            else
-            {
-                Log.Error("MEDICINE LOST", "no of items in storage: 0 ");
-            }
 
-            Activity.RunOnUiThread(() =>
+                dialog.Show();
+                var listWithAllElements = new List<MedicationSchedule>();
+                if (Storage.GetInstance().GetListOfDiseasesFromFile(Context) != null)
+                {
+                    listWithAllElements = await Storage.GetInstance().GetPersonalMedicationConverted();
+                    listWithAllElements = listWithAllElements.OrderBy(x => DateTime.Parse(x.Timestampstring)).ToList();
+                }
+                else
+                {
+                    Log.Error("MEDICINE LOST", "no of items in storage: 0 ");
+                }
+
+                Activity.RunOnUiThread(() =>
+                {
+                    Log.Error("Type 4 lost", "uiThread");
+                    _medicationsLost.Clear();
+                    _medicationsLost = new List<MedicationSchedule>(listWithAllElements);
+                    _medicineLostAdapter.setMedsList(_medicationsLost);
+                    _medicineLostAdapter.NotifyDataSetChanged();
+                    cwEmpty.Visibility = _medicineLostAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+                    dialog.Dismiss();
+                });
+
+
+            }
+            catch (Exception e)
             {
-                Log.Error("Type 4 lost", "uiThread");
-                _medicationsLost.Clear();
-                _medicationsLost = new List<MedicationSchedule>(listWithAllElements);
-                _medicineLostAdapter.setMedsList(_medicationsLost);
-                _medicineLostAdapter.NotifyDataSetChanged();
-                cwEmpty.Visibility = _medicineLostAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+                Log.Error("MEDICINE LOST", " ERR " + e.Message);
                 dialog.Dismiss();
-            });
+            }
         }
 
         public void OnMedLostClick(MedicationSchedule med)
@@ -180,7 +191,7 @@ namespace Familia.Medicatie
                                 DateTime now = DateTime.Now;
                                 JSONArray mArray = new JSONArray().Put(new JSONObject().Put("uuid", med.Uuid)
                                     .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
-                                isSent =  SendMedicationTask(mArray, med, now);
+                                isSent = SendMedicationTask(mArray, med, now);
                             }
 
                             if (isSent)
@@ -293,45 +304,68 @@ namespace Familia.Medicatie
         private async void GetData()
         {
             var dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
-            dialog.Show();
-            Log.Error("MEDICINE LOST ", "task getting data..");
-            var dataMedicationSchedules = await networking.ReadPastDataTask(0);
-            Log.Error("MEDICINE LOST ", "task data received");
+            try
+            {
 
-            //------------------------------------------------med pers
-            var listWithAllElements = new List<MedicationSchedule>();
-            if (Storage.GetInstance().GetListOfDiseasesFromFile(Context) != null)
-            {
-                listWithAllElements = await Storage.GetInstance().GetPersonalMedicationConverted();
-                foreach (MedicationSchedule item in dataMedicationSchedules)
-                {
-                    listWithAllElements.Add(item);
-                }
-                listWithAllElements = listWithAllElements.OrderBy(x => DateTime.Parse(x.Timestampstring)).ToList();
-            }
-            else
-            {
-                Log.Error("MEDICINE LOST", "no of items in storage: 0 ");
-            }
-            //----------------------------------------------------------------
+                dialog.Show();
+                Log.Error("MEDICINE LOST ", "task getting data..");
+                var dataMedicationSchedules = await networking.ReadPastDataTask(0);
+                Log.Error("MEDICINE LOST ", "task data received");
 
-            Activity.RunOnUiThread(() =>
+                //------------------------------------------------med pers
+                var listWithAllElements = new List<MedicationSchedule>();
+
+                try
+                {
+
+                    if (Storage.GetInstance().GetListOfDiseasesFromFile(Context) != null)
+                    {
+                        listWithAllElements = await Storage.GetInstance().GetPersonalMedicationConverted();
+                        foreach (MedicationSchedule item in dataMedicationSchedules)
+                        {
+                            listWithAllElements.Add(item);
+                        }
+                        listWithAllElements = listWithAllElements.OrderBy(x => DateTime.Parse(x.Timestampstring)).ToList();
+                    }
+                    else
+                    {
+                        Log.Error("MEDICINE LOST", "no of items in storage: 0 ");
+                    }
+
+
+                }
+                catch (Exception e)
+                {
+                    Log.Error("MEDICINE LOST", "err med pers " + e.Message);
+                }
+
+                //----------------------------------------------------------------
+
+                Activity.RunOnUiThread(() =>
+                {
+                    Log.Error("MEDICINE LOST ", "uiThread");
+                    if (dataMedicationSchedules != null && dataMedicationSchedules.Count != 0)
+                    {
+                        _medicationsLost.Clear();
+                        _medicationsLost = new List<MedicationSchedule>(listWithAllElements);
+                        _medicineLostAdapter.setMedsList(_medicationsLost);
+                        _medicineLostAdapter.NotifyDataSetChanged();
+                        cwEmpty.Visibility = _medicineLostAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+                    }
+                    else
+                    {
+                        cwEmpty.Visibility = _medicineLostAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+                    }
+                    dialog.Dismiss();
+                });
+
+
+            }
+            catch (Exception e)
             {
-                Log.Error("MEDICINE LOST ", "uiThread");
-                if (dataMedicationSchedules != null && dataMedicationSchedules.Count != 0)
-                {
-                    _medicationsLost.Clear();
-                    _medicationsLost = new List<MedicationSchedule>(listWithAllElements);
-                    _medicineLostAdapter.setMedsList(_medicationsLost);
-                    _medicineLostAdapter.NotifyDataSetChanged();
-                    cwEmpty.Visibility = _medicineLostAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
-                }
-                else
-                {
-                    cwEmpty.Visibility = _medicineLostAdapter.getList().Count == 0 ? ViewStates.Visible : ViewStates.Gone;
-                }
+                Log.Error("MEDICINE LOST", " ERR " + e.Message);
                 dialog.Dismiss();
-            });
+            }
         }
 
         private static List<MedicationSchedule> ConvertPersonalMedicationListToMedicationSchedules(List<Disease> LD)
@@ -477,7 +511,8 @@ namespace Familia.Medicatie
             var nameDb = "devices_data.db";
             db = new SQLiteAsyncConnection(Path.Combine(path, nameDb));
             await db.CreateTableAsync<MedicineRecords>();
-            await db.InsertAsync(new MedicineRecords {
+            await db.InsertAsync(new MedicineRecords
+            {
                 Uuid = uuid,
                 DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
             });

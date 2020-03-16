@@ -93,40 +93,44 @@ namespace Familia.Medicatie
             countReq = 0;
             if (rvMedSer != null)
             {
-                rvMedSer.HasFixedSize = true;
-                var onScrollListener = new MedicineServerRecyclerViewOnScrollListener(layoutManager);
-                onScrollListener.LoadMoreEvent += async (sender, e) =>
-                {
-                    countReq++;
-                    Log.Error("MEDICATION SERVER", _medications.Count + "");
-                    if (countReq == 1)
+                try {
+                    rvMedSer.HasFixedSize = true;
+                    var onScrollListener = new MedicineServerRecyclerViewOnScrollListener(layoutManager);
+                    onScrollListener.LoadMoreEvent += async (sender, e) =>
                     {
-                            if (_medications.Count <= 7) return;
-                            var newItems = await GetMoreData(_medications.Count);
+                        countReq++;
+                        Log.Error("MEDICATION SERVER", _medications.Count + "");
+                        if (countReq == 1)
+                        {
+                            if (_medicineServerAdapter.getList().Count <= 7) return;
+                            var newItems = await GetMoreData(_medicineServerAdapter.getList().Count);
                             if (newItems.Count != 0)
                             {
+                                Log.Error("MEDICATION SERVER", "new items: " + newItems.Count);
                                 try
                                 {
                                     for (var ms = 0; ms <= newItems.Count; ms++)
                                     {
-                                        Log.Error("MSSSSSTRING", newItems[ms].Timestampstring);
                                         DateTime date = parseTimestampStringToDate(newItems[ms]);
                                         newItems[ms].Timestampstring = date.ToString();
                                         _medicineServerAdapter.AddItem(newItems[ms]);
                                     }
                                     _medicineServerAdapter.NotifyDataSetChanged();
-                                    Log.Error("MEDICINE SERVER",
-                                        "new items : " + newItems.Count + " list count: " + _medications.Count);
+                                    Log.Error("MEDICINE SERVER", "new items : " + newItems.Count + " list count: " + _medications.Count);
                                 }
                                 catch (Exception ex)
                                 {
-                                    Log.Error("ERRRRR", ex.Message);
+                                    Log.Error("ERRRRR MEDICINE SERVER", ex.Message);
                                 }
                             }
-                    }
-                };
-                rvMedSer.AddOnScrollListener(onScrollListener);
-                rvMedSer.SetLayoutManager(layoutManager);
+                        }
+                    };
+                    rvMedSer.AddOnScrollListener(onScrollListener);
+                    rvMedSer.SetLayoutManager(layoutManager);
+                }
+                catch (Exception e) {
+                    Log.Error("ERRRRR MEDICINE SERVER scroll listener", e.Message);
+                }
             }
         }
 
@@ -155,14 +159,25 @@ namespace Familia.Medicatie
         private async void GetData()
         {
             var dialog = new ProgressBarDialog("Asteptati", "Se incarca datele...", Activity, false);
+            try { 
+            
             dialog.Show();
-            Log.Error("NetworkingData", "task getting data..");
+            Log.Error("MSF NetworkingData", "task getting data..");
             var dataMedicationSchedules = await networking.ReadFutureDataTask(0);
-            Log.Error("NetworkingData", "task data received");
+            Log.Error("MSF NetworkingData", "task data received");
 
-            Activity.RunOnUiThread(() =>
+                if (dataMedicationSchedules == null)
+                {
+                    Log.Error("MSF FUTURE", "list is null");
+                }
+                else {
+                    Log.Error("MSF FUTURE", "list is NOT null");
+                }
+
+           
+                Activity.RunOnUiThread(() =>
             {
-                Log.Error("NetworkingData", "uiThread");
+                Log.Error("MSF NetworkingData", "uiThread");
                 if (dataMedicationSchedules != null && dataMedicationSchedules.Count != 0)
                 {
                     _medications.Clear();
@@ -177,6 +192,16 @@ namespace Familia.Medicatie
                 }
                 dialog.Dismiss();
             });
+
+            }
+
+
+            catch (Exception e)
+            {
+
+                Log.Error("MedicationServerFragment", "FUTURE ERR " + e.Message);
+                dialog.Dismiss();
+            }
         }
         private async Task<List<MedicationSchedule>> GetMoreData(int size)
         {

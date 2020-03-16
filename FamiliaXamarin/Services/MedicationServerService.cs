@@ -124,6 +124,11 @@ namespace Familia.Services
                             {
                                 Log.Error(Log_Tag, "so the uuid is 0, I'm updating the PI'S id and set up alarm for the uuid " + _medications[ms].Uuid);
                                 SetupAlarm(ms, _medications[ms].IdNotification);
+                                Log.Error(Log_Tag, "UPDATED PI'S ID " + _medications[ms].IdNotification);
+                                await Storage.GetInstance().removeMedSer(_medications[ms].Uuid);
+                                await Storage.GetInstance().insertElementMedSer(_medications[ms]);
+                               Log.Error(Log_Tag, "remove & insert element for pi's id != 0 and uuid already exists");
+
                             }
                             else
                             {
