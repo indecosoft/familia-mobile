@@ -162,19 +162,8 @@ namespace Familia.Medicatie
             try { 
             
             dialog.Show();
-            Log.Error("MSF NetworkingData", "task getting data..");
             var dataMedicationSchedules = await networking.ReadFutureDataTask(0);
-            Log.Error("MSF NetworkingData", "task data received");
-
-                if (dataMedicationSchedules == null)
-                {
-                    Log.Error("MSF FUTURE", "list is null");
-                }
-                else {
-                    Log.Error("MSF FUTURE", "list is NOT null");
-                }
-
-           
+         
                 Activity.RunOnUiThread(() =>
             {
                 Log.Error("MSF NetworkingData", "uiThread");

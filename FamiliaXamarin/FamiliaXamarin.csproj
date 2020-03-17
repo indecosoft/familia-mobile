@@ -92,6 +92,8 @@
     <Compile Include="DataModels\MedicineServerRecords.cs" />
     <Compile Include="DataModels\SmartBandRecords.cs" />
     <Compile Include="Devices\DevicesAsistent\AsistentHealthDevicesFragment.cs" />
+    <Compile Include="Games\entities\Category.cs" />
+    <Compile Include="Games\entities\Game.cs" />
     <Compile Include="Games\GameActivity.cs" />
     <Compile Include="Games\GameCenterActivity.cs" />
     <Compile Include="Games\MyWebViewClient.cs" />
@@ -283,6 +285,7 @@
       <Generator>
       </Generator>
     </AndroidResource>
+    <AndroidResource Include="Resources\raw\empty_box.json" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -1216,6 +1219,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\joc2\images\parent1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_game_center.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

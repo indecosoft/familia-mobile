@@ -24,19 +24,6 @@ namespace Familia.Medicatie.Data
             var numeDB = "devices_data.db";
         }
 
-        //        public static NetworkingData GetInstance()
-        //        {
-        //            lock (Padlock)
-        //            {
-        //                if (_instance == null)
-        //                {
-        //                    _instance = new NetworkingData();
-        //                }
-        //            }
-        //
-        //            return _instance;
-        //        }
-
         private async Task<List<MedicationSchedule>> CallServerFutureData(int size)
         {
             var serverItemsError = false;
@@ -261,13 +248,7 @@ namespace Familia.Medicatie.Data
         public async Task<List<MedicationSchedule>> ReadListFromDbFutureDataTask()
         {
             var list = await GetDataFromDb();
-            if (list != null)
-            {
-                Log.Error("MSF FUTURE", "READ FROM DB list is not null");
-            }
-            else {
-                Log.Error("MSF FUTURE", " READ FROM DB listis null ");
-            }
+            
             DateTime currentDate = DateTime.Now;
             var listMedSch = new List<MedicationSchedule>();
 
@@ -292,6 +273,7 @@ namespace Familia.Medicatie.Data
             return listMedSch;
         }
 
+       
         private static List<MedicationSchedule> ExtractFutureData(List<MedicationSchedule> list)
         {
             DateTime currentDate = DateTime.Now;
@@ -361,13 +343,9 @@ namespace Familia.Medicatie.Data
         private async Task<IEnumerable<MedicineServerRecords>> GetDataFromDb()
         {
             try {
-                Log.Error("NetworkingData class", "GetDataFromDb ReadListFromDbPastDataTask 1");
                 _db = await SqlHelper<MedicineServerRecords>.CreateAsync();
-                Log.Error("NetworkingData class", "GetDataFromDb ReadListFromDbPastDataTask 2");
                 var list = await _db.QueryValuations("select * from MedicineServerRecords");
-                Log.Error("NetworkingData class", "GetDataFromDb ReadListFromDbPastDataTask 3");
                 return list;
-
             }
             catch (Exception e) {
                 Log.Error("NetworkingData class", " ERR " + e.Message);
