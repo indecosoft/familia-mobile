@@ -23,6 +23,12 @@
     text-align: center;
 }
 
+.container {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+}
+
 .dashed {
     display: none;
     width: 80px;

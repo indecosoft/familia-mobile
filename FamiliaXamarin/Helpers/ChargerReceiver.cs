@@ -23,7 +23,6 @@ namespace Familia.Helpers {
 			var numeDB = "devices_data.db";
 			_db = new SQLiteAsyncConnection(Path.Combine(path, numeDB));
 			await _db.CreateTableAsync<DeviceConfigRecords>();
-			// Log.Error("PPPAAAAAAAAAAAAAAAAAA", "Received action headset plug");
 
 			await Task.Run(async () => {
 				try {
@@ -49,7 +48,6 @@ namespace Familia.Helpers {
 		}
 
 		private static void LaunchAlarm(Context context, string interval, string content) {
-			//=int.Parse(interval) * 60000
 
 			if (int.TryParse(interval, out int intervalMilisec))
 				intervalMilisec *= 60000;
@@ -58,7 +56,6 @@ namespace Familia.Helpers {
 
 			//for test
 			//intervalMilisec = 60000;
-
 
 			var am = (AlarmManager) context.GetSystemService(Context.AlarmService);
 			var i = new Intent(context, typeof(AlarmDeviceReceiver));
@@ -81,10 +78,7 @@ namespace Familia.Helpers {
 		private static async Task<string> GetData() {
 			if (!Utils.CheckNetworkAvailability()) return null;
 			string result = await WebServices.WebServices.Get(
-				$"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetDeviceIdentificator(Application.Context)}");
-			//               var result = await WebServices.Get(
-			//                   $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetDeviceIdentificator(Application.Context)}",
-			//                   Utils.GetDefaults("Token", context));
+				$"https://gisdev.indecosoft.net/chat/api/get-device-config/{Utils.GetDeviceIdentificator(Application.Context)}");
 			if (result == null) return null;
 			Log.Error("RESULT_FROM_GIS", result);
 			return result;

@@ -290,7 +290,7 @@ namespace Familia {
 		}
 
 		private void createSimpleChannelForServices() {
-			var channel = new NotificationChannel(App.SimpleChannelIdForServices, "Test simple channel",
+			var channel = new NotificationChannel(App.SimpleChannelIdForServices, "Simple",
 				NotificationImportance.Default);
 			((NotificationManager) GetSystemService(NotificationService)).CreateNotificationChannel(channel);
 			Log.Error("App CreateChannel", "Test simple channel created");
@@ -298,7 +298,7 @@ namespace Familia {
 
 		private void createNonstopChannelForServices() {
 			var channel = new NotificationChannel(App.NonStopChannelIdForServices,
-				"Test nonstop channel", NotificationImportance.Default);
+				"Nonstop", NotificationImportance.Default);
 			((NotificationManager) GetSystemService(NotificationService)).CreateNotificationChannel(channel);
 			Log.Error("App CreateChannel", "Test nonstop channel created");
 		}
@@ -311,7 +311,7 @@ namespace Familia {
 			AudioAttributes attributes = new AudioAttributes.Builder().SetUsage(AudioUsageKind.Notification).Build();
 
 			var channel = new NotificationChannel(App.AlarmMedicationChannelId,
-				"Test alarm medication channel", NotificationImportance.High);
+				"Alarm medication", NotificationImportance.High);
 
 			channel.SetSound(sound, attributes);
 
