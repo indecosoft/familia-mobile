@@ -3,6 +3,7 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8, maximum-scale=0.8, user-scalable=no" />
 </head>
 
 <body>
@@ -15,17 +16,28 @@
         <div class="child"> </div>
 
         <div class="round-green ">
-            <p class="text-center-inside-the-circle">4</p>
+            <p id="textCorrect" class="text-center-inside-the-circle">4</p>
         </div>
 
         <div class="round-grey ">
-            <p class="text-center-inside-the-circle">0</p>
+            <p id="textIncorrect" class="text-center-inside-the-circle">0</p>
         </div>
 
         <div class="dashed"></div>
 
         <div class="bordered"></div>
+
+
+        <div class="box_scor">
+            <p class="text">You won</p>
+            <button id="reset" class="button-reset" onclick="playAgain()">
+                    <img src="images/restart.png" class="img-dimension"/>
+            </button>
+        </div>
+
     </div>
+
+
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

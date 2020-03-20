@@ -11,34 +11,66 @@ const idDashed = "#dashed";
 
 let dashedElements = [];
 
+let solution = [];
+
 scene.init = function () {
+    clean();
+
+    $(".box_scor").css({ display: 'none', height: Number($(window).height()) + 10 });
 
     $(".parent").css({ top: 30, left: 30, position: 'absolute', display: 'block' });
 
-    generateDashedElements(4);
-    generateBorderedElements(6);
-
-    $(".round-green").css({
-        top: 80,
-        left: 750,
-        position: 'absolute',
-        display: 'block'
-    });
-
-    $(".round-grey").css({
-        top: 120,
-        left: 800,
-        position: 'absolute',
-        display: 'block'
-    });
-
-    scene.refreshIntervalId = setInterval(scene.update, 5);
+    generateDashedElements(3);
+    generateBorderedElements(5);
+    createSolution();
+    // scene.refreshIntervalId = setInterval(scene.update, 5);
 }
 
 scene.update = function () { }
 
 scene.finish = function () {
-    clearInterval(scene.refreshIntervalId);
+    // clearInterval(scene.refreshIntervalId);
+}
+
+function clean() {
+    for (let i = 0; i < children.length; i++) {
+        children[i].jqueryElement.remove();
+    }
+
+    for (let i = 0; i < dashedElements.length; i++) {
+        dashedElements[i].jqueryElement.remove();
+    }
+
+    solution = [];
+
+
+    $(".round-green").css({
+        top: 80,
+        left: 650,
+        position: 'absolute',
+        display: 'none'
+    });
+    $(".round-grey").css({
+        top: 120,
+        left: 700,
+        position: 'absolute',
+        display: 'none'
+    });
+}
+
+function createSolution() {
+    let randomNumbers = getArrayWithRandomNumbers(dashedElements.length, children);
+    solution = [...new Set(randomNumbers)];
+    if (solution.length != dashedElements.length) {
+        for (let i = 1; i <= children.length; i++) {
+            if (solution.length != dashedElements.length) {
+                if (!isHere(i, solution)) {
+                    solution.push(i);
+                }
+            }
+        }
+    }
+    console.log('Solution ', solution);
 }
 
 function generateDashedElements(nrOfItems) {
@@ -123,6 +155,24 @@ function generateBorderedElements(nrOfItems) {
     }
 }
 
+function getArrayWithRandomNumbers(noOfItems, list) {
+    let array = [];
+    for (let i = 0; i < noOfItems; i++) {
+        array.push(Math.floor(Math.random() * list.length) + 1);
+    }
+    return array;
+}
+
+function isHere(number, list) {
+    for (let i = 0; i < list.length; i++) {
+        if (number == list[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 function getPosition(uiElement, list) {
     let id = -1;
     for (let i = 0; i < list.length; i++) {
@@ -163,6 +213,76 @@ function onDropInside(dashedElement, uiElement) {
     const idElement = getPosition(dashedElement, dashedElements);
     setChildToDashedPosition(uiElement, dashed, child, idElement);
     removeStinkyItem(isMovedBetweenDashedElements, idElement, uiElement);
+
+    let details = getDetails();
+    if (details.allOccupied) {
+        if (details.isWinner) {
+            console.log('Winner');
+            $(".box_scor").css({ display: 'block' });
+        }
+        displayInformation(details);
+    }
+
+}
+
+function displayInformation(details) {
+    $(".round-green").css({
+        top: 80,
+        left: 650,
+        position: 'absolute',
+        display: 'block'
+    });
+    $(".round-grey").css({
+        top: 120,
+        left: 700,
+        position: 'absolute',
+        display: 'block'
+    });
+
+    $("#textCorrect").text(details.correctPosition);
+    $("#textIncorrect").text(details.incorrectPosition);
+}
+
+function getDetails() {
+    let isWinnner = true;
+    let list = [];
+    let correctPosition = 0;
+    let incorrectPosition = 0;
+    let allOccupied = areAllItemsOccupied(list);
+
+    if (allOccupied) {
+        console.log('your list', list);
+        for (let i = 0; i < solution.length; i++) {
+            if (solution[i] != list[i]) {
+                isWinnner = false;
+                if (isHere(list[i], solution)) {
+                    incorrectPosition++;
+                }
+            } else {
+                correctPosition++;
+            }
+        }
+    } else {
+        isWinnner = false;
+    }
+
+    return {
+        allOccupied: allOccupied,
+        isWinner: isWinnner,
+        correctPosition: correctPosition,
+        incorrectPosition: incorrectPosition
+    };
+}
+
+function areAllItemsOccupied(list) {
+    for (let i = 0; i < dashedElements.length; i++) {
+        if (dashedElements[i].occupied.element == '') {
+            return false;
+        }
+        let id = dashedElements[i].occupied.element.attr('id')
+        list.push(Number(id.substr(id.length - 1)));
+    }
+    return true;
 }
 
 function removeStinkyItem(isMovedBetweenDashedElements, idElement, uiElement) {
@@ -239,6 +359,12 @@ function updateCurrentPostion(uiElement, x, y) {
             children[i].currentPosition.y = y;
         }
     }
+}
+
+
+function playAgain() {
+    console.log('play again');
+    scene.init();
 }
 
 /*
