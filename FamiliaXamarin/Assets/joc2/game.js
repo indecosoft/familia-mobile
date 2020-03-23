@@ -228,13 +228,13 @@ function onDropInside(dashedElement, uiElement) {
 function displayInformation(details) {
     $(".round-green").css({
         top: 80,
-        left: 650,
+        left: 750,
         position: 'absolute',
         display: 'block'
     });
     $(".round-grey").css({
         top: 120,
-        left: 700,
+        left: 800,
         position: 'absolute',
         display: 'block'
     });
