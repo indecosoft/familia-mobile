@@ -1224,7 +1224,22 @@
     <AndroidResource Include="Resources\layout\activity_game_center.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\joc2\images\woodbg.jpg" />
+    <AndroidAsset Include="Assets\joc2\images\rightstroke.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc2\images\replayicon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc2\images\close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc2\images\howtoplay.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc2\images\paperbg.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc2\images\bgwood.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

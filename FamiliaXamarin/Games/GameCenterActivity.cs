@@ -75,6 +75,9 @@ namespace Familia.Games
                     }
                 }
             }
+
+            GetCategories();
+
         }
 
         protected override void OnStart()

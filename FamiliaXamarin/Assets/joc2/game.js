@@ -5,6 +5,83 @@
     refreshIntervalId: ''
 }
 
+$.keyframe.define([{
+    name: 'bounce',
+    '0%': {
+        transform: 'translateY(0);'
+    },
+    '50%': {
+        transform: 'translateY(-60px);'
+    },
+    '100%': {
+        transform: 'translateY(0);'
+    }
+},
+{
+    name: 'spinner',
+    '0%': {
+        '-webkit-transform': 'rotate3d(1, 1, 1, 0deg);',
+        '-ms-transform': 'rotate3d(1, 1, 1, 0deg);',
+        '-o-transform': 'rotate3d(1, 1, 1, 0deg);',
+        transform: 'rotate3d(1, 1, 1, 0deg);'
+    },
+    '50%': {
+        '-webkit-transform': 'rotate3d(1, 1, 1, 180deg);',
+        '-ms-transform': 'rotate3d(1, 1, 1, 180deg);',
+        '-o-transform': 'rotate3d(1, 1, 1, 180deg);',
+        transform: 'rotate3d(1, 1, 1, 180deg);'
+    },
+    '100%': {
+        '-webkit-transform': 'rotate3d(1, 1, 1, 360deg);',
+        '-ms-transform': 'rotate3d(1, 1, 1, 360deg);',
+        '-o-transform': 'rotate3d(1, 1, 1, 360deg);',
+        transform: 'rotate3d(1, 1, 1, 360deg);'
+    }
+},
+{
+    name: 'spinner2',
+    '0%': {
+        '-webkit-transform': 'rotate3d(1, 1, 1, 0deg);',
+        '-ms-transform': 'rotate3d(1, 1, 1, 0deg);',
+        '-o-transform': 'rotate3d(1, 1, 1, 0deg);',
+        transform: 'rotate3d(1, 1, 1, 0deg);'
+    },
+    '50%': {
+        '-webkit-transform': 'rotate3d(1, 1, 1, 180deg);',
+        '-ms-transform': 'rotate3d(1, 1, 1, 180deg);',
+        '-o-transform': 'rotate3d(1, 1, 1, 180deg);',
+        transform: 'rotate3d(1, 1, 1, 180deg);'
+    },
+    '100%': {
+        '-webkit-transform': 'rotate3d(1, 1, 1, 360deg);',
+        '-ms-transform': 'rotate3d(1, 1, 1, 360deg);',
+        '-o-transform': 'rotate3d(1, 1, 1, 360deg);',
+        transform: 'rotate3d(1, 1, 1, 360deg);'
+    }
+},
+{
+    name: 'showBox',
+    '0%': {
+        transform: 'translateY(-100%);'
+    },
+    '100%': {
+        transition: '0.5s;',
+        transform: 'translateY(0%);'
+    }
+},
+{
+    name: 'byeBox',
+    '0%': {
+        transform: 'translateY(0%);'
+    },
+    '100%': {
+        transition: '0.5s;',
+        transform: 'translateY(-100%);'
+    }
+}
+]);
+
+
 let children = [];
 const idChild = "#child";
 const idDashed = "#dashed";
@@ -12,16 +89,18 @@ const idDashed = "#dashed";
 let dashedElements = [];
 
 let solution = [];
+let jquerySolution = [];
 
 scene.init = function () {
     clean();
 
-    $(".box_scor").css({ display: 'none', height: Number($(window).height()) + 10 });
 
-    $(".parent").css({ top: 30, left: 30, position: 'absolute', display: 'block' });
 
-    generateDashedElements(3);
-    generateBorderedElements(5);
+    $(".parent").css({ top: 40, left: 30, position: 'absolute', display: 'block' });
+
+    let item = getNrOfItems();
+    generateDashedElements(item.countDashed);
+    generateBorderedElements(item.countChildren);
     createSolution();
     // scene.refreshIntervalId = setInterval(scene.update, 5);
 }
@@ -41,21 +120,27 @@ function clean() {
         dashedElements[i].jqueryElement.remove();
     }
 
+    for (let i = 0; i < jquerySolution.length; i++) {
+        jquerySolution[i].remove();
+    }
+
     solution = [];
+
 
 
     $(".round-green").css({
         top: 80,
-        left: 650,
+        left: 850,
         position: 'absolute',
         display: 'none'
     });
     $(".round-grey").css({
         top: 120,
-        left: 700,
+        left: 900,
         position: 'absolute',
         display: 'none'
     });
+
 }
 
 function createSolution() {
@@ -73,10 +158,47 @@ function createSolution() {
     console.log('Solution ', solution);
 }
 
+function getNrOfItems() {
+
+    const obj = {
+        countDashed: 0,
+        countChildren: 0
+    }
+    const random = Math.random() * 100 + 1;
+
+    if (random <= 20) {
+        obj.countDashed = 3;
+        obj.countChildren = 3;
+    }
+
+    if (random > 20 && random <= 40) {
+        obj.countDashed = 3;
+        obj.countChildren = 4;
+    }
+
+    if (random > 40 && random <= 70) {
+        obj.countDashed = 3;
+        obj.countChildren = 5;
+    }
+
+
+    if (random > 70 && random <= 90) {
+        obj.countDashed = 4;
+        obj.countChildren = 4;
+    }
+
+    if (random > 90) {
+        obj.countDashed = 4;
+        obj.countChildren = 5;
+    }
+
+    return obj;
+}
+
 function generateDashedElements(nrOfItems) {
     dashedElements = [];
     let centerX = 100;
-    let centerY = 80;
+    let centerY = 100;
     for (let i = 1; i <= nrOfItems; i++) {
         let item = $('<div id="dashed' + i + '"class="dashed"></div>');
         centerX += 100;
@@ -85,7 +207,8 @@ function generateDashedElements(nrOfItems) {
             left: centerX,
             top: centerY,
             display: 'block',
-            position: 'absolute'
+            position: 'absolute',
+            'z-index': 3
         })
             .droppable({
                 drop: function (event, ui) {
@@ -122,7 +245,8 @@ function generateBorderedElements(nrOfItems) {
             top: centerY,
             display: 'block',
             position: 'absolute',
-            'background-image': 'url("images/pui' + i + '.png")'
+            'background-image': 'url("images/pui' + i + '.png")',
+            'z-index': 3
         })
             .draggable({
                 revert: false,
@@ -183,6 +307,9 @@ function getPosition(uiElement, list) {
     return id;
 }
 
+
+let changed = false;
+
 function onDropInside(dashedElement, uiElement) {
 
     const child = {
@@ -218,25 +345,87 @@ function onDropInside(dashedElement, uiElement) {
     if (details.allOccupied) {
         if (details.isWinner) {
             console.log('Winner');
-            $(".box_scor").css({ display: 'block' });
-        }
-        displayInformation(details);
-    }
 
+            let delay = 0.5;
+            for (let i = 0; i < dashedElements.length; i++) {
+                delay += 0.3;
+                if (i == dashedElements.length - 1) {
+                    dashedElements[i].occupied.element.playKeyframe({
+                        name: 'bounce',
+                        duration: delay + 's',
+                        complete: function () {
+                            $(".box_scor").css({ display: 'block' });
+
+                            $(".box_scor").playKeyframe({
+                                name: 'showBox',
+                                duration: '0.6s'
+                            })
+                        }
+                    });
+                } else {
+                    dashedElements[i].occupied.element.playKeyframe({
+                        name: 'bounce',
+                        duration: delay + 's',
+                        complete: function () { }
+                    });
+                }
+
+            }
+        }
+
+        changed = !changed;
+        displayInformation(details, changed);
+    }
 }
 
-function displayInformation(details) {
+function displayInformation(details, changed) {
     $(".round-green").css({
         top: 80,
-        left: 750,
+        left: 650,
         position: 'absolute',
         display: 'block'
     });
+
+    $('.round-green').resetKeyframe(function () {
+        switch (changed) {
+            case true:
+                $('.round-green').playKeyframe({
+                    name: 'spinner',
+                    duration: "0.2s"
+                });
+                break;
+            case false:
+                $('.round-green').playKeyframe({
+                    name: 'spinner2',
+                    duration: "0.2s"
+                });
+                break;
+        }
+    });
+
     $(".round-grey").css({
         top: 120,
-        left: 800,
+        left: 700,
         position: 'absolute',
-        display: 'block'
+        display: 'block',
+        'animation-iteration-count': 'infinite'
+    });
+
+    $('.round-grey').resetKeyframe(function () {
+        switch (changed) {
+            case true:
+                $('.round-grey').playKeyframe({
+                    name: 'spinner',
+                    duration: "0.2s"
+                });
+                break;
+            case false:
+                $('.round-grey').playKeyframe({
+                    name: 'spinner2',
+                    duration: "0.2s"
+                });
+                break;
+        }
     });
 
     $("#textCorrect").text(details.correctPosition);
@@ -361,10 +550,72 @@ function updateCurrentPostion(uiElement, x, y) {
     }
 }
 
-
 function playAgain() {
     console.log('play again');
+
+    $(".box_scor").playKeyframe({
+        name: 'byeBox',
+        duration: '0.6s',
+        complete: function () {
+            $(".box_scor").css({ display: 'none' });
+        }
+    })
+
     scene.init();
+}
+
+function help() {
+    console.log('help');
+    $(".box_help").css({ display: 'block' });
+}
+
+function closeHelp() {
+    $(".box_help").css({ display: 'none' });
+}
+
+function pass() {
+    console.log('pass');
+    $(".box_pass").css({ display: 'block' });
+
+    let x = -20;
+
+    for (let i = 0; i < solution.length; i++) {
+
+        let element = getChildAt(i).jqueryElement;
+
+        x += 100;
+        let item = $('<div class="child"></div>');
+        item.css({
+            left: x,
+            top: 120,
+            display: 'block',
+            position: 'absolute',
+            'background-image': element.css('background-image'),
+            'z-index': 12
+        });
+
+        $(".container").append(item);
+        jquerySolution.push(item);
+
+    }
+
+}
+
+function getChildAt(i) {
+    let element = '';
+    for (let j = 0; j < children.length; j++) {
+        let id = Number(children[j].id.substr(children[j].id.length - 1));
+        if (solution[i] == id) {
+            element = children[j];
+        }
+    }
+    return element;
+}
+
+function playAgainFromSolution() {
+    $(".box_pass").css({ display: 'none' });
+
+    playAgain();
 }
 
 /*
