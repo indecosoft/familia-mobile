@@ -11,8 +11,10 @@ using Android.Widget;
 using Com.Airbnb.Lottie;
 using Familia.Games.entities;
 using Familia.Helpers;
+using Org.Json;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace Familia.Games
@@ -25,17 +27,13 @@ namespace Familia.Games
         private static string LOG_TAG = "GameCenterActivity";
         private LottieAnimationView emptyAnimation;
         private TextView tvEmpty;
-        private ConstraintLayout constraintLayout;
+        private LinearLayout linearLayout;
 
-        private static List<Category> categories = new List<Category>() {
-            new Category(1, "category1"),
-            new Category(2, "category2"),
-            new Category(3, "category3"),
-            new Category(4, "category4")
-        };
+        private static List<Category> categories = new List<Category>();
+      
         private List<Game> games = new List<Game>() {
-            new Game("Planetele Vesele", 1, new List<Category>(){ categories[0], categories[2] }),
-            new Game("Joc 2", 2, new List<Category>(){ new Category(4, "category4")})
+            new Game("Planetele Vesele", 1, new List<Category>(){ new Category(4, "Coordonare") }),
+            new Game("Logica", 2, new List<Category>(){ new Category(1, "Gandire Logica"), new Category(2, "Gandire Matematica")})
         };
 
         private HashSet<Game> list = new HashSet<Game>();
@@ -51,14 +49,18 @@ namespace Familia.Games
 
             emptyAnimation = FindViewById<LottieAnimationView>(Resource.Id.animation_empty_box);
             tvEmpty = FindViewById<TextView>(Resource.Id.tv_empty_games);
-            constraintLayout = FindViewById<ConstraintLayout>(Resource.Id.cl_cw);
+            linearLayout = FindViewById<LinearLayout>(Resource.Id.cl_cw);
+            linearLayout.Visibility = ViewStates.Gone;
+
 
             selectGamesFromCategories();
 
         }
 
-        private void selectGamesFromCategories()
+        private async void selectGamesFromCategories()
         {
+            categories = await GetCategories();
+
             if (categories != null && categories.Count != 0)
             {
                 foreach (var game in games)
@@ -76,24 +78,19 @@ namespace Familia.Games
                 }
             }
 
-            GetCategories();
+            Log.Error(LOG_TAG, "games count " + list.Count);
 
-        }
-
-        protected override void OnStart()
-        {
-            base.OnStart();
             if (list.Count != 0)
             {
                 emptyAnimation.Visibility = ViewStates.Invisible;
                 tvEmpty.Visibility = ViewStates.Gone;
-                constraintLayout.Visibility = ViewStates.Visible;
+                linearLayout.Visibility = ViewStates.Visible;
             }
             else
             {
                 emptyAnimation.Visibility = ViewStates.Visible;
                 tvEmpty.Visibility = ViewStates.Visible;
-                constraintLayout.Visibility = ViewStates.Gone;
+                linearLayout.Visibility = ViewStates.Gone;
             }
 
             showGamesCards();
@@ -101,11 +98,13 @@ namespace Familia.Games
 
         private void showGamesCards()
         {
+            linearLayout.Visibility = ViewStates.Visible;
             // this method will be modified to handle a list of games with a list of cardviews
             bool isDisplayedCW1 = false;
             bool isDisplayedCW2 = false;
             foreach (var item in list)
             {
+                Log.Error(LOG_TAG, "item type " + item.Type + ", " + item.Name);
                 if (item.Type == 1)
                 {
                     isDisplayedCW1 = true;
@@ -154,9 +153,10 @@ namespace Familia.Games
         }
 
 
-        private async void GetCategories()
+        private async Task<List<Category>> GetCategories()
         {
             var dialog = new ProgressBarDialog("Asteptati", "Se preiau datele", this, false);
+            var categories = new List<Category>();
             try
             {
                 dialog.Show();
@@ -165,6 +165,16 @@ namespace Familia.Games
                 if (res != null)
                 {
                     Log.Error(LOG_TAG, " RESULT " + res);
+                    try {
+                        var array = new JSONArray(res);
+                        for (var i = 0; i < array.Length(); i++)
+                        {
+                            var obj = (JSONObject)array.Get(i);
+                            categories.Add(new Category(obj.GetInt("id"), obj.GetString("categorie")));
+                        }
+                    } catch (Exception e) {
+                        Log.Error(LOG_TAG, "ERR" + e.Message);
+                    }
                 }
                 else
                 {
@@ -182,6 +192,8 @@ namespace Familia.Games
                 Log.Error(LOG_TAG, "ERR " + e.Message);
                 dialog.Dismiss();
             }
+
+            return categories;
         }
 
 

@@ -91,6 +91,7 @@
     <Compile Include="DataModels\MedicineRecords.cs" />
     <Compile Include="DataModels\MedicineServerRecords.cs" />
     <Compile Include="DataModels\SmartBandRecords.cs" />
+    <Compile Include="Devices\Alarm\ConfigReceiver.cs" />
     <Compile Include="Devices\DevicesAsistent\AsistentHealthDevicesFragment.cs" />
     <Compile Include="Games\entities\Category.cs" />
     <Compile Include="Games\entities\Game.cs" />
@@ -98,9 +99,8 @@
     <Compile Include="Games\GameCenterActivity.cs" />
     <Compile Include="Games\MyWebViewClient.cs" />
     <Compile Include="Games\Sensors\AccelerometerSensor.cs" />
-    <Compile Include="Helpers\AlarmDeviceReceiver.cs" />
+    <Compile Include="Devices\Alarm\AlarmDeviceReceiver.cs" />
     <Compile Include="Helpers\BiometricUtils.cs" />
-    <Compile Include="Helpers\ChargerReceiver.cs" />
     <Compile Include="Helpers\FingerprintHandler.cs" />
     <Compile Include="Helpers\ProgressBarDialog.cs" />
     <Compile Include="Helpers\RejectChatBroadcastReceiver.cs" />
@@ -1221,9 +1221,6 @@
     <AndroidAsset Include="Assets\joc2\images\parent1.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\activity_game_center.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidAsset Include="Assets\joc2\images\rightstroke.png" />
   </ItemGroup>
   <ItemGroup>
@@ -1240,6 +1237,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\joc2\images\bgwood.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\thumbnailjoc2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

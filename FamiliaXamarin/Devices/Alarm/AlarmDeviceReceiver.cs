@@ -1,12 +1,15 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Support.V4.App;
+using Android.Util;
+using Familia.Devices.Alarm;
 
 namespace Familia.Helpers {
     [BroadcastReceiver(Enabled = true, Exported = true)]
     public class AlarmDeviceReceiver : BroadcastReceiver {
         public static readonly string INTERVAL_CONTENT = "INTERVAL_CONTENT";
-        public static readonly string CHANNEL_NAME_ALARM_DEVICE = "Alarm device channel";
+        public static readonly string CHANNEL_NAME_ALARM_DEVICE = "measuring devices channel";
+        public static readonly string CHANNEL_TITLE_ALARM_DEVICE = "Measuring devices";
         public static readonly string CHANNEL_NAME_BLOODPRESSURE = "BloodPressure Channel";
         public static readonly string TITLE_BLOODPRESSURE = "Tensiune";
         public static readonly string TITLE_GLUCOSE = "Glicemie";
@@ -16,29 +19,26 @@ namespace Familia.Helpers {
 
         public override void OnReceive(Context context, Intent intent) {
             string content = intent.GetStringExtra(INTERVAL_CONTENT);
-            string intervalMilis = intent.GetStringExtra("IntervalMilis");
-
-            //Log.Error("PPPAAAAAAAAAAAAAAAAAA", "receiver " + content);
-
+            string interval = intent.GetStringExtra("IntervalMilis");
+            Log.Error("PPPAAAAAAAAAAAAAAAAAA", "receiver " + content + ", " + interval);
             if (string.IsNullOrEmpty(Utils.GetDefaults("Token"))) return;
 
-            CreateNotificationChannel(CHANNEL_NAME_ALARM_DEVICE, TITLE_GLUCOSE, CONTENT_GLUCOSE);
-
-
-            if (content.Equals(Constants.IntervalGlucose)) {
-                var intentGlucose = new Intent(context, typeof(MainActivity));
-                intentGlucose.PutExtra("extra_health_device", "HealthDevicesFragment");
-                //CreateNotificationChannel(CHANNEL_NAME_GLUCOSE, TITLE_GLUCOSE, CONTENT_GLUCOSE);
-                BuildNotification(context, Constants.GlucoseNotifId, CHANNEL_NAME_ALARM_DEVICE,
-                    TITLE_GLUCOSE, CONTENT_GLUCOSE, intentGlucose);
-            } else {
-                if (!content.Equals(Constants.IntervalBloodPressure)) return;
-                var intentBloodPressure = new Intent(context, typeof(MainActivity));
-                intentBloodPressure.PutExtra("extra_health_device", "HealthDevicesFragment");
-
-                BuildNotification(context, Constants.BloodPressureNotifId, CHANNEL_NAME_ALARM_DEVICE,
-                    TITLE_BLOODPRESSURE, CONTENT_BLOODPRESSURE, intentBloodPressure);
+            CreateNotificationChannel(CHANNEL_NAME_ALARM_DEVICE, CHANNEL_TITLE_ALARM_DEVICE, CHANNEL_TITLE_ALARM_DEVICE);
+            intent= new Intent(context, typeof(MainActivity));
+            switch (content) {
+                case Constants.IntervalGlucose:
+                    intent.PutExtra("extra_health_device", "HealthDevicesFragment");
+                    BuildNotification(context, Constants.GlucoseNotifId, CHANNEL_NAME_ALARM_DEVICE,
+                        TITLE_GLUCOSE, CONTENT_GLUCOSE, intent);
+                    break;
+                case Constants.IntervalBloodPressure:
+                    intent.PutExtra("extra_health_device", "HealthDevicesFragment");
+                    BuildNotification(context, Constants.BloodPressureNotifId, CHANNEL_NAME_ALARM_DEVICE,
+                        TITLE_BLOODPRESSURE, CONTENT_BLOODPRESSURE, intent);
+                    break;
             }
+
+            ConfigReceiver.LaunchAlarm(context, interval, content);
 
         }
 
@@ -46,11 +46,10 @@ namespace Familia.Helpers {
             string description = mContent;
 
             var channel =
-                new NotificationChannel(mChannel, mTitle, NotificationImportance.Default) {
+                new NotificationChannel(mChannel, mTitle, NotificationImportance.High) {
                     Description = description
                 };
 
-            // Log.Error("PPPAAAAAAAAAAAAAAAAAA", "create channel for " + mTitle);
             var notificationManager =
                 (NotificationManager)Application.Context.GetSystemService(
                     Context.NotificationService);

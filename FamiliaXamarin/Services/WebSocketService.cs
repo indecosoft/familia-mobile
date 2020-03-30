@@ -15,12 +15,12 @@ namespace Familia.Services {
 	internal class WebSocketService : Service {
 		private readonly IWebSocketClient _socketClient = new WebSocketClient();
 		private readonly IWebSocketClient _webSocketLocation = new WebSocketLocation();
-		private readonly ChargerReceiver _charger = new ChargerReceiver();
+		//private readonly ChargerReceiver _charger = new ChargerReceiver();
 		public override IBinder OnBind(Intent intent) => throw new NotImplementedException();
 
 		public override void OnDestroy() {
 			base.OnDestroy();
-			UnregisterReceiver(_charger);
+			//UnregisterReceiver(_charger);
 		}
 
 		public override async void OnCreate() {
@@ -37,7 +37,8 @@ namespace Familia.Services {
 					StartForeground(App.NonstopNotificationIdForServices, notification);
 				}
 
-				RegisterReceiver(_charger, new IntentFilter(Intent.ActionHeadsetPlug));
+				//RegisterReceiver(_charger, new IntentFilter(Intent.ActionHeadsetPlug));
+
 				bool ok = int.TryParse(Utils.GetDefaults("UserType"), out int type);
 				Log.Error("ok", ok.ToString());
 				Log.Error("type", type.ToString());
