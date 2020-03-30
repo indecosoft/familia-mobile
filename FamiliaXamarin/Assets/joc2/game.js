@@ -129,14 +129,14 @@ function clean() {
 
 
     $(".round-green").css({
-        top: 80,
-        left: 850,
+        top: 30,
+        left: 550,
         position: 'absolute',
         display: 'none'
     });
     $(".round-grey").css({
-        top: 120,
-        left: 900,
+        top: 70,
+        left: 600,
         position: 'absolute',
         display: 'none'
     });
@@ -234,8 +234,8 @@ function generateDashedElements(nrOfItems) {
 
 function generateBorderedElements(nrOfItems) {
     children = [];
-    let centerX = 100;
-    let centerY = 300;
+    let centerX = 10;
+    let centerY = 280;
     for (let i = 1; i <= nrOfItems; i++) {
         let item = $('<div id="child' + i + '" class="child"></div>');
         centerX += 100;
@@ -380,8 +380,8 @@ function onDropInside(dashedElement, uiElement) {
 
 function displayInformation(details, changed) {
     $(".round-green").css({
-        top: 80,
-        left: 650,
+        top: 30,
+        left: 550,
         position: 'absolute',
         display: 'block'
     });
@@ -404,8 +404,8 @@ function displayInformation(details, changed) {
     });
 
     $(".round-grey").css({
-        top: 120,
-        left: 700,
+        top: 70,
+        left: 600,
         position: 'absolute',
         display: 'block',
         'animation-iteration-count': 'infinite'
