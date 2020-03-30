@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="/Library/Frameworks/Xamarin.Android.framework/Libraries/xbuild/Xamarin/Android" t="Include">
-      <e p="android-support-multidex.jar" t="Include" />
-    </e>
-    <e p="$USER_HOME$/.nuget/packages/xamarin.android.arch.lifecycle.runtime/1.1.1.3/proguard/monoandroid90/proguard.txt" t="Include" />
-    <e p="$USER_HOME$/.nuget/packages/xamarin.android.arch.lifecycle.viewmodel/1.1.1.3/proguard/monoandroid90/proguard.txt" t="Include" />
-    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.animated.vector.drawable/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
-    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.compat/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
-    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.coordinaterlayout/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
-    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.design/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
-    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.media.compat/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
-    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.transition/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
-    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.v7.appcompat/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
-    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.v7.recyclerview/28.0.0.3/proguard/monoandroid90/proguard.txt" t="Include" />
-    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.versionedparcelable/28.0.0.3/proguard/monoandroid90" t="Include">
-      <e p="proguard.txt" t="Include" />
-    </e>
-    <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.base/71.1610.0/proguard/monoandroid90/proguard.txt" t="Include" />
-    <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.basement/71.1620.0/proguard/monoandroid90/proguard.txt" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="FamiliaXamarin" t="IncludeRecursive">
         <e p="Active Conversations" t="Include">
@@ -49,13 +31,56 @@
             <e p="layer6.png" t="Include" />
           </e>
           <e p="interactive.html" t="Include" />
-          <e p="jquery.keyframes.min.js" t="Include" />
+          <e p="joc1" t="Include">
+            <e p="game.js" t="Include" />
+            <e p="images" t="Include">
+              <e p="background.png" t="Include" />
+              <e p="next.png" t="Include" />
+              <e p="planet1.png" t="Include" />
+              <e p="planet2.png" t="Include" />
+              <e p="planet3.png" t="Include" />
+              <e p="planet4.png" t="Include" />
+              <e p="planet5.png" t="Include" />
+              <e p="planet6.png" t="Include" />
+              <e p="planet7.png" t="Include" />
+              <e p="planet8.png" t="Include" />
+              <e p="restart.png" t="Include" />
+            </e>
+            <e p="index.html" t="Include" />
+            <e p="jquery.keyframes.min.js" t="Include" />
+            <e p="style.css" t="Include" />
+          </e>
+          <e p="joc2" t="Include">
+            <e p="game.js" t="Include" />
+            <e p="images" t="Include">
+              <e p="background.png" t="Include" />
+              <e p="bgwood.jpg" t="Include" />
+              <e p="close.png" t="Include" />
+              <e p="howtoplay.jpg" t="Include" />
+              <e p="next.png" t="Include" />
+              <e p="paperbg.jpg" t="Include" />
+              <e p="parent1.png" t="Include" />
+              <e p="pui1.png" t="Include" />
+              <e p="pui10.png" t="Include" />
+              <e p="pui2.png" t="Include" />
+              <e p="pui3.png" t="Include" />
+              <e p="pui4.png" t="Include" />
+              <e p="pui5.png" t="Include" />
+              <e p="pui6.png" t="Include" />
+              <e p="pui7.png" t="Include" />
+              <e p="pui8.png" t="Include" />
+              <e p="pui9.png" t="Include" />
+              <e p="replayicon.png" t="Include" />
+              <e p="restart.png" t="Include" />
+              <e p="rightstroke.png" t="Include" />
+            </e>
+            <e p="index.html" t="Include" />
+            <e p="jquery.keyframes.min.js" t="Include" />
+            <e p="jquery.ui.touch-punch.min.js" t="Include" />
+            <e p="style.css" t="Include" />
+          </e>
           <e p="p5.js" t="Include" />
-          <e p="test.css" t="Include" />
-          <e p="test.html" t="Include" />
-          <e p="test.js" t="Include" />
         </e>
-        <e p="bin" t="ExcludeRecursive" />
         <e p="Chat" t="Include">
           <e p="ChatActivity.cs" t="Include" />
           <e p="ChatAdapter.cs" t="Include" />
@@ -153,10 +178,15 @@
         </e>
         <e p="FamiliaXamarin.csproj" t="IncludeRecursive" />
         <e p="Games" t="Include">
+          <e p="Entities" t="Include">
+            <e p="Category.cs" t="Include" />
+            <e p="Game.cs" t="Include" />
+          </e>
           <e p="GameActivity.cs" t="Include" />
           <e p="GameCenterActivity.cs" t="Include" />
+          <e p="MyWebViewClient.cs" t="Include" />
           <e p="Sensors" t="Include">
-            <e p="GyroSensor.cs" t="Include" />
+            <e p="AccelerometerSensor.cs" t="Include" />
           </e>
         </e>
         <e p="Helpers" t="Include">
@@ -225,28 +255,6 @@
           <e p="MedicineServerAdapter.cs" t="Include" />
           <e p="MedicineServerFragment.cs" t="Include" />
           <e p="MedicineServerRecyclerViewOnScrollListener.cs" t="Include" />
-        </e>
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="lp" t="Include">
-              <e p="11" t="Include">
-                <e p="nl" t="Include">
-                  <e p="arm64-v8a" t="Include">
-                    <e p="libe_sqlite3.so" t="Include" />
-                  </e>
-                  <e p="armeabi-v7a" t="Include">
-                    <e p="libe_sqlite3.so" t="Include" />
-                  </e>
-                  <e p="x86" t="Include">
-                    <e p="libe_sqlite3.so" t="Include" />
-                  </e>
-                  <e p="x86_64" t="Include">
-                    <e p="libe_sqlite3.so" t="Include" />
-                  </e>
-                </e>
-              </e>
-            </e>
-          </e>
         </e>
         <e p="Profile" t="Include">
           <e p="Data" t="Include">
@@ -381,6 +389,7 @@
             <e p="swipe_left_button.xml" t="Include" />
             <e p="swipe_message.xml" t="Include" />
             <e p="text_button_style.xml" t="Include" />
+            <e p="thumbnailjoc1.png" t="Include" />
             <e p="trash.xml" t="Include" />
             <e p="tv_tint_selector.xml" t="Include" />
             <e p="view_list.xml" t="Include" />
@@ -410,11 +419,13 @@
             <e p="activity_first_setup.axml" t="Include" />
             <e p="activity_game.axml" t="Include" />
             <e p="activity_game_center.axml" t="Include" />
+            <e p="activity_game_center.xml" t="Include" />
             <e p="activity_login.axml" t="Include" />
             <e p="activity_main.axml" t="Include" />
             <e p="activity_pin_lockscreen.axml" t="Include" />
             <e p="activity_pressure_and_glucose.axml" t="Include" />
             <e p="activity_profile.axml" t="Include" />
+            <e p="activity_profile.xml" t="Include" />
             <e p="activity_pwdreset.axml" t="Include" />
             <e p="activity_register.axml" t="Include" />
             <e p="activity_sharing_menu.axml" t="Include" />
@@ -521,6 +532,7 @@
             <e p="bell.json" t="Include" />
             <e p="devices_data.db" t="Include" />
             <e p="drop.json" t="Include" />
+            <e p="empty_box.json" t="Include" />
             <e p="fingerprint.json" t="Include" />
             <e p="heart.json" t="Include" />
             <e p="loading.json" t="Include" />
@@ -586,7 +598,6 @@
       <e p="packages" t="ExcludeRecursive" />
     </e>
     <e p="$USER_HOME$/Library/Caches/Rider2019.3/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/Library/Caches/Rider2019.3/resharper-host/local/Transient/ReSharperHost/v193/SolutionCaches/_FamiliaXamarin.843005714.00" t="ExcludeRecursive" />
-    <e p="$USER_HOME$/Library/Developer/Xamarin/android-sdk-macosx/platforms/android-28/Data/res" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/Rider2019.3/resharper-host/local/Transient/ReSharperHost/v193/SolutionCaches/_FamiliaXamarin.-1021164152.00" t="ExcludeRecursive" />
   </component>
 </project>
