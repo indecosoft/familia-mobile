@@ -8,6 +8,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Database;
 using Android.Graphics.Drawables;
+using Android.Media;
 using Android.OS;
 using Android.Provider;
 using Android.Support.Constraints;
@@ -21,8 +22,10 @@ using Com.Bumptech.Glide;
 using Familia.Asistenta_sociala;
 using Familia.Helpers;
 using Familia.JsonModels;
+using Familia.Medicatie.Alarm;
 using Familia.Profile;
 using Familia.Profile.Data;
+using Familia.Services;
 using Java.Text;
 using Java.Util;
 using Newtonsoft.Json;
@@ -488,6 +491,7 @@ namespace Familia.Login_System
                     intent.PutExtra("Items", JsonConvert.SerializeObject(items));
                     intent.PutExtra("SelectedItems", JsonConvert.SerializeObject(_selectedDiseases));
                     StartActivityForResult(intent, 3);
+
                     Activity.RunOnUiThread(progressBarDialog.Dismiss);
                 });
             }
@@ -551,11 +555,25 @@ namespace Familia.Login_System
                                         break;
                                     case 2:
 
-                                        await SaveProfileData();
+                                        
 
                                         Utils.SetDefaults("Logins", true.ToString());
                                         Utils.SetDefaults("Avatar",
                                             $"{Constants.PublicServerAddress}/{Utils.GetDefaults("Email")}.{FragmentContext._firstSetupModel.ImageExtension}");
+
+
+                                        await SaveProfileData();
+
+
+                                        createSimpleChannelForServices();
+                                        createNonstopChannelForServices();
+
+                                        if (int.Parse(Utils.GetDefaults("UserType")) == 3)
+                                        {
+                                            var _medicationServerServiceIntent = new Intent(Application.Context, typeof(MedicationServerService));
+                                            Activity.StartService(_medicationServerServiceIntent);
+                                        }
+
                                         FragmentContext.StartActivity(typeof(MainActivity));
                                         FragmentContext.Finish();
                                         break;
@@ -574,6 +592,8 @@ namespace Familia.Login_System
                         break;
                 }
             }
+
+          
 
             private async Task SaveProfileData()
             {
@@ -597,7 +617,44 @@ namespace Familia.Login_System
                         Log.Error("FirstSetup", "Error saving profile data ..");
                     }
                 }
+               
             }
+
+            private void createSimpleChannelForServices()
+            {
+                var channel = new NotificationChannel(App.SimpleChannelIdForServices, "Test simple channel",
+                    NotificationImportance.Default);
+                ((NotificationManager)Activity.GetSystemService(NotificationService)).CreateNotificationChannel(channel);
+                Log.Error("App CreateChannel", "Test simple channel created");
+            }
+
+            private void createNonstopChannelForServices()
+            {
+                var channel = new NotificationChannel(App.NonStopChannelIdForServices,
+                    "Test nonstop channel", NotificationImportance.Default);
+                ((NotificationManager)Activity.GetSystemService(NotificationService)).CreateNotificationChannel(channel);
+                Log.Error("App CreateChannel", "Test nonstop channel created");
+            }
+
+
+            private void createAlarmMedicationChannel()
+            {
+                Uri sound = Uri.Parse(ContentResolver.SchemeAndroidResource + "://" + Application.Context.PackageName +
+                                      "/" + Resource.Raw
+                                          .alarm); //Here is FILE_NAME is the name of file that you want to play
+                AudioAttributes attributes = new AudioAttributes.Builder().SetUsage(AudioUsageKind.Notification).Build();
+
+                var channel = new NotificationChannel(App.AlarmMedicationChannelId,
+                    "Test alarm medication channel", NotificationImportance.High);
+
+                channel.SetSound(sound, attributes);
+
+                ((NotificationManager)Activity.GetSystemService(NotificationService)).CreateNotificationChannel(channel);
+                Log.Error("MainActivity App CreateChannel", "Test alarm medication channel created");
+            }
+
+
+
 
             public bool OnTouch(View v, MotionEvent e)
             {

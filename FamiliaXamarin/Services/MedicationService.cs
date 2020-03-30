@@ -126,7 +126,7 @@ namespace Familia.Services
 
             } catch (Exception e) {
                 Log.Error("Medication Service ", e.Message);
-                Toast.MakeText(context, "Sqlite busy", ToastLength.Long).Show();
+                //Toast.MakeText(context, "Sqlite busy", ToastLength.Long).Show();
                 return false;
             }
         

@@ -130,7 +130,8 @@ namespace Familia.Asistenta_sociala {
             await Task.Run(async () => {
                 try {
                     //Utils.GetDefaults("QrId")
-                    string response = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/getUserBenefits/{Utils.GetDefaults("Id")}", Utils.GetDefaults("Token"));
+                   // string response = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/getUserBenefits/{Utils.GetDefaults("Id")}", Utils.GetDefaults("Token"));
+                    string response = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/getUserBenefits/{Utils.GetDefaults("QrId")}", Utils.GetDefaults("Token"));
                     Log.Error("Debug Log in " + nameof(AsistentForm), "Response: " + response);
                     var jsonResponse = new JSONObject(response);
                     Log.Error("ASISTEN FORM BENEFITS", jsonResponse.ToString());

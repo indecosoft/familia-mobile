@@ -122,7 +122,13 @@ namespace Familia.Services
                             MedicationSchedule medObj = await Storage.GetInstance().getElementByUUID(_medications[ms].Uuid);
                             if (medObj.IdNotification == 0)
                             {
+                                Log.Error(Log_Tag, "so the uuid is 0, I'm updating the PI'S id and set up alarm for the uuid " + _medications[ms].Uuid);
                                 SetupAlarm(ms, _medications[ms].IdNotification);
+                                Log.Error(Log_Tag, "UPDATED PI'S ID " + _medications[ms].IdNotification);
+                                await Storage.GetInstance().removeMedSer(_medications[ms].Uuid);
+                                await Storage.GetInstance().insertElementMedSer(_medications[ms]);
+                               Log.Error(Log_Tag, "remove & insert element for pi's id != 0 and uuid already exists");
+
                             }
                             else
                             {
@@ -136,6 +142,10 @@ namespace Familia.Services
                 }
 
                 await Storage.GetInstance().saveMedSer(list);
+                Log.Error(Log_Tag, "saving this list.. ");
+                foreach (var item in list) {
+                    Log.Error(Log_Tag, "pi id " + item.IdNotification + " timestamp " + item.Timestampstring + " title  " + item.Title + " content " + item.Content + " uuit " + item.Uuid);
+                }
 
                 //test
 
@@ -186,6 +196,8 @@ namespace Familia.Services
 
         private List<MedicationSchedule> ParseResultFromUrl(string res)
         {
+            var random = new System.Random(1);
+            var id = CurrentTimeMillis();
             if (res != null)
             {
                 var medicationScheduleList = new List<MedicationSchedule>();
@@ -200,8 +212,7 @@ namespace Familia.Services
                     string content = obj.GetString("content");
                     var postpone = Convert.ToInt32(obj.GetString("postpone"));
 
-                    var random = new System.Random(1);
-                    var id = CurrentTimeMillis() * random.Next();
+                    id += 10;
 
                     medicationScheduleList.Add(new MedicationSchedule(uuid, timestampString, title, content, postpone, id));
                     Log.Error(Log_Tag, "MEDICATIONSTRING " + timestampString);

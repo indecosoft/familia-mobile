@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9, user-scalable=no" />
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="parent"> </div>
+
+        <div class="round-green ">
+            <p id="textCorrect" class="text-center-inside-the-circle">4</p>
+        </div>
+
+        <div class="round-grey ">
+            <p id="textIncorrect" class="text-center-inside-the-circle">0</p>
+        </div>
+
+        <div class="menu-button corner-left-bottom" onclick="help()">
+            <div class="text-menu">?</div>
+        </div>
+
+        <div class="menu-button corner-right-bottom" onclick="pass()">
+            <div class="text-menu">
+                <img src="images/rightstroke.png" />
+            </div>
+        </div>
+
+
+        <div class="box_scor">
+            <p class="text">Felicitări! Ai câștigat!!</p>
+            <button id="reset" class="button-reset" onclick="playAgain()">
+                    <img src="images/replayicon.png" class="img-dimension"/>
+            </button>
+        </div>
+
+        <div class="box_help">
+            <div class="menu-button corner-right-top" onclick="closeHelp()">
+                <div class="text-menu"><img src="images/close.png" style="width: 33%;" /></div>
+            </div>
+            <p class="text-help">Cum se joacă?</p>
+            <p class="text-help-p">Trageți cărtille cu numere în zonele marcate pentru a ghici combinația.
+            </p>
+            <p class="text-help-p">Numărul de pe bănuțul auriu semnifică câte cărti sunt așezate pe poziții corecte.
+            </p>
+            <p class="text-help-p">
+                Numărul de pe bănuțul argintiu semnifică câte alte cărti sunt corecte dar pe poziții greșite.
+            </p>
+            <img src="images/howtoplay.jpg" style="width: 40%; margin-left: 40%;" />
+        </div>
+
+        <div class="box_pass">
+            <p class="text-pass">Soluția era:</p>
+            <button id="reset" class="button-reset" style="margin-top: 23%;" onclick="playAgainFromSolution()">
+                <img src="images/replayicon.png" class="img-dimension"/>
+            </button>
+        </div>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
+    <script src="jquery.ui.touch-punch.min.js"></script>
+    <script src="jquery.keyframes.min.js"></script>
+    <script src="game.js"></script>
+
+</body>
+
+</html>

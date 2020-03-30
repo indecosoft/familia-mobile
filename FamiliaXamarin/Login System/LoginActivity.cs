@@ -439,11 +439,14 @@ namespace Familia.Login_System
 
                                 StartActivity(logins ? typeof(MainActivity) : typeof(FirstSetup));
 
-                                if (int.Parse(Utils.GetDefaults("UserType")) == 3)
-                                {
-                                    var _medicationServerServiceIntent = new Intent(this, typeof(MedicationServerService));
-                                    StartService(_medicationServerServiceIntent);
+                                if (logins) {
+                                    if (int.Parse(Utils.GetDefaults("UserType")) == 3)
+                                    {
+                                        var _medicationServerServiceIntent = new Intent(this, typeof(MedicationServerService));
+                                        StartService(_medicationServerServiceIntent);
+                                    }
                                 }
+                             
 
                                     Finish();
                                 break;

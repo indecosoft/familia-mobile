@@ -67,7 +67,7 @@ namespace Familia.Services {
 			if (!Utils.CheckNetworkAvailability()) return "{}";
 			return await WebServices.WebServices.Get(
 				       $"https://gis.indecosoft.net/devices/get-device-config/{Utils.GetDeviceIdentificator(Application.Context)}") ??
-			       "{}";
+			   "{}";
 		}
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) =>

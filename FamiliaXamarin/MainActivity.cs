@@ -24,6 +24,7 @@ using Familia.Chat;
 using Familia.DataModels;
 using Familia.Devices;
 using Familia.Devices.DevicesAsistent;
+using Familia.Devices.DevicesManagement;
 using Familia.Games;
 using Familia.Helpers;
 using Familia.Login_System;
@@ -139,6 +140,8 @@ namespace Familia {
 			//menuNav.FindItem(Resource.Id.games).SetVisible(false);
 			//menuNav.FindItem(Resource.Id.activity_tracker).SetVisible(false);
 
+			
+
 			switch (type) {
 				case 1:
 					Toast.MakeText(this, "1", ToastLength.Long).Show();
@@ -205,6 +208,40 @@ namespace Familia {
 					break;
 			}
 
+
+			Log.Error("MainActivityDevicesRoot", "checking intent");
+			var intentDevicesRoot = Intent;
+			if (intentDevicesRoot != null && intentDevicesRoot.HasExtra(DevicesManagementActivity.DevicesRoot))
+			{
+				int userType = intentDevicesRoot.GetIntExtra(DevicesManagementActivity.DevicesRoot, -1);
+				Log.Error("MainActivityDevicesRoot", "intent not null and has extra " + userType);
+
+				if (userType != -1)
+				{
+					switch (userType)
+					{
+						case 2:
+							SupportFragmentManager.BeginTransaction()
+								.Replace(Resource.Id.fragment_container, new AsistentHealthDevicesFragment())
+								.AddToBackStack(null).Commit();
+							Title = "Dispozitive de masurare";
+							break;
+						case 3:
+						case 4:
+							SupportFragmentManager.BeginTransaction()
+								.Replace(Resource.Id.fragment_container, new HealthDevicesFragment()).AddToBackStack(null)
+								.Commit();
+							Title = "Dispozitive de masurare";
+							break;
+					}
+				}
+			}
+			else
+			{
+				Log.Error("MainActivityDevicesRoot", "intent is null or no extra");
+			}
+
+
 			if (!Utils.CheckIfLocationIsEnabled()) {
 				_ = new AlertDialog.Builder(this).SetMessage("Locatia nu este activata").SetPositiveButton("Activare",
 					(sender, args) => {
@@ -253,7 +290,7 @@ namespace Familia {
 		}
 
 		private void createSimpleChannelForServices() {
-			var channel = new NotificationChannel(App.SimpleChannelIdForServices, "Test simple channel",
+			var channel = new NotificationChannel(App.SimpleChannelIdForServices, "Simple",
 				NotificationImportance.Default);
 			((NotificationManager) GetSystemService(NotificationService)).CreateNotificationChannel(channel);
 			Log.Error("App CreateChannel", "Test simple channel created");
@@ -261,7 +298,7 @@ namespace Familia {
 
 		private void createNonstopChannelForServices() {
 			var channel = new NotificationChannel(App.NonStopChannelIdForServices,
-				"Test nonstop channel", NotificationImportance.Default);
+				"Nonstop", NotificationImportance.Default);
 			((NotificationManager) GetSystemService(NotificationService)).CreateNotificationChannel(channel);
 			Log.Error("App CreateChannel", "Test nonstop channel created");
 		}
@@ -274,7 +311,7 @@ namespace Familia {
 			AudioAttributes attributes = new AudioAttributes.Builder().SetUsage(AudioUsageKind.Notification).Build();
 
 			var channel = new NotificationChannel(App.AlarmMedicationChannelId,
-				"Test alarm medication channel", NotificationImportance.High);
+				"Alarm medication", NotificationImportance.High);
 
 			channel.SetSound(sound, attributes);
 
