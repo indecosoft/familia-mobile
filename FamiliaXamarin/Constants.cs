@@ -1,17 +1,18 @@
 ﻿using Android;
 
 namespace Familia {
-	internal class Constants {
-		public static string IntervalGlucose { get; } = "INTERVAL_GLUCOSE";
-		public static string IntervalBloodPressure { get; } = "INTERVAL_BLOOD_PRESSURE";
+	 internal class Constants {
 
-		#region Medication Constants
+		public  const string IntervalGlucose  = "INTERVAL_GLUCOSE";
+		public  const string IntervalBloodPressure  = "INTERVAL_BLOOD_PRESSURE";
+
+		#region Medication 
 
 		public static string ChannelId { get; } = "my chanel id";
 		public static string NotificationTitle { get; } = "Este timpul sa iti iei medicamentele";
 		public static string NotifContent { get; } = "";
-		public static int BloodPressureNotifId { get; } = 4000;
-		public static int GlucoseNotifId { get; } = 5000;
+		public static int BloodPressureNotifId { get; } = 88886;
+		public static int GlucoseNotifId { get; } = 88887;
 		public static int NotifId { get; } = 3000;
 		public static int NotificationAlarmDevice { get; } = 400;
 		public static int NotifChatId { get; set; } = 100;
@@ -22,7 +23,7 @@ namespace Familia {
 
 		#endregion
 
-		#region Fitbit Constants
+		#region Fitbit 
 
 		public static string ClientSecret { get; } = "bb4070c932c69d3083aa90dd471c8cf3";
 		public static string ClientId { get; } = "22CZRL";
@@ -35,6 +36,8 @@ namespace Familia {
 			Manifest.Permission.AccessFineLocation, Manifest.Permission.Camera, Manifest.Permission.ReadExternalStorage,
 			Manifest.Permission.WriteExternalStorage
 		};
+
+		public static string Config { get; } = "https://gisdev.indecosoft.net/chat/api/get-device-config";
 
 		// public static string SaveDeviceDataUrl { get; } = "http://192.168.101.107/devices/save-device-measurements";
 		// public static string PublicServerAddress { get; } = "http://192.168.101.107:3000";

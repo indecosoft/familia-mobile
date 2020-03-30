@@ -3992,31 +3992,34 @@ namespace Familia
 			public const int thumbnailjoc1 = 2131165438;
 			
 			// aapt resource value: 0x7F0700FF
-			public const int tooltip_frame_dark = 2131165439;
+			public const int thumbnailjoc2 = 2131165439;
 			
 			// aapt resource value: 0x7F070100
-			public const int tooltip_frame_light = 2131165440;
+			public const int tooltip_frame_dark = 2131165440;
 			
 			// aapt resource value: 0x7F070101
-			public const int trash = 2131165441;
+			public const int tooltip_frame_light = 2131165441;
 			
 			// aapt resource value: 0x7F070102
-			public const int tv_tint_selector = 2131165442;
+			public const int trash = 2131165442;
 			
 			// aapt resource value: 0x7F070103
-			public const int view_list = 2131165443;
+			public const int tv_tint_selector = 2131165443;
 			
 			// aapt resource value: 0x7F070104
-			public const int walk = 2131165444;
+			public const int view_list = 2131165444;
 			
 			// aapt resource value: 0x7F070105
-			public const int watch = 2131165445;
+			public const int walk = 2131165445;
 			
 			// aapt resource value: 0x7F070106
-			public const int water = 2131165446;
+			public const int watch = 2131165446;
 			
 			// aapt resource value: 0x7F070107
-			public const int wheelchair = 2131165447;
+			public const int water = 2131165447;
+			
+			// aapt resource value: 0x7F070108
+			public const int wheelchair = 2131165448;
 			
 			static Drawable()
 			{

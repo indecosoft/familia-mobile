@@ -23,6 +23,7 @@ using Familia.Asistenta_sociala;
 using Familia.Chat;
 using Familia.DataModels;
 using Familia.Devices;
+
 using Familia.Devices.DevicesAsistent;
 using Familia.Devices.DevicesManagement;
 using Familia.Games;
@@ -138,7 +139,7 @@ namespace Familia {
 
 			//            make it hidden for release bc is not done yet
 			//menuNav.FindItem(Resource.Id.games).SetVisible(false);
-			//menuNav.FindItem(Resource.Id.activity_tracker).SetVisible(false);
+			menuNav.FindItem(Resource.Id.activity_tracker).SetVisible(false);
 
 			
 
@@ -178,7 +179,7 @@ namespace Familia {
 					menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
 
 					createAlarmMedicationChannel();
-
+					
 
 					SupportFragmentManager.BeginTransaction()
 						.Replace(Resource.Id.fragment_container, new HealthDevicesFragment()).AddToBackStack(null)
@@ -289,6 +290,8 @@ namespace Familia {
 			}
 		}
 
+		
+
 		private void createSimpleChannelForServices() {
 			var channel = new NotificationChannel(App.SimpleChannelIdForServices, "Simple",
 				NotificationImportance.Default);
@@ -318,7 +321,6 @@ namespace Familia {
 			((NotificationManager) GetSystemService(NotificationService)).CreateNotificationChannel(channel);
 			Log.Error("MainActivity App CreateChannel", "Test alarm medication channel created");
 		}
-
 
 		public override void OnBackPressed() {
 			var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);

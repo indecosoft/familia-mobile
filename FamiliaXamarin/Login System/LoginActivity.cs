@@ -19,6 +19,7 @@ using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
 using Familia.Helpers;
+using Familia.Devices.Alarm;
 using Familia.Services;
 using Java.Security;
 using Javax.Crypto;
@@ -444,6 +445,7 @@ namespace Familia.Login_System
                                     {
                                         var _medicationServerServiceIntent = new Intent(this, typeof(MedicationServerService));
                                         StartService(_medicationServerServiceIntent);
+                                        startConfigReceiver();
                                     }
                                 }
                              
@@ -479,6 +481,16 @@ namespace Familia.Login_System
             });
             _progressBarDialog.Dismiss();
            
+        }
+
+        private void startConfigReceiver()
+        {
+            var am = (AlarmManager)Application.Context.GetSystemService(AlarmService);
+            var pi = PendingIntent.GetBroadcast(Application.Context,
+                ConfigReceiver.IdPendingIntent,
+                new Intent(this, typeof(ConfigReceiver)),
+                PendingIntentFlags.UpdateCurrent);
+            am.SetExact(AlarmType.RtcWakeup, 0, pi);
         }
 
         private void ShowInactiveUserDialog(string cod)
