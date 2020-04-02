@@ -27,8 +27,6 @@ namespace Familia.Services {
 
 		public override void OnCreate() {
 			CreateChannels();
-			_pacientLongitude = double.Parse(Utils.GetDefaults("ConsultLong"));
-			_pacientLatitude = double.Parse(Utils.GetDefaults("ConsultLat"));
 		}
 
 		public override async void OnDestroy() {
@@ -37,13 +35,21 @@ namespace Familia.Services {
 		}
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) {
-			try {
+			init();
+			return StartCommandResult.Sticky;
+		}
+        private async void init()
+        {
+			try
+			{
 				Notification notification = new NotificationCompat.Builder(this, App.SimpleChannelIdForServices)
 					.SetContentTitle("Familia").SetContentText("Asistenta la domiciliu in curs de desfasurare")
 					.SetSmallIcon(Resource.Drawable.logo).SetOngoing(true).Build();
 
 				StartForeground(App.SimpleNotificationIdForServices, notification);
-			} catch (Exception e) {
+			}
+			catch (Exception e)
+			{
 				Console.WriteLine(e);
 				StopSelf();
 			}
@@ -51,12 +57,16 @@ namespace Familia.Services {
 
 			location.LocationRequested += Location_LocationRequested;
 
-			Task.Run(async () => await location.StartRequestingLocation(_refreshTime));
-			return StartCommandResult.Sticky;
+			await location.StartRequestingLocation(_refreshTime);
 		}
 
 		private void Location_LocationRequested(object source, EventArgs args) {
 			try {
+				if (_pacientLatitude == 0 ||_pacientLongitude == 0)
+                {
+					_pacientLatitude = ((LocationEventArgs)args).Location.Latitude;
+					_pacientLongitude = ((LocationEventArgs)args).Location.Longitude;
+				}
 				if (!Utils.GetDefaults("ActivityStart").Equals(string.Empty)) {
 					double distance = Utils.HaversineFormula(_pacientLatitude, _pacientLongitude,
 						((LocationEventArgs) args).Location.Latitude, ((LocationEventArgs) args).Location.Longitude);
