@@ -28,6 +28,11 @@
             android:id="@+id/nav_devices"
             android:icon="@drawable/heart_pulse"
             android:title="Dispozitive de masurare" />
+        <item
+            android:id="@+id/nav_statistics"
+            android:icon="@drawable/heart_pulse"
+            android:title="Valori masurate" />
+        
       <item
             android:id="@+id/nav_devices_asistent"
             android:icon="@drawable/heart_pulse"

@@ -408,6 +408,13 @@ namespace Familia {
 						.Commit();
 					Title = item.ToString();
 					break;
+				case Resource.Id.nav_statistics:
+					var intent = new Intent(this, typeof(SharingMenuActivity));
+					intent.PutExtra("Name", "Masuratori personale");
+					intent.PutExtra("Email", Utils.GetDefaults("Email"));
+					intent.PutExtra("Imei", Utils.GetDeviceIdentificator(this));
+					StartActivity(intent);
+					break;
 				case Resource.Id.nav_QRCode:
 					SupportFragmentManager.BeginTransaction()
 						.Replace(Resource.Id.fragment_container, new QrCodeGenerator()).AddToBackStack(null).Commit();

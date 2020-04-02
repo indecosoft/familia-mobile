@@ -126,11 +126,6 @@ namespace Familia.Devices.GlucoseDevice {
             }
 
         }
-        protected override void OnPostResume() {
-            base.OnPostResume();
-            _send = false;
-        }
-
         protected override void OnPause() {
             base.OnPause();
             if (_bluetoothAdapter != null) {
@@ -156,6 +151,7 @@ namespace Familia.Devices.GlucoseDevice {
             Log.Error("glucose", g.ToString());
             if (!_send) {
                 if(g != null) {
+                    Log.Error("Data", "send Data");
                     using var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
                     if (!Utils.CheckNetworkAvailability()) {
                         await _bleDevicesDataRecords.Insert(new DevicesRecords {
@@ -214,6 +210,7 @@ namespace Familia.Devices.GlucoseDevice {
                             Toast.MakeText(this, "" + result, ToastLength.Long).Show();
                         }
                     }
+                    _send = true;
                 }
             }
             if(g != 1) {

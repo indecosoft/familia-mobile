@@ -62,12 +62,6 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 					DisplayMessageToUi("Citirea s-a efectuat cu success");
 					if (_records.Count > 0) {
 						var oderedRecords = _records.OrderByDescending(r => r.Value.DateTimeRecord).ToList();
-						// foreach (var record in oderedRecords) {
-						//     Log.Error("Glucose Data MEASUREMENT: ", "" +
-						//                     $"Glucose: {record.Value.glucoseData} " +
-						//                     $"High/Low: {record.Value.flag_hilow.ToString()} " +
-						//                     $"Time: {record.Value.DateTimeRecord.ToString()}");
-						// }
 						Task.Run(() => {
 							((GlucoseDeviceActivity) _context).RunOnUiThread(async () =>
 								await ((GlucoseDeviceActivity) _context).UpdateUi(oderedRecords.First().Value
