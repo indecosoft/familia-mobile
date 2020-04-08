@@ -29,7 +29,7 @@ namespace Familia.Profile
         private CircleImageView ciwProfileImage;
         private TextView tvName;
         private TextView tvEmail;
-        private TextView tvBirtdate;
+        //private TextView tvBirtdate;
         private TextView tvGender;
         private TextView tvDateOftBirth;
         private TextView tvAge;

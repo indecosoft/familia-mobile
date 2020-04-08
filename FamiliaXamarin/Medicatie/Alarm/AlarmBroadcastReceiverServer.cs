@@ -26,12 +26,9 @@ namespace Familia.Medicatie.Alarm {
         public const string Postpone = "postpone";
         public const string IdPendingIntent = "idPendingIntent";
 
-        private const string Ok = "OK";
-        private const string ActionOk = "actionOk";
+        
         public const string ActionReceive = "actionReceive";
         private static int NotifyId = Constants.NotifId;
-        private SQLiteAsyncConnection _db;
-        private Intent _medicationServiceIntent;
         public static readonly string FROM_SERVER = "from_server";
         public static readonly string MEDICATION_NAME = "med_name";
 

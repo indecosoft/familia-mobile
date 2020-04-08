@@ -19,7 +19,7 @@
             IdNotification = idNotification;
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return "Uuid: " + Uuid + " Timestampstring: " + Timestampstring + " Title: " + Title + " Content: " +
                    Content + " Postpone" + Postpone + " IdNotification" + IdNotification;

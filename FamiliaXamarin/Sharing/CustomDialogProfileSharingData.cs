@@ -17,12 +17,8 @@ namespace Familia.Sharing
         public CircleImageView Image;
         public Button ButtonConfirm;
         public Button ButtonCancel;
-        private string conflict = "aaa";
-       
-        public CustomDialogProfileSharingData(Context context) : base(context)
-        {
-            _activity = (Activity)context;
-        }
+
+        public CustomDialogProfileSharingData(Context context) : base(context) => _activity = (Activity)context;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);

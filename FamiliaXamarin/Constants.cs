@@ -1,4 +1,5 @@
 ﻿using Android;
+using Familia.Activity_Tracker;
 
 namespace Familia {
 	 internal class Constants {
@@ -34,8 +35,7 @@ namespace Familia {
 		public static readonly string[] PermissionsArray = {
 			Manifest.Permission.ReadPhoneState, Manifest.Permission.AccessCoarseLocation,
 			Manifest.Permission.AccessFineLocation, Manifest.Permission.Camera, Manifest.Permission.ReadExternalStorage,
-			Manifest.Permission.WriteExternalStorage
-		};
+			Manifest.Permission.WriteExternalStorage };
 
 		public static string Config { get; } = "https://gisdev.indecosoft.net/chat/api/get-device-config";
 

@@ -14,7 +14,7 @@ namespace Familia.Helpers {
         public static readonly string TITLE_BLOODPRESSURE = "Tensiune";
         public static readonly string TITLE_GLUCOSE = "Glicemie";
         public static readonly string CONTENT_GLUCOSE = "Vă rugăm să vă măsurați glicemia.";
-        public static readonly string CONTENT_BLOODPRESSURE = "Vă rugăm să vă măsurați tensiunea.";
+        public static readonly string CONTENT_BLOOD_PRESSURE = "Vă rugăm să vă măsurați tensiunea.";
 
 
         public override void OnReceive(Context context, Intent intent) {
@@ -34,7 +34,7 @@ namespace Familia.Helpers {
                 case Constants.IntervalBloodPressure:
                     intent.PutExtra("extra_health_device", "HealthDevicesFragment");
                     BuildNotification(context, Constants.BloodPressureNotifId, CHANNEL_NAME_ALARM_DEVICE,
-                        TITLE_BLOODPRESSURE, CONTENT_BLOODPRESSURE, intent);
+                        TITLE_BLOODPRESSURE, CONTENT_BLOOD_PRESSURE, intent);
                     break;
             }
 
@@ -59,7 +59,7 @@ namespace Familia.Helpers {
 
         private static void BuildNotification(Context context, int notifyId, string channel, string title, string content, Intent intent) {
 
-            //Log.Error("PPPAAAAAAAAAAAAAAAAAA", "build notification for " + title + " with id: " + notifyId);
+            Log.Error("PPPAAAAAAAAAAAAAAAAAA", "build notification for " + title + " with id: " + notifyId);
 
             PendingIntent piNotification = PendingIntent.GetActivity(context, notifyId, intent, PendingIntentFlags.UpdateCurrent);
             NotificationCompat.Builder mBuilder =

@@ -1,8 +1,12 @@
 ﻿using System;
+using Android;
 using Android.Animation;
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
+using Android.Hardware;
 using Android.OS;
+using Android.Runtime;
 using Android.Support.V4.Content;
 using Android.Support.V7.App;
 using Android.Util;
@@ -17,17 +21,13 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 namespace Familia.Activity_Tracker
 {
     [Activity(Label = "TrackerActivity", ScreenOrientation = ScreenOrientation.Portrait)]
-    public class TrackerActivity : AppCompatActivity, StepCounterSensor.IStepCounterSensorChangedListener, Animator.IAnimatorListener
+    public class TrackerActivity : AppCompatActivity, TrackerActivityService.IStepsChangeListener
     {
         private TextView tvSteps;
         private TextView tvDailyTarget;
         private TextView tvHHT;
         private TextView tvProgress;
-        private StepCounterSensor sensor;
-        private LottieAnimationView walkingLottieAnimationView;
         private LottieAnimationView progressLottieAnimationView;
-        private bool isAnimating;
-        private long currentSteps;
         private int dailyTarget;
         private int currentProgres;
         protected override void OnCreate(Bundle savedInstanceState)
@@ -36,32 +36,44 @@ namespace Familia.Activity_Tracker
             SetContentView(Resource.Layout.activity_tracker);
             SetToolbar();
 
-            InitWalkingAnimation();
-            
             tvSteps = FindViewById<TextView>(Resource.Id.tv_steps_from_sensor);
             tvDailyTarget = FindViewById<TextView>(Resource.Id.tv_steps_daily_target);
             tvHHT = FindViewById<TextView>(Resource.Id.tv_steps_hht_target);
             tvProgress = FindViewById<TextView>(Resource.Id.tv_progress);
-            
-            dailyTarget = getDailyTarget();
+
+            TrackerActivityService.SetListener(this);
+            SetSteps();
+            dailyTarget = GetDailyTarget();
             tvDailyTarget.Text = dailyTarget + "";
             int hht = dailyTarget / 15;
             tvHHT.Text = hht + "";
 
             InitProgressAnimation();
+            SetUIForProgress();
 
-            sensor = new StepCounterSensor(this);
-            sensor.SetListener(this);
         }
 
-        private int getDailyTarget()
+        private void SetSteps()
+        {
+            try
+            {
+                tvSteps.Text = int.Parse(Utils.GetDefaults("ActivityTrackerDailySteps")) + "";
+            }
+            catch (Exception e)
+            {
+                Log.Error("TrackerActivity Error", e.Message);
+                tvSteps.Text = 0 + "";
+            }
+        }
+
+        private int GetDailyTarget()
         {
             int DailyTarget;
             try
             {
                 DailyTarget = int.Parse(Utils.GetDefaults("ActivityTrackerDailyTarget"));
             }
-            catch (Exception )
+            catch (Exception)
             {
                 //daily target not setted, default is 5000
                 DailyTarget = 5000;
@@ -70,7 +82,7 @@ namespace Familia.Activity_Tracker
             return DailyTarget;
         }
 
-        private int getProgressInPercent(int target, int currentValue)
+        private int GetProgressInPercent(int target, int currentValue)
         {
             return currentValue * 100 / target;
         }
@@ -79,17 +91,6 @@ namespace Familia.Activity_Tracker
         {
             progressLottieAnimationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view_steps_progress);
             currentProgres = 0;
-        }
-
-        private void InitWalkingAnimation()
-        {
-            walkingLottieAnimationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view_walking);
-            walkingLottieAnimationView.AddAnimatorListener(this);
-            var filter = new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
-            walkingLottieAnimationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter,
-                new LottieValueCallback(filter));
-            isAnimating = false;
-            currentSteps = 0;
         }
 
         private void SetToolbar()
@@ -101,12 +102,23 @@ namespace Familia.Activity_Tracker
             toolbar.NavigationClick += delegate { OnBackPressed(); };
             Title = "Consiliere Activitate";
         }
-
-        public void OnStepCounterSensorChanged(long count)
+        
+        private void SetUIForProgress100()
         {
-            tvSteps.Text = TrackerActivityService.TotalDailySteps + "";
-            int progress = getProgressInPercent(dailyTarget, (int)TrackerActivityService.TotalDailySteps);//count
+            var filter = new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
+            progressLottieAnimationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter, new LottieValueCallback(filter));
+            progressLottieAnimationView.PlayAnimation();
+        }
 
+        public void OnStepsChanged(long steps)
+        {
+            tvSteps.Text = steps + "";
+            SetUIForProgress();
+        }
+
+        private void SetUIForProgress()
+        {
+            int progress = GetProgressInPercent(dailyTarget, (int)TrackerActivityService.TotalDailySteps);
             if (currentProgres != progress)
             {
                 if (progress >= 100)
@@ -122,44 +134,7 @@ namespace Familia.Activity_Tracker
                 }
                 currentProgres = progress;
             }
-
             tvProgress.Text = progress + "";
-
-            if (!isAnimating)
-            {
-                walkingLottieAnimationView.Speed = 3;
-                walkingLottieAnimationView.PlayAnimation();
-            }
-        }
-
-        private void SetUIForProgress100()
-        {
-            progressLottieAnimationView.SetMinAndMaxProgress(1.0f, 1.0f);
-            var filter = new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
-            progressLottieAnimationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter, new LottieValueCallback(filter));
-            progressLottieAnimationView.PlayAnimation();
-        }
-
-        public override void OnBackPressed()
-        {
-            base.OnBackPressed();
-            sensor.CloseListener();
-        }
-
-        public void OnAnimationCancel(Animator animation){}
-
-        public void OnAnimationEnd(Animator animation)
-        {
-            Log.Error("TrackerActivity", "animation end");
-            isAnimating = false;
-        }
-
-        public void OnAnimationRepeat(Animator animation){}
-
-        public void OnAnimationStart(Animator animation)
-        {
-            Log.Error("TrackerActivity", "animation start");
-            isAnimating = true;
         }
     }
 }

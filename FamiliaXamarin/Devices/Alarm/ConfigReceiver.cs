@@ -62,7 +62,6 @@ namespace Familia.Devices.Alarm
                     am.Cancel(pi);
                     pi.Cancel();
 
-
                     string data = await GetData();
                     if (data != null)
                     {
@@ -122,7 +121,6 @@ namespace Familia.Devices.Alarm
             var milisec = dt.Hour * 3600000 + dt.Minute * 60000 + dt.Second * 1000;
             var remainingTime = 24 * 3600000 - milisec;
             var newdt = dt.AddMilliseconds(remainingTime + 8 * 3600 * 1000);
-            //var newdt = dt.AddMilliseconds(5 * 60000); //for test
             Log.Error(Log_Tag, "new date " + newdt.Day + ", " + newdt.Month + ", " + newdt.Year + ", " + newdt.Hour + ", " + newdt.Minute + ", " + newdt.Millisecond);
             return newdt;
         }

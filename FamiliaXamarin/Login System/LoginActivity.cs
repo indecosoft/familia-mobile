@@ -27,6 +27,7 @@ using Org.Json;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Permission = Android.Content.PM.Permission;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Familia.Activity_Tracker;
 
 namespace Familia.Login_System
 {
@@ -271,7 +272,7 @@ namespace Familia.Login_System
             InitListeners();
 
             const string permission = Manifest.Permission.ReadPhoneState;
-            if (CheckSelfPermission(permission) != (int)Permission.Granted)
+            if (CheckSelfPermission(permission) != Permission.Granted)
             {
                 RequestPermissions(Constants.PermissionsArray, 0);
             }
@@ -445,7 +446,7 @@ namespace Familia.Login_System
                                     {
                                         var _medicationServerServiceIntent = new Intent(this, typeof(MedicationServerService));
                                         StartService(_medicationServerServiceIntent);
-                                        startConfigReceiver();
+                                       // startConfigReceiver();
                                     }
                                 }
                              

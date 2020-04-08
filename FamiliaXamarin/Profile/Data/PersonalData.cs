@@ -27,7 +27,8 @@ namespace Familia.Profile.Data
         {
         }
 
-        public string ToString()
+        
+        public override string ToString()
         {
             return DateOfBirth + ", " + Gender + ", " + ImageName + ", " + ImageExtension;
         }

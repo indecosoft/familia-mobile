@@ -11,11 +11,6 @@ namespace Familia.Activity_Tracker
         private SensorManager sensorManager;
         private Sensor sensor;
         private IStepCounterSensorChangedListener listener;
-        
-//        public StepCounterSensor()
-//        {
-//            SetSettings();
-//        }
 
         public StepCounterSensor(Context context)
         {
@@ -27,8 +22,7 @@ namespace Familia.Activity_Tracker
         {
             sensorManager = (SensorManager) context.GetSystemService(Context.SensorService);
             sensor = sensorManager.GetDefaultSensor(SensorType.StepCounter);
-            sensorManager.RegisterListener(this, sensor, SensorDelay.Fastest);
-           
+            sensorManager.RegisterListener(this, sensor, SensorDelay.Normal);
         }
 
         public void SetListener(IStepCounterSensorChangedListener listener)
@@ -36,11 +30,12 @@ namespace Familia.Activity_Tracker
             this.listener = listener;
         }
         
-        public void OnAccuracyChanged(Sensor sensor, SensorStatus accuracy) {}
+        public void OnAccuracyChanged(Sensor sensor, SensorStatus accuracy) {
+        }
 
         public void OnSensorChanged(SensorEvent e)
         {
-           listener.OnStepCounterSensorChanged((long)e.Values[0]);
+           listener.OnStepCounterSensorChanged((int)e.Values[0]);
         }
 
         public void CloseListener()
@@ -51,7 +46,7 @@ namespace Familia.Activity_Tracker
 
         public interface IStepCounterSensorChangedListener
         {
-            void OnStepCounterSensorChanged(long count);
+            void OnStepCounterSensorChanged(int count);
         }
     }
 }

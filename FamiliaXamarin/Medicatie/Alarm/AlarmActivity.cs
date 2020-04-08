@@ -36,7 +36,6 @@ namespace Familia.Medicatie.Alarm
         private Disease mBoala;
         private Medicine mMed;
         private int mIdAlarm;
-        private Ringtone r;
         private string extraMessage;
 
         private string uuid;
@@ -57,7 +56,6 @@ namespace Familia.Medicatie.Alarm
             base.OnUserLeaveHint();
             Finish();
         }
-
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
@@ -88,8 +86,6 @@ namespace Familia.Medicatie.Alarm
                 boli = Storage.GetInstance().GetListOfDiseasesFromFile(this);
                 mBoala = Storage.GetInstance().GetDisease(boalaId);
                
-
-
                 if (mBoala != null)
                 {
                     mMed = mBoala.GetMedicineById(medId);
@@ -145,16 +141,12 @@ namespace Familia.Medicatie.Alarm
                                 {
                                     StartService(_medicationServiceIntent);
                                 }
-                                 Storage.GetInstance().removeMedSer(uuid);
-
-
+                                await Storage.GetInstance().removeMedSer(uuid);
                     }
 
                     Log.Error("ID NOTIFICARE", NotifyId +"");
                         var notificationManager = (NotificationManager)ApplicationContext.GetSystemService(NotificationService);
                         notificationManager.Cancel(NotifyId);
-
-                    //Toast.MakeText(this, "Medicament luat.", ToastLength.Short).Show();
                     Finish();
 
                     break;
@@ -215,18 +207,8 @@ namespace Familia.Medicatie.Alarm
 
             if (am != null)
             {
-                // am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + snoozeInMilisec,
-                //    AlarmManager.IntervalDay, pi);
                 am.SetExact(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + snoozeInMilisec, pi);
             }
-        }
-
-        private static bool IsServiceRunning(Type classTypeof, Context context)
-        {
-            var manager = (ActivityManager)context.GetSystemService(ActivityService);
-#pragma warning disable 618
-            return manager.GetRunningServices(int.MaxValue).Any(service =>
-                service.Service.ShortClassName == classTypeof.ToString());
         }
 
         private static async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now)
@@ -236,23 +218,5 @@ namespace Familia.Medicatie.Alarm
                 DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
             });
         }
-
-        private static async Task<bool> SendData(Context context, JSONArray mArray)
-        {
-            string result = await WebServices.WebServices.Post(
-                $"{Constants.PublicServerAddress}/api/medicine", mArray,
-                Utils.GetDefaults("Token"));
-            if (!Utils.CheckNetworkAvailability()) return false;
-            switch (result)
-            {
-                case "Done":
-                case "done":
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
     }
-
 }
