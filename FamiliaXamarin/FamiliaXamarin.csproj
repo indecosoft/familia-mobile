@@ -1249,6 +1249,48 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\thumbnailjoc2.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\joc3\images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\data.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\game.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\style.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\entities\activity.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\entities\object.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\entities\place.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\entities\task.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\ui\animations.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\ui\ui.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\entities\daytime.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\lib\jquery.keyframes.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\lib\jquery.ui.touch-punch.min.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.

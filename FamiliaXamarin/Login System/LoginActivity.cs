@@ -446,7 +446,7 @@ namespace Familia.Login_System
                                     {
                                         var _medicationServerServiceIntent = new Intent(this, typeof(MedicationServerService));
                                         StartService(_medicationServerServiceIntent);
-                                       // startConfigReceiver();
+                                        startConfigReceiver();
                                     }
                                 }
                              
