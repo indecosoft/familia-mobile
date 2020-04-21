@@ -9,7 +9,6 @@
 
 <bod>
 
-
     <div id="firstPage" class="container">
         <div class="container-text-title">
             <div class="text-title">
@@ -19,7 +18,6 @@
         </div>
     </div>
 
-
     <div id="secondPage" class="container">
         <div class="container-text-title">
             <div class="text-title">
@@ -27,9 +25,14 @@
             </div>
         </div>
         <div class="container-body">
+
+            <!-- <div id="aa" class="selectable-element-test" onclick="onItemClicked('aa')">
+                <img style="width: 100%; height: 100%" src="images/Alearga.png" />
+            </div> -->
+
             <div class="next" onclick="next(1)">
                 <div class="text-selectable-element" style="margin-top: 10%">
-                    Next
+                    Continuă
                 </div>
             </div>
         </div>
@@ -37,8 +40,11 @@
 
     <div id="thirdPage" class="container">
         <div class="container-text-title">
+            <div class="text-primary">
+                Actiunea
+            </div>
             <div class="text-title">
-                Obiecte
+                De ce obiecte ai nevoie?
             </div>
         </div>
         <div class="container-body">
@@ -50,8 +56,32 @@
         </div>
     </div>
 
+    <div id="fourthPage" class="container">
+        <div class="container-text-title">
+            <div class="text-primary">
+                Actiunea
+            </div>
+            <div class="text-title">
+                In ce locuri?
+            </div>
+        </div>
+        <div class="container-body">
+            <div class="next" onclick="next(3)">
+                <div class="text-selectable-element" style="margin-top: 10%">
+                    Next
+                </div>
+            </div>
+        </div>
+    </div>
 
-
+    <div id="fifthPage" class="container">
+        <div class="container-text-title">
+            <div id="textActivities" class="text-primary"></div>
+            <div id="textObjects" class="text-primary"> </div>
+            <div id="textPlaces" class="text-primary"></div>
+            <button class="button-start" onclick="playAgain()"> Din nou </button>
+        </div>
+    </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>

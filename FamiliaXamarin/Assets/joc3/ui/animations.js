@@ -23,7 +23,7 @@ $.keyframe.define([{
         '100%': {
             transition: '0.5s;',
             transform: 'translateY(-40%);',
-            'font-size': '34px',
+            'font-size': '32px',
         }
     }
 ]);
