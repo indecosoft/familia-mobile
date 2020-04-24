@@ -53,7 +53,10 @@ function next(page) {
             saveActivities();
             list = [];
             uiList = [];
-            next(2);
+            ui.showElement("#thirdPage");
+            ui.runTranslateTextAnimation('..în continuare trebuie să selectați activitățile pe care le faceți ' + data.name + '..').then(() => {
+                next(2);
+            })
             break;
         case 2:
             if (list.length != 0) {
@@ -73,7 +76,12 @@ function next(page) {
                 uiList = [];
                 indexObj = 0;
                 ui.clearThirdPage();
-                next(3);
+                ui.clearContainerBody();
+                ui.showElement("#fourthPage");
+                ui.hideElement(".text-primary");
+                ui.runTranslateTextAnimation('.. în continuare trebuie să selectați unde vă desfășurați activitatea ..').then(() => {
+                    next(3);
+                })
             }
             break;
         case 3:
@@ -149,7 +157,7 @@ function saveActivities() {
         activities: [...data.activities],
         selectedActivities: myActivities
     };
-    ui.hideSecondPage();
+    ui.clearSecondPage();
 }
 
 function getActivities() {
@@ -192,6 +200,8 @@ function addPlacesToJournal(list, indexObj) {
 
 function playAgain() {
     ui.clearFifthPage();
+    ui.recreateFirstPage();
+    ui.createPages();
     scene.init();
 }
 

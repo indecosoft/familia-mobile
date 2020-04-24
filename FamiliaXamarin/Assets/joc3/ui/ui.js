@@ -3,43 +3,41 @@ class UI {
     constructor() {}
 
     init() {
-
         $(".text-title").text('Începeți jurnalul de activități!');
         $("#firstPage").css({ display: 'block' });
         $("#secondPage").css({ display: 'none' });
         $("#thirdPage").css({ display: 'none' });
         $("#fourthPage").css({ display: 'none' });
         $("#fifthPage").css({ display: 'none' });
-
-        //recreate first & second page from scratch
     }
 
     runStartAnimations() {
         return new Promise((res, rej) => {
             $("#firstPage").css({ display: 'none' });
             $("#secondPage").css({ display: 'block' });
-            $(".text-title").text('Se pare că este ' + data.name + ' !').playKeyframe({
+            $(".text-title").text('Este ' + data.name + ' !').playKeyframe({
                 name: 'showBox',
-                duration: '2.5s',
+                duration: '2s',
                 complete: function() {
                     $(".text-title").playKeyframe({
                         name: 'byeBox',
                         duration: '2s',
                         complete: function() {
-                            $(".text-title").text('Selectează activități pe care le faci ' + data.name + '.').playKeyframe({
-                                name: 'showBox',
-                                duration: '2.5s',
-                                complete: () => {
-                                    $(".text-title").playKeyframe({
-                                        name: 'moveUp',
-                                        duration: '0.5s',
-                                        complete: () => {
-                                            $(".container-body").css({ display: "block" });
-                                            res("done");
-                                        }
-                                    });
-                                }
-                            });
+                            $(".text-title").text('Trebuie să selectați activități pe care le faceți ' + data.name + '.')
+                                .playKeyframe({
+                                    name: 'showBox',
+                                    duration: '5s',
+                                    complete: () => {
+                                        $(".text-title").playKeyframe({
+                                            name: 'byeBox',
+                                            duration: '3s',
+                                            complete: () => {
+                                                $(".container-body").css({ display: "block" });
+                                                res("done");
+                                            }
+                                        });
+                                    }
+                                });
                         }
                     });
                 }
@@ -66,24 +64,24 @@ class UI {
             switch (i) {
                 case 1:
                     x = 7;
-                    y = 30;
+                    y = 18;
                     break;
                 case 2:
-                    y = 55;
+                    y = 47;
                     break;
                 case 3:
                     x = 37;
-                    y = 30;
+                    y = 18;
                     break;
                 case 4:
-                    y = 55;
+                    y = 47;
                     break;
                 case 5:
                     x = 67;
-                    y = 30;
+                    y = 18;
                     break;
                 case 6:
-                    y = 55;
+                    y = 47;
                     break;
             }
             let item = $('<div id="item' + i + '" class="selectable-element" onclick=(onItemClicked("item' + i + '"))>' +
@@ -165,47 +163,65 @@ class UI {
         }
     }
 
-    hideSecondPage() {
-        $("#secondPage").css({ display: 'none' });
+    clearSecondPage() {
         $("#secondPage").empty();
         $(".container-body").empty();
     }
 
+    showElement(element) {
+        $(element).css({ display: 'block' });
+    }
+
+    hideElement(element) {
+        $(element).css({ display: 'none' });
+    }
+
+    runTranslateTextAnimation(text) {
+        return new Promise((res, rej) => {
+            $(".text-title").text(text)
+                .playKeyframe({
+                    name: 'showBox',
+                    duration: '5s',
+                    complete: function() {
+                        $(".text-title").playKeyframe({
+                            name: 'byeBox',
+                            duration: '3s',
+                            complete: () => {
+                                res('done');
+                            }
+                        });
+                    }
+                });
+        });
+    }
+
     displayThirdPage(activityName) {
         return new Promise((res, rej) => {
-
-            $(".text-primary").text('"' + activityName + '"');
-            $(".text-title").text('Selectați cu ce vă desfășurați activitatea ');
+            $(".text-primary").text(activityName).css({ display: 'block' });
             $(".container-body").css({ display: "block" });
-            res('done');
-
             $(".container-body").append('<div class="next" onclick="next(2)">' +
-                ' <div class="text-selectable-element" style="margin-top: 10%"> Next </div> </div>')
+                ' <div class="text-selectable-element" style="margin-top: 10%"> Continuă </div> </div>')
             $(".next").css({ display: 'none' });
-            $("#thirdPage").css({ display: 'block' });
+            res('done');
         })
     }
 
     displayFourthPage(activityName) {
         return new Promise((res, rej) => {
-            $(".text-primary").text('"' + activityName + '"')
+            $(".text-primary").text(activityName).css({ display: 'block' });
             $(".text-title").text('Selectați unde vă desfășurați activitatea');
             $(".container-body").css({ display: "block" });
-
-            res('done');
             $(".container-body").append('<div class="next" onclick="next(3)">' +
-                ' <div class="text-selectable-element" style="margin-top: 10%"> Next </div> </div>')
+                ' <div class="text-selectable-element" style="margin-top: 10%"> Continuă </div> </div>')
             $(".next").css({ display: 'none' });
-            $("#fourthPage").css({ display: 'block' });
+            res('done');
         })
     }
 
     displayFifthPage(textActivities, textObjects, textPlaces) {
-
         $("#textActivities").text(textActivities);
         $("#textObjects").text(textObjects);
         $("#textPlaces").text(textPlaces);
-
         $("#fifthPage").css({ display: 'block' });
     }
 
@@ -223,7 +239,86 @@ class UI {
 
     clearFifthPage() {
         $("#fifthPage").empty();
+    }
 
+    createSecondPage() {
+        $("#secondPage").append(
+            '<div class="container-text-title">' +
+            ' <div class="text-title">' +
+            ' Se pare ca este dimineata!' +
+            ' </div>' +
+            '  </div>' +
+            '<div class="container-body">' +
+            '  <div class="next" onclick="next(1)">' +
+            '<div class="text-selectable-element" style="margin-top: 10%">' +
+            '   Continuă' +
+            '</div>' +
+            '</div>' +
+            '</div>'
+        )
+    }
+
+
+    createThirdPage() {
+        $("#thirdPage").append(
+            '<div class="container-text-title">' +
+            '<div class="text-primary"></div>' +
+            '<div class="text-title"></div>' +
+            '</div>' +
+            '<div class="container-body">' +
+            '<div class="next" onclick="next(2)">' +
+            '<div class="text-selectable-element" style="margin-top: 10%">' +
+            'Continuă' +
+            '</div>' +
+            '</div>' +
+            '</div>'
+        )
+    }
+
+    createFourthPage() {
+        $("#fourthPage").append(
+            '<div class="container-text-title">' +
+            '<div class="text-primary"></div>' +
+            '<div class="text-title"></div>' +
+            '</div>' +
+            '<div class="container-body">' +
+            '<div class="next" onclick="next(3)">' +
+            '<div class="text-selectable-element" style="margin-top: 10%">' +
+            'Continuă' +
+            '</div>' +
+            '</div>' +
+            '</div>'
+        )
+    }
+
+    createFifthPage() {
+        $("#fifthPage").append(
+            '<div class="container-text-title">' +
+            '<div id="textActivities" class="text-primary"></div>' +
+            '<div id="textObjects" class="text-primary"> </div>' +
+            '<div id="textPlaces" class="text-primary"></div>' +
+            '<button class="button-start" onclick="playAgain()"> Din nou </button>' +
+            '</div>'
+        )
+    }
+
+    recreateFirstPage() {
+        $("#firstPage").empty();
+        $("#firstPage").append(
+            '<div class="container-text-title">' +
+            '<div class="text-title">' +
+            'Începeți jurnalul de activități!' +
+            '</div>' +
+            '<button class="button-start" onclick="start()">START</button>' +
+            '</div>'
+        )
+    }
+
+    createPages() {
+        this.createSecondPage();
+        this.createThirdPage();
+        this.createFourthPage();
+        this.createFifthPage();
     }
 
 }
