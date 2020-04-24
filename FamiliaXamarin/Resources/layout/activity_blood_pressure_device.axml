@@ -95,7 +95,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/DiastoleTextView" />
 
-            <Button
+          <!--  <Button
                 android:id="@+id/ScanButton"
                 android:layout_width="100dp"
                 android:layout_height="30dp"
@@ -103,7 +103,7 @@
                 android:background="@drawable/main_button_style"
                 android:text="@string/scan_button"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintRight_toRightOf="parent" />-->
 
         </android.support.constraint.ConstraintLayout>
 

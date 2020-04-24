@@ -33,7 +33,7 @@ namespace Familia.Devices.GlucoseDevice {
         private BluetoothManager _bluetoothManager;
         private bool _send;
         private TextView _glucose;
-        private Button _scanButton;
+        //private Button _scanButton;
         internal TextView LbStatus;
         private ConstraintLayout _dataContainer;
         private LottieAnimationView _animationView;
@@ -83,7 +83,7 @@ namespace Familia.Devices.GlucoseDevice {
             _dataContainer = FindViewById<ConstraintLayout>(Resource.Id.dataContainer);
             _dataContainer.Visibility = ViewStates.Gone;
             _glucose = FindViewById<TextView>(Resource.Id.GlucoseTextView);
-            _scanButton = FindViewById<Button>(Resource.Id.ScanButton);
+            //_scanButton = FindViewById<Button>(Resource.Id.ScanButton);
             _animationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
             var filter =
                 new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
@@ -93,14 +93,14 @@ namespace Familia.Devices.GlucoseDevice {
 
         private void InitEvents() {
             _animationView.AddAnimatorListener(this);
-            _scanButton.Click += delegate {
-                if (_bluetoothManager == null) return;
-                BluetoothScanner.StartScan(ScanCallback);
-                _scanButton.Enabled = false;
-                _send = false;
-                LbStatus.Text = "Se efectueaza masuratoarea...";
-                _animationView.PlayAnimation();
-            };
+            //_scanButton.Click += delegate {
+            //    if (_bluetoothManager == null) return;
+            //    BluetoothScanner.StartScan(ScanCallback);
+            //    _scanButton.Enabled = false;
+            //    _send = false;
+            //    LbStatus.Text = "Se efectueaza masuratoarea...";
+            //    _animationView.PlayAnimation();
+            //};
         }
 
         public void OnAnimationCancel(Animator animation) {
@@ -121,7 +121,7 @@ namespace Familia.Devices.GlucoseDevice {
             } else {
                 BluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
                 BluetoothScanner.StartScan(ScanCallback);
-                _scanButton.Enabled = false;
+                //_scanButton.Enabled = false;
                 _dataContainer.Visibility = ViewStates.Gone;
             }
 
@@ -139,7 +139,7 @@ namespace Familia.Devices.GlucoseDevice {
             if (resultCode == Result.Ok) {
                 BluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
                 BluetoothScanner.StartScan(ScanCallback);
-                _scanButton.Enabled = false;
+                //_scanButton.Enabled = false;
                 _animationView.PlayAnimation();
 
             } else {
@@ -219,11 +219,11 @@ namespace Familia.Devices.GlucoseDevice {
                 _glucose.Text = string.Empty;
             }
             _animationView.CancelAnimation();
-            ActivateScanButton();
+            //ActivateScanButton();
         }
 
-        void ActivateScanButton() {
-            _scanButton.Enabled = true;
-        }
+        //void ActivateScanButton() {
+        //    //_scanButton.Enabled = true;
+        //}
     }
 }

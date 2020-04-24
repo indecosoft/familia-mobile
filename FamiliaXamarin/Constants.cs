@@ -46,7 +46,7 @@ namespace Familia {
 
 		public static string SaveDeviceDataUrl { get; } =
 			"https://gisdev.indecosoft.net/devices/save-device-measurements";
-
+        
 		public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/chat";
 		public static string WebSocketLocationAddress { get; } = "https://gisdev.indecosoft.net/location";
 		public static string WebSocketAddress { get; } = "https://gisdev.indecosoft.net/ws";
