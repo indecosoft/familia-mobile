@@ -34,7 +34,7 @@ namespace Familia.Devices.PressureDevice {
         private TextView _systole;
         private TextView _diastole;
         private TextView _pulse;
-        private Button _scanButton;
+        //private Button _scanButton;
         internal TextView LbStatus;
         private ConstraintLayout _dataContainer;
         internal LottieAnimationView AnimationView;
@@ -70,14 +70,14 @@ namespace Familia.Devices.PressureDevice {
 
         private void InitEvents() {
             AnimationView.AddAnimatorListener(this);
-            _scanButton.Click += delegate {
-                if (_bluetoothManager == null || _bluetoothAdapter == null) return;
-                BluetoothScanner.StartScan(ScanCallback);
-                _scanButton.Enabled = false;
-                _send = false;
-                LbStatus.Text = "Se efectueaza masuratoarea...";
-                AnimationView.PlayAnimation();
-            };
+            //_scanButton.Click += delegate {
+            //    if (_bluetoothManager == null || _bluetoothAdapter == null) return;
+            //    BluetoothScanner.StartScan(ScanCallback);
+            //    _scanButton.Enabled = false;
+            //    _send = false;
+            //    LbStatus.Text = "Se efectueaza masuratoarea...";
+            //    AnimationView.PlayAnimation();
+            //};
             
         }
 
@@ -94,7 +94,7 @@ namespace Familia.Devices.PressureDevice {
             _systole = FindViewById<TextView>(Resource.Id.SystoleTextView);
             _diastole = FindViewById<TextView>(Resource.Id.DiastoleTextView);
             _pulse = FindViewById<TextView>(Resource.Id.PulseTextView);
-            _scanButton = FindViewById<Button>(Resource.Id.ScanButton);
+            //_scanButton = FindViewById<Button>(Resource.Id.ScanButton);
             AnimationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
             var filter = new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
             AnimationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter, new LottieValueCallback(filter));
@@ -123,7 +123,7 @@ namespace Familia.Devices.PressureDevice {
             if (resultCode == Result.Ok) {
                 BluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
                 BluetoothScanner.StartScan(ScanCallback);
-                _scanButton.Enabled = false;
+                //_scanButton.Enabled = false;
                 AnimationView.PlayAnimation();
             } else {
                 StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), 11);
@@ -145,7 +145,7 @@ namespace Familia.Devices.PressureDevice {
             } else {
                 BluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
                 BluetoothScanner.StartScan(ScanCallback);
-                _scanButton.Enabled = false;
+                //_scanButton.Enabled = false;
                 _dataContainer.Visibility = ViewStates.Gone;
             }
         }
@@ -224,11 +224,11 @@ namespace Familia.Devices.PressureDevice {
                 _diastole.Text = string.Empty;
                 _pulse.Text = string.Empty;
             }
-            ActivateScanButton();
+            //ActivateScanButton();
         }
 
-        private void ActivateScanButton() {
-            _scanButton.Enabled = true;
-        }
+        //private void ActivateScanButton() {
+        //    _scanButton.Enabled = true;
+        //}
     }
 }
