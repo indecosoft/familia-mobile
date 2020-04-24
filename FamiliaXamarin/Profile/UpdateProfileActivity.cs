@@ -47,7 +47,6 @@ namespace Familia.Profile
         private TextView tvBirthDate;
         private TextView tvName;
         private EditText etName;
-        private TextView tvBirthdate;
         private AppCompatButton btnUploadImage;
         private AppCompatButton btnChangeDiseases;
         private TextView btnLabelDiseases;
@@ -344,6 +343,7 @@ namespace Familia.Profile
                         }
                         catch (Exception e)
                         {
+                            Log.Error("UpdateProfileActivity", "err " + e.Message);
                             Toast.MakeText(this, "Nu este permisa incarcarea imaginilor din cloud", ToastLength.Long).Show();
                         }
 

@@ -12,16 +12,12 @@ namespace Familia.Medicatie.Data
 {
     class NetworkingData
     {
-        private static NetworkingData _instance;
-        private static readonly object Padlock = new object();
         private List<MedicationSchedule> _medicationSchedules;
         private SqlHelper<MedicineServerRecords> _db;
 
         public NetworkingData()
         {
             _medicationSchedules = new List<MedicationSchedule>();
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            var numeDB = "devices_data.db";
         }
 
         private async Task<List<MedicationSchedule>> CallServerFutureData(int size)

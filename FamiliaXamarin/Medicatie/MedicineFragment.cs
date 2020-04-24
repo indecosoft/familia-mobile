@@ -19,8 +19,7 @@ namespace Familia.Medicatie
 //        private ProgressBarDialog _progressBarDialog;
         public static string IdBoala = "id_boala";
         private DiseaseAdapter _boalaAdapter;
-        private List<MedicationSchedule> _medications;
-        private SQLiteConnection _db;
+        
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             Log.Error("CREATE VIEW", "MEDICINE PERSONALA FRAGMENT");

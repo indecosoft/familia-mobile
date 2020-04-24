@@ -39,7 +39,6 @@ namespace Familia.Games {
 
 			webView.Settings.JavaScriptEnabled = true;
 			webView.SetWebViewClient(new MyWebViewClient(this, webView));
-			//webView.SetWebChromeClient(new WebChromeClient());
 			webView.SetRendererPriorityPolicy(RendererPriority.Bound, true);
 
 			WebSettings webSettings = webView.Settings;

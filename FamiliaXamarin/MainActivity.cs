@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Android;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Media;
 using Android.OS;
 using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.V7.App;
@@ -49,13 +51,9 @@ namespace Familia {
 		ScreenOrientation = ScreenOrientation.Portrait)]
 	public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener {
 		Intent _loacationServiceIntent;
-
 		Intent _webSocketServiceIntent;
-
-		//Intent _medicationServiceIntent;
 		Intent _smartBandServiceIntent;
-		Intent _medicationServerServiceIntent;
-		Intent _stepCounterService;
+		Intent _stepCounterServiceIntent;
 
 		SQLiteAsyncConnection _db;
 
@@ -133,13 +131,23 @@ namespace Familia {
 			IMenu menuNav = navigationView.Menu;
 
 			//Consiliere de activitate ------
-			//_stepCounterService = new Intent(this, typeof(TrackerActivityService));
-			//StartForegroundService(_stepCounterService);
+			if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.ActivityRecognition) == Permission.Denied)
+			{
+				RequestPermissions(new string[] { Manifest.Permission.ActivityRecognition }, 2);
+				Log.Error("StepCounter Permission", "DENIDED");
+			}
+			else
+			{
+				Log.Error("StepCounter Permission", "ACCEPTED");
+			}
+
+			_stepCounterServiceIntent = new Intent(this, typeof(TrackerActivityService));
+			StartForegroundService(_stepCounterServiceIntent);
 			//-------------
 
 			//            make it hidden for release bc is not done yet
 			//menuNav.FindItem(Resource.Id.games).SetVisible(false);
-			menuNav.FindItem(Resource.Id.activity_tracker).SetVisible(false);
+			//menuNav.FindItem(Resource.Id.activity_tracker).SetVisible(false);
 
 			
 
@@ -156,8 +164,7 @@ namespace Familia {
 					Title = "Generare cod QR";
 
 					StartForegroundService(_webSocketServiceIntent);
-					StartService(_medicationServerServiceIntent);
-					// StartService(_medicationServiceIntent);
+					
 					break;
 				case 2: // asistent
 					Toast.MakeText(this, "2", ToastLength.Long).Show();
@@ -199,12 +206,10 @@ namespace Familia {
 
 					createAlarmMedicationChannel();
 
-
 					SupportFragmentManager.BeginTransaction()
 						.Replace(Resource.Id.fragment_container, new FindUsersFragment()).AddToBackStack(null).Commit();
 					Title = "Cauta prieteni";
 					StartForegroundService(_webSocketServiceIntent);
-					//StartService(_medicationServerServiceIntent);
 					
 					break;
 			}
@@ -426,17 +431,13 @@ namespace Familia {
 					//Process.KillProcess(Process.MyPid());
 					StopService(_loacationServiceIntent);
 					StopService(_webSocketServiceIntent);
-					//StopService(_medicationServerServiceIntent);
 					StopService(_smartBandServiceIntent);
-					//StopService(_medicationServiceIntent);
 
-					
+					StopService(_stepCounterServiceIntent);
 
 					_ = ClearStorage();
-
 					StartActivity(typeof(LoginActivity));
 
-					//StopService(_stepCounterService);
 					Finish();
 					break;
 			}

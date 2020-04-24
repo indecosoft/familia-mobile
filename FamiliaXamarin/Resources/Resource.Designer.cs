@@ -5159,6 +5159,9 @@ namespace Familia
 			// aapt resource value: 0x7F08017B
 			public const int searchButton = 2131231099;
 			
+			// aapt resource value: 0x7F08017B
+			public const int searchButton = 2131231099;
+			
 			// aapt resource value: 0x7F08017C
 			public const int search_badge = 2131231100;
 			

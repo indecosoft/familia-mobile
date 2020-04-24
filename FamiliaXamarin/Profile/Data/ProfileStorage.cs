@@ -15,7 +15,6 @@ namespace Familia.Profile.Data
     {
         private static ProfileStorage Instance;
         private static readonly object padlock = new object();
-        private FirstSetupModel model;
 
         public PersonalData personalData { get; set; }
 
@@ -25,8 +24,6 @@ namespace Familia.Profile.Data
         private ProfileStorage()
         {
             personalData = new PersonalData();
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            var numeDB = "devices_data.db";
         }
 
         public static ProfileStorage GetInstance()

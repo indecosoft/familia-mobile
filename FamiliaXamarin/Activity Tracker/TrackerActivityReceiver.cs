@@ -4,50 +4,76 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
+using Familia.Helpers;
 using Familia.Services;
+using Java.Util;
 
 namespace Familia.Activity_Tracker
 {
     [BroadcastReceiver(Enabled = true, Exported = true)]
     public class TrackerActivityReceiver : BroadcastReceiver
     {
-
         public static readonly int TRACKER_ACTIVITY_RECEIVER_NOTIFICATION_ID_USER = 7;
         public static readonly int TRACKER_ACTIVITY_RECEIVER_PENDING_INTENT_ID_USER = 8;
-        string CHANNEL_ID = "my_channel_01";
+        public static readonly int TRACKER_ACTIVITY_RECEIVER_PENDING_INTENT_ID_RESET_STEPS = 9;
+        public static readonly string EXTRA_RESET_STEPS = "reset_steps";
+        string CHANNEL_ID = "activity_tracker_channel";
 
-        public static int TotalDailySteps { get; private set; }
-
-        public TrackerActivityReceiver() {
+        public TrackerActivityReceiver()
+        {
             CreateNotificationChannel(CHANNEL_ID, "Step Counter", "Activity Tracker");
         }
 
         public override void OnReceive(Context context, Intent intent)
         {
             Log.Error("TrackerActivityReceiver", "arrived");
-            string content;
-            int hour = DateTime.Now.Hour;
+            if (string.IsNullOrEmpty(Utils.GetDefaults("Token"))) return;
 
+            if (intent.HasExtra(EXTRA_RESET_STEPS))
+            {
+                TrackerActivityService.ResetSteps();
+                TrackerActivityService.ScheduleForResetSteps(context);
+            }
+            else {
+                int hour = DateTime.Now.Hour;
+                HandleCurrentHour(context, hour);
+            }
+        }
+        
+        private void HandleCurrentHour(Context context, int hour)
+        {
+            string content;
+            var dt = DateTime.Now;
+            var remainingTime = GetRemainingTime(dt);
+            var oneHourInMillis = 3600 * 1000;
+            DateTime date;
+
+            Log.Error("TrackerActivity RECEIVER", "1. currentHHT: "
+                                       + TrackerActivityService.CurrentStepsHh
+                                       + " HHT: " + TrackerActivityService.HalfHourTarget);
             switch (hour)
             {
-                case 16: // launch notification for hour 4 pm
+                case 16: // launch notification for hour 16:00
                     content = GetContentFor4pm();
                     LaunchNotification(context, content);
-                    SetSchedule(context, false);
+                    date = dt.AddMilliseconds(remainingTime - 4 * oneHourInMillis); // set to 20:00 today
+                    Schedule(context, date);
                     break;
-                case 20:// launch notification for hour 8 am
+                case 20:// launch notification for hour 20:00
                     content = GetContentFor8pm();
                     LaunchNotification(context, content);
-                    SetSchedule(context, false);
+                    date = dt.AddMilliseconds(remainingTime + 8 * oneHourInMillis); // set to 8:00 tomorrow
+                    Schedule(context, date);
                     break;
                 default:
                     if (hour >= 8)
                     {
-                        if (TrackerActivityService.DailyTarget <= TotalDailySteps)//stepsFromSensor)// DailyTarget achieved
+                        if (TrackerActivityService.DailyTarget <= TrackerActivityService.TotalDailySteps) // DailyTarget achieved
                         {
                             content = "Felicitari! Target zilnic atins.";
                             LaunchNotification(context, content);
-                            SetSchedule(context, false);
+                            date = dt.AddMilliseconds(remainingTime - 8 * oneHourInMillis); // set to 16:00 today
+                            Schedule(context, date);
                         }
                         else
                         {
@@ -55,64 +81,53 @@ namespace Familia.Activity_Tracker
                             {
                                 if (TrackerActivityService.CurrentStepsHh < TrackerActivityService.HalfHourTarget)
                                 {
-                                    Log.Error("TrackerActivityReceiver", "1. currentHHT: " + TrackerActivityService.CurrentStepsHh + " HHT: " + TrackerActivityService.HalfHourTarget);
                                     content = GetContentFor30minsTarget();
                                     LaunchNotification(context, content);
-                                    SetSchedule(context, true);
+                                    TrackerActivityService.CurrentStepsHh = 0;
                                 }
-                                else
-                                {
-                                    Log.Error("TrackerActivityReceiver", "2. currentHHT: " + TrackerActivityService.CurrentStepsHh + " HHT: " + TrackerActivityService.HalfHourTarget);
-                                    SetSchedule(context, false);
-                                }
-                            }
-                            else
-                            {
-                                if (hour > 20 || hour < 20)
-                                {
-                                    Log.Error("TrackerActivityReceiver", "3. currentHHT: " + TrackerActivityService.CurrentStepsHh + " HHT: " + TrackerActivityService.HalfHourTarget);
-                                    SetSchedule(context, false);// continue checking before or after 8 pm
-                                }
+                                Schedule(context, 30); //should be 30 here
                             }
                         }
                     }
-                    else
-                    {
-                        Log.Error("TrackerActivityReceiver", "4. currentHHT: " + TrackerActivityService.CurrentStepsHh + " HHT: " + TrackerActivityService.HalfHourTarget);
-                        SetSchedule(context, false); // check til hour is 8 am
-                    }
+
                     break;
             }
-          
         }
 
-        private void SetSchedule(Context context, bool checkAtEvery30Min)
+        public static int GetRemainingTime(DateTime dt)
         {
-            if (!checkAtEvery30Min)
-            {
-                long hoursTillNextCheck = 3600000 * 2; //delay 120 minutes
-                Log.Error("TrackerActivityReceiver", "interval: " + hoursTillNextCheck);
-                Schedule(context, hoursTillNextCheck);
-            }
-            else
-            {
-                TrackerActivityService.CurrentStepsHh = 0; 
-                long minutesTillNextCheck = 60000 * 5; //delay 30 mins 
-                Log.Error("TrackerActivityReceiver", "interval: " + minutesTillNextCheck);
-                Schedule(context, minutesTillNextCheck);
-            }
-
+            var milisec = dt.Hour * 3600000 + dt.Minute * 60000 + dt.Second * 1000;
+            return 24 * 3600000 - milisec;
         }
 
-        private void Schedule(Context context, long milisec) {
+        private void Schedule(Context context, int minutes)
+        {
+            Log.Error("TrackerActivity RECEIVER", "Schedule minutes" + minutes + " minutes");
+            Calendar calendar = TrackerActivityService.GetCalendarAfterAddingMinutes(minutes);
+            SetAlarm(context, calendar);
+        }
+
+        private void Schedule(Context context, DateTime date)
+        {
+            var calendar = Calendar.Instance;
+            calendar.Set(date.Year, date.Month - 1, date.Day, date.Hour, date.Minute, 0);
+            Log.Error("TrackerActivity RECEIVER", "Schedule calendar" + calendar.ToString());
+            SetAlarm(context, calendar);
+        }
+
+        private static void SetAlarm(Context context, Calendar calendar)
+        {
             var am = (AlarmManager)context.GetSystemService(Context.AlarmService);
-            var i = new Intent(context, typeof(TrackerActivityReceiver));
-            PendingIntent pi = PendingIntent.GetBroadcast(context, TRACKER_ACTIVITY_RECEIVER_PENDING_INTENT_ID_USER, i, PendingIntentFlags.UpdateCurrent);
+            PendingIntent pi = PendingIntent.GetBroadcast(context,
+                TRACKER_ACTIVITY_RECEIVER_PENDING_INTENT_ID_USER,
+                new Intent(context, typeof(TrackerActivityReceiver)),
+                PendingIntentFlags.UpdateCurrent);
+
             if (am == null) return;
-            am.SetInexactRepeating(AlarmType.ElapsedRealtimeWakeup, SystemClock.ElapsedRealtime() + milisec, AlarmManager.IntervalDay, pi);
+            am.SetExact(AlarmType.RtcWakeup, calendar.TimeInMillis, pi);
         }
 
-        private  void LaunchNotification(Context context,  string content)
+        private void LaunchNotification(Context context, string content)
         {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                .SetSmallIcon(Resource.Drawable.logo)
@@ -150,7 +165,8 @@ namespace Familia.Activity_Tracker
             }
             else
             {
-                content = "Numar de pasi facuti in ultima jumatate de ora: " + TrackerActivityService.CurrentStepsHh;
+                content = "Numar de pasi facuti in ultima jumatate de ora: " 
+                    + TrackerActivityService.CurrentStepsHh;
             }
             return content;
         }
@@ -158,7 +174,7 @@ namespace Familia.Activity_Tracker
         private static string GetContentFor8pm()
         {
             string content;
-            if (TrackerActivityService.DailyTarget <= TotalDailySteps) // stepsFromSensor)
+            if (TrackerActivityService.DailyTarget <= TrackerActivityService.TotalDailySteps) 
             {
                 content = "Ziua s-a incheiat cu bine.";
             }
@@ -173,14 +189,14 @@ namespace Familia.Activity_Tracker
         private static string GetContentFor4pm()
         {
             string content;
-            if (TrackerActivityService.DailyTarget <= TotalDailySteps) //stepsFromSensor)
+            if (TrackerActivityService.DailyTarget <= TrackerActivityService.TotalDailySteps)
             {
                 content = "Felicitari! Target zilnic atins.";
             }
             else
             {
-                long dif = TrackerActivityService.DailyTarget - TotalDailySteps; //stepsFromSensor;
-                content = "Pasi necesari pana la target: " + dif;
+                content = "Pasi necesari pana la target: " +
+                    (TrackerActivityService.DailyTarget - TrackerActivityService.TotalDailySteps);
             }
 
             return content;

@@ -31,8 +31,6 @@ namespace Familia.Medicatie.Data
             DiseaseList = new List<Disease>();
             // will be removed
             _medicationSchedules = new List<MedicationSchedule>();
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            var numeDB = "devices_data.db";
         }
 
         public static Storage GetInstance()

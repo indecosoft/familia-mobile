@@ -46,22 +46,7 @@ namespace Familia.Devices.Alarm
             {
                 try
                 {
-                    var am = (AlarmManager)context.GetSystemService(Context.AlarmService);
-                    var intent = new Intent(Application.Context, typeof(AlarmDeviceReceiver));
-                    PendingIntent pi = PendingIntent.GetBroadcast(Application.Context, Constants.BloodPressureNotifId, intent, 0);
-
-                    if (pi == null)
-                    {
-                        Log.Error(Log_Tag, "pi is null");
-                    }
-                    else
-                    {
-                        Log.Error("MainActivity", "pi is not null");
-                    }
-
-                    am.Cancel(pi);
-                    pi.Cancel();
-
+                    CancelAlarms(context);
 
                     string data = await GetData();
                     if (data != null)
@@ -69,10 +54,12 @@ namespace Familia.Devices.Alarm
                         var obj = new JSONObject(data);
                         Log.Error(Log_Tag, obj.ToString());
 
-                        try {
+                        try
+                        {
                             intervalBloodPressure = obj.GetJSONObject("bloodPressureSystolic").GetString("interval");
                         }
-                        catch (System.Exception e) {
+                        catch (System.Exception e)
+                        {
                             Log.Error(Log_Tag, "Err " + e.Message + " / no interval for bloodPressureSystolic");
                             intervalBloodPressure = null;
                         }
@@ -88,22 +75,26 @@ namespace Familia.Devices.Alarm
                             intervalGlucose = null;
                         }
 
-                            await UpdateDeviceConfig(intervalBloodPressure, intervalGlucose);
+                        await UpdateDeviceConfig(intervalBloodPressure, intervalGlucose);
                     }
-                    else {
+                    else
+                    {
 
                         var obj = await GetDataFromLocalDb();
-                        if (obj != null) {
+                        if (obj != null)
+                        {
                             intervalBloodPressure = obj.IntervalBloodPresure;
                             intervalGlucose = obj.IntervalGlucose;
                         }
                     }
 
-                    if (intervalBloodPressure != null) {
+                    if (intervalBloodPressure != null)
+                    {
                         LaunchAlarm(context, intervalBloodPressure, Constants.IntervalBloodPressure);
                     }
 
-                    if (intervalGlucose != null) {
+                    if (intervalGlucose != null)
+                    {
                         LaunchAlarm(context, intervalGlucose, Constants.IntervalGlucose);
                     }
 
@@ -115,6 +106,19 @@ namespace Familia.Devices.Alarm
             });
         }
 
+        private static void CancelAlarms(Context context)
+        {
+            var am = (AlarmManager)context.GetSystemService(Context.AlarmService);
+            var intent = new Intent(Application.Context, typeof(AlarmDeviceReceiver));
+            PendingIntent piBloodPressure = PendingIntent.GetBroadcast(Application.Context, Constants.BloodPressureNotifId, intent, 0);
+            PendingIntent piGlucose = PendingIntent.GetBroadcast(Application.Context, Constants.GlucoseNotifId, intent, 0);
+
+            am.Cancel(piBloodPressure);
+            piBloodPressure.Cancel();
+            am.Cancel(piGlucose);
+            piGlucose.Cancel();
+        }
+
         private static DateTime getDate()
         {
             DateTime dt = DateTime.Now;
@@ -122,7 +126,6 @@ namespace Familia.Devices.Alarm
             var milisec = dt.Hour * 3600000 + dt.Minute * 60000 + dt.Second * 1000;
             var remainingTime = 24 * 3600000 - milisec;
             var newdt = dt.AddMilliseconds(remainingTime + 8 * 3600 * 1000);
-            //var newdt = dt.AddMilliseconds(5 * 60000); //for test
             Log.Error(Log_Tag, "new date " + newdt.Day + ", " + newdt.Month + ", " + newdt.Year + ", " + newdt.Hour + ", " + newdt.Minute + ", " + newdt.Millisecond);
             return newdt;
         }

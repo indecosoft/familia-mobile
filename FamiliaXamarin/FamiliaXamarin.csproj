@@ -17,7 +17,7 @@
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
@@ -44,6 +44,10 @@
     <MandroidExtraArgs>
     </MandroidExtraArgs>
     <LangVersion>8.0</LangVersion>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -60,6 +64,10 @@
     <Debugger>Xamarin</Debugger>
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
     <LangVersion>8.0</LangVersion>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev.Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -1240,6 +1248,48 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\thumbnailjoc2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\joc3\images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\data.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\game.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\style.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\entities\activity.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\entities\object.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\entities\place.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\entities\task.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\ui\animations.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\ui\ui.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\entities\daytime.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\lib\jquery.keyframes.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\lib\jquery.ui.touch-punch.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

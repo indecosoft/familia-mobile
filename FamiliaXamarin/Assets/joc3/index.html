@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9, user-scalable=no" />
+</head>
+
+<bod>
+
+    <div id="firstPage" class="container">
+        <div class="container-text-title">
+            <div class="text-title">
+                Începeți jurnalul de activități!
+            </div>
+            <button class="button-start" onclick="start()">START</button>
+        </div>
+    </div>
+
+    <div id="secondPage" class="container">
+        <div class="container-text-title">
+            <div class="text-title">
+                Se pare ca este dimineata!
+            </div>
+        </div>
+        <div class="container-body">
+
+            <!-- <div id="aa" class="selectable-element-test" onclick="onItemClicked('aa')">
+                <img style="width: 100%; height: 100%" src="images/Alearga.png" />
+            </div> -->
+
+            <div class="next" onclick="next(1)">
+                <div class="text-selectable-element" style="margin-top: 10%">
+                    Continuă
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="thirdPage" class="container">
+        <div class="container-text-title">
+            <div class="text-primary"></div>
+            <div class="text-title"></div>
+        </div>
+        <div class="container-body">
+            <div class="next" onclick="next(2)">
+                <div class="text-selectable-element" style="margin-top: 10%">
+                    Next
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="fourthPage" class="container">
+        <div class="container-text-title">
+            <div class="text-primary"></div>
+            <div class="text-title"></div>
+        </div>
+        <div class="container-body">
+            <div class="next" onclick="next(3)">
+                <div class="text-selectable-element" style="margin-top: 10%">
+                    Next
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="fifthPage" class="container">
+        <div class="container-text-title">
+            <div id="textActivities" class="text-primary"></div>
+            <div id="textObjects" class="text-primary"> </div>
+            <div id="textPlaces" class="text-primary"></div>
+            <button class="button-start" onclick="playAgain()"> Din nou </button>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
+    <script src="lib/jquery.ui.touch-punch.min.js"></script>
+    <script src="lib/jquery.keyframes.min.js"></script>
+    <script src="entities/object.js"></script>
+    <script src="entities/activity.js"></script>
+    <script src="entities/place.js"></script>
+    <script src="entities/daytime.js"></script>
+    <script src="data.js"></script>
+    <script src="ui/animations.js"></script>
+    <script src="ui/ui.js"></script>
+    <script src="game.js"></script>
+
+    </body>
+
+</html>

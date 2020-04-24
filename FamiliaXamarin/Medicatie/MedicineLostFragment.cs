@@ -29,7 +29,6 @@ namespace Familia.Medicatie
     {
         private MedicineLostAdapter _medicineLostAdapter;
         private List<MedicationSchedule> _medicationsLost;
-        private SQLiteAsyncConnection _db;
         private Intent _medicationLostIntent;
         private CardView cwEmpty;
         private RecyclerView rvMedLost;
@@ -474,7 +473,7 @@ namespace Familia.Medicatie
 
         public bool SendMedicationTask(JSONArray mArray, MedicationSchedule med, DateTime now)
         {
-            AddMedicine(_db, med.Uuid, now);
+            AddMedicine(med.Uuid, now);
             Log.Error("MEDICINE LOST", "Medication service started");
             _medicationLostIntent = new Intent(Context, typeof(MedicationService));
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
@@ -505,11 +504,11 @@ namespace Familia.Medicatie
             }
         }
 
-        private static async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now)
+        private static async void AddMedicine(string uuid, DateTime now)
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             var nameDb = "devices_data.db";
-            db = new SQLiteAsyncConnection(Path.Combine(path, nameDb));
+            var db = new SQLiteAsyncConnection(Path.Combine(path, nameDb));
             await db.CreateTableAsync<MedicineRecords>();
             await db.InsertAsync(new MedicineRecords
             {

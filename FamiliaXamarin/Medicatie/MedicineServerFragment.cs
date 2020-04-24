@@ -28,8 +28,6 @@ namespace Familia.Medicatie
 
         private MedicineServerAdapter _medicineServerAdapter;
         private List<MedicationSchedule> _medications;
-        private SQLiteAsyncConnection _db;
-        private Intent _medicationServiceIntent;
         private CardView cwEmpty;
         private int countReq;
         private NetworkingData networking =  new NetworkingData();
@@ -49,27 +47,7 @@ namespace Familia.Medicatie
             var medDate = Convert.ToDateTime(med.Timestampstring);
             DateTime currentDate = DateTime.Now;
 
-            if (medDate < currentDate)
-            {
-                alert.SetMessage("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " se va marca administrat.");
-                alert.SetPositiveButton("Da", async (senderAlert, args) =>
-                {
-                    DateTime now = DateTime.Now;
-                    JSONArray mArray = new JSONArray().Put(new JSONObject().Put("uuid", med.Uuid)
-                        .Put("date", now.ToString("yyyy-MM-dd HH:mm:ss")));
-
-                    if (await SendMedicationTask(mArray, med, now))
-                    {
-                        Toast.MakeText(Context, "Medicament administrat.", ToastLength.Long).Show();
-                        _medications.Remove(med);
-                        _medicineServerAdapter.removeItem(med);
-                        _medicineServerAdapter.NotifyDataSetChanged();
-                    }
-                    cwEmpty.Visibility = _medications.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
-                });
-                alert.SetNegativeButton("Nu", (senderAlert, args) => { });
-            }
-            else
+            if (medDate > currentDate)
             {
                 alert.SetMessage("Pentru afectiunea " + med.Title + ", medicamentul " + med.Content + " nu se poate marca administrat.");
                 alert.SetPositiveButton("Ok", (senderAlert, args) => { });
@@ -181,10 +159,7 @@ namespace Familia.Medicatie
                 }
                 dialog.Dismiss();
             });
-
             }
-
-
             catch (Exception e)
             {
 
@@ -219,69 +194,6 @@ namespace Familia.Medicatie
                 e.PrintStackTrace();
             }
             return date.ToLocalTime();
-        }
-        #endregion
-        #region send data to medication service
-        public async Task<bool> SendMedicationTask(JSONArray mArray, MedicationSchedule med, DateTime now)
-        {
-            var isOk = false;
-            await Task.Run(async () =>
-            {
-                if (await SendData(Context, mArray))
-                {
-                    isOk = true;
-                }
-                else
-                {
-                    AddMedicine(_db, med.Uuid, now);
-                    Storage.GetInstance().removeMedSer(med.Uuid);
-                    Log.Error("MEDICATION SERVER", "Medication service started");
-                    _medicationServiceIntent =
-                        new Intent(Context, typeof(MedicationService));
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                    {
-                        Context.StartForegroundService(_medicationServiceIntent);
-                    }
-                    else
-                    {
-                        Context.StartService(_medicationServiceIntent);
-                    }
-                    isOk = false;
-                }
-            });
-            return isOk;
-        }
-
-        private static async Task<bool> SendData(Context context, JSONArray mArray)
-        {
-            string result = await WebServices.WebServices.Post(
-                $"{Constants.PublicServerAddress}/api/medicine", mArray,
-                Utils.GetDefaults("Token"));
-            if (!Utils.CheckNetworkAvailability()) return false;
-            switch (result)
-            {
-                case "Done":
-                case "done":
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        private static bool IsServiceRunning(Type classTypeof, Context context)
-        {
-            var manager = (ActivityManager)context.GetSystemService(Context.ActivityService);
-#pragma warning disable 618
-            return manager.GetRunningServices(int.MaxValue).Any(service =>
-                service.Service.ShortClassName == classTypeof.ToString());
-        }
-
-        private static async void AddMedicine(SQLiteAsyncConnection db, string uuid, DateTime now)
-        {
-            await db.InsertAsync(new MedicineRecords {
-                Uuid = uuid,
-                DateTime = now.ToString("yyyy-MM-dd HH:mm:ss")
-            });
         }
         #endregion
     }
