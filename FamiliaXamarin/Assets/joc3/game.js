@@ -12,6 +12,7 @@ let list = [];
 
 scene.init = function() {
     console.log('init');
+    ui.setBgImage(new Date().getMonth());
     data = storedData.getDataForCurrentTimeOfTheDay(new Date().getHours());
     ui.init();
     uiList = [];
@@ -19,7 +20,11 @@ scene.init = function() {
 
 function start() {
     console.log("start", data);
-    ui.runStartAnimations().then(() => ui.generateElements(data.activities, storedData.activities));
+    ui.runStartAnimations().then(() => {
+        ui.generateElements(data.activities, storedData.activities);
+        ui.showElement(".menu-button");
+        ui.setHelpText(ui.textHelp1);
+    });
 }
 
 // this function will be used when is needed to load other data
@@ -54,8 +59,11 @@ function next(page) {
             list = [];
             uiList = [];
             ui.showElement("#thirdPage");
-            ui.runTranslateTextAnimation('..în continuare trebuie să selectați activitățile pe care le faceți ' + data.name + '..').then(() => {
+            ui.hideElement(".menu-button");
+            ui.runTranslateTextAnimation('..în continuare trebuie să selectați cu ce vă desfășurați activitatea..').then(() => {
                 next(2);
+                ui.showElement(".menu-button");
+                ui.setHelpText(ui.textHelp2);
             })
             break;
         case 2:
@@ -79,8 +87,11 @@ function next(page) {
                 ui.clearContainerBody();
                 ui.showElement("#fourthPage");
                 ui.hideElement(".text-primary");
-                ui.runTranslateTextAnimation('.. în continuare trebuie să selectați unde vă desfășurați activitatea ..').then(() => {
+                ui.hideElement(".menu-button");
+                ui.runTranslateTextAnimation('..în continuare trebuie să selectați unde vă desfășurați activitatea..').then(() => {
                     next(3);
+                    ui.showElement(".menu-button");
+                    ui.setHelpText(ui.textHelp3);
                 })
             }
             break;
@@ -103,6 +114,7 @@ function next(page) {
                 indexObj = 0;
                 ui.clearFourthPage();
                 next(4);
+                ui.hideElement(".menu-button");
             }
             break;
         case 4:
@@ -143,7 +155,7 @@ function next(page) {
                 });
             });
 
-            ui.displayFifthPage("Activitati: " + countActivities + "/" + journal.activities.length,
+            ui.displayFifthPage("Activități: " + countActivities + "/" + journal.activities.length,
                 "Obiecte: " + countObjects + "/" + totalObjects,
                 "Locuri: " + countPlaces + "/" + totalPlaces);
 
@@ -203,6 +215,24 @@ function playAgain() {
     ui.recreateFirstPage();
     ui.createPages();
     scene.init();
+}
+
+function help() {
+    ui.showElement(".box_help");
+}
+
+function closeHelp() {
+    ui.hideElement(".box_help");
+}
+
+function showDetails() {
+    console.log("show details");
+    ui.populateLists(journal);
+    ui.showElement('.box_details');
+}
+
+function closeDetails() {
+    ui.hideElement('.box_details');
 }
 
 $(document).ready(function() {

@@ -105,6 +105,7 @@
     <Compile Include="Games\entities\Game.cs" />
     <Compile Include="Games\GameActivity.cs" />
     <Compile Include="Games\GameCenterActivity.cs" />
+    <Compile Include="Games\GamesGridViewAdapter.cs" />
     <Compile Include="Games\MyWebViewClient.cs" />
     <Compile Include="Games\Sensors\AccelerometerSensor.cs" />
     <Compile Include="Devices\Alarm\AlarmDeviceReceiver.cs" />
@@ -241,6 +242,7 @@
     <Compile Include="Devices\Bluetooth\Callbacks\Glucose\MedisanaGattCallback.cs" />
   </ItemGroup>
   <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\storage.json" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
@@ -1250,9 +1252,6 @@
     <AndroidResource Include="Resources\drawable\thumbnailjoc2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Assets\joc3\images\" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidAsset Include="Assets\joc3\data.js" />
   </ItemGroup>
   <ItemGroup>
@@ -1290,6 +1289,44 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\joc3\lib\jquery.ui.touch-punch.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\images\iarna_dark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\images\primavara_dark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\images\toamna_dark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\images\vara_dark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_game.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\thumbnailjoc3.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\images\iarna.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\images\primavara.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\images\toamna.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\images\toamna2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\images\toamna2_dark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\joc3\images\vara.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

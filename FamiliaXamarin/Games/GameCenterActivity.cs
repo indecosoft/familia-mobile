@@ -21,19 +21,18 @@ namespace Familia.Games
 {
     [Activity(Label = "GameCenterActivity", Theme = "@style/AppTheme.Dark",
         ScreenOrientation = ScreenOrientation.Portrait)]
-    public class GameCenterActivity : AppCompatActivity, View.IOnClickListener
+    public class GameCenterActivity : AppCompatActivity
     {
-
         private static string LOG_TAG = "GameCenterActivity";
         private LottieAnimationView emptyAnimation;
         private TextView tvEmpty;
-        private LinearLayout linearLayout;
 
         private static List<Category> categories = new List<Category>();
       
         private List<Game> games = new List<Game>() {
             new Game("Planetele Vesele", 1, new List<Category>(){ new Category(4, "Coordonare") }),
-            new Game("Logica", 2, new List<Category>(){ new Category(1, "Gandire Logica"), new Category(2, "Gandire Matematica")})
+            new Game("Logică", 2, new List<Category>(){ new Category(1, "Gandire Logica"), new Category(2, "Gandire Matematica")}),
+            new Game("Jurnal de activități", 3, new List<Category>(){ new Category(3, "Orientare in timp si spatiu")})
         };
 
         private HashSet<Game> list = new HashSet<Game>();
@@ -44,17 +43,10 @@ namespace Familia.Games
             SetContentView(Resource.Layout.activity_game_center);
             SetToolbar();
 
-            FindViewById<CardView>(Resource.Id.cw_game1).SetOnClickListener(this);
-            FindViewById<CardView>(Resource.Id.cw_game2).SetOnClickListener(this);
-
             emptyAnimation = FindViewById<LottieAnimationView>(Resource.Id.animation_empty_box);
             tvEmpty = FindViewById<TextView>(Resource.Id.tv_empty_games);
-            linearLayout = FindViewById<LinearLayout>(Resource.Id.cl_cw);
-            linearLayout.Visibility = ViewStates.Gone;
-
-
+            
             selectGamesFromCategories();
-
         }
 
         private async void selectGamesFromCategories()
@@ -84,13 +76,11 @@ namespace Familia.Games
             {
                 emptyAnimation.Visibility = ViewStates.Invisible;
                 tvEmpty.Visibility = ViewStates.Gone;
-                linearLayout.Visibility = ViewStates.Visible;
             }
             else
             {
                 emptyAnimation.Visibility = ViewStates.Visible;
                 tvEmpty.Visibility = ViewStates.Visible;
-                linearLayout.Visibility = ViewStates.Gone;
             }
 
             showGamesCards();
@@ -98,48 +88,14 @@ namespace Familia.Games
 
         private void showGamesCards()
         {
-            linearLayout.Visibility = ViewStates.Visible;
-            // this method will be modified to handle a list of games with a list of cardviews
-            bool isDisplayedCW1 = false;
-            bool isDisplayedCW2 = false;
-            foreach (var item in list)
-            {
-                Log.Error(LOG_TAG, "item type " + item.Type + ", " + item.Name);
-                if (item.Type == 1)
-                {
-                    isDisplayedCW1 = true;
-                }
-                if (item.Type == 2)
-                {
-                    isDisplayedCW2 = true;
-                }
-            }
+            var gridview = FindViewById<GridView>(Resource.Id.gridview);
+            gridview.Adapter = new GamesGridViewAdapter(this, list);
 
-            if (!isDisplayedCW1)
-            {
-                FindViewById<CardView>(Resource.Id.cw_game1).Visibility = ViewStates.Gone;
-            }
-
-            if (!isDisplayedCW2)
-            {
-                FindViewById<CardView>(Resource.Id.cw_game2).Visibility = ViewStates.Gone;
-            }
-        }
-
-        public void OnClick(View v)
-        {
-            var intent = new Intent(this, typeof(GameActivity));
-            switch (v.Id)
-            {
-                case Resource.Id.cw_game1:
-                    intent.PutExtra("Game", games[0].Type);
-                    StartActivity(intent);
-                    break;
-                case Resource.Id.cw_game2:
-                    intent.PutExtra("Game", games[1].Type);
-                    StartActivity(intent);
-                    break;
-            }
+            gridview.ItemClick += delegate (object sender, AdapterView.ItemClickEventArgs args) {
+                var intent = new Intent(this, typeof(GameActivity));
+                intent.PutExtra("Game", games[args.Position].Type);
+                StartActivity(intent);
+            };
         }
 
         private void SetToolbar()
@@ -160,7 +116,6 @@ namespace Familia.Games
             try
             {
                 dialog.Show();
-
                 string res = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/gamesCategories/", Utils.GetDefaults("Token"));
                 if (res != null)
                 {

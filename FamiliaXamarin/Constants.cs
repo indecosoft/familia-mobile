@@ -39,13 +39,13 @@ namespace Familia {
 
 		public static string Config { get; } = "https://gisdev.indecosoft.net/chat/api/get-device-config";
 
-		// public static string SaveDeviceDataUrl { get; } = "http://192.168.101.107/devices/save-device-measurements";
-		// public static string PublicServerAddress { get; } = "http://192.168.101.107:3000";
-		// public static string WebSocketLocationAddress { get; } = "http://192.168.101.107:3000/location";
+		 //public static string SaveDeviceDataUrl { get; } = "http://192.168.101.107/devices/save-device-measurements";
+		 //public static string PublicServerAddress { get; } = "http://192.168.101.107:3000";
+		 //public static string WebSocketLocationAddress { get; } = "http://192.168.101.107:3000/location";
 		//public static string WebSocketAddress { get; } = "http://192.168.101.107:3000/ws";
 
 		public static string SaveDeviceDataUrl { get; } =
-			"https://gisdev.indecosoft.net/devices/save-device-measurements";
+			"https://gisdev.indecosoft.net/chat/api/save-device-measurements";
         
 		public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/chat";
 		public static string WebSocketLocationAddress { get; } = "https://gisdev.indecosoft.net/location";
