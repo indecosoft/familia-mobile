@@ -143,12 +143,6 @@ namespace Familia {
 
 			_stepCounterServiceIntent = new Intent(this, typeof(TrackerActivityService));
 			StartForegroundService(_stepCounterServiceIntent);
-			//-------------
-
-			//            make it hidden for release bc is not done yet
-			//menuNav.FindItem(Resource.Id.games).SetVisible(false);
-			//menuNav.FindItem(Resource.Id.activity_tracker).SetVisible(false);
-
 			
 
 			switch (type) {
@@ -203,6 +197,7 @@ namespace Familia {
 					menuNav.FindItem(Resource.Id.nav_monitorizare)?.SetVisible(false);
 					menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
 					menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
+					menuNav.FindItem(Resource.Id.games).SetVisible(false);
 
 					createAlarmMedicationChannel();
 
