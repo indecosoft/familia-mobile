@@ -1,5 +1,9 @@
 class UI {
 
+    textHelp1 = "Selectați activități pe care le faceți în această perioadă a zilei.";
+    textHelp2 = "Selectați cu ce vă desfășurați activitatea.";
+    textHelp3 = "Selectați unde vă desfășurați activitatea.";
+
     constructor() {}
 
     init() {
@@ -9,10 +13,53 @@ class UI {
         $("#thirdPage").css({ display: 'none' });
         $("#fourthPage").css({ display: 'none' });
         $("#fifthPage").css({ display: 'none' });
+        $("#sixth").css({ display: 'none' });
+        this.hideHelp();
+    }
+
+    getRoText(txt) {
+        switch (txt) {
+            case 'dimineață':
+                return 'dimineața';
+            case 'mijlocul zilei':
+                return 'la prânz';
+            case 'seară':
+                return 'seara';
+        }
+    }
+
+    getBgImage(month) {
+        let season = 'iarna';
+        //primavara
+        if (month >= 2 && month <= 4) {
+            season = 'primavara';
+        }
+        //vara
+        if (month >= 5 && month <= 7) {
+            season = 'primavara';
+        }
+        //toamna
+        if (month >= 8 && month <= 10) {
+            season = 'primavara';
+        }
+
+        return season;
+    }
+
+    setBgImage(month) {
+        const season = this.getBgImage(month);
+        $('body').css({
+            background: 'url(images/' + season + '_dark.png)',
+            'background-repeat': 'no-repeat',
+            'background-size': '100%'
+        });
     }
 
     runStartAnimations() {
         return new Promise((res, rej) => {
+
+            let roText = this.getRoText(data.name);
+
             $("#firstPage").css({ display: 'none' });
             $("#secondPage").css({ display: 'block' });
             $(".text-title").text('Este ' + data.name + ' !').playKeyframe({
@@ -23,7 +70,7 @@ class UI {
                         name: 'byeBox',
                         duration: '2s',
                         complete: function() {
-                            $(".text-title").text('Trebuie să selectați activități pe care le faceți ' + data.name + '.')
+                            $(".text-title").text('Vă rugăm să selectați activități pe care le faceți ' + roText + '.')
                                 .playKeyframe({
                                     name: 'showBox',
                                     duration: '5s',
@@ -297,7 +344,8 @@ class UI {
             '<div id="textActivities" class="text-primary"></div>' +
             '<div id="textObjects" class="text-primary"> </div>' +
             '<div id="textPlaces" class="text-primary"></div>' +
-            '<button class="button-start" onclick="playAgain()"> Din nou </button>' +
+            '<button class="button-details" onclick="showDetails()"> Detalii </button>' +
+            '<button class="button-finish" onclick="playAgain()"> Din nou </button>' +
             '</div>'
         )
     }
@@ -319,6 +367,59 @@ class UI {
         this.createThirdPage();
         this.createFourthPage();
         this.createFifthPage();
+    }
+
+    hideHelp() {
+        this.hideElement(".box_help");
+        this.hideElement(".menu-button");
+    }
+
+    setHelpText(text) {
+        $("#textHelp").text(text);
+    }
+
+    populateLists(journal) {
+        this.emptyLists();
+        journal.selectedActivities.forEach(activity => {
+            $("#a-pickedList").append('<div class="text-item-picked">' +
+                activity.name + '</div>');
+
+            activity.selectedObjects.forEach(obj => {
+                $("#o-pickedList").append('<div class="text-item-picked">' +
+                    activity.name + ' - ' + obj.name + '</div>');
+            });
+            activity.objects.forEach(obj => {
+                $("#o-correctList").append('<div class="text-item-correct">' +
+                    activity.name + ' - ' + obj.name + '</div>');
+            });
+
+            activity.selectedPlaces.forEach(place => {
+                $("#l-pickedList").append('<div class="text-item-picked">' +
+                    activity.name + ' - ' + place.name + '</div>');
+            });
+            activity.places.forEach(place => {
+                $("#l-correctList").append('<div class="text-item-correct">' +
+                    activity.name + ' - ' + place.name + '</div>');
+            });
+
+        });
+        journal.activities.forEach(element => {
+            $("#a-correctList").append('<div class="text-item-correct">' +
+                element.name + '</div>');
+        });
+    }
+
+    emptyElement(element) {
+        $(element).empty();
+    }
+
+    emptyLists() {
+        this.emptyElement('#a-pickedList');
+        this.emptyElement('#a-correctList');
+        this.emptyElement('#o-pickedList');
+        this.emptyElement('#o-correctList');
+        this.emptyElement('#l-pickedList');
+        this.emptyElement('#l-correctList');
     }
 
 }

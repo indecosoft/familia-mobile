@@ -1,0 +1,329 @@
+{
+    "objects": [{
+            "name": "O1"
+        },
+        {
+            "name": "O2"
+        },
+        {
+            "name": "O3"
+        },
+        {
+            "name": "O4"
+        },
+        {
+            "name": "O5"
+        },
+        {
+            "name": "O6"
+        },
+        {
+            "name": "O7"
+        },
+        {
+            "name": "O8"
+        }
+    ],
+    "places": [{
+            "name": "P1"
+        },
+        {
+            "name": "P2"
+        },
+        {
+            "name": "P3"
+        },
+        {
+            "name": "P4"
+        },
+        {
+            "name": "P5"
+        },
+        {
+            "name": "P6"
+        },
+        {
+            "name": "P7"
+        },
+        {
+            "name": "P8"
+        }
+    ],
+    "activities": [{
+            "name": "A1",
+            "objects": [{
+                    "name": "O1"
+                },
+                {
+                    "name": "O3"
+                },
+                {
+                    "name": "O4"
+                }
+            ],
+            "places": [{
+                    "name": "P1"
+                },
+                {
+                    "name": "P2"
+                },
+                {
+                    "name": "P3"
+                },
+                {
+                    "name": "P4"
+                },
+                {
+                    "name": "P5"
+                }
+            ]
+        },
+        {
+            "name": "A2",
+            "objects": [{
+                    "name": "O2"
+                },
+                {
+                    "name": "O3"
+                }
+            ],
+            "places": [{
+                "name": "P6"
+            }]
+        },
+        {
+            "name": "A3",
+            "objects": [{
+                    "name": "O2"
+                },
+                {
+                    "name": "O3"
+                },
+                {
+                    "name": "O4"
+                }
+            ],
+            "places": [{
+                "name": "P7"
+            }]
+        },
+        {
+            "name": "A4",
+            "objects": [{
+                    "name": "O5"
+                },
+                {
+                    "name": "O7"
+                },
+                {
+                    "name": "O4"
+                }
+            ],
+            "places": [{
+                    "name": "P8"
+                },
+                {
+                    "name": "P3"
+                },
+                {
+                    "name": "P6"
+                },
+                {
+                    "name": "P7"
+                }
+            ]
+        },
+        {
+            "name": "A5",
+            "objects": [{
+                    "name": "O6"
+                },
+                {
+                    "name": "O3"
+                },
+                {
+                    "name": "O8"
+                }
+            ],
+            "places": [{
+                    "name": "P2"
+                },
+                {
+                    "name": "P3"
+                }
+            ]
+        },
+        {
+            "name": "A6",
+            "objects": [{
+                    "name": "O6"
+                },
+                {
+                    "name": "O3"
+                },
+                {
+                    "name": "O8"
+                }
+            ],
+            "places": [{
+                    "name": "P2"
+                },
+                {
+                    "name": "P3"
+                }
+            ]
+        }
+    ],
+    "dayTimes": [{
+            "name": "dimineață",
+            "activities": [{
+                    "name": "A1",
+                    "objects": [{
+                            "name": "O1"
+                        },
+                        {
+                            "name": "O3"
+                        },
+                        {
+                            "name": "O4"
+                        }
+                    ],
+                    "places": [{
+                            "name": "P1"
+                        },
+                        {
+                            "name": "P2"
+                        },
+                        {
+                            "name": "P3"
+                        },
+                        {
+                            "name": "P4"
+                        },
+                        {
+                            "name": "P5"
+                        }
+                    ]
+                },
+                {
+                    "name": "A2",
+                    "objects": [{
+                            "name": "O2"
+                        },
+                        {
+                            "name": "O3"
+                        }
+                    ],
+                    "places": [{
+                        "name": "P6"
+                    }]
+                },
+                {
+                    "name": "A3",
+                    "objects": [{
+                            "name": "O2"
+                        },
+                        {
+                            "name": "O3"
+                        },
+                        {
+                            "name": "O4"
+                        }
+                    ],
+                    "places": [{
+                        "name": "P7"
+                    }]
+                }
+            ]
+        },
+        {
+            "name": "în timpul zilei",
+            "activities": [{
+                    "name": "A3",
+                    "objects": [{
+                            "name": "O2"
+                        },
+                        {
+                            "name": "O3"
+                        },
+                        {
+                            "name": "O4"
+                        }
+                    ],
+                    "places": [{
+                        "name": "P7"
+                    }]
+                },
+                {
+                    "name": "A6",
+                    "objects": [{
+                            "name": "O6"
+                        },
+                        {
+                            "name": "O3"
+                        },
+                        {
+                            "name": "O8"
+                        }
+                    ],
+                    "places": [{
+                            "name": "P2"
+                        },
+                        {
+                            "name": "P3"
+                        }
+                    ]
+                },
+                {
+                    "name": "A5",
+                    "objects": [{
+                            "name": "O6"
+                        },
+                        {
+                            "name": "O3"
+                        },
+                        {
+                            "name": "O8"
+                        }
+                    ],
+                    "places": [{
+                            "name": "P2"
+                        },
+                        {
+                            "name": "P3"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "seara",
+            "activities": [{
+                "name": "A4",
+                "objects": [{
+                        "name": "O5"
+                    },
+                    {
+                        "name": "O7"
+                    },
+                    {
+                        "name": "O4"
+                    }
+                ],
+                "places": [{
+                        "name": "P8"
+                    },
+                    {
+                        "name": "P3"
+                    },
+                    {
+                        "name": "P6"
+                    },
+                    {
+                        "name": "P7"
+                    }
+                ]
+            }]
+        }
+    ]
+}

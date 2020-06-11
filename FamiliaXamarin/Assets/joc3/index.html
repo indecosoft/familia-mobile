@@ -8,6 +8,17 @@
 </head>
 
 <bod>
+    <div class="menu-button corner-right-top" onclick="help()">
+        <div class="text-menu">?</div>
+    </div>
+
+    <div class="box_help">
+        <div class="menu-button corner-right-top" onclick="closeHelp()">
+            <div class="text-menu">x</div>
+        </div>
+
+        <div id="textHelp" class="text-menu">AAAAA BBBB CCC DDD</div>
+    </div>
 
     <div id="firstPage" class="container">
         <div class="container-text-title">
@@ -68,11 +79,82 @@
 
     <div id="fifthPage" class="container">
         <div class="container-text-title">
-            <div id="textActivities" class="text-primary"></div>
-            <div id="textObjects" class="text-primary"> </div>
-            <div id="textPlaces" class="text-primary"></div>
-            <button class="button-start" onclick="playAgain()"> Din nou </button>
+            <div id="textActivities" class="text-primary-finish"></div>
+            <div id="textObjects" class="text-primary-finish"> </div>
+            <div id="textPlaces" class="text-primary-finish"></div>
+            <button class="button-details" onclick="showDetails()"> Detalii </button>
+            <button class="button-finish" onclick="playAgain()"> Din nou </button>
         </div>
+    </div>
+
+    <div id="sixthPage" class="box_details">
+        <div class="close-details-button corner-right-top" onclick="closeDetails()">
+            <div class="text-menu">x</div>
+        </div>
+
+        <div class="mt-10 clearf">
+            <div class="text-title-divider ">
+                Activități
+            </div>
+            <div class="fleft mt-5">
+                <div class="text-title-picked">
+                    Variante alese
+                </div>
+                <div id="a-pickedList" class="mt-5">
+                </div>
+            </div>
+
+            <div class="fright mt-5">
+                <div class="text-title-correct">
+                    Variante corecte
+                </div>
+                <div id="a-correctList" class="mt-5">
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-20 clearf">
+            <div class="text-title-divider ">
+                Obiecte
+            </div>
+            <div class="fleft mt-5">
+                <div class="text-title-picked">
+                    Variante alese
+                </div>
+                <div id="o-pickedList" class="mt-5">
+                </div>
+            </div>
+
+            <div class="fright mt-5">
+                <div class="text-title-correct">
+                    Variante corecte
+                </div>
+                <div id="o-correctList" class="mt-5">
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-20 mb-15 clearf">
+            <div class="text-title-divider ">
+                Locuri
+            </div>
+            <div class="fleft mt-5">
+                <div class="text-title-picked">
+                    Variante alese
+                </div>
+                <div id="l-pickedList" class="mt-5">
+                </div>
+            </div>
+
+            <div class="fright mt-5">
+                <div class="text-title-correct">
+                    Variante corecte
+                </div>
+                <div id="l-correctList" class="mt-5">
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
