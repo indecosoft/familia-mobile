@@ -43,6 +43,7 @@ namespace Familia.Devices.Bluetooth.Callbacks.BloodPressure {
                 case ProfileState.Disconnected: {
                         gatt.Disconnect();
                         gatt.Close();
+                        Log.Error("GattPressure", "Disconnect");
                         if (Records.Count > 0) {
                             DisplayMessageToUi("Citirea s-a efectuat cu success");
                             var result = Records.Where(e => e != null).ToList().OrderByDescending(v => v.RecordDateTime).ToList();

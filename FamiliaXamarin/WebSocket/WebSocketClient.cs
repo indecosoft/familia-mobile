@@ -20,8 +20,8 @@ using Socket = SocketIO.Client.Socket;
 
 namespace Familia.WebSocket {
     public class WebSocketClient : Object, IWebSocketClient, IListener {
-        Socket _socket;
-        public static Socket Client;
+        public static Socket Socket;
+        //public static Socket Client;
 
         Context _context;
         private SqlHelper<ConversationsRecords> _conversationsRecords;
@@ -40,22 +40,22 @@ namespace Familia.WebSocket {
                     Query = $"token={Utils.GetDefaults("Token")}&imei={Utils.GetDeviceIdentificator(Application.Context)}"
 
                 };
-                _socket = IO.Socket(hostname, options);
+                Socket = IO.Socket(hostname, options);
 
-                _socket.On(Socket.EventConnect, OnConnect);
-                _socket.On(Socket.EventDisconnect, OnDisconnect);
-                _socket.On(Socket.EventConnectError, OnConnectError);
-                _socket.On(Socket.EventConnectTimeout, OnConnectTimeout);
+                Socket.On(Socket.EventConnect, OnConnect);
+                Socket.On(Socket.EventDisconnect, OnDisconnect);
+                Socket.On(Socket.EventConnectError, OnConnectError);
+                Socket.On(Socket.EventConnectTimeout, OnConnectTimeout);
                 //_socket.On(Manager.EventTransport, OnTransport);
 
-                _socket.On("conversation", OnConversation);
-                _socket.On("chat request", OnChatRequest);
-                _socket.On("chat accepted", OnChatAccepted);
-                _socket.On("chat rejected", OnChatRejected);
-                _socket.On("Error", OnError);
+                Socket.On("conversation", OnConversation);
+                Socket.On("chat request", OnChatRequest);
+                Socket.On("chat accepted", OnChatAccepted);
+                Socket.On("chat rejected", OnChatRejected);
+                Socket.On("Error", OnError);
 
-                _socket.Connect();
-                Client = _socket;
+                Socket.Connect();
+                //Client = _socket;
             } catch (Exception e) {
                 Log.Error("WSConnectionError: ", e.ToString());
             }
@@ -66,12 +66,12 @@ namespace Familia.WebSocket {
         }
 
 
-        public static void Disconect() {
-            Client?.Disconnect();
+        public void Disconect() {
+            Socket?.Disconnect();
         }
 
         public void Emit(string eventName, JSONObject value) {
-            _socket?.Emit(eventName, value);
+            Socket?.Emit(eventName, value);
         }
 
         private void OnConnect(Object[] obj) {

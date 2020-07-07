@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tv_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Inregistrare manuala"
+        android:textColor="@drawable/tv_tint_selector"
+        android:textSize="18sp"
+        />
+    <android.support.design.widget.TextInputLayout
+                android:id="@+id/et_sys_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:hint=" "
+		        android:layout_below="@+id/tv_email"
+        >
+	<EditText
+		android:id="@+id/et_sys"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="Sistola"
+		android:textColor="#fff"
+		android:textColorHint="@color/colorSecondary"
+		android:drawableStart="@drawable/heart"
+		android:drawableTint="@drawable/drawable_tint_selector"
+		android:drawablePadding="5dp"
+		android:paddingStart="10dp"
+		android:paddingTop="16dp"
+		android:paddingBottom="16dp"
+		android:paddingEnd="10dp"
+		android:background="@drawable/edit_text_layout"
+		android:inputType="number" 
+         />
+        </android.support.design.widget.TextInputLayout>
+      <android.support.design.widget.TextInputLayout
+                android:id="@+id/et_dia_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint=" "
+		        android:layout_below="@+id/et_sys_layout"
+        >
+    <EditText
+        android:id="@+id/et_dia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Diastola"
+        android:textColor="#fff"
+        android:textColorHint="@color/colorSecondary"
+        android:drawableStart="@drawable/heart"
+        android:drawableTint="@drawable/drawable_tint_selector"
+        android:drawablePadding="5dp"
+        android:paddingStart="10dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:paddingEnd="10dp"
+        android:layout_marginTop="10dp"
+		android:inputType="number" 
+        android:background="@drawable/edit_text_layout"
+        android:layout_below="@+id/et_sys_layout"
+         />
+        </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+                android:id="@+id/et_puls_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint=" "
+		        android:layout_below="@+id/et_dia_layout"
+        >
+       <EditText
+        android:id="@+id/et_puls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Puls"
+        android:textColor="#fff"
+        android:textColorHint="@color/colorSecondary"
+        android:drawableStart="@drawable/heart_pulse"
+        android:drawableTint="@drawable/drawable_tint_selector"
+        android:drawablePadding="5dp"
+        android:paddingStart="10dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:paddingEnd="10dp"
+        android:layout_marginTop="10dp"
+		android:inputType="number" 
+        android:background="@drawable/edit_text_layout"
+        android:layout_below="@+id/et_dia"
+         />
+        </android.support.design.widget.TextInputLayout>
+    <android.support.constraint.ConstraintLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/et_puls_layout">
+
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_weight="0"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:text="Anulare"
+            android:textAlignment="center"
+            android:padding="16dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/secondary_button_style"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintWidth_percent="0.49"/>
+        <Button
+            android:id="@+id/btn_add"
+            android:layout_width="0dp"
+            android:layout_weight="0"
+            android:layout_height="wrap_content"
+            android:text="Adaugare"
+            android:textAlignment="center"
+            android:padding="16dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/main_button_style"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintLeft_toRightOf="@+id/btn_cancel"
+            app:layout_constraintWidth_percent="0.49"/>
+    </android.support.constraint.ConstraintLayout>
+
+
+</RelativeLayout>

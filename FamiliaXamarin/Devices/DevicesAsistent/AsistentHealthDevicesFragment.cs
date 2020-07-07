@@ -52,13 +52,13 @@ namespace Familia.Devices.DevicesAsistent {
 		}
 
 		private async void StartNewActivity(Type activity, DeviceType deviceType) {
-			string deviceId = await ScanQrCode();
-			if (string.IsNullOrEmpty(deviceId)) return;
+			string text = await ScanQrCode();
+			if (string.IsNullOrEmpty(text)) return;
 			var bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
 			var list = await bleDevicesRecords.QueryValuations("SELECT * FROM BluetoothDeviceRecords");
 			if (list.Where(d => d.DeviceType == deviceType).Count() > 0) {
 				var intent = new Intent(Activity, activity);
-				intent.PutExtra("Imei", deviceId);
+				intent.PutExtra("Data", text);
 				Activity.StartActivity(intent);
 			} else {
 				using AlertDialog alertDialog = new AlertDialog.Builder(Activity, Resource.Style.AppTheme_Dialog).Create();
@@ -105,7 +105,8 @@ namespace Familia.Devices.DevicesAsistent {
 		public async Task<string> ScanQrCode() {
 			try {
 				Result qrCodeData = await Utils.ScanQrCode(Activity);
-				return qrCodeData.Text;
+				Log.Error("QrCodeData", qrCodeData.Text);
+				return qrCodeData is null ? null : qrCodeData.Text;
 			} catch (Exception) {
 				return null;
 			}

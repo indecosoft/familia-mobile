@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:padding="16dp">
 
     <ImageView
@@ -13,6 +17,47 @@
         android:src="@drawable/qrcode_scan"
         android:tint="@color/colorAccent"
         android:layout_centerHorizontal="true" />
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below ="@+id/container"
+            >
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btnBloodPressure"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:padding="12dp"
+                    android:text="Tensiune"
+                    android:textAllCaps="true"
+                    android:background="@drawable/main_button_style"
+                    android:textSize="18sp"
+		            android:layout_below ="@+id/container"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent=".49"/>
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btnBloodGlucose"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:padding="12dp"
+                    android:text="Glicemie"
+                    android:textAllCaps="true"
+                    android:background="@drawable/main_button_style"
+                    android:textSize="18sp"
+		            android:layout_below ="@+id/container"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent=".49"/>
+            </android.support.constraint.ConstraintLayout>
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btnScan"
@@ -25,7 +70,7 @@
         android:textAllCaps="true"
         android:background="@drawable/main_button_style"
         android:textSize="18sp"
-		android:layout_below ="@+id/container"/>
+		android:layout_below ="@+id/buttons"/>
 	<android.support.v7.widget.AppCompatButton
         android:id="@+id/btnAnulare"
         android:layout_width="match_parent"
@@ -97,3 +142,4 @@
 
 
 </RelativeLayout>
+</ScrollView>

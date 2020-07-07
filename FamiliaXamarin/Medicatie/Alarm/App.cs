@@ -32,9 +32,7 @@ namespace Familia.Medicatie.Alarm
             {
                 string name = Constants.ChannelId;
                 var description = "my channel desc";
-#pragma warning disable CS0618 // Type or member is obsolete
-                NotificationImportance importance = NotificationManager.ImportanceHigh;
-#pragma warning restore CS0618 // Type or member is obsolete
+                NotificationImportance importance = NotificationImportance.High;
                 var channel = new NotificationChannel(Constants.ChannelId, name, importance)
                 {
                     Description = description

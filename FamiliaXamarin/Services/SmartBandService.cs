@@ -141,7 +141,7 @@ namespace Familia.Services {
 						obj.Put("imei", Utils.GetDeviceIdentificator(this))
 							.Put("idClient", Utils.GetDefaults("IdClient"))
 							.Put("idPersoana", Utils.GetDefaults("IdPersoana")).Put("data", jsonArray)
-							.Put("latitude", ((LocationEventArgs) args).Location.Latitude.ToString().Replace(',', '.'))
+							.Put("laﬁﬁtitude", ((LocationEventArgs) args).Location.Latitude.ToString().Replace(',', '.'))
 							.Put("longitude",
 								((LocationEventArgs) args).Location.Longitude.ToString().Replace(',', '.'));
 						string result = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/smartband/sleep", obj,

@@ -59,27 +59,27 @@ namespace Familia.Devices.DevicesManagement {
             InitEvents();
         }
 
-        public override void OnBackPressed()
-        {
-            base.OnBackPressed();
+        //public override void OnBackPressed()
+        //{
+        //    base.OnBackPressed();
 
-            var intent = new Intent(this, typeof(MainActivity));
-            intent.PutExtra(DevicesRoot, int.Parse(Utils.GetDefaults("UserType")));
-            StartActivity(intent);
+        //    var intent = new Intent(this, typeof(MainActivity));
+        //    intent.PutExtra(DevicesRoot, int.Parse(Utils.GetDefaults("UserType")));
+        //    StartActivity(intent);
 
-           /* if (int.Parse(Utils.GetDefaults("UserType")) == 2) {
+        //   /* if (int.Parse(Utils.GetDefaults("UserType")) == 2) {
 
-                SupportFragmentManager.BeginTransaction()
-                        .Replace(Resource.Id.fragment_container, new AsistentHealthDevicesFragment())
-                        .AddToBackStack(null).Commit();
-            }
-            if (int.Parse(Utils.GetDefaults("UserType")) == 3 || int.Parse(Utils.GetDefaults("UserType")) == 4) {
-                SupportFragmentManager.BeginTransaction()
-                        .Replace(Resource.Id.fragment_container, new HealthDevicesFragment()).AddToBackStack(null)
-                        .Commit();
-            }*/
+        //        SupportFragmentManager.BeginTransaction()
+        //                .Replace(Resource.Id.fragment_container, new AsistentHealthDevicesFragment())
+        //                .AddToBackStack(null).Commit();
+        //    }
+        //    if (int.Parse(Utils.GetDefaults("UserType")) == 3 || int.Parse(Utils.GetDefaults("UserType")) == 4) {
+        //        SupportFragmentManager.BeginTransaction()
+        //                .Replace(Resource.Id.fragment_container, new HealthDevicesFragment()).AddToBackStack(null)
+        //                .Commit();
+        //    }*/
               
-        }
+        //}
 
         protected override async void OnResume() {
             base.OnResume();

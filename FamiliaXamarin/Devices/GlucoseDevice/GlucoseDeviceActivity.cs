@@ -19,6 +19,9 @@ using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
 using Familia.DataModels;
 using Familia.Devices.Bluetooth.Callbacks.Glucose;
+using Familia.Devices.DevicesManagement.Dialogs.Events;
+using Familia.Devices.DevicesManagement.Dialogs.Helpers;
+using Familia.Devices.GlucoseDevice.Dialogs;
 using Familia.Helpers;
 using Java.Text;
 using Java.Util;
@@ -31,9 +34,9 @@ namespace Familia.Devices.GlucoseDevice {
         private BluetoothAdapter _bluetoothAdapter;
         internal BluetoothLeScanner BluetoothScanner;
         private BluetoothManager _bluetoothManager;
-        private bool _send;
         private TextView _glucose;
         //private Button _scanButton;
+        private Button _manualRegisterButton;
         internal TextView LbStatus;
         private ConstraintLayout _dataContainer;
         private LottieAnimationView _animationView;
@@ -44,28 +47,47 @@ namespace Familia.Devices.GlucoseDevice {
         private SqlHelper<DevicesRecords> _bleDevicesDataRecords;
         private string _imei;
 
-        protected override void OnCreate(Bundle savedInstanceState) {
+        protected override async void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.blood_glucose_device);
             InitUi();
             InitEvents();
-            _imei = Intent.GetStringExtra("Imei");
-            if (string.IsNullOrEmpty(_imei)) {
+            string data = Intent.GetStringExtra("Data");
+            if (data != null)
+            {
+                if (Utils.isJson(data))
+                {
+                    _imei = new JSONObject(data).GetString("deviceId");
+                }
+                else
+                {
+                    var decripted = Encryption.Decrypt(data);
+                    if (Utils.isJson(decripted))
+                    {
+                        _imei = new JSONObject(decripted).GetString("imei");
+                    }
+                    else
+                    {
+                        _imei = data;
+                    }
+                }
+            }
+            if (string.IsNullOrEmpty(_imei))
+            {
                 _imei = Utils.GetDeviceIdentificator(this);
             }
-            Task.Run(async () => {
+            List<BluetoothDeviceRecords> list = new List<BluetoothDeviceRecords>();
+           await Task.Run(async () =>
+            {
                 _bleDevicesDataRecords = await SqlHelper<DevicesRecords>.CreateAsync();
-                var bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
-                var list = await bleDevicesRecords.QueryValuations("select * from BluetoothDeviceRecords");
-                RunOnUiThread(() => {
-                    _bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
-                    var listOfSavedDevices = list.ToList();
-                    ScanCallback = new GlucoseScanCallback(this, listOfSavedDevices);
-                    GattCallback = new GlucoseGattCallBack(this, listOfSavedDevices);
-                    MedisanaGattCallback = new MedisanaGattCallback(this);
-                    _animationView.PlayAnimation();
-                });
-            }).Wait();
+                 list = (await (await SqlHelper<BluetoothDeviceRecords>.CreateAsync()).QueryValuations("select * from BluetoothDeviceRecords")).ToList();
+               
+            });
+            _bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
+            ScanCallback = new GlucoseScanCallback(this, list);
+            GattCallback = new GlucoseGattCallBack(this, list);
+            MedisanaGattCallback = new MedisanaGattCallback(this);
+            _animationView.PlayAnimation();
         }
 
         private void InitUi() {
@@ -81,6 +103,8 @@ namespace Familia.Devices.GlucoseDevice {
 
             LbStatus = FindViewById<TextView>(Resource.Id.status);
             _dataContainer = FindViewById<ConstraintLayout>(Resource.Id.dataContainer);
+            _manualRegisterButton = FindViewById<Button>(Resource.Id.manual_register);
+
             _dataContainer.Visibility = ViewStates.Gone;
             _glucose = FindViewById<TextView>(Resource.Id.GlucoseTextView);
             //_scanButton = FindViewById<Button>(Resource.Id.ScanButton);
@@ -93,6 +117,20 @@ namespace Familia.Devices.GlucoseDevice {
 
         private void InitEvents() {
             _animationView.AddAnimatorListener(this);
+            _manualRegisterButton.Click += delegate {
+                var cdd = new GlucoseManualRegisterDialog(this);
+                cdd.DialogState += async delegate (object o, DialogStateEventArgs eventArgs) {
+                    if (eventArgs.Status != DialogStatuses.Dismissed) return;
+
+                    if (cdd.Glucose != null)
+                    {
+                        await UpdateUi(cdd.Glucose);
+                    }
+                };
+                cdd.Show();
+                cdd.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimaryDark);
+
+            };
             //_scanButton.Click += delegate {
             //    if (_bluetoothManager == null) return;
             //    BluetoothScanner.StartScan(ScanCallback);
@@ -102,13 +140,20 @@ namespace Familia.Devices.GlucoseDevice {
             //    _animationView.PlayAnimation();
             //};
         }
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            GattCallback.Dispose();
+            MedisanaGattCallback.Dispose();
+            ScanCallback.Dispose();
 
+        }
         public void OnAnimationCancel(Animator animation) {
             _dataContainer.Visibility = ViewStates.Visible;
             _animationView.Progress = 1f;
         }
 
-        public void OnAnimationEnd(Animator animation) { }
+        public  void OnAnimationEnd(Animator animation) { }
 
         public void OnAnimationRepeat(Animator animation) { }
 
@@ -149,8 +194,7 @@ namespace Familia.Devices.GlucoseDevice {
 
         internal async Task UpdateUi(float? g = null) {
             Log.Error("glucose", g.ToString());
-            if (!_send) {
-                if(g != null) {
+                if (g != null) {
                     Log.Error("Data", "send Data");
                     using var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
                     if (!Utils.CheckNetworkAvailability()) {
@@ -163,7 +207,7 @@ namespace Familia.Devices.GlucoseDevice {
                         JSONObject jsonObject;
                         var jsonArray = new JSONArray();
                         var list = await _bleDevicesDataRecords.QueryValuations("select * from DevicesRecords");
-
+                        Log.Error("list", list.Count().ToString());
                         foreach (DevicesRecords el in list) {
                             try {
                                 jsonObject = new JSONObject();
@@ -210,10 +254,9 @@ namespace Familia.Devices.GlucoseDevice {
                             Toast.MakeText(this, "" + result, ToastLength.Long).Show();
                         }
                     }
-                    _send = true;
                 }
-            }
-            if(g != 1) {
+
+            if (g != 1) {
                 _glucose.Text = GetString(Resource.String.glucose) + " " + g + " md/dL";
             } else {
                 _glucose.Text = string.Empty;

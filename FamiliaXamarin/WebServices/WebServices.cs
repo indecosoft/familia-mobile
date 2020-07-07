@@ -15,6 +15,8 @@ namespace Familia.WebServices
     {
         public static async Task<string> Get(string url)
         {
+            Log.Error("Get Request on", url);
+
             try
             {
                 using (var client = new HttpClient())
@@ -38,6 +40,8 @@ namespace Familia.WebServices
 
         public static async Task<string> Get(string url, string token)
         {
+            Log.Error("Get Token Request on", url);
+
             using (var client = new HttpClient())
             {
                 try
@@ -68,6 +72,8 @@ namespace Familia.WebServices
         {
             try
             {
+                Log.Error("Post Request on", url);
+
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "POST";
@@ -98,6 +104,7 @@ namespace Familia.WebServices
         {
             try
             {
+                Log.Error("Token Post Request on", url);
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "POST";

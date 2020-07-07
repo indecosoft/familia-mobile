@@ -71,22 +71,20 @@ namespace Familia.Services {
 					double distance = Utils.HaversineFormula(_pacientLatitude, _pacientLongitude,
 						((LocationEventArgs) args).Location.Latitude, ((LocationEventArgs) args).Location.Longitude);
 					Log.Error("Distance", "" + distance);
-					Toast.MakeText(this, "" + distance + " metri", ToastLength.Short).Show();
+					Toast.MakeText(this, Math.Round(distance) + " metri.", ToastLength.Short)
+							.Show();
 					if (distance > 180 && distance < 220) {
 						Log.Warn("Distance warning",
-							"mai mult de 200 metri.Esti la " + Math.Round(distance) + " metrii distanta");
-						Toast.MakeText(this, "" + distance, ToastLength.Short).Show();
+							"mai mult de 200 metri. Esti la " + Math.Round(distance) + " metri distanta");
 						_verifications = 0;
 						NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment",
-							"Ai plecat de la pacient? Esti la " + Math.Round(distance) + " metrii distanta");
+							"Ai plecat de la pacient? Esti la " + Math.Round(distance) + " metri distanta");
 
 						GetManager().Notify(100, nb.Build());
 						if (_refreshTime == 15000) return;
 						_refreshTime = 15000;
 						location.ChangeInterval(_refreshTime);
 					} else if (distance > 220) {
-						Toast.MakeText(this, distance + " metri " + _verifications, ToastLength.Short).Show();
-
 						if (_verifications == 15) {
 							NotificationCompat.Builder nb =
 								GetAndroidChannelNotification("Avertisment", "Vizita a fost anulata automat!");
@@ -108,8 +106,7 @@ namespace Familia.Services {
 							location.ChangeInterval(_refreshTime);
 						}
 					} else {
-						Toast.MakeText(this, Math.Round(distance) + " metri. Inca esti bine ;)", ToastLength.Short)
-							.Show();
+						
 						_verifications = 0;
 
 						if (_refreshTime == 15000) return;

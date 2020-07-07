@@ -11,8 +11,7 @@ using Object = Java.Lang.Object;
 
 namespace Familia.WebSocket {
     public class WebSocketLocation : IWebSocketClient {
-        Socket _socket;
-        public Socket Client;
+        public static Socket Socket;
         private readonly Handler handler = new Handler(Looper.MainLooper);
         private readonly LocationManager location = LocationManager.Instance;
         public void Connect(string hostname, int port, Context context) {
@@ -24,28 +23,28 @@ namespace Familia.WebSocket {
                     Query = $"token={Utils.GetDefaults("Token")}&imei={Utils.GetDeviceIdentificator(Application.Context)}"
 
                 };
-                _socket = IO.Socket(hostname, options);
+                Socket = IO.Socket(hostname, options);
 
-                _socket.On(Socket.EventConnect, OnConnect);
-                _socket.On(Socket.EventDisconnect, OnDisconnect);
-                _socket.On(Socket.EventConnectError, OnConnectError);
-                _socket.On(Socket.EventConnectTimeout, OnConnectTimeout);
+                Socket.On(Socket.EventConnect, OnConnect);
+                Socket.On(Socket.EventDisconnect, OnDisconnect);
+                Socket.On(Socket.EventConnectError, OnConnectError);
+                Socket.On(Socket.EventConnectTimeout, OnConnectTimeout);
 
-                _socket.On("get-location", OnGetLocation);
+                Socket.On("get-location", OnGetLocation);
 
-                _socket.Connect();
-                Client = _socket;
+                Socket.Connect();
             } catch (Exception e) {
                 Log.Error("WSConnectionError: ", e.ToString());
             }
         }
 
+
         public void Emit(string eventName, JSONObject value) {
-            _socket?.Emit(eventName, value);
+            Socket?.Emit(eventName, value);
         }
 
         public void Disconect() {
-            Client?.Disconnect();
+            Socket?.Disconnect();
         }
 
         private static void OnConnect(Object[] obj) {
@@ -76,7 +75,7 @@ namespace Familia.WebSocket {
             using var locationObj = new JSONObject();
             locationObj.Put("latitude", (args as LocationEventArgs).Location.Latitude);
             locationObj.Put("longitude", (args as LocationEventArgs).Location.Longitude);
-            _socket.Emit("send-location", locationObj);
+            Socket.Emit("send-location", locationObj);
             location.LocationRequested -= LocationRequested;
         }
     }

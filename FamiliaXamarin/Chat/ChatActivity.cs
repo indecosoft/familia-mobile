@@ -178,7 +178,7 @@ namespace Familia.Chat
                             .Put("from", emailFrom)
                             .Put("accepted", true).Put("room", RoomName);
                         Log.Error("aici", mailObject.ToString());
-                        WebSocketClient.Client.Emit("chat accepted", mailObject);
+                        WebSocketClient.Socket.Emit("chat accepted", mailObject);
                     }
                     catch (JSONException e)
                     {
@@ -224,7 +224,7 @@ namespace Familia.Chat
             }
 
             // perform the sending message attempt.
-            WebSocketClient.Client.Emit("send message", messageToSend);
+            WebSocketClient.Socket.Emit("send message", messageToSend);
         }
 
         public static void AddMessage(string message, int type)
