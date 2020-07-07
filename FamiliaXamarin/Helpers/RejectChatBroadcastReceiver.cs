@@ -16,7 +16,7 @@ namespace Familia.Helpers {
 				JSONObject mailObject = new JSONObject().Put("dest", intent.GetStringExtra("EmailFrom"))
 					.Put("from", emailFrom).Put("accepted", false);
 				Log.Error("aici", mailObject.ToString());
-				WebSocketClient.Client.Emit("chat accepted", mailObject);
+				WebSocketClient.Socket.Emit("chat accepted", mailObject);
 			} catch (JSONException e) {
 				e.PrintStackTrace();
 			}

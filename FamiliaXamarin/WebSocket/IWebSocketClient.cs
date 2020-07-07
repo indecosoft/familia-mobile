@@ -7,6 +7,7 @@ namespace Familia.WebSocket {
         Task ConnectAsync(string hostname, int port, Context context) => null;
         void Connect(string hostname, int port, Context context) {
         }
+        void Disconect();
 
         void Emit(string eventName, JSONObject value);
     }

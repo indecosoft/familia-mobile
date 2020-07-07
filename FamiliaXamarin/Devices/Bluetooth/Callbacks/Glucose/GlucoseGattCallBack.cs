@@ -20,7 +20,7 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 		private readonly Handler _handler = new Handler();
 		private int _timesyncUtcTzCnt;
 		private readonly IEnumerable<BluetoothDeviceRecords> _listOfSavedDevices;
-		private BluetoothGatt _bluetoothGatt;
+		//private BluetoothGatt _bluetoothGatt;
 		private BluetoothGattCharacteristic _glucoseMeasurementContextCharacteristic;
 		private BluetoothGattCharacteristic _customTimeCharacteristic;
 		private BluetoothGattCharacteristic _glucoseMeasurementCharacteristic;
@@ -46,7 +46,7 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 
 		public override void OnConnectionStateChange(BluetoothGatt gatt, GattStatus status, ProfileState newState) {
 			base.OnConnectionStateChange(gatt, status, newState);
-			_bluetoothGatt = gatt;
+			//_bluetoothGatt = gatt;
 			var devicesDataNormalized = from c in _listOfSavedDevices
 				where c.Address == gatt.Device.Address
 				select new {c.Name, c.Address, c.DeviceType};
@@ -59,6 +59,9 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 					DisplayMessageToUi($"Se conecteaza la {devicesDataNormalized.FirstOrDefault()?.Name}...");
 					break;
 				case ProfileState.Disconnected:
+					gatt.Close();
+                    gatt.Disconnect();
+					Log.Error("GattGlucose", "Disconected");
 					DisplayMessageToUi("Citirea s-a efectuat cu success");
 					if (_records.Count > 0) {
 						var oderedRecords = _records.OrderByDescending(r => r.Value.DateTimeRecord).ToList();
@@ -121,12 +124,12 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 			}
 		}
 
-		private void EnableRecordAccessControlPointIndication() {
+		private void EnableRecordAccessControlPointIndication(BluetoothGatt gatt) {
 			if (_racpCharacteristic == null) return;
-			_bluetoothGatt.SetCharacteristicNotification(_racpCharacteristic, true);
+			gatt.SetCharacteristicNotification(_racpCharacteristic, true);
 			BluetoothGattDescriptor descriptor = _racpCharacteristic.GetDescriptor(BLEHelpers.BLE_DESCRIPTOR);
 			descriptor.SetValue(BluetoothGattDescriptor.EnableIndicationValue.ToArray());
-			_bluetoothGatt.WriteDescriptor(descriptor);
+			gatt.WriteDescriptor(descriptor);
 		}
 
 		public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,
@@ -164,7 +167,7 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 					} else if (BLEHelpers.BLE_CHAR_GLUCOSE_SERIALNUM.Equals(characteristic.Uuid)) {
 						_serial = characteristic.GetStringValue(0);
 						Log.Error("Serial", _serial);
-						EnableRecordAccessControlPointIndication();
+						EnableRecordAccessControlPointIndication(gatt);
 					}
 
 					break;
@@ -196,10 +199,10 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 			[GeneratedEnum] GattStatus status) {
 			if (status != GattStatus.Success) return;
 			if (BLEHelpers.BLE_CHAR_GLUCOSE_MEASUREMENT.Equals(descriptor.Characteristic.Uuid)) {
-				EnableGlucoseContextNotification();
+				EnableGlucoseContextNotification(gatt);
 			} else if (BLEHelpers.BLE_CHAR_GLUCOSE_CONTEXT.Equals(descriptor.Characteristic.Uuid)) {
 				if (!_isIsensMeter) {
-					RequestSequence();
+					RequestSequence(gatt);
 				} else {
 					if (_customTimeCharacteristic == null ||
 					    !_customTimeCharacteristic.Uuid.Equals(BLEHelpers.BLE_CHAR_CUSTOM_TIME_MC)) {
@@ -207,37 +210,37 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 						    !_customTimeCharacteristic.Uuid.Equals(BLEHelpers.BLE_CHAR_CUSTOM_TIME_TI) &&
 						    !_customTimeCharacteristic.Uuid.Equals(BLEHelpers.BLE_CHAR_CUSTOM_TIME_TI_NEW)) {
 							_handler.Post(() => {
-								if (SetFlag()) return;
+								if (SetFlag(gatt)) return;
 								try {
 									Thread.Sleep(500);
-									SetFlag();
+									SetFlag(gatt);
 								} catch (Exception e) {
 									Log.Error("error", e.Message);
 								}
 							});
 						} else {
-							EnableTimeSyncIndication();
+							EnableTimeSyncIndication(gatt);
 						}
 					} else {
 						try {
 							Thread.Sleep(500);
-							WriteTimeSync_ex();
+							WriteTimeSync_ex(gatt);
 							Thread.Sleep(500);
-							RequestSequence();
+							RequestSequence(gatt);
 						} catch (Exception e) {
 							Log.Error("DescriptorWrite nu are customTime characteristic", e.Message);
 						}
 					}
 				}
 			} else if (BLEHelpers.BLE_CHAR_GLUCOSE_RACP.Equals(descriptor.Characteristic.Uuid)) {
-				EnableGlucoseMeasurementNotification();
+				EnableGlucoseMeasurementNotification(gatt);
 			} else if (BLEHelpers.BLE_CHAR_CUSTOM_TIME_TI.Equals(descriptor.Characteristic.Uuid) ||
 			           BLEHelpers.BLE_CHAR_CUSTOM_TIME_TI_NEW.Equals(descriptor.Characteristic.Uuid)) {
 				_handler.Post(() => {
-					if (SetCustomFlag()) return;
+					if (SetCustomFlag(gatt)) return;
 					try {
 						Thread.Sleep(500);
-						SetCustomFlag();
+						SetCustomFlag(gatt);
 					} catch (Exception e) {
 						Log.Error("error", e.Message);
 					}
@@ -247,13 +250,13 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 			}
 		}
 
-		private void EnableGlucoseMeasurementNotification() {
+		private void EnableGlucoseMeasurementNotification(BluetoothGatt gatt) {
 			if (_glucoseMeasurementCharacteristic == null) return;
-			_bluetoothGatt.SetCharacteristicNotification(_glucoseMeasurementCharacteristic, true);
+			gatt.SetCharacteristicNotification(_glucoseMeasurementCharacteristic, true);
 			BluetoothGattDescriptor descriptor =
 				_glucoseMeasurementCharacteristic.GetDescriptor(BLEHelpers.BLE_DESCRIPTOR);
 			descriptor.SetValue(BluetoothGattDescriptor.EnableNotificationValue.ToArray());
-			_bluetoothGatt.WriteDescriptor(descriptor);
+			gatt.WriteDescriptor(descriptor);
 		}
 
 		private void SetCustomData_MC(BluetoothGattCharacteristic bluetoothGattCharacteristic) {
@@ -273,33 +276,33 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 			}
 		}
 
-		private void WriteTimeSync_ex() {
+		private void WriteTimeSync_ex(BluetoothGatt gatt) {
 			try {
-				if (_bluetoothGatt == null || _customTimeCharacteristic == null) return;
+				if (gatt == null || _customTimeCharacteristic == null) return;
 				SetCustomData_MC(_customTimeCharacteristic);
-				_bluetoothGatt.WriteCharacteristic(_customTimeCharacteristic);
+				gatt.WriteCharacteristic(_customTimeCharacteristic);
 			} catch (Exception e) {
 				Log.Error("Error", e.Message);
 			}
 		}
 
-		private void RequestSequence() {
+		private void RequestSequence(BluetoothGatt gatt) {
 			_handler.Post(() => {
-				if (GetSequenceNumber()) return;
+				if (GetSequenceNumber(gatt)) return;
 				try {
 					Thread.Sleep(500);
-					GetSequenceNumber();
+					GetSequenceNumber(gatt);
 				} catch (Exception e) {
 					Log.Error("error Sequence", e.Message);
 				}
 			});
 		}
 
-		private bool GetSequenceNumber() {
+		private bool GetSequenceNumber(BluetoothGatt gatt) {
 			try {
-				if (_bluetoothGatt != null && _racpCharacteristic != null) {
+				if (gatt != null && _racpCharacteristic != null) {
 					SetOpCode(_racpCharacteristic, 4, 1, new int[0]);
-					return _bluetoothGatt.WriteCharacteristic(_racpCharacteristic);
+					return gatt.WriteCharacteristic(_racpCharacteristic);
 				}
 			} catch (Exception e) {
 				Log.Error("Error", e.Message);
@@ -322,18 +325,18 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 			}
 		}
 
-		private void EnableGlucoseContextNotification() {
+		private void EnableGlucoseContextNotification(BluetoothGatt gatt) {
 			if (_glucoseMeasurementContextCharacteristic != null) {
-				_bluetoothGatt.SetCharacteristicNotification(_glucoseMeasurementContextCharacteristic, true);
+				gatt.SetCharacteristicNotification(_glucoseMeasurementContextCharacteristic, true);
 				BluetoothGattDescriptor descriptor =
 					_glucoseMeasurementContextCharacteristic.GetDescriptor(BLEHelpers.BLE_DESCRIPTOR);
 				descriptor.SetValue(BluetoothGattDescriptor.EnableNotificationValue.ToArray());
-				_bluetoothGatt.WriteDescriptor(descriptor);
+				gatt.WriteDescriptor(descriptor);
 			}
 		}
 
-		private bool SetFlag() {
-			if (_bluetoothGatt == null || _racpCharacteristic == null) {
+		private bool SetFlag(BluetoothGatt gatt) {
+			if (gatt == null || _racpCharacteristic == null) {
 				return false;
 			}
 
@@ -343,11 +346,11 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 				_racpCharacteristic.SetValue((byte[]) (Array) bArr);
 			}
 
-			return _bluetoothGatt.WriteCharacteristic(_racpCharacteristic);
+			return gatt.WriteCharacteristic(_racpCharacteristic);
 		}
 
-		private bool SetCustomFlag() {
-			if (_bluetoothGatt == null || _customTimeCharacteristic == null) {
+		private bool SetCustomFlag(BluetoothGatt gatt) {
+			if (gatt == null || _customTimeCharacteristic == null) {
 				return false;
 			}
 
@@ -358,7 +361,7 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 					_customTimeCharacteristic.SetValue((byte[]) (Array) bArr);
 				}
 
-				return _bluetoothGatt.WriteCharacteristic(_customTimeCharacteristic);
+				return gatt.WriteCharacteristic(_customTimeCharacteristic);
 			} catch (Exception e) {
 				Log.Error("setCustomFlagError", e.Message);
 			}
@@ -366,19 +369,19 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 			return false;
 		}
 
-		private void EnableTimeSyncIndication() {
+		private void EnableTimeSyncIndication(BluetoothGatt gatt) {
 			if (_customTimeCharacteristic == null) return;
-			_bluetoothGatt.SetCharacteristicNotification(_customTimeCharacteristic, true);
+			gatt.SetCharacteristicNotification(_customTimeCharacteristic, true);
 			BluetoothGattDescriptor descriptor = _customTimeCharacteristic.GetDescriptor(BLEHelpers.BLE_DESCRIPTOR);
 			descriptor.SetValue(BluetoothGattDescriptor.EnableNotificationValue.ToArray());
-			_bluetoothGatt.WriteDescriptor(descriptor);
+			gatt.WriteDescriptor(descriptor);
 		}
 
-		private void GetCustomTimeSync() {
+		private void GetCustomTimeSync(BluetoothGatt gatt) {
 			try {
-				if (_bluetoothGatt == null || _customTimeCharacteristic == null) return;
+				if (gatt == null || _customTimeCharacteristic == null) return;
 				SetCustomTimeSync(_customTimeCharacteristic, new GregorianCalendar());
-				_bluetoothGatt.WriteCharacteristic(_customTimeCharacteristic);
+				gatt.WriteCharacteristic(_customTimeCharacteristic);
 			} catch (Exception e) {
 				Log.Error("Error", e.Message);
 			}
@@ -402,23 +405,23 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 			}
 		}
 
-		private void RequestBleAll() {
+		private void RequestBleAll(BluetoothGatt gatt) {
 			_handler.Post(() => {
-				if (GetAllRecords()) return;
+				if (GetAllRecords(gatt)) return;
 				try {
 					Thread.Sleep(500);
-					GetAllRecords();
+					GetAllRecords(gatt);
 				} catch (Exception e) {
 					Log.Error("requestBleAll", e.Message);
 				}
 			});
 		}
 
-		private bool GetAllRecords() {
+		private bool GetAllRecords(BluetoothGatt gatt) {
 			try {
-				if (_bluetoothGatt != null && _racpCharacteristic != null) {
+				if (gatt != null && _racpCharacteristic != null) {
 					SetOpCode(_racpCharacteristic, 1, 1, new int[0]);
-					return _bluetoothGatt.WriteCharacteristic(_racpCharacteristic);
+					return gatt.WriteCharacteristic(_racpCharacteristic);
 				}
 			} catch (Exception e) {
 				Log.Error("getAllRecords", e.Message);
@@ -438,17 +441,17 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 				int intValue = characteristic.GetIntValue(GattFormat.Uint8, 0).IntValue();
 				switch (intValue) {
 					case 5 when !_isIsensMeter || _timesyncUtcTzCnt >= 3:
-						RequestSequence();
+						RequestSequence(gatt);
 						break;
 					case 5:
-						GetCustomTimeSync();
+						GetCustomTimeSync(gatt);
 						break;
 					case 192 when characteristic.GetIntValue(GattFormat.Uint8, 1).IntValue() == 2: {
-						if (_bluetoothGatt == null || _racpCharacteristic == null) {
+						if (gatt == null || _racpCharacteristic == null) {
 							return;
 						}
 
-						GetCustomTimeSync();
+						GetCustomTimeSync(gatt);
 						break;
 					}
 				}
@@ -499,18 +502,18 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 				} else if (BLEHelpers.BLE_CHAR_GLUCOSE_RACP.Equals(characteristic.Uuid)) {
 					int status = characteristic.GetIntValue(GattFormat.Uint8, 0).IntValue();
 					switch (status) {
-						case 5 when _bluetoothGatt == null || _racpCharacteristic == null:
+						case 5 when gatt == null || _racpCharacteristic == null:
 							return;
 						case 5 when _serial == null:
 							Log.Error("Error", "serial is null");
 							return;
 						case 5:
-							RequestBleAll();
+							RequestBleAll(gatt);
 							break;
 						case 6: {
 							if (!_isDownloadComplete) {
 								_isDownloadComplete = true;
-								_bluetoothGatt.WriteCharacteristic(characteristic);
+									gatt.WriteCharacteristic(characteristic);
 							}
 
 							break;

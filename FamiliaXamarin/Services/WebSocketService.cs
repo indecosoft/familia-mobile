@@ -20,6 +20,9 @@ namespace Familia.Services {
 
 		public override void OnDestroy() {
 			base.OnDestroy();
+			Log.Error("WebSocket", "Disconected");
+			_socketClient.Disconect();
+			_webSocketLocation.Disconect();
 			//UnregisterReceiver(_charger);
 		}
 

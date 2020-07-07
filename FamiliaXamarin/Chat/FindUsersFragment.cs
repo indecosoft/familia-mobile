@@ -41,7 +41,7 @@ namespace Familia.Chat {
 						try {
 							JSONObject emailObject = new JSONObject().Put("dest", el.Email)
 								.Put("from", Utils.GetDefaults("Email"));
-							WebSocketClient.Client.Emit("chat request", emailObject);
+							WebSocketClient.Socket.Emit("chat request", emailObject);
 						} catch (Exception e) {
 							Log.Error("Chat Request Err: ", e.Message);
 						}

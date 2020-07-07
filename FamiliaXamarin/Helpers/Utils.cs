@@ -21,6 +21,8 @@ using Familia.Chat;
 using Java.Lang;
 using Java.Text;
 using Java.Util;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Org.Json;
 using ZXing;
 using ZXing.Common;
@@ -142,6 +144,18 @@ namespace Familia.Helpers {
 
 			return null;
 		}
+        public static bool isJson(string text)
+        {
+			try
+			{
+				JToken.Parse(text);
+				return true;
+			}
+			catch (JsonReaderException)
+			{
+				return false;
+			}
+        }
 
 		public static async Task<JSONObject> ScanEncryptedQrCode(Activity activity) {
 			MobileBarcodeScanner.Initialize(new Application());

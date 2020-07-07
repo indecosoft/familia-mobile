@@ -47,12 +47,14 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/tv_last_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0"
+                
                 android:layout_marginEnd="5dp"
                 android:text="Nume"
                 android:textColor="@drawable/tv_tint_selector"
@@ -96,6 +98,7 @@
                 android:id="@+id/tv_first_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="45dp"
                 android:text="Prenume"

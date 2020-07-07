@@ -147,7 +147,6 @@ namespace Familia {
 
 			switch (type) {
 				case 1:
-					Toast.MakeText(this, "1", ToastLength.Long).Show();
 					menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
 					menuNav.FindItem(Resource.Id.nav_devices).SetVisible(false);
 					menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
@@ -161,7 +160,6 @@ namespace Familia {
 					
 					break;
 				case 2: // asistent
-					Toast.MakeText(this, "2", ToastLength.Long).Show();
 					menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(true);
 					menuNav.FindItem(Resource.Id.nav_QRCode).SetVisible(false);
 					menuNav.FindItem(Resource.Id.harta).SetVisible(false);
@@ -170,11 +168,10 @@ namespace Familia {
 					menuNav.FindItem(Resource.Id.medicatie).SetVisible(false);
 					SupportFragmentManager.BeginTransaction()
 						.Replace(Resource.Id.fragment_container, new AsistentForm()).AddToBackStack(null).Commit();
-					Title = "Asistenta sociala";
+					Title = "Dispozitive de masurare";
 					StartForegroundService(_webSocketServiceIntent);
 					break;
 				case 3: // pacient
-					Toast.MakeText(this, "3", ToastLength.Long).Show();
 					menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
 					menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
 					menuNav.FindItem(Resource.Id.nav_devices_asistent).SetVisible(false);
@@ -192,7 +189,6 @@ namespace Familia {
 
 					break;
 				case 4: // self registered
-					Toast.MakeText(this, "4", ToastLength.Long).Show();
 					menuNav.FindItem(Resource.Id.nav_asistenta).SetVisible(false);
 					menuNav.FindItem(Resource.Id.nav_monitorizare)?.SetVisible(false);
 					menuNav.FindItem(Resource.Id.nav_monitorizare).SetVisible(false);
@@ -225,16 +221,16 @@ namespace Familia {
 							SupportFragmentManager.BeginTransaction()
 								.Replace(Resource.Id.fragment_container, new AsistentHealthDevicesFragment())
 								.AddToBackStack(null).Commit();
-							Title = "Dispozitive de masurare";
+							
 							break;
 						case 3:
 						case 4:
 							SupportFragmentManager.BeginTransaction()
 								.Replace(Resource.Id.fragment_container, new HealthDevicesFragment()).AddToBackStack(null)
 								.Commit();
-							Title = "Dispozitive de masurare";
 							break;
 					}
+					Title = "Dispozitive de masurare";
 				}
 			}
 			else
@@ -422,7 +418,6 @@ namespace Familia {
 					break;
 				case Resource.Id.logout:
 
-					WebSocketClient.Disconect();
 					//Process.KillProcess(Process.MyPid());
 					StopService(_loacationServiceIntent);
 					StopService(_webSocketServiceIntent);
