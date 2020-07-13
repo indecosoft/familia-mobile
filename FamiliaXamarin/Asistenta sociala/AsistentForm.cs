@@ -120,6 +120,8 @@ namespace Familia.Asistenta_sociala
             {
                 _formContainer.Visibility = ViewStates.Gone;
                 _btnAnulare.Visibility = ViewStates.Gone;
+                _btnBloodPressure.Visibility = ViewStates.Gone;
+                _btnBloodGlucose.Visibility = ViewStates.Gone;
 
                 _btnScan.Text = "Incepe activitatea";
             }
@@ -141,13 +143,25 @@ namespace Familia.Asistenta_sociala
                 }
                 _btnScan.Text = "Finalizeaza activitatea";
                 _btnScan.Enabled = false;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                Intent distanceIntent = new Intent(Activity, typeof(DistanceCalculator));
+                if (_qrJsonData.Has("latitude") && _qrJsonData.Has("longitudine"))
                 {
-                    Activity.StartForegroundService(new Intent(Activity, typeof(DistanceCalculator)));
+                    distanceIntent.PutExtra("Latitude", _qrJsonData.GetString("latitude"));
+                    distanceIntent.PutExtra("Longitude", _qrJsonData.GetString("longitudine"));
                 }
                 else
                 {
-                    Activity.StartService(new Intent(Activity, typeof(DistanceCalculator)));
+                    distanceIntent.PutExtra("Latitude", _location.GetString("latitude"));
+                    distanceIntent.PutExtra("Longitude", _location.GetString("longitude"));
+                }
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    Activity.StartForegroundService(distanceIntent);
+                }
+                else
+                {
+                    Activity.StartService(distanceIntent);
                 }
             }
 
@@ -375,13 +389,24 @@ namespace Familia.Asistenta_sociala
                 JSONObject obj = new JSONObject().Put("QRData", _qrJsonData.ToString()).Put("Start", _dateTimeStart).Put("Location", locationObj.ToString());
                 Utils.SetDefaults("ActivityStart", obj.ToString());
 
+                Intent distanceIntent = new Intent(Activity, typeof(DistanceCalculator));
+                if(_qrJsonData.Has("latitude") && _qrJsonData.Has("longitudine"))
+                {
+                    distanceIntent.PutExtra("Latitude", _qrJsonData.GetString("latitude"));
+                    distanceIntent.PutExtra("Longitude", _qrJsonData.GetString("longitudine"));
+                } else
+                {
+                    distanceIntent.PutExtra("Latitude", locationObj.GetString("latitude"));
+                    distanceIntent.PutExtra("Longitude", locationObj.GetString("longitude"));
+                }
+
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
-                    Activity.StartForegroundService(_distanceCalculatorService);
+                    Activity.StartForegroundService(distanceIntent);
                 }
                 else
                 {
-                    Activity.StartService(_distanceCalculatorService);
+                    Activity.StartService(distanceIntent);
                 }
 
             }
@@ -469,56 +494,6 @@ namespace Familia.Asistenta_sociala
 
             }
             _progressBarDialog.Dismiss();
-
-
-            //if (Utils.IsServiceRunning(typeof(DistanceCalculator), Activity))
-            //{
-            //    await location.StopRequestionLocationUpdates();
-            //    location.LocationRequested -= LocationRequested;
-            //    return;
-            //}
-
-            //_location = new JSONObject().Put("latitude", _latitude).Put("longitude", _longitude);
-            //_benefitsArray = new JSONArray();
-            //foreach (SearchListModel t in _selectedBenefits)
-            //    _benefitsArray.Put(t.Id);
-
-            //_details = new JSONObject().Put("benefit", _benefitsArray).Put("details", _tbDetails.Text);
-            //Log.Error("Details", _details.ToString());
-
-            //await Task.Run(async () =>
-            //{
-            //    _latitude = double.Parse(Utils.GetDefaults("Latitude"));
-            //    _longitude = double.Parse(Utils.GetDefaults("Longitude"));
-
-            //    JSONObject dataToSend = new JSONObject().Put("dateTimeStart", _dateTimeStart)
-            //        .Put("dateTimeStop", _dateTimeEnd).Put("qrCodeData", _qrJsonData)
-            //        .Put("location", _location).Put("details", _details);
-            //    string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/consult", dataToSend, Utils.GetDefaults("Token"));
-            //    if (response != null)
-            //    {
-            //        var responseJson = new JSONObject(response);
-            //        switch (responseJson.GetInt("status"))
-            //        {
-            //            case 0:
-            //                Snackbar.Make(_formContainer, "Nu sunteti la pacient!", Snackbar.LengthLong).Show();
-            //                break;
-            //            case 1:
-            //                Snackbar.Make(_formContainer, "Eroare conectare la server", Snackbar.LengthLong).Show();
-            //                break;
-            //            case 2:
-            //                break;
-            //        }
-            //        Activity.RunOnUiThread(_progressBarDialog.Dismiss);
-            //    }
-            //    else
-            //        Snackbar.Make(_formContainer, "Nu se poate conecta la server!", Snackbar.LengthLong).Show();
-            //});
-            //Activity.StopService(_distanceCalculatorService);
-            //_tbDetails.Text = string.Empty;
-            //_selectedBenefits.Clear();
-            //_btnScan.Enabled = true;
-            //_btnBenefits.Text = "Selecteaza beneficii";
         }
 
         public override void OnActivityResult(int requestCode, int resultCode, Intent data)

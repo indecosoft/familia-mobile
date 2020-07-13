@@ -262,11 +262,7 @@ namespace Familia.Devices.GlucoseDevice {
                 _glucose.Text = string.Empty;
             }
             _animationView.CancelAnimation();
-            //ActivateScanButton();
         }
 
-        //void ActivateScanButton() {
-        //    //_scanButton.Enabled = true;
-        //}
     }
 }
