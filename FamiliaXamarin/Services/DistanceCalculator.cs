@@ -32,10 +32,17 @@ namespace Familia.Services {
 		public override async void OnDestroy() {
 			await location.StopRequestionLocationUpdates();
 			location.LocationRequested -= Location_LocationRequested;
+			_pacientLatitude = 0;
+			_pacientLongitude = 0;
+
 		}
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) {
-			init();
+            _pacientLatitude = double.Parse(intent.GetStringExtra("Latitude"));
+            _pacientLongitude = double.Parse(intent.GetStringExtra("Longitude"));
+            Log.Error("PatientLocation", _pacientLatitude.ToString());
+            Log.Error("PatientLocation", _pacientLongitude.ToString());
+            init();
 			return StartCommandResult.Sticky;
 		}
         private async void init()
@@ -62,11 +69,11 @@ namespace Familia.Services {
 
 		private void Location_LocationRequested(object source, EventArgs args) {
 			try {
-				if (_pacientLatitude == 0 ||_pacientLongitude == 0)
-                {
-					_pacientLatitude = ((LocationEventArgs)args).Location.Latitude;
-					_pacientLongitude = ((LocationEventArgs)args).Location.Longitude;
-				}
+				//if (_pacientLatitude == 0 ||_pacientLongitude == 0)
+    //            {
+				//	_pacientLatitude = ((LocationEventArgs)args).Location.Latitude;
+				//	_pacientLongitude = ((LocationEventArgs)args).Location.Longitude;
+				//}
 				if (!Utils.GetDefaults("ActivityStart").Equals(string.Empty)) {
 					double distance = Utils.HaversineFormula(_pacientLatitude, _pacientLongitude,
 						((LocationEventArgs) args).Location.Latitude, ((LocationEventArgs) args).Location.Longitude);
@@ -93,6 +100,9 @@ namespace Familia.Services {
 
 							//trimitere date la server
 							Utils.SetDefaults("ActivityStart", string.Empty);
+							Utils.SetDefaults("QrId", string.Empty);
+							Utils.SetDefaults("QrCode", string.Empty);
+							Utils.SetDefaults("readedQR", string.Empty);
 							StopSelf();
 						} else {
 							NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment",

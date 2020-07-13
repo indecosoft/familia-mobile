@@ -46,7 +46,6 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 
 		public override void OnConnectionStateChange(BluetoothGatt gatt, GattStatus status, ProfileState newState) {
 			base.OnConnectionStateChange(gatt, status, newState);
-			//_bluetoothGatt = gatt;
 			var devicesDataNormalized = from c in _listOfSavedDevices
 				where c.Address == gatt.Device.Address
 				select new {c.Name, c.Address, c.DeviceType};
@@ -61,8 +60,7 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 				case ProfileState.Disconnected:
 					gatt.Close();
                     gatt.Disconnect();
-					Log.Error("GattGlucose", "Disconected");
-					DisplayMessageToUi("Citirea s-a efectuat cu success");
+					DisplayMessageToUi("Citirea s-a efectuat cu succes");
 					if (_records.Count > 0) {
 						var oderedRecords = _records.OrderByDescending(r => r.Value.DateTimeRecord).ToList();
 						Task.Run(() => {
