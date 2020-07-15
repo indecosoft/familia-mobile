@@ -57,18 +57,29 @@ namespace Familia.Devices.PressureDevice
             InitEvents();
             IEnumerable<BluetoothDeviceRecords> list;
             string data = Intent.GetStringExtra("Data");
+            Log.Error("Imei" , data);
             if(data != null)
             {
                 if (Utils.isJson(data))
                 {
+                    Log.Error("Imei" , "data is json");
+
                     _imei = new JSONObject(data).GetString("deviceId");
                 } else {
-                    var decripted = Encryption.Decrypt(data);
-                    if (Utils.isJson(decripted))
+                    Log.Error("Imei" , "data is  not json");
+
+                    var decrypted = Encryption.Decrypt(data);
+                    Log.Error("Imei decrypted" , decrypted);
+
+                    if (!string.IsNullOrEmpty(decrypted) && Utils.isJson(decrypted))
                     {
-                        _imei = new JSONObject(decripted).GetString("imei");
+                        Log.Error("Imei" , "tring to parse decrypted");
+
+                        _imei = new JSONObject(decrypted).GetString("imei");
                     } else
                     {
+                        Log.Error("Imei" , "imei is data");
+
                         _imei = data;
                     }
                 }

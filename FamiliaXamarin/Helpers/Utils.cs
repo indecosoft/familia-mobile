@@ -147,18 +147,28 @@ namespace Familia.Helpers {
 
 			return null;
 		}
-        public static bool isJson(string text)
+        public static bool isJson(string strInput)
         {
-			try
+			strInput = strInput.Trim();
+			if ((strInput.StartsWith("{") && strInput.EndsWith("}")) || //For object
+				(strInput.StartsWith("[") && strInput.EndsWith("]"))) //For array
 			{
-				JToken.Parse(text);
-				return true;
-			}
-			catch (JsonReaderException)
-			{
+				try {
+					var obj = JToken.Parse(strInput);
+					return true;
+				} catch (JsonReaderException jex) {
+					//Exception in parsing json
+					Console.WriteLine(jex.Message);
+					return false;
+				} catch (Exception ex) //some other exception
+				  {
+					Console.WriteLine(ex.ToString());
+					return false;
+				}
+			} else {
 				return false;
 			}
-        }
+		}
 
 		public static async Task<JSONObject> ScanEncryptedQrCode(Activity activity) {
 			MobileBarcodeScanner.Initialize(new Application());
