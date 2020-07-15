@@ -49,15 +49,18 @@ namespace Familia.Helpers {
 		}
 
 		public static void SetDefaults(string key, string value) =>
-			PreferenceManager.GetDefaultSharedPreferences(Application.Context).Edit().PutString(key, value).Commit();
+            PreferenceManager.GetDefaultSharedPreferences(Application.Context).Edit().PutString(key, value).Commit();
+        //Application.Context.GetSharedPreferences("Store Data",FileCreationMode.WorldWriteable).Edit().PutString(key, value).Commit();
 
-		public static void RemoveDefaults() =>
+
+        public static void RemoveDefaults() =>
 			Application.Context
 				.GetSharedPreferences(PreferenceManager.GetDefaultSharedPreferencesName(Application.Context), 0).Edit()
 				.Clear().Commit();
 
 		public static string GetDefaults(string key) =>
-			PreferenceManager.GetDefaultSharedPreferences(Application.Context).GetString(key, null);
+        PreferenceManager.GetDefaultSharedPreferences(Application.Context).GetString(key, null);
+        //Application.Context.GetSharedPreferences("Store Data", FileCreationMode.WorldReadable).GetString(key, null);
 
 		public static bool PasswordValidator(string s) =>
 			new Regex("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,100}$").Match(s).Success;

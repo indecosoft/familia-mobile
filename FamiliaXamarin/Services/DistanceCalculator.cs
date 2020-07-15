@@ -17,7 +17,7 @@ namespace Familia.Services {
 	internal class DistanceCalculator : Service {
 		private double _pacientLatitude, _pacientLongitude;
 		private NotificationManager _mNotificationManager;
-		private int _verifications;
+		private int _verifications = 15;
 		private int _refreshTime = 15000;
 		private LocationManager location = LocationManager.Instance;
 
@@ -70,10 +70,14 @@ namespace Familia.Services {
 		private void Location_LocationRequested(object source, EventArgs args) {
 			try {
 				//if (_pacientLatitude == 0 ||_pacientLongitude == 0)
-    //            {
+				//            {
 				//	_pacientLatitude = ((LocationEventArgs)args).Location.Latitude;
 				//	_pacientLongitude = ((LocationEventArgs)args).Location.Longitude;
 				//}
+				Log.Error("Patient" , $"{_pacientLatitude},{_pacientLongitude}");
+				Log.Error("Asistent" , $"{((LocationEventArgs)args).Location.Latitude},{((LocationEventArgs)args).Location.Longitude}");
+
+
 				if (!Utils.GetDefaults("ActivityStart").Equals(string.Empty)) {
 					double distance = Utils.HaversineFormula(_pacientLatitude, _pacientLongitude,
 						((LocationEventArgs) args).Location.Latitude, ((LocationEventArgs) args).Location.Longitude);
@@ -87,16 +91,16 @@ namespace Familia.Services {
 						NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment",
 							"Ai plecat de la pacient? Esti la " + Math.Round(distance) + " metri distanta");
 
-						GetManager().Notify(100, nb.Build());
+						GetManager().Notify(2, nb.Build());
 						if (_refreshTime == 15000) return;
 						_refreshTime = 15000;
 						location.ChangeInterval(_refreshTime);
 					} else if (distance > 220) {
-						if (_verifications == 15) {
+						if (_verifications == 0) {
 							NotificationCompat.Builder nb =
 								GetAndroidChannelNotification("Avertisment", "Vizita a fost anulata automat!");
-							GetManager().Notify(1000, nb.Build());
-							_verifications = 0;
+							GetManager().Notify(2 , nb.Build());
+							_verifications = 15;
 
 							//trimitere date la server
 							Utils.SetDefaults("ActivityStart", string.Empty);
@@ -106,18 +110,18 @@ namespace Familia.Services {
 							StopSelf();
 						} else {
 							NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment",
-								"Vizita va fi anulata automat deoarece te afli la " + Math.Round(distance) +
-								" metrii distanta de pacient! Mai ai " + (15 - _verifications) +
+								"Vizita va fi anulata automat deoarece te afli la " + (Math.Round(distance) > 1000 ? Math.Round(distance)/1000 + " kilometri" : Math.Round(distance) + " metri") +
+								" distanta de pacient! Mai ai " + (_verifications) +
 								" minute sa te intorci!");
-							GetManager().Notify(1000, nb.Build());
-							_verifications++;
+							GetManager().Notify(2, nb.Build());
+							_verifications--;
 							if (_refreshTime == 60000) return;
 							_refreshTime = 60000;
 							location.ChangeInterval(_refreshTime);
 						}
 					} else {
 						
-						_verifications = 0;
+						_verifications = 15;
 
 						if (_refreshTime == 15000) return;
 						_refreshTime = 15000;
@@ -134,7 +138,7 @@ namespace Familia.Services {
 
 		private void CreateChannels() {
 			if (Build.VERSION.SdkInt < BuildVersionCodes.O) return;
-			var androidChannel = new NotificationChannel("ANDROID_CHANNEL_ID", "ANDROID_CHANNEL_NAME",
+			var androidChannel = new NotificationChannel("Distance_Calculation_ID" , "Distance Calculation" ,
 				NotificationImportance.High);
 			androidChannel.EnableLights(true);
 			androidChannel.EnableVibration(true);
@@ -153,7 +157,7 @@ namespace Familia.Services {
 
 			PendingIntent acceptIntent = PendingIntent.GetActivity(this, 1, intent, PendingIntentFlags.OneShot);
 
-			return new NotificationCompat.Builder(ApplicationContext, "ANDROID_CHANNEL_ID").SetContentTitle(title)
+			return new NotificationCompat.Builder(ApplicationContext, "Distance_Calculation_ID").SetContentTitle(title)
 				.SetContentText(body).SetSmallIcon(Resource.Drawable.alert)
 				.SetStyle(new NotificationCompat.BigTextStyle().BigText(body))
 				.SetPriority(NotificationCompat.PriorityHigh).SetContentIntent(acceptIntent).SetAutoCancel(true);
