@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
@@ -38,8 +39,10 @@ namespace Familia.Services {
 		}
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) {
-            _pacientLatitude = double.Parse(intent.GetStringExtra("Latitude"));
-            _pacientLongitude = double.Parse(intent.GetStringExtra("Longitude"));
+			Log.Error("PatientLocation from shared" , intent.GetStringExtra("Latitude"));
+			Log.Error("PatientLocation from shared" , intent.GetStringExtra("Longitude"));
+			_pacientLatitude = double.Parse(intent.GetStringExtra("Latitude") , CultureInfo.InvariantCulture);
+            _pacientLongitude = double.Parse(intent.GetStringExtra("Longitude") , CultureInfo.InvariantCulture);
             Log.Error("PatientLocation", _pacientLatitude.ToString());
             Log.Error("PatientLocation", _pacientLongitude.ToString());
             init();
@@ -69,12 +72,11 @@ namespace Familia.Services {
 
 		private void Location_LocationRequested(object source, EventArgs args) {
 			try {
-				//if (_pacientLatitude == 0 ||_pacientLongitude == 0)
-				//            {
-				//	_pacientLatitude = ((LocationEventArgs)args).Location.Latitude;
-				//	_pacientLongitude = ((LocationEventArgs)args).Location.Longitude;
-				//}
-				Log.Error("Patient" , $"{_pacientLatitude},{_pacientLongitude}");
+                //if (_pacientLatitude == 0 || _pacientLongitude == 0) {
+                //    _pacientLatitude = ((LocationEventArgs)args).Location.Latitude;
+                //    _pacientLongitude = ((LocationEventArgs)args).Location.Longitude;
+                //}
+                Log.Error("Patient" , $"{_pacientLatitude},{_pacientLongitude}");
 				Log.Error("Asistent" , $"{((LocationEventArgs)args).Location.Latitude},{((LocationEventArgs)args).Location.Longitude}");
 
 

@@ -277,12 +277,10 @@ namespace Familia.Asistenta_sociala
             } else
             {
                 isPacientWithoutApp = false;
-
-                _qrJsonData = new JSONObject(Encryption.Decrypt(readedQR));
-                if (_qrJsonData is null) return;
                 try
                 {
-
+                    _qrJsonData = new JSONObject(Encryption.Decrypt(readedQR));
+                    if (_qrJsonData is null) return;
                     try
                     {
                         Log.Error("QrCode", _qrJsonData.ToString());
@@ -313,6 +311,7 @@ namespace Familia.Asistenta_sociala
                 }
                 catch (Exception)
                 {
+                    Snackbar.Make(_formContainer , "QRCode invalid!" , Snackbar.LengthLong).Show();
                     _progressBarDialog.Dismiss();
                 }
 
