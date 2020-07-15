@@ -37,7 +37,6 @@ namespace Familia.Asistenta_sociala
         private Button _btnScan, _btnAnulare, _btnBenefits, _btnBloodPressure, _btnBloodGlucose;
         private ConstraintLayout _formContainer;
         private string _dateTimeStart, _dateTimeEnd;
-        private double _latitude, _longitude;
         private ProgressBarDialog _progressBarDialog;
         private JSONObject _location, _details, _qrJsonData;
         private JSONArray _benefitsArray;
@@ -70,6 +69,7 @@ namespace Familia.Asistenta_sociala
             return _selectedBenefits.Count > 0 && !string.IsNullOrEmpty(_tbDetails.Text);
 
         }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             // Use this to return your custom view for this Fragment
@@ -143,25 +143,24 @@ namespace Familia.Asistenta_sociala
                 }
                 _btnScan.Text = "Finalizeaza activitatea";
                 _btnScan.Enabled = false;
-                Intent distanceIntent = new Intent(Activity, typeof(DistanceCalculator));
                 if (_qrJsonData.Has("latitude") && _qrJsonData.Has("longitudine"))
                 {
-                    distanceIntent.PutExtra("Latitude", _qrJsonData.GetString("latitude"));
-                    distanceIntent.PutExtra("Longitude", _qrJsonData.GetString("longitudine"));
+                    _distanceCalculatorService.PutExtra("Latitude", _qrJsonData.GetString("latitude"));
+                    _distanceCalculatorService.PutExtra("Longitude", _qrJsonData.GetString("longitudine"));
                 }
                 else
                 {
-                    distanceIntent.PutExtra("Latitude", _location.GetString("latitude"));
-                    distanceIntent.PutExtra("Longitude", _location.GetString("longitude"));
+                    _distanceCalculatorService.PutExtra("Latitude", _location.GetString("latitude"));
+                    _distanceCalculatorService.PutExtra("Longitude", _location.GetString("longitude"));
                 }
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
-                    Activity.StartForegroundService(distanceIntent);
+                    Activity.StartForegroundService(_distanceCalculatorService);
                 }
                 else
                 {
-                    Activity.StartService(distanceIntent);
+                    Activity.StartService(_distanceCalculatorService);
                 }
             }
 
@@ -389,24 +388,24 @@ namespace Familia.Asistenta_sociala
                 JSONObject obj = new JSONObject().Put("QRData", _qrJsonData.ToString()).Put("Start", _dateTimeStart).Put("Location", locationObj.ToString());
                 Utils.SetDefaults("ActivityStart", obj.ToString());
 
-                Intent distanceIntent = new Intent(Activity, typeof(DistanceCalculator));
+                
                 if(_qrJsonData.Has("latitude") && _qrJsonData.Has("longitudine"))
                 {
-                    distanceIntent.PutExtra("Latitude", _qrJsonData.GetString("latitude"));
-                    distanceIntent.PutExtra("Longitude", _qrJsonData.GetString("longitudine"));
+                    _distanceCalculatorService.PutExtra("Latitude", _qrJsonData.GetString("latitude"));
+                    _distanceCalculatorService.PutExtra("Longitude", _qrJsonData.GetString("longitudine"));
                 } else
                 {
-                    distanceIntent.PutExtra("Latitude", locationObj.GetString("latitude"));
-                    distanceIntent.PutExtra("Longitude", locationObj.GetString("longitude"));
+                    _distanceCalculatorService.PutExtra("Latitude", locationObj.GetString("latitude"));
+                    _distanceCalculatorService.PutExtra("Longitude", locationObj.GetString("longitude"));
                 }
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
-                    Activity.StartForegroundService(distanceIntent);
+                    Activity.StartForegroundService(_distanceCalculatorService);
                 }
                 else
                 {
-                    Activity.StartService(distanceIntent);
+                    Activity.StartService(_distanceCalculatorService);
                 }
 
             }

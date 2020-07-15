@@ -39,29 +39,29 @@ namespace Familia {
 
 
         // Dev
-        public static string SaveDeviceDataUrl { get; } = "https://gisdev.indecosoft.net/chat/api/save-device-measurements";
-        public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/chat";
-        public static string WebSocketLocationAddress { get; } = "https://gisdev.indecosoft.net/location";
-        public static string WebSocketAddress { get; } = "https://gisdev.indecosoft.net/ws";
-        public static string Config { get; } = "https://gisdev.indecosoft.net/chat/api/get-device-config";
+        //public static string SaveDeviceDataUrl { get; } = "https://gisdev.indecosoft.net/chat/api/save-device-measurements";
+        //public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/chat";
+        //public static string WebSocketLocationAddress { get; } = "https://gisdev.indecosoft.net/location";
+        //public static string WebSocketAddress { get; } = "https://gisdev.indecosoft.net/ws";
+        //public static string Config { get; } = "https://gisdev.indecosoft.net/chat/api/get-device-config";
 
 
         // Prod
-  //      public static string SaveDeviceDataUrl { get; } = "https://gis.indecosoft.net/chat/api/save-device-measurements";
-		//public static string PublicServerAddress { get; } = "https://gis.indecosoft.net/chat";
-		//public static string WebSocketLocationAddress { get; } = "https://gis.indecosoft.net/location";
-		//public static string WebSocketAddress { get; } = "https://gis.indecosoft.net/ws";
-		//public static string Config { get; } = "https://gis.indecosoft.net/chat/api/get-device-config";
+        public static string SaveDeviceDataUrl { get; } = "https://gis.indecosoft.net/chat/api/save-device-measurements";
+        public static string PublicServerAddress { get; } = "https://gis.indecosoft.net/chat";
+        public static string WebSocketLocationAddress { get; } = "https://gis.indecosoft.net/location";
+        public static string WebSocketAddress { get; } = "https://gis.indecosoft.net/ws";
+        public static string Config { get; } = "https://gis.indecosoft.net/chat/api/get-device-config";
 
 
-		// local
-		//public static string SaveDeviceDataUrl { get; } = "http://192.168.101.107/devices/save-device-measurements";
-		//public static string PublicServerAddress { get; } = "http://192.168.101.107:3000";
-		//public static string WebSocketLocationAddress { get; } = "http://192.168.101.107:3000/location";
-		//public static string WebSocketAddress { get; } = "http://192.168.101.107:3000/ws";
+        // local
+        //public static string SaveDeviceDataUrl { get; } = "http://192.168.101.107/devices/save-device-measurements";
+        //public static string PublicServerAddress { get; } = "http://192.168.101.107:3000";
+        //public static string WebSocketLocationAddress { get; } = "http://192.168.101.107:3000/location";
+        //public static string WebSocketAddress { get; } = "http://192.168.101.107:3000/ws";
 
 
-		public static int WebSocketPort { get; } = 3000;
+        public static int WebSocketPort { get; } = 3000;
 		public static int RequestGallery { get; } = 2;
 		public static int RequestCamera { get; } = 1;
 	}

@@ -101,7 +101,7 @@ namespace Familia.Devices.PressureDevice
             _manualRegisterButton.Click += delegate {
                 BloodPressureData model = new BloodPressureData();
                 var cdd = new BloodPressureManualRegisterDialog(this, model);
-                cdd.DialogState += async delegate (object o, DialogStateEventArgs eventArgs) {
+                cdd.DialogState += delegate (object o, DialogStateEventArgs eventArgs) {
                     if (eventArgs.Status != DialogStatuses.Dismissed) return;
 
                     if(model != null)

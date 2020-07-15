@@ -33,7 +33,7 @@ namespace Familia.Location {
 
             if (!Utils.IsGooglePlayServicesInstalled(Application.Context)) return;
             _locationRequest = new LocationRequest()
-                .SetPriority(LocationRequest.PriorityBalancedPowerAccuracy)
+                .SetPriority(LocationRequest.PriorityHighAccuracy)
                 .SetInterval(miliseconds)
                 .SetFastestInterval(miliseconds)
                 .SetMaxWaitTime(miliseconds+1000);
