@@ -7,6 +7,7 @@ using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
 using Android.Widget;
+using Familia.Asistenta_sociala;
 using Familia.Helpers;
 using Familia.Location;
 using Familia.Medicatie.Alarm;
@@ -14,13 +15,16 @@ using Exception = System.Exception;
 using Math = System.Math;
 
 namespace Familia.Services {
+
+
 	[Service]
 	internal class DistanceCalculator : Service {
 		private double _pacientLatitude, _pacientLongitude;
 		private NotificationManager _mNotificationManager;
-		private int _verifications = 15;
+		private int _verifications = 2;
 		private int _refreshTime = 15000;
-		private LocationManager location = LocationManager.Instance;
+		private readonly LocationManager location = LocationManager.Instance;
+		private static IServiceStoppedListener listener;
 
 		public override IBinder OnBind(Intent intent) {
 			throw new NotImplementedException();
@@ -31,11 +35,12 @@ namespace Familia.Services {
 		}
 
 		public override async void OnDestroy() {
-			await location.StopRequestionLocationUpdates();
 			location.LocationRequested -= Location_LocationRequested;
+			await location.StopRequestionLocationUpdates();
 			_pacientLatitude = 0;
 			_pacientLongitude = 0;
-
+			if (listener is null) return;
+			listener.OnServiceStopped();
 		}
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) {
@@ -63,7 +68,6 @@ namespace Familia.Services {
 				Console.WriteLine(e);
 				StopSelf();
 			}
-			// Enlist this instance of the service as a foreground service
 
 			location.LocationRequested += Location_LocationRequested;
 
@@ -102,8 +106,6 @@ namespace Familia.Services {
 							NotificationCompat.Builder nb =
 								GetAndroidChannelNotification("Avertisment", "Vizita a fost anulata automat!");
 							GetManager().Notify(2 , nb.Build());
-							_verifications = 15;
-
 							//trimitere date la server
 							Utils.SetDefaults("ActivityStart", string.Empty);
 							Utils.SetDefaults("QrId", string.Empty);
@@ -123,17 +125,25 @@ namespace Familia.Services {
 						}
 					} else {
 						
-						_verifications = 15;
+						_verifications = 2;
 
 						if (_refreshTime == 15000) return;
 						_refreshTime = 15000;
 						location.ChangeInterval(_refreshTime);
 					}
 				} else {
+					Utils.SetDefaults("ActivityStart" , string.Empty);
+					Utils.SetDefaults("QrId" , string.Empty);
+					Utils.SetDefaults("QrCode" , string.Empty);
+					Utils.SetDefaults("readedQR" , string.Empty);
 					StopSelf();
 				}
 			} catch (Exception e) {
 				Log.Error($"Error occurred in {nameof(DistanceCalculator)} service: ", e.Message);
+				Utils.SetDefaults("ActivityStart" , string.Empty);
+				Utils.SetDefaults("QrId" , string.Empty);
+				Utils.SetDefaults("QrCode" , string.Empty);
+				Utils.SetDefaults("readedQR" , string.Empty);
 				StopSelf();
 			}
 		}
@@ -164,5 +174,13 @@ namespace Familia.Services {
 				.SetStyle(new NotificationCompat.BigTextStyle().BigText(body))
 				.SetPriority(NotificationCompat.PriorityHigh).SetContentIntent(acceptIntent).SetAutoCancel(true);
 		}
-	}
+		public static void SetListener(IServiceStoppedListener mlistener) {
+			listener = mlistener;
+		}
+
+		public interface IServiceStoppedListener {
+			public void OnServiceStopped();
+		}
+
+    }
 }

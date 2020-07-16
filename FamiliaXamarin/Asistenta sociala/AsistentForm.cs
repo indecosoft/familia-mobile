@@ -31,7 +31,7 @@ using LocationEventArgs = Familia.Location.LocationEventArgs;
 
 namespace Familia.Asistenta_sociala
 {
-    public class AsistentForm : Fragment
+    public class AsistentForm : Fragment, DistanceCalculator.IServiceStoppedListener
     {
         private EditText _tbDetails;
         private Button _btnScan, _btnAnulare, _btnBenefits, _btnBloodPressure, _btnBloodGlucose;
@@ -143,25 +143,7 @@ namespace Familia.Asistenta_sociala
                 }
                 _btnScan.Text = "Finalizeaza activitatea";
                 _btnScan.Enabled = false;
-                if (_qrJsonData.Has("latitude") && _qrJsonData.Has("longitudine"))
-                {
-                    _distanceCalculatorService.PutExtra("Latitude", _qrJsonData.GetString("latitude"));
-                    _distanceCalculatorService.PutExtra("Longitude", _qrJsonData.GetString("longitudine"));
-                }
-                else
-                {
-                    _distanceCalculatorService.PutExtra("Latitude", _location.GetString("latitude"));
-                    _distanceCalculatorService.PutExtra("Longitude", _location.GetString("longitude"));
-                }
-
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                {
-                    Activity.StartForegroundService(_distanceCalculatorService);
-                }
-                else
-                {
-                    Activity.StartService(_distanceCalculatorService);
-                }
+                StartDistanceCalculationService();
             }
 
             _btnScan.Click += BtnScan_Click;
@@ -179,6 +161,29 @@ namespace Familia.Asistenta_sociala
 
 
             return view;
+        }
+        private void StartDistanceCalculationService(JSONObject locationObj = null) {
+            if (_qrJsonData.Has("latitude") && _qrJsonData.Has("longitudine")) {
+                _distanceCalculatorService.PutExtra("Latitude" , _qrJsonData.GetString("latitude"));
+                _distanceCalculatorService.PutExtra("Longitude" , _qrJsonData.GetString("longitudine"));
+            } else {
+                if(locationObj != null) {
+                    _distanceCalculatorService.PutExtra("Latitude" , locationObj.GetString("latitude"));
+                    _distanceCalculatorService.PutExtra("Longitude" , locationObj.GetString("longitude"));
+                } else {
+                    _distanceCalculatorService.PutExtra("Latitude" , _location.GetString("latitude"));
+                    _distanceCalculatorService.PutExtra("Longitude" , _location.GetString("longitude"));
+                }
+            }
+            if (Utils.IsServiceRunning(typeof(DistanceCalculator), Activity)) {
+                Activity.StopService(_distanceCalculatorService);
+            }
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O) {
+                Activity.StartForegroundService(_distanceCalculatorService);
+            } else {
+                Activity.StartService(_distanceCalculatorService);
+            }
+            DistanceCalculator.SetListener(this);
         }
         private async void StartNewActivity(Type activity, DeviceType deviceType)
         {
@@ -387,26 +392,7 @@ namespace Familia.Asistenta_sociala
                 JSONObject obj = new JSONObject().Put("QRData", _qrJsonData.ToString()).Put("Start", _dateTimeStart).Put("Location", locationObj.ToString());
                 Utils.SetDefaults("ActivityStart", obj.ToString());
 
-                
-                if(_qrJsonData.Has("latitude") && _qrJsonData.Has("longitudine"))
-                {
-                    _distanceCalculatorService.PutExtra("Latitude", _qrJsonData.GetString("latitude"));
-                    _distanceCalculatorService.PutExtra("Longitude", _qrJsonData.GetString("longitudine"));
-                } else
-                {
-                    _distanceCalculatorService.PutExtra("Latitude", locationObj.GetString("latitude"));
-                    _distanceCalculatorService.PutExtra("Longitude", locationObj.GetString("longitude"));
-                }
-
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                {
-                    Activity.StartForegroundService(_distanceCalculatorService);
-                }
-                else
-                {
-                    Activity.StartService(_distanceCalculatorService);
-                }
-
+                StartDistanceCalculationService(locationObj);
             }
             else
             {
@@ -511,6 +497,24 @@ namespace Familia.Asistenta_sociala
             }
         }
 
+        public void OnServiceStopped() {
+            Utils.SetDefaults("ActivityStart" , string.Empty);
+            Utils.SetDefaults("QrId" , string.Empty);
+            Utils.SetDefaults("QrCode" , string.Empty);
+            Utils.SetDefaults("readedQR" , string.Empty);
+
+
+            _formContainer.Visibility = ViewStates.Gone;
+            _btnAnulare.Visibility = ViewStates.Gone;
+            _btnBloodPressure.Visibility = ViewStates.Gone;
+            _btnBloodGlucose.Visibility = ViewStates.Gone;
+
+            _btnScan.Text = "Incepe activitatea";
+            _selectedBenefits.Clear();
+            _tbDetails.Text = string.Empty;
+            _btnBenefits.Text = "Selecteaza beneficii";
+            _btnScan.Enabled = true;
+        }
     }
 
 }
