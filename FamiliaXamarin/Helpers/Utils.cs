@@ -375,9 +375,24 @@ namespace Familia.Helpers {
 			return activeNetwork != null && activeNetwork.IsConnected;
 		}
 
-		[Obsolete]
-		public static bool IsServiceRunning(Type classTypeof, Context context) =>
-			((ActivityManager) context.GetSystemService(Context.ActivityService)).GetRunningServices(int.MaxValue)
-			.Any(service => service.Service.ShortClassName == classTypeof.ToString());
+
+        public static bool IsServiceRunning(Type classTypeof) {
+			ActivityManager manager = (ActivityManager)Application.Context.GetSystemService(Context.ActivityService);
+#pragma warning disable CS0618 // Type or member is obsolete
+            foreach (ActivityManager.RunningServiceInfo service in manager.GetRunningServices(Integer.MaxValue)) {
+#pragma warning restore CS0618 // Type or member is obsolete
+				//Log.Error("Service-ul SCN: " , service.Service.ShortClassName);
+				//Log.Error("Service-ul N: " , service.Service.ClassName.Split('.')[1]);
+				//Log.Error("Service-ul CN: " , service.Service.Class.CanonicalName);
+				//Log.Error("Service-ul T: " , classTypeof.ToString());
+				//Log.Error("Service-ul TN: " , classTypeof.Name);
+				if (classTypeof.Name == service.Service.ClassName.Split('.')[1]) {
+					Log.Error("Utils" , "Service is running");
+					return true;
+				}
+			}
+			Log.Error("Utils" , "Service is not running");
+			return false;
+		}
 	}
 }

@@ -32,14 +32,16 @@ namespace Familia.Location {
             }
 
             if (!Utils.IsGooglePlayServicesInstalled(Application.Context)) return;
-            _locationRequest = new LocationRequest()
-                .SetPriority(LocationRequest.PriorityHighAccuracy)
-                .SetInterval(miliseconds)
-                .SetFastestInterval(miliseconds)
-                .SetMaxWaitTime(miliseconds+1000);
-            _locationCallback = new FusedLocationProviderCallback(this);
+            if(_fusedLocationProviderClient is null || _locationRequest is null) {
+                _locationRequest = new LocationRequest()
+               .SetPriority(LocationRequest.PriorityHighAccuracy)
+               .SetInterval(miliseconds)
+               .SetFastestInterval(miliseconds)
+               .SetMaxWaitTime(miliseconds + 1000);
+                _locationCallback = new FusedLocationProviderCallback(this);
 
-            _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Application.Context);
+                _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Application.Context);
+            }
             await RequestLocationUpdates();
         }
         public async void ChangeInterval(int miliseconds = 1000 * 60 * 30) {

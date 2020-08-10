@@ -49,6 +49,7 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 			var devicesDataNormalized = from c in _listOfSavedDevices
 				where c.Address == gatt.Device.Address
 				select new {c.Name, c.Address, c.DeviceType};
+			((GlucoseDeviceActivity)_context).isDeviceConnected = true;
 			switch (newState) {
 				case ProfileState.Connected:
 					DisplayMessageToUi($"S-a conectat la {devicesDataNormalized.FirstOrDefault()?.Name}...");
@@ -58,6 +59,7 @@ namespace Familia.Devices.Bluetooth.Callbacks.Glucose {
 					DisplayMessageToUi($"Se conecteaza la {devicesDataNormalized.FirstOrDefault()?.Name}...");
 					break;
 				case ProfileState.Disconnected:
+					((GlucoseDeviceActivity)_context).isDeviceConnected = false;
 					gatt.Close();
                     gatt.Disconnect();
 					DisplayMessageToUi("Citirea s-a efectuat cu succes");
