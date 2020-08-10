@@ -43,7 +43,7 @@ namespace Familia.Asistenta_sociala {
         private bool isPacientWithoutApp;
         LocationManager location = LocationManager.Instance;
         string readedQR;
-
+        string inProgressQRCode = "";
 
         private void IntiUi(View v) {
 
@@ -78,6 +78,7 @@ namespace Familia.Asistenta_sociala {
             string fromPreferences = Utils.GetDefaults("ActivityStart");
             string qrData = Utils.GetDefaults("QrCode");
             readedQR = Utils.GetDefaults("readedQR");
+            inProgressQRCode = Utils.GetDefaults("InProgressQRCode");
             _btnBloodPressure.Visibility = ViewStates.Gone;
             _btnBloodGlucose.Visibility = ViewStates.Gone;
             _tbDetails.TextChanged += delegate {
@@ -85,23 +86,26 @@ namespace Familia.Asistenta_sociala {
                 _btnScan.Enabled = FieldsValidation();
             };
             _btnAnulare.Click += delegate {
-                Utils.SetDefaults("ActivityStart" , string.Empty);
-                Utils.SetDefaults("QrId" , string.Empty);
-                Utils.SetDefaults("QrCode" , string.Empty);
-                Utils.SetDefaults("readedQR" , string.Empty);
-
-
-                _formContainer.Visibility = ViewStates.Gone;
-                _btnAnulare.Visibility = ViewStates.Gone;
-                _btnBloodPressure.Visibility = ViewStates.Gone;
-                _btnBloodGlucose.Visibility = ViewStates.Gone;
-
-                _btnScan.Text = "Incepe activitatea";
                 Activity.StopService(_distanceCalculatorService);
-                _selectedBenefits.Clear();
-                _tbDetails.Text = string.Empty;
-                _btnBenefits.Text = "Selecteaza beneficii";
-                _btnScan.Enabled = true;
+                //Utils.SetDefaults("ActivityStart" , string.Empty);
+                //Utils.SetDefaults("QrId" , string.Empty);
+                //Utils.SetDefaults("QrCode" , string.Empty);
+                //Utils.SetDefaults("readedQR" , string.Empty);
+
+
+                //_formContainer.Visibility = ViewStates.Gone;
+                //_btnAnulare.Visibility = ViewStates.Gone;
+                //_btnBloodPressure.Visibility = ViewStates.Gone;
+                //_btnBloodGlucose.Visibility = ViewStates.Gone;
+
+                //_btnScan.Text = "Incepe activitatea";
+
+                //_selectedBenefits.Clear();
+                //_tbDetails.Text = string.Empty;
+                //_btnBenefits.Text = "Selecteaza beneficii";
+                //_btnScan.Enabled = true;
+                OnServiceStopped();
+
             };
             _btnBloodPressure.Click += _btnBloodPressure_Click;
             _btnBloodGlucose.Click += _btnBloodGlucose_Click;
@@ -234,7 +238,17 @@ namespace Familia.Asistenta_sociala {
             Date dateTimeNow = sdf.Parse(currentDateandTime);
             var result = await Utils.ScanQrCode(Activity);
             if (result is null) return;
+            //if (string.IsNullOrEmpty(inProgressQRCode)) {
+            //    inProgressQRCode = result.Text;
+            //    Utils.SetDefaults("InProgressQRCode" , inProgressQRCode);
+            //} else {
+            //    if (inProgressQRCode != result.Text) {
+            //        Snackbar.Make(_formContainer , "QRCode invalid!" , Snackbar.LengthLong).Show();
+            //        return;
+            //    }
+            //}
             readedQR = result.Text;
+      
             Utils.SetDefaults("readedQR" , readedQR);
             if (Utils.isJson(readedQR)) {
                 Log.Error("QrCode" , "is json");
@@ -261,21 +275,16 @@ namespace Familia.Asistenta_sociala {
                             await CheckActivity(currentDateandTime);
                         } else {
                             Snackbar.Make(_formContainer , "QRCode expirat! Va rugam sa generati alt cod QR!" , Snackbar.LengthLong).Show();
-                            _progressBarDialog.Dismiss();
                         }
 
                     } catch (JSONException) {
                         Snackbar.Make(_formContainer , "QRCode invalid!" , Snackbar.LengthLong).Show();
-                        _progressBarDialog.Dismiss();
 
                     }
 
-
                 } catch (Exception) {
                     Snackbar.Make(_formContainer , "QRCode invalid!" , Snackbar.LengthLong).Show();
-                    _progressBarDialog.Dismiss();
                 }
-
             }
         }
 
@@ -302,16 +311,10 @@ namespace Familia.Asistenta_sociala {
                     ex.PrintStackTrace();
                 }
             } else {
-                _formContainer.Visibility = ViewStates.Gone;
-                _btnAnulare.Visibility = ViewStates.Gone;
-                Utils.SetDefaults("QrId" , string.Empty);
-
                 try {
 
-                    if (ContextCompat.CheckSelfPermission(Activity ,
-                            Manifest.Permission.AccessFineLocation) != Permission.Granted) return;
                     location.LocationRequested += LocationRequested;
-                    await location.StartRequestingLocation();
+                    await location.StartRequestingLocation(1000);
 
                 } catch (JSONException ex) {
                     ex.PrintStackTrace();
@@ -321,17 +324,14 @@ namespace Familia.Asistenta_sociala {
 
         private async void LocationRequested(object source , EventArgs args) {
             _progressBarDialog.Show();
-            Log.Error("Latitude tst" , ((LocationEventArgs)args).Location.Latitude.ToString());
-            Log.Error("Longitude tst" , ((LocationEventArgs)args).Location.Longitude.ToString());
             using var locationObj = new JSONObject();
             locationObj.Put("latitude" , ((LocationEventArgs)args).Location.Latitude);
             locationObj.Put("longitude" , ((LocationEventArgs)args).Location.Longitude);
 
             if (_btnScan.Text.Equals("Incepe activitatea")) {
-                Log.Error("Asist" , "Start");
                 location.LocationRequested -= LocationRequested;
-
                 await location.StopRequestionLocationUpdates();
+                Log.Error("Asist" , "Start");
 
                 _btnScan.Text = "Finalizeaza activitatea";
                 JSONObject obj = new JSONObject().Put("QRData" , _qrJsonData.ToString()).Put("Start" , _dateTimeStart).Put("Location" , locationObj.ToString());
@@ -339,79 +339,70 @@ namespace Familia.Asistenta_sociala {
 
                 StartDistanceCalculationService(locationObj);
             } else {
-                Log.Error("Asist" , "Stop");
-                Activity.StopService(_distanceCalculatorService);
                 location.LocationRequested -= LocationRequested;
-
                 await location.StopRequestionLocationUpdates();
-                Utils.SetDefaults("ActivityStart" , string.Empty);
+                Log.Error("Asist" , "Stop");
                 using var sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 string currentDateandTime = sdf.Format(new Date());
                 _dateTimeEnd = currentDateandTime;
-                _btnScan.Text = "Incepe activitatea";
                 _benefitsArray = new JSONArray();
                 foreach (SearchListModel t in _selectedBenefits)
                     _benefitsArray.Put(t.Id);
 
                 _details = new JSONObject().Put("benefit" , _benefitsArray).Put("details" , _tbDetails.Text);
                 Log.Error("Details" , _details.ToString());
-                //Activity.StopService(_distanceCalculatorService);
-                _tbDetails.Text = string.Empty;
-                _selectedBenefits.Clear();
-                _btnScan.Enabled = true;
-                _btnBenefits.Text = "Selecteaza beneficii";
-                //await Task.Run(async () =>
-                //{
-                Log.Error("before send" , _qrJsonData.ToString());
-
-                if (isPacientWithoutApp) {
-                    JSONObject dataToSend = new JSONObject().Put("dateTimeStart" , _dateTimeStart)
-                    .Put("dateTimeStop" , _dateTimeEnd)
-                    .Put("imei" , _qrJsonData.GetString("deviceId"))
-                    .Put("location" , locationObj).Put("details" , _details);
-                    string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/consultByImei" , dataToSend , Utils.GetDefaults("Token"));
-                    if (response != null) {
-                        var responseJson = new JSONObject(response);
-                        switch (responseJson.GetInt("status")) {
-                            case 0:
-                                Snackbar.Make(_formContainer , "Nu sunteti la pacient!" , Snackbar.LengthLong).Show();
-                                break;
-                            case 1:
-                                Snackbar.Make(_formContainer , "Eroare conectare la server" , Snackbar.LengthLong).Show();
-                                break;
-                            case 2:
-                                break;
-                        }
-                        //Activity.RunOnUiThread(_progressBarDialog.Dismiss);
-                    } else
-                        Snackbar.Make(_formContainer , "Nu se poate conecta la server!" , Snackbar.LengthLong).Show();
-                } else {
-                    JSONObject dataToSend = new JSONObject().Put("dateTimeStart" , _dateTimeStart)
-                    .Put("dateTimeStop" , _dateTimeEnd).Put("qrCodeData" , _qrJsonData)
-                    .Put("location" , locationObj).Put("details" , _details);
-                    string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/consult" , dataToSend , Utils.GetDefaults("Token"));
-                    if (response != null) {
-                        var responseJson = new JSONObject(response);
-                        switch (responseJson.GetInt("status")) {
-                            case 0:
-                                Snackbar.Make(_formContainer , "Nu sunteti la pacient!" , Snackbar.LengthLong).Show();
-                                break;
-                            case 1:
-                                Snackbar.Make(_formContainer , "Eroare conectare la server" , Snackbar.LengthLong).Show();
-                                break;
-                            case 2:
-                                break;
-                        }
-                        //Activity.RunOnUiThread(_progressBarDialog.Dismiss);
-                    } else
-                        Snackbar.Make(_formContainer , "Nu se poate conecta la server!" , Snackbar.LengthLong).Show();
-                }
+                Activity.StopService(_distanceCalculatorService);
 
 
+                //await Task.Run(async () => {
+                    Log.Error("before send" , _qrJsonData.ToString());
+
+                    if (isPacientWithoutApp) {
+                        JSONObject dataToSend = new JSONObject().Put("dateTimeStart" , _dateTimeStart)
+                        .Put("dateTimeStop" , _dateTimeEnd)
+                        .Put("imei" , _qrJsonData.GetString("deviceId"))
+                        .Put("location" , locationObj).Put("details" , _details);
+                        string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/consultByImei" , dataToSend , Utils.GetDefaults("Token"));
+                        Log.Error("Data Payload" , dataToSend.ToString());
+                        if (response != null) {
+                            var responseJson = new JSONObject(response);
+                            switch (responseJson.GetInt("status")) {
+                                case 0:
+                                    Snackbar.Make(_formContainer , "Nu sunteti la pacient!" , Snackbar.LengthLong).Show();
+                                    break;
+                                case 1:
+                                    Snackbar.Make(_formContainer , "Eroare conectare la server" , Snackbar.LengthLong).Show();
+                                    break;
+                                case 2:
+                                    break;
+                            }
+                            //Activity.RunOnUiThread(_progressBarDialog.Dismiss);
+                        } else
+                            Snackbar.Make(_formContainer , "Nu se poate conecta la server!" , Snackbar.LengthLong).Show();
+                    } else {
+                        JSONObject dataToSend = new JSONObject().Put("dateTimeStart" , _dateTimeStart)
+                        .Put("dateTimeStop" , _dateTimeEnd).Put("qrCodeData" , _qrJsonData)
+                        .Put("location" , locationObj).Put("details" , _details);
+                        string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/consult" , dataToSend , Utils.GetDefaults("Token"));
+                        if (response != null) {
+                            var responseJson = new JSONObject(response);
+                            switch (responseJson.GetInt("status")) {
+                                case 0:
+                                    Snackbar.Make(_formContainer , "Nu sunteti la pacient!" , Snackbar.LengthLong).Show();
+                                    break;
+                                case 1:
+                                    Snackbar.Make(_formContainer , "Eroare conectare la server" , Snackbar.LengthLong).Show();
+                                    break;
+                                case 2:
+                                    break;
+                            }
+                            //Activity.RunOnUiThread(_progressBarDialog.Dismiss);
+                        } else
+                            Snackbar.Make(_formContainer , "Nu se poate conecta la server!" , Snackbar.LengthLong).Show();
+                    }
+                OnServiceStopped();
 
                 //});
-
-
             }
             _progressBarDialog.Dismiss();
         }
@@ -444,10 +435,12 @@ namespace Familia.Asistenta_sociala {
             _btnBloodGlucose.Visibility = ViewStates.Gone;
 
             _btnScan.Text = "Incepe activitatea";
+            _btnBenefits.Text = "Selecteaza beneficii";
+
             _selectedBenefits.Clear();
             _tbDetails.Text = string.Empty;
-            _btnBenefits.Text = "Selecteaza beneficii";
             _btnScan.Enabled = true;
+            inProgressQRCode = string.Empty;
         }
     }
 
