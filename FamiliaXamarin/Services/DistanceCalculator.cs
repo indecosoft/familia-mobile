@@ -21,7 +21,7 @@ namespace Familia.Services {
 	internal class DistanceCalculator : Service {
 		private double _pacientLatitude, _pacientLongitude;
 		private NotificationManager _mNotificationManager;
-		private int _verifications = 2;
+		private int _verifications = 15;
 		private int _refreshTime = 15000;
 		private readonly LocationManager location = LocationManager.Instance;
 		private static IServiceStoppedListener listener;
@@ -35,6 +35,7 @@ namespace Familia.Services {
 		}
 
 		public override async void OnDestroy() {
+			Log.Error("Distance Service" , "is Destroyed");
 			location.LocationRequested -= Location_LocationRequested;
 			await location.StopRequestionLocationUpdates();
 			_pacientLatitude = 0;
@@ -44,13 +45,19 @@ namespace Familia.Services {
 		}
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) {
-			Log.Error("PatientLocation from shared" , intent.GetStringExtra("Latitude"));
-			Log.Error("PatientLocation from shared" , intent.GetStringExtra("Longitude"));
-			_pacientLatitude = double.Parse(intent.GetStringExtra("Latitude") , CultureInfo.InvariantCulture);
-            _pacientLongitude = double.Parse(intent.GetStringExtra("Longitude") , CultureInfo.InvariantCulture);
-            Log.Error("PatientLocation", _pacientLatitude.ToString());
-            Log.Error("PatientLocation", _pacientLongitude.ToString());
-            init();
+            try {
+				Log.Error("PatientLocation from shared" , intent.GetStringExtra("Latitude"));
+				Log.Error("PatientLocation from shared" , intent.GetStringExtra("Longitude"));
+				_pacientLatitude = double.Parse(intent.GetStringExtra("Latitude") , CultureInfo.InvariantCulture);
+				_pacientLongitude = double.Parse(intent.GetStringExtra("Longitude") , CultureInfo.InvariantCulture);
+				Log.Error("PatientLocation" , _pacientLatitude.ToString());
+				Log.Error("PatientLocation" , _pacientLongitude.ToString());
+				init();
+			} catch (Exception ex) {
+				Log.Error("Distance Calculator Service" , ex.Message);
+				StopSelf();
+            }
+			
 			return StartCommandResult.Sticky;
 		}
         private async void init()
@@ -76,10 +83,10 @@ namespace Familia.Services {
 
 		private void Location_LocationRequested(object source, EventArgs args) {
 			try {
-                //if (_pacientLatitude == 0 || _pacientLongitude == 0) {
-                //    _pacientLatitude = ((LocationEventArgs)args).Location.Latitude;
-                //    _pacientLongitude = ((LocationEventArgs)args).Location.Longitude;
-                //}
+                if (_pacientLatitude == 0 || _pacientLongitude == 0) {
+                    _pacientLatitude = ((LocationEventArgs)args).Location.Latitude;
+                    _pacientLongitude = ((LocationEventArgs)args).Location.Longitude;
+                }
                 Log.Error("Patient" , $"{_pacientLatitude},{_pacientLongitude}");
 				Log.Error("Asistent" , $"{((LocationEventArgs)args).Location.Latitude},{((LocationEventArgs)args).Location.Longitude}");
 
@@ -125,7 +132,7 @@ namespace Familia.Services {
 						}
 					} else {
 						
-						_verifications = 2;
+						_verifications = 15;
 
 						if (_refreshTime == 15000) return;
 						_refreshTime = 15000;

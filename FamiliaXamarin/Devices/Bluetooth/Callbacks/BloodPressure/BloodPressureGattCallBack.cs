@@ -29,6 +29,7 @@ namespace Familia.Devices.Bluetooth.Callbacks.BloodPressure {
             var devicesDataNormalized = from c in _listOfSavedDevices
                                         where c.Address == gatt.Device.Address
                                         select new { c.Name, c.Address, c.DeviceType };
+            ((BloodPressureDeviceActivity)_context).isDeviceConnected = true;
             switch (newState) {
                 case ProfileState.Connected:
                     DisplayMessageToUi($"S-a conectat la {devicesDataNormalized.FirstOrDefault()?.Name}...");
@@ -41,6 +42,7 @@ namespace Familia.Devices.Bluetooth.Callbacks.BloodPressure {
                     DisplayMessageToUi($"Se deconecteaza de la {devicesDataNormalized.FirstOrDefault()?.Name}...");
                     break;
                 case ProfileState.Disconnected: {
+                        ((BloodPressureDeviceActivity)_context).isDeviceConnected = false;
                         gatt.Disconnect();
                         gatt.Close();
                         Log.Error("GattPressure", "Disconnect");

@@ -28,11 +28,9 @@ using Java.Util;
 using Org.Json;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 
-namespace Familia.Devices.PressureDevice
-{
-    [Activity(Label = "BloodPressureDeviceActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
-    public class BloodPressureDeviceActivity : AppCompatActivity, Animator.IAnimatorListener
-    {
+namespace Familia.Devices.PressureDevice {
+    [Activity(Label = "BloodPressureDeviceActivity" , Theme = "@style/AppTheme.Dark" , ScreenOrientation = ScreenOrientation.Portrait)]
+    public class BloodPressureDeviceActivity : AppCompatActivity, Animator.IAnimatorListener {
         private BluetoothAdapter _bluetoothAdapter;
         internal BluetoothLeScanner BluetoothScanner;
         private BluetoothManager _bluetoothManager;
@@ -48,9 +46,12 @@ namespace Familia.Devices.PressureDevice
         internal BloodPressureGattCallBack GattCallback;
         private SqlHelper<DevicesRecords> _bleDevicesDataRecords;
         private string _imei;
+        private Handler handler = new Handler();
+        // Stops scanning after 2 minutes.
+        private static long SCAN_PERIOD = 120000;
+        internal bool isDeviceConnected;
 
-        protected override void OnCreate(Bundle savedInstanceState)
-        {
+        protected override void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_blood_pressure_device);
             InitUi();
@@ -58,10 +59,8 @@ namespace Familia.Devices.PressureDevice
             IEnumerable<BluetoothDeviceRecords> list;
             string data = Intent.GetStringExtra("Data");
             Log.Error("Imei" , data);
-            if(data != null)
-            {
-                if (Utils.isJson(data))
-                {
+            if (data != null) {
+                if (Utils.isJson(data)) {
                     Log.Error("Imei" , "data is json");
 
                     _imei = new JSONObject(data).GetString("deviceId");
@@ -71,52 +70,45 @@ namespace Familia.Devices.PressureDevice
                     var decrypted = Encryption.Decrypt(data);
                     Log.Error("Imei decrypted" , decrypted);
 
-                    if (!string.IsNullOrEmpty(decrypted) && Utils.isJson(decrypted))
-                    {
+                    if (!string.IsNullOrEmpty(decrypted) && Utils.isJson(decrypted)) {
                         Log.Error("Imei" , "tring to parse decrypted");
 
                         _imei = new JSONObject(decrypted).GetString("imei");
-                    } else
-                    {
+                    } else {
                         Log.Error("Imei" , "imei is data");
 
                         _imei = data;
                     }
                 }
             }
-            if (string.IsNullOrEmpty(_imei))
-            {
+            if (string.IsNullOrEmpty(_imei)) {
                 _imei = Utils.GetDeviceIdentificator(this);
             }
-            Task.Run(async () =>
-            {
+            Task.Run(async () => {
                 _bleDevicesDataRecords = await SqlHelper<DevicesRecords>.CreateAsync();
                 var bleDevicesRecords = await SqlHelper<BluetoothDeviceRecords>.CreateAsync();
                 list = await bleDevicesRecords.QueryValuations("select * from BluetoothDeviceRecords");
-                RunOnUiThread(() =>
-                {
+                RunOnUiThread(() => {
                     _bluetoothManager = (BluetoothManager)GetSystemService(BluetoothService);
                     var listOfSavedDevices = list.ToList();
-                    ScanCallback = new BloodPressureScanCallback(this, listOfSavedDevices);
-                    GattCallback = new BloodPressureGattCallBack(this, listOfSavedDevices);
+                    ScanCallback = new BloodPressureScanCallback(this , listOfSavedDevices);
+                    GattCallback = new BloodPressureGattCallBack(this , listOfSavedDevices);
                     AnimationView.PlayAnimation();
                 });
 
             }).Wait();
         }
 
-        
-        private void InitEvents()
-        {
+
+        private void InitEvents() {
             AnimationView.AddAnimatorListener(this);
             _manualRegisterButton.Click += delegate {
                 BloodPressureData model = new BloodPressureData();
-                var cdd = new BloodPressureManualRegisterDialog(this, model);
-                cdd.DialogState += delegate (object o, DialogStateEventArgs eventArgs) {
+                var cdd = new BloodPressureManualRegisterDialog(this , model);
+                cdd.DialogState += delegate (object o , DialogStateEventArgs eventArgs) {
                     if (eventArgs.Status != DialogStatuses.Dismissed) return;
 
-                    if(model != null)
-                    {
+                    if (model != null) {
                         UpdateUi(model);
                     }
                 };
@@ -135,15 +127,14 @@ namespace Familia.Devices.PressureDevice
 
         }
 
-        private void InitUi()
-        {
+        private void InitUi() {
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             Title = "Tensiune";
 
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
-            toolbar.NavigationClick += (sender, args) => Finish();
+            toolbar.NavigationClick += (sender , args) => Finish();
             LbStatus = FindViewById<TextView>(Resource.Id.status);
             _manualRegisterButton = FindViewById<Button>(Resource.Id.manual_register);
             _dataContainer = FindViewById<ConstraintLayout>(Resource.Id.dataContainer);
@@ -152,44 +143,35 @@ namespace Familia.Devices.PressureDevice
             _pulse = FindViewById<TextView>(Resource.Id.PulseTextView);
             //_scanButton = FindViewById<Button>(Resource.Id.ScanButton);
             AnimationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
-            var filter = new SimpleColorFilter(ContextCompat.GetColor(this, Resource.Color.accent));
-            AnimationView.AddValueCallback(new KeyPath("**"), LottieProperty.ColorFilter, new LottieValueCallback(filter));
+            var filter = new SimpleColorFilter(ContextCompat.GetColor(this , Resource.Color.accent));
+            AnimationView.AddValueCallback(new KeyPath("**") , LottieProperty.ColorFilter , new LottieValueCallback(filter));
         }
 
-        protected override void OnPostResume()
-        {
+        protected override void OnPostResume() {
             base.OnPostResume();
         }
 
-        protected override void OnPause()
-        {
+        protected override void OnPause() {
             base.OnPause();
-            if (_bluetoothAdapter != null)
-            {
+            if (_bluetoothAdapter != null) {
                 BluetoothScanner?.StopScan(ScanCallback);
             }
         }
 
-        public void OnAnimationCancel(Animator animation)
-        {
+        public void OnAnimationCancel(Animator animation) {
             _dataContainer.Visibility = ViewStates.Visible;
             AnimationView.Progress = 1f;
         }
 
-        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
-        {
-            base.OnActivityResult(requestCode, resultCode, data);
+        
+
+        protected override void OnActivityResult(int requestCode , Result resultCode , Intent data) {
+            base.OnActivityResult(requestCode , resultCode , data);
             if (requestCode != 11) return;
-            if (resultCode == Result.Ok)
-            {
-                BluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
-                BluetoothScanner.StartScan(ScanCallback);
-                //_scanButton.Enabled = false;
+            if (resultCode == Result.Ok) {
                 AnimationView.PlayAnimation();
-            }
-            else
-            {
-                StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), 11);
+            } else {
+                StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable) , 11);
             }
         }
 
@@ -197,110 +179,101 @@ namespace Familia.Devices.PressureDevice
 
         public void OnAnimationRepeat(Animator animation) { }
 
-        public void OnAnimationStart(Animator animation)
-        {
+        public void OnAnimationStart(Animator animation) {
             LbStatus.Text = "Se efectueaza masuratoarea...";
 
             if (_bluetoothManager == null) return;
             _bluetoothAdapter = _bluetoothManager.Adapter;
-            if (!_bluetoothAdapter.IsEnabled)
-            {
-                StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), 11);
-            }
-            else
-            {
+            if (!_bluetoothAdapter.IsEnabled) {
+                StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable) , 11);
+            } else {
                 BluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
                 BluetoothScanner.StartScan(ScanCallback);
+                // Stops scanning after a pre-defined scan period.
+                handler.PostDelayed(() => {
+                    //mScanning = false;
+                    Log.Error("ScanTest" , "Timeout");
+                    if (!isDeviceConnected) {
+                        BluetoothScanner.StopScan(ScanCallback);
+                        LbStatus.Text = "Nu s-au gasit dispozitive";
+                        AnimationView.CancelAnimation();
+                    }
+                    
+                } , SCAN_PERIOD);
                 //_scanButton.Enabled = false;
                 _dataContainer.Visibility = ViewStates.Gone;
             }
         }
-        internal async void UpdateUi(BloodPressureData data)
-        {
-                var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.Uk);
-                if (data != null)
-                {
-                    if (!Utils.CheckNetworkAvailability())
-                    {
-                        await _bleDevicesDataRecords.Insert(new DevicesRecords
-                        {
-                            Imei = _imei,
-                            DateTime = ft.Format(new Date()),
-                            BloodPresureSystolic = data.Systolic,
-                            BloodPresureDiastolic = data.Diastolic,
-                            BloodPresurePulsRate = data.PulseRate
-                        });
-                    }
-                    else
-                    {
-                        JSONObject jsonObject;
-                        var jsonArray = new JSONArray();
-                        var list = await _bleDevicesDataRecords.QueryValuations("select * from DevicesRecords");
-                        Log.Error("list", list.Count().ToString());
+        internal async void UpdateUi(BloodPressureData data) {
+            var ft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss" , Locale.Uk);
+            if (data != null) {
+                if (!Utils.CheckNetworkAvailability()) {
+                    await _bleDevicesDataRecords.Insert(new DevicesRecords {
+                        Imei = _imei ,
+                        DateTime = ft.Format(new Date()) ,
+                        BloodPresureSystolic = data.Systolic ,
+                        BloodPresureDiastolic = data.Diastolic ,
+                        BloodPresurePulsRate = data.PulseRate
+                    });
+                } else {
+                    JSONObject jsonObject;
+                    var jsonArray = new JSONArray();
+                    var list = await _bleDevicesDataRecords.QueryValuations("select * from DevicesRecords");
+                    Log.Error("list" , list.Count().ToString());
 
-                        foreach (DevicesRecords el in list)
-                        {
-                            try
-                            {
-                                jsonObject = new JSONObject();
-                                jsonObject
-                                    .Put("imei", el.Imei)
-                                    .Put("dateTimeISO", el.DateTime)
-                                    .Put("geolocation", new JSONObject()
-                                        .Put("latitude", $"{el.Latitude}")
-                                        .Put("longitude", $"{el.Longitude}"))
-                                    .Put("lastLocation", el.LastLocation)
-                                    .Put("sendPanicAlerts", el.SendPanicAlerts)
-                                    .Put("stepCounter", el.StepCounter)
-                                    .Put("bloodPressureSystolic", el.BloodPresureSystolic)
-                                    .Put("bloodPressureDiastolic", el.BloodPresureDiastolic)
-                                    .Put("bloodPressurePulseRate", el.BloodPresurePulsRate)
-                                    .Put("bloodGlucose", "" + el.BloodGlucose)
-                                    .Put("oxygenSaturation", el.OxygenSaturation)
-                                    .Put("extension", el.Extension);
-                                jsonArray.Put(jsonObject);
-                            }
-                            catch (JSONException e)
-                            {
-                                e.PrintStackTrace();
-                            }
+                    foreach (DevicesRecords el in list) {
+                        try {
+                            jsonObject = new JSONObject();
+                            jsonObject
+                                .Put("imei" , el.Imei)
+                                .Put("dateTimeISO" , el.DateTime)
+                                .Put("geolocation" , new JSONObject()
+                                    .Put("latitude" , $"{el.Latitude}")
+                                    .Put("longitude" , $"{el.Longitude}"))
+                                .Put("lastLocation" , el.LastLocation)
+                                .Put("sendPanicAlerts" , el.SendPanicAlerts)
+                                .Put("stepCounter" , el.StepCounter)
+                                .Put("bloodPressureSystolic" , el.BloodPresureSystolic)
+                                .Put("bloodPressureDiastolic" , el.BloodPresureDiastolic)
+                                .Put("bloodPressurePulseRate" , el.BloodPresurePulsRate)
+                                .Put("bloodGlucose" , "" + el.BloodGlucose)
+                                .Put("oxygenSaturation" , el.OxygenSaturation)
+                                .Put("extension" , el.Extension);
+                            jsonArray.Put(jsonObject);
+                        } catch (JSONException e) {
+                            e.PrintStackTrace();
                         }
-                        jsonObject = new JSONObject();
-                        jsonObject
-                            .Put("imei", _imei)
-                            .Put("dateTimeISO", ft.Format(new Date()))
-                            .Put("geolocation", string.Empty)
-                            .Put("lastLocation", string.Empty)
-                            .Put("sendPanicAlerts", string.Empty)
-                            .Put("stepCounter", string.Empty)
-                            .Put("bloodPressureSystolic", data.Systolic)
-                            .Put("bloodPressureDiastolic", data.Diastolic)
-                            .Put("bloodPressurePulseRate", data.PulseRate)
-                            .Put("bloodGlucose", string.Empty)
-                            .Put("oxygenSaturation", string.Empty)
-                            .Put("extension", string.Empty);
-                        jsonArray.Put(jsonObject);
-                        string result = await WebServices.WebServices.Post(Constants.SaveDeviceDataUrl, jsonArray);
-                        if (result == "Succes!")
-                        {
-                            Toast.MakeText(this, "Succes", ToastLength.Long).Show();
-                            await _bleDevicesDataRecords.DeleteAll();
-                        }
-                        else
-                        {
-                            Toast.MakeText(this, "" + result, ToastLength.Long).Show();
-                        }
+                    }
+                    jsonObject = new JSONObject();
+                    jsonObject
+                        .Put("imei" , _imei)
+                        .Put("dateTimeISO" , ft.Format(new Date()))
+                        .Put("geolocation" , string.Empty)
+                        .Put("lastLocation" , string.Empty)
+                        .Put("sendPanicAlerts" , string.Empty)
+                        .Put("stepCounter" , string.Empty)
+                        .Put("bloodPressureSystolic" , data.Systolic)
+                        .Put("bloodPressureDiastolic" , data.Diastolic)
+                        .Put("bloodPressurePulseRate" , data.PulseRate)
+                        .Put("bloodGlucose" , string.Empty)
+                        .Put("oxygenSaturation" , string.Empty)
+                        .Put("extension" , string.Empty);
+                    jsonArray.Put(jsonObject);
+                    string result = await WebServices.WebServices.Post(Constants.SaveDeviceDataUrl , jsonArray);
+                    if (result == "Succes!") {
+                        Toast.MakeText(this , "Succes" , ToastLength.Long).Show();
+                        await _bleDevicesDataRecords.DeleteAll();
+                    } else {
+                        Toast.MakeText(this , "" + result , ToastLength.Long).Show();
                     }
                 }
+            }
 
-            if (data != null)
-            {
+            if (data != null) {
                 _systole.Text = GetString(Resource.String.systole) + " " + data.Systolic + " mmHg";
                 _diastole.Text = GetString(Resource.String.diastole) + " " + data.Diastolic + " mmHg";
                 _pulse.Text = GetString(Resource.String.pulse) + " " + data.PulseRate + " b/min";
-            }
-            else
-            {
+            } else {
                 _systole.Text = string.Empty;
                 _diastole.Text = string.Empty;
                 _pulse.Text = string.Empty;

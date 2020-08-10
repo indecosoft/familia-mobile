@@ -169,7 +169,7 @@ namespace Familia {
 					menuNav.FindItem(Resource.Id.games).SetVisible(false);
 					SupportFragmentManager.BeginTransaction()
 						.Replace(Resource.Id.fragment_container, new AsistentForm()).AddToBackStack(null).Commit();
-					Title = "Dispozitive de masurare";
+					Title = "Asistenta sociala";
 					StartForegroundService(_webSocketServiceIntent);
 					break;
 				case 3: // pacient

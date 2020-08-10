@@ -43,10 +43,13 @@ namespace Familia.Devices.GlucoseDevice {
         internal GlucoseScanCallback ScanCallback;
         internal GlucoseGattCallBack GattCallback;
         internal MedisanaGattCallback MedisanaGattCallback;
+        private Handler handler = new Handler();
+        // Stops scanning after 2 minutes.
+        private static long SCAN_PERIOD = 120000;
 
         private SqlHelper<DevicesRecords> _bleDevicesDataRecords;
         private string _imei;
-
+        internal bool isDeviceConnected;
         protected override async void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.blood_glucose_device);
@@ -166,6 +169,15 @@ namespace Familia.Devices.GlucoseDevice {
             } else {
                 BluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
                 BluetoothScanner.StartScan(ScanCallback);
+                handler.PostDelayed(() => {
+                    //mScanning = false;
+                    if (!isDeviceConnected) {
+                        Log.Error("ScanTest" , "Timeout");
+                        BluetoothScanner.StopScan(ScanCallback);
+                        LbStatus.Text = "Nu s-au gasit dispozitive";
+                        _animationView.CancelAnimation();
+                    }
+                } , SCAN_PERIOD);
                 //_scanButton.Enabled = false;
                 _dataContainer.Visibility = ViewStates.Gone;
             }
@@ -182,11 +194,7 @@ namespace Familia.Devices.GlucoseDevice {
             base.OnActivityResult(requestCode, resultCode, data);
             if (requestCode != 11) return;
             if (resultCode == Result.Ok) {
-                BluetoothScanner = _bluetoothAdapter.BluetoothLeScanner;
-                BluetoothScanner.StartScan(ScanCallback);
-                //_scanButton.Enabled = false;
                 _animationView.PlayAnimation();
-
             } else {
                 StartActivityForResult(new Intent(BluetoothAdapter.ActionRequestEnable), 11);
             }
