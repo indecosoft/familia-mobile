@@ -166,6 +166,7 @@ namespace Familia {
 					menuNav.FindItem(Resource.Id.chat).SetVisible(false);
 					menuNav.FindItem(Resource.Id.nav_devices).SetVisible(false);
 					menuNav.FindItem(Resource.Id.medicatie).SetVisible(false);
+					menuNav.FindItem(Resource.Id.games).SetVisible(false);
 					SupportFragmentManager.BeginTransaction()
 						.Replace(Resource.Id.fragment_container, new AsistentForm()).AddToBackStack(null).Commit();
 					Title = "Asistenta sociala";
