@@ -24,6 +24,7 @@ namespace Familia.Location {
         private bool _isRequestingLocationUpdates;
         public delegate void LocationEventHandler(object source , EventArgs args);
         public event LocationEventHandler LocationRequested;
+
         public async Task StartRequestingLocation(int miliseconds = 1000 * 60 * 30) {
             Log.Error("Starting location" , miliseconds.ToString());
             if (!Utils.CheckIfLocationIsEnabled()) {
@@ -34,25 +35,19 @@ namespace Familia.Location {
             if (!Utils.IsGooglePlayServicesInstalled(Application.Context)) return;
             if (_fusedLocationProviderClient is null || _locationRequest is null) {
                 _locationRequest = new LocationRequest()
-               .SetPriority(LocationRequest.PriorityHighAccuracy)
-               .SetInterval(miliseconds)
-               .SetFastestInterval(miliseconds)
-               .SetMaxWaitTime(miliseconds + 1000);
+               .SetPriority(LocationRequest.PriorityHighAccuracy);
                 _locationCallback = new FusedLocationProviderCallback(this);
 
                 _fusedLocationProviderClient = LocationServices.GetFusedLocationProviderClient(Application.Context);
-            }else {
-                ChangeInterval(miliseconds);
             }
-            await RequestLocationUpdates();
+            await ChangeInterval(miliseconds);
         }
-        public async void ChangeInterval(int miliseconds = 1000 * 60 * 30) {
-            if (_locationRequest != null) {
+        public async Task ChangeInterval(int miliseconds = 1000 * 60 * 30) {
+            if (_locationRequest != null && _fusedLocationProviderClient != null) {
                 _locationRequest.SetFastestInterval(miliseconds);
                 _locationRequest.SetInterval(miliseconds);
                 _locationRequest.SetMaxWaitTime(miliseconds + 10000);
-
-                await _fusedLocationProviderClient.RequestLocationUpdatesAsync(_locationRequest , _locationCallback);
+                await RequestLocationUpdates();
             }
         }
         private async Task RequestLocationUpdates() {
@@ -66,8 +61,6 @@ namespace Familia.Location {
             if (_isRequestingLocationUpdates) {
                 _isRequestingLocationUpdates = false;
                 await _fusedLocationProviderClient.RemoveLocationUpdatesAsync(_locationCallback);
-                //_fusedLocationProviderClient.Dispose();
-                //_locationRequest.Dispose();
             }
         }
 
@@ -77,8 +70,8 @@ namespace Familia.Location {
             JSONObject obj = new JSONObject().Put("latitude" , ((LocationEventArgs)args).Location.Latitude).Put("longitude" , (args as LocationEventArgs).Location.Longitude);
             JSONObject finalObj = new JSONObject().Put("idUser" , Utils.GetDefaults("Id")).Put("location" , obj);
             try {
-                Task.Run(async () => {
-                    await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation" , finalObj , Utils.GetDefaults("Token"));
+                Task.Run(() => {
+                    _ = WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation" , finalObj , Utils.GetDefaults("Token"));
                     Utils.SetDefaults("Latitude" , ((LocationEventArgs)args).Location.Latitude.ToString());
                     Utils.SetDefaults("Longitude" , ((LocationEventArgs)args).Location.Longitude.ToString());
                     Log.Debug("Latitude " , ((LocationEventArgs)args).Location.Latitude.ToString());

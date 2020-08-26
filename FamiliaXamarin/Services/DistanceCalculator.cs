@@ -31,6 +31,7 @@ namespace Familia.Services {
 		}
 
 		public override void OnCreate() {
+			Log.Error("Distance Calculator Service Started" , "here");
 			CreateChannels();
 		}
 
@@ -62,6 +63,7 @@ namespace Familia.Services {
 		}
         private async void init()
         {
+			Log.Error("Distance Calculator Service" , "init");
 			try
 			{
 				Notification notification = new NotificationCompat.Builder(this, App.SimpleChannelIdForServices)
@@ -82,6 +84,7 @@ namespace Familia.Services {
 		}
 
 		private void Location_LocationRequested(object source, EventArgs args) {
+			Log.Error("Locatie preluata in service" , "here");
 			try {
                 if (_pacientLatitude == 0 || _pacientLongitude == 0) {
                     _pacientLatitude = ((LocationEventArgs)args).Location.Latitude;
@@ -121,7 +124,7 @@ namespace Familia.Services {
 							StopSelf();
 						} else {
 							NotificationCompat.Builder nb = GetAndroidChannelNotification("Avertisment",
-								"Vizita va fi anulata automat deoarece te afli la " + (Math.Round(distance) > 1000 ? Math.Round(distance)/1000 + " kilometri" : Math.Round(distance) + " metri") +
+								"Vizita va fi anulata automat deoarece te afli la " + (Math.Round(distance) > 1000 ? (Math.Round(distance)/1000).ToString().Replace('.', ',') + " kilometri" : Math.Round(distance) + " metri") +
 								" distanta de pacient! Mai ai " + (_verifications) +
 								" minute sa te intorci!");
 							GetManager().Notify(2, nb.Build());
