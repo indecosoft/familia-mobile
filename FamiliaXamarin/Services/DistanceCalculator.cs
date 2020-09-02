@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
 using Android.Widget;
-using Familia.Asistenta_sociala;
 using Familia.Helpers;
 using Familia.Location;
 using Familia.Medicatie.Alarm;
@@ -100,7 +98,7 @@ namespace Familia.Services {
 					Log.Error("Distance", "" + distance);
 					Toast.MakeText(this, Math.Round(distance) + " metri.", ToastLength.Short)
 							.Show();
-					if (distance > 180 && distance < 220) {
+					if (distance > 450 && distance < 550) {
 						Log.Warn("Distance warning",
 							"mai mult de 200 metri. Esti la " + Math.Round(distance) + " metri distanta");
 						_verifications = 0;
@@ -111,7 +109,7 @@ namespace Familia.Services {
 						if (_refreshTime == 15000) return;
 						_refreshTime = 15000;
 						location.ChangeInterval(_refreshTime);
-					} else if (distance > 220) {
+					} else if (distance >= 550) {
 						if (_verifications == 0) {
 							NotificationCompat.Builder nb =
 								GetAndroidChannelNotification("Avertisment", "Vizita a fost anulata automat!");
