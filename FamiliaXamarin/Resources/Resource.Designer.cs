@@ -6641,124 +6641,121 @@ namespace Familia
 			public const int inapoi = 2131755102;
 			
 			// aapt resource value: 0x7F10005F
-			public const int large_text = 2131755103;
+			public const int logo = 2131755103;
 			
 			// aapt resource value: 0x7F100060
-			public const int logo = 2131755104;
+			public const int message_user_joined = 2131755104;
 			
 			// aapt resource value: 0x7F100061
-			public const int message_user_joined = 2131755105;
+			public const int message_user_left = 2131755105;
 			
 			// aapt resource value: 0x7F100062
-			public const int message_user_left = 2131755106;
+			public const int message_welcome = 2131755106;
 			
 			// aapt resource value: 0x7F100063
-			public const int message_welcome = 2131755107;
+			public const int mi_am_uitat_parola = 2131755107;
 			
 			// aapt resource value: 0x7F100064
-			public const int mi_am_uitat_parola = 2131755108;
-			
-			// aapt resource value: 0x7F100065
-			public const int mtrl_chip_close_icon_content_description = 2131755109;
-			
-			// aapt resource value: 0x7F100069
-			public const int navigation_drawer_close = 2131755113;
-			
-			// aapt resource value: 0x7F10006A
-			public const int navigation_drawer_open = 2131755114;
-			
-			// aapt resource value: 0x7F100066
-			public const int nav_header_desc = 2131755110;
-			
-			// aapt resource value: 0x7F100067
-			public const int nav_header_subtitle = 2131755111;
+			public const int mtrl_chip_close_icon_content_description = 2131755108;
 			
 			// aapt resource value: 0x7F100068
-			public const int nav_header_title = 2131755112;
+			public const int navigation_drawer_close = 2131755112;
+			
+			// aapt resource value: 0x7F100069
+			public const int navigation_drawer_open = 2131755113;
+			
+			// aapt resource value: 0x7F100065
+			public const int nav_header_desc = 2131755109;
+			
+			// aapt resource value: 0x7F100066
+			public const int nav_header_subtitle = 2131755110;
+			
+			// aapt resource value: 0x7F100067
+			public const int nav_header_title = 2131755111;
+			
+			// aapt resource value: 0x7F10006A
+			public const int nu_aveti_cont_creati_unul_acum = 2131755114;
 			
 			// aapt resource value: 0x7F10006B
-			public const int nu_aveti_cont_creati_unul_acum = 2131755115;
+			public const int open_location_settings = 2131755115;
 			
 			// aapt resource value: 0x7F10006C
-			public const int open_location_settings = 2131755116;
+			public const int parola = 2131755116;
 			
 			// aapt resource value: 0x7F10006D
-			public const int parola = 2131755117;
+			public const int password_toggle_content_description = 2131755117;
 			
 			// aapt resource value: 0x7F10006E
-			public const int password_toggle_content_description = 2131755118;
+			public const int path_password_eye = 2131755118;
 			
 			// aapt resource value: 0x7F10006F
-			public const int path_password_eye = 2131755119;
+			public const int path_password_eye_mask_strike_through = 2131755119;
 			
 			// aapt resource value: 0x7F100070
-			public const int path_password_eye_mask_strike_through = 2131755120;
+			public const int path_password_eye_mask_visible = 2131755120;
 			
 			// aapt resource value: 0x7F100071
-			public const int path_password_eye_mask_visible = 2131755121;
+			public const int path_password_strike_through = 2131755121;
 			
 			// aapt resource value: 0x7F100072
-			public const int path_password_strike_through = 2131755122;
+			public const int permission_rationale = 2131755122;
 			
 			// aapt resource value: 0x7F100073
-			public const int permission_rationale = 2131755123;
+			public const int primire_date_info = 2131755123;
 			
 			// aapt resource value: 0x7F100074
-			public const int primire_date_info = 2131755124;
+			public const int prompt_email = 2131755124;
 			
 			// aapt resource value: 0x7F100075
-			public const int prompt_email = 2131755125;
+			public const int prompt_message = 2131755125;
 			
 			// aapt resource value: 0x7F100076
-			public const int prompt_message = 2131755126;
+			public const int prompt_password = 2131755126;
 			
 			// aapt resource value: 0x7F100077
-			public const int prompt_password = 2131755127;
+			public const int pulse = 2131755127;
 			
 			// aapt resource value: 0x7F100078
-			public const int pulse = 2131755128;
+			public const int scan_button = 2131755128;
 			
 			// aapt resource value: 0x7F100079
-			public const int scan_button = 2131755129;
+			public const int search_menu_title = 2131755129;
 			
 			// aapt resource value: 0x7F10007A
-			public const int search_menu_title = 2131755130;
+			public const int section_format = 2131755130;
 			
 			// aapt resource value: 0x7F10007B
-			public const int section_format = 2131755131;
+			public const int smartband_device = 2131755131;
 			
 			// aapt resource value: 0x7F10007C
-			public const int smartband_device = 2131755132;
+			public const int smartband_text = 2131755132;
 			
 			// aapt resource value: 0x7F10007D
-			public const int smartband_text = 2131755133;
+			public const int status_bar_notification_info_overflow = 2131755133;
 			
 			// aapt resource value: 0x7F10007E
-			public const int status_bar_notification_info_overflow = 2131755134;
+			public const int steps = 2131755134;
 			
 			// aapt resource value: 0x7F10007F
-			public const int steps = 2131755135;
+			public const int systole = 2131755135;
 			
 			// aapt resource value: 0x7F100080
-			public const int systole = 2131755136;
+			public const int title_activity_first_setup = 2131755136;
 			
 			// aapt resource value: 0x7F100081
-			public const int title_activity_first_setup = 2131755137;
+			public const int title_activity_menu = 2131755137;
 			
 			// aapt resource value: 0x7F100082
-			public const int title_activity_menu = 2131755138;
+			public const int title_activity_profile = 2131755138;
 			
 			// aapt resource value: 0x7F100083
-			public const int title_activity_profile = 2131755139;
+			public const int title_activity_register = 2131755139;
 			
 			// aapt resource value: 0x7F100084
-			public const int title_activity_register = 2131755140;
+			public const int urmatorul = 2131755140;
 			
 			// aapt resource value: 0x7F100085
-			public const int urmatorul = 2131755141;
-			
-			// aapt resource value: 0x7F100086
-			public const int user_action_typing = 2131755142;
+			public const int user_action_typing = 2131755141;
 			
 			static String()
 			{
