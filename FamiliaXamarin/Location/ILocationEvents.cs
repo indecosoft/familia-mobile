@@ -2,6 +2,6 @@
 
 namespace Familia.Location {
 	public interface ILocationEvents {
-		void OnLocationRequested(EventArgs args);
+		void OnLocationRequested(LocationEventArgs args);
 	}
 }

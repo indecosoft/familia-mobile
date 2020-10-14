@@ -75,26 +75,30 @@ namespace Familia.Services {
 				Console.WriteLine(e);
 				StopSelf();
 			}
-
+            
 			location.LocationRequested += Location_LocationRequested;
 
 			await location.StartRequestingLocation(_refreshTime);
 		}
-
-		private void Location_LocationRequested(object source, EventArgs args) {
+		/// <summary>
+		/// pentru citirile cu succes a locatiei se va calcula distanta dintre pacient si asistent si notifica utilizatorul in cazul in care distanta este prea mare
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="args"></param>
+		private void Location_LocationRequested(object source, LocationEventArgs args) {
 			Log.Error("Locatie preluata in service" , "here");
 			try {
                 if (_pacientLatitude == 0 || _pacientLongitude == 0) {
-                    _pacientLatitude = ((LocationEventArgs)args).Location.Latitude;
-                    _pacientLongitude = ((LocationEventArgs)args).Location.Longitude;
+                    _pacientLatitude = args.Location.Latitude;
+                    _pacientLongitude = args.Location.Longitude;
                 }
                 Log.Error("Patient" , $"{_pacientLatitude},{_pacientLongitude}");
-				Log.Error("Asistent" , $"{((LocationEventArgs)args).Location.Latitude},{((LocationEventArgs)args).Location.Longitude}");
+				Log.Error("Asistent" , $"{args.Location.Latitude},{args.Location.Longitude}");
 
 
 				if (!Utils.GetDefaults("ActivityStart").Equals(string.Empty)) {
 					double distance = Utils.HaversineFormula(_pacientLatitude, _pacientLongitude,
-						((LocationEventArgs) args).Location.Latitude, ((LocationEventArgs) args).Location.Longitude);
+						 args.Location.Latitude, args.Location.Longitude);
 					Log.Error("Distance", "" + distance);
 					Toast.MakeText(this, Math.Round(distance) + " metri.", ToastLength.Short)
 							.Show();
