@@ -27,12 +27,6 @@ namespace Familia.Chat
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-            //Inflate our CrewMemberItem Layout
-            //View itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.Srow, parent, false);
-
-            //Create our ViewHolder to cache the layout view references and register
-
-            //the OnClick event.
             int layout = -1;
             switch (viewType)
             {
@@ -49,7 +43,6 @@ namespace Familia.Chat
                     layout = Resource.Layout.item_my_message;
                     break;
             }
-            //            layout = Resource.Layout.item_my_message;
 
             View itemView = mInflater.Inflate(layout, parent, false);
 
@@ -66,7 +59,6 @@ namespace Familia.Chat
             holder.Time.Text = DateTime.Now.ToShortTimeString();
             holder.MessageView.Text = message.Message;
 
-            //viewHolder.setAvatar(message.getAvatar());
         }
 
         public void Clear()
@@ -84,10 +76,7 @@ namespace Familia.Chat
             if(_messages != null ||_messages.Count>0)
             _messages.Add(model);
         }
-        //private readonly ImageManager _imageManager;
-
-        //This will fire any event handlers that are registered with our ItemClick
-        //event.
+     
         public override int ItemCount => _messages.Count;
 
 

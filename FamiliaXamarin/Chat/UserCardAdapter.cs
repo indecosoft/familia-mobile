@@ -32,13 +32,13 @@ namespace Familia.Chat
         UserCard spot = GetItem(position);
 
         holder.Name.Text = spot.Name;
-        holder.Probleme.Text = spot.Probleme;
+        holder.Probleme.Text = spot.Problems;
 
         holder.Name.Text = spot.Name;
-        holder.Probleme.Text = spot.Probleme ;
+        holder.Probleme.Text = spot.Problems ;
         //holder.Image.SetImageResource(spot.Url);
 
-        Glide.With(Context).Load(spot.Url).Into(holder.Image);
+        Glide.With(Context).Load(spot.BackroundResourceId).Into(holder.Image);
 
         return convertView;
 

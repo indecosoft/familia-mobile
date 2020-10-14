@@ -46,7 +46,6 @@ namespace Familia.Chat {
 							Log.Error("Chat Request Err: ", e.Message);
 						}
 					});
-					//
 					
 				} else if (_cardStackView.TopIndex == _adapter.Count) {
 					HideUi();

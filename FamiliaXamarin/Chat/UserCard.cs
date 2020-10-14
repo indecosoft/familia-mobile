@@ -3,16 +3,16 @@
     class UserCard
     {
         public string Name;
-        public string Probleme;
+        public string Problems;
         public string Email;
         public string Avatar;
-        public int Url;
+        public int BackroundResourceId;
 
-        public UserCard(string name, string email, string probleme, string avatar, int url)
+        public UserCard(string name, string email, string problems, string avatar, int backroundResourceId)
         {
             Name = name;
-            Probleme = probleme;
-            Url = url;
+            Problems = problems;
+            BackroundResourceId = backroundResourceId;
             Email = email;
             Avatar = avatar;
         }

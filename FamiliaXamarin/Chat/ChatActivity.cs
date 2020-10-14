@@ -242,7 +242,7 @@ namespace Familia.Chat
             //_recyclerView.ScrollToPosition(mAdapter.ItemCount-1);
             RecyclerView.SmoothScrollToPosition(mAdapter.ItemCount - 1);
             //layoutManager.ReverseLayout = true;
-            Log.Error("positiooooooooooooon: ", mAdapter.ItemCount - 1 + "");
+            Log.Error("position: ", mAdapter.ItemCount - 1 + "");
         }
     }
 }

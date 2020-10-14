@@ -126,7 +126,10 @@ namespace Familia.Helpers {
 		public static void HideKeyboard(Activity activity) =>
 			((InputMethodManager) activity.GetSystemService(Context.InputMethodService)).HideSoftInputFromWindow(
 				(activity.CurrentFocus ?? new View(activity)).WindowToken, 0);
-
+        /// <summary>
+        /// Genereaza un cod QR de tipul 1
+        /// </summary>
+        /// <returns>Bitmap care reprezinta codul QR generat</returns>
 		public static Bitmap GenQrCode() {
 			try {
 				using var sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -147,6 +150,7 @@ namespace Familia.Helpers {
 
 			return null;
 		}
+        
         public static bool isJson(string strInput)
         {
 			strInput = strInput.Trim();
@@ -169,7 +173,11 @@ namespace Familia.Helpers {
 				return false;
 			}
 		}
-
+		/// <summary>
+		/// Scaneaza un QRCode cu continut in format Json criptat
+		/// </summary>
+		/// <param name="activity">Contextul actual</param>
+		/// <returns>JSONObject</returns>
 		public static async Task<JSONObject> ScanEncryptedQrCode(Activity activity) {
 			MobileBarcodeScanner.Initialize(new Application());
 			var options = new MobileBarcodeScanningOptions {
@@ -192,7 +200,11 @@ namespace Familia.Helpers {
 
 			return null;
 		}
-
+		/// <summary>
+		/// Scaneaza un QRCode cu continut necriptat
+		/// </summary>
+		/// <param name="activity">Co</param>
+		/// <returns>ZXing.Result</returns>
 		public static async Task<Result> ScanQrCode(Activity activity) {
 			MobileBarcodeScanner.Initialize(new Application());
 			var options = new MobileBarcodeScanningOptions {

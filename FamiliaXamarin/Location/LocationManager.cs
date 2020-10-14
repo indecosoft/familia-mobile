@@ -22,7 +22,7 @@ namespace Familia.Location {
         private LocationCallback _locationCallback;
         private LocationRequest _locationRequest;
         private bool _isRequestingLocationUpdates;
-        public delegate void LocationEventHandler(object source , EventArgs args);
+        public delegate void LocationEventHandler(object source , LocationEventArgs args);
         public event LocationEventHandler LocationRequested;
 
         public async Task StartRequestingLocation(int miliseconds = 1000 * 60 * 30) {
@@ -64,7 +64,7 @@ namespace Familia.Location {
             }
         }
 
-        public void OnLocationRequested(EventArgs args) {
+        public void OnLocationRequested(LocationEventArgs args) {
             OnLocationRequested(((LocationEventArgs)args).Location);
             if (!Utils.CheckNetworkAvailability()) return;
             JSONObject obj = new JSONObject().Put("latitude" , ((LocationEventArgs)args).Location.Latitude).Put("longitude" , (args as LocationEventArgs).Location.Longitude);
