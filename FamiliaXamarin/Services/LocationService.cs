@@ -38,7 +38,10 @@ namespace Familia.Services {
         }
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) {
             Log.Info("Location Service", "Started");
-
+            if (intent.HasExtra("IsShouldStop")) {
+                StopForeground(true);
+                StopSelf();
+            }
             return StartCommandResult.Sticky;
         }
     }

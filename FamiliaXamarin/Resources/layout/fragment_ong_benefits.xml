@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:src="@drawable/qrcode_scan"
+        android:tint="@color/colorAccent"
+        android:contentDescription="QRCode icon"
+        android:layout_centerHorizontal="true" />
+        
+
+
+        
+
+    
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+		android:layout_below="@+id/image">
+        
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/benefits_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/main_button_style"
+            android:text="Selecteaza beneficii"
+            android:padding="12dp"
+            android:textAllCaps="true"
+            android:layout_marginTop="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/DetailsInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="16dp"
+            android:hint=" "
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/benefits_button">
+
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/input_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="6dp"
+                android:gravity="top|left"
+                android:hint="Detalii"
+                android:inputType="textMultiLine"
+                android:lines="8"
+                android:padding="16dp"
+                android:textColorHint="@color/colorSecondary"
+                android:background="@drawable/edit_text_layout"
+                android:maxLines="10"
+                android:minLines="6"
+                android:scrollbars="vertical"
+                android:singleLine="false"
+                android:textAlignment="gravity" />
+
+        </android.support.design.widget.TextInputLayout>
+
+
+    </android.support.constraint.ConstraintLayout>
+            <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnScan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:padding="12dp"
+        android:text="Acorda beneficiu"
+        android:textAllCaps="true"
+        android:background="@drawable/main_button_style"
+        android:textSize="18sp"
+		android:layout_below ="@id/container"/>
+	<android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnAnulare"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:padding="12dp"
+        android:text="Renunta"
+        android:textAllCaps="true"
+        android:background="@drawable/secondary_button_style"
+        android:textSize="18sp"
+		android:layout_below ="@id/btnScan"/>
+
+
+</RelativeLayout>
+</ScrollView>

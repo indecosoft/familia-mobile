@@ -34,7 +34,7 @@ namespace Familia.Devices.DevicesManagement {
         private List<DeviceEditingManagementModel> _devicesList = new List<DeviceEditingManagementModel>();
         private DevicesManagementAdapter _adapter;
         private SqlHelper<BluetoothDeviceRecords> _sqlHelper;
-        public static readonly string DevicesRoot = "DevicesRoot";
+        //public static readonly string DevicesRoot = "DevicesRoot";
 
         protected override void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
