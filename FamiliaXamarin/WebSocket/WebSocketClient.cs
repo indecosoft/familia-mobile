@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Util;
-using EngineIO.Client;
 using Familia.Chat;
 using Familia.DataModels;
 using Familia.Helpers;

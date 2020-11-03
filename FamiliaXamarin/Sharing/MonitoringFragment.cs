@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.V4.App;
-using Android.Support.V7.Widget;
 using Android.Views;
+using AndroidX.Fragment.App;
+using AndroidX.RecyclerView.Widget;
 using Familia.Helpers;
 using Familia.JsonModels;
 using Java.Lang;
@@ -34,7 +34,7 @@ namespace Familia.Sharing
                 List<SharingModel> contacts = null;
                 await Task.Run(async () =>
                 {
-                    string response = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/getSharingPeople",
+                    string response = await WebServices.WebServices.Post("/api/getSharingPeople",
                         new JSONObject().Put("email", Utils.GetDefaults("Email")),
                             Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(response))

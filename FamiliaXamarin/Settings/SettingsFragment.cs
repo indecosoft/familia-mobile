@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using Android.OS;
-using Android.Support.V4.App;
-using Android.Support.V4.Hardware.Fingerprint;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Core.Hardware.Fingerprint;
+using AndroidX.Fragment.App;
 using Familia.Devices.DevicesManagement;
 using Familia.Helpers;
 

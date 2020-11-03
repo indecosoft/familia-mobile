@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.CardView.Widget;
+using AndroidX.RecyclerView.Widget;
 using Familia.DataModels;
 using Familia.Helpers;
 using Familia.Medicatie.Data;
@@ -18,10 +19,10 @@ using Familia.Services;
 using Java.Text;
 using Org.Json;
 using SQLite;
-using AlertDialog = Android.Support.V7.App.AlertDialog;
 using Environment = System.Environment;
-using Fragment = Android.Support.V4.App.Fragment;
+using Fragment = AndroidX.Fragment.App.Fragment;
 using TimeZone = Java.Util.TimeZone;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
 namespace Familia.Medicatie
 {
@@ -491,7 +492,7 @@ namespace Familia.Medicatie
         private static async Task<bool> SendData(Context context, JSONArray mArray)
         {
             string result = await WebServices.WebServices.Post(
-                $"{Constants.PublicServerAddress}/api/medicine", mArray,
+                "/api/medicine", mArray,
                 Utils.GetDefaults("Token"));
             if (!Utils.CheckNetworkAvailability()) return false;
             switch (result)

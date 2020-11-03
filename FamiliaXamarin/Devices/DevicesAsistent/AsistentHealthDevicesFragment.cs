@@ -2,21 +2,22 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Android;
-using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Fragment.App;
 using Familia.DataModels;
 using Familia.Devices.DevicesManagement;
 using Familia.Devices.GlucoseDevice;
 using Familia.Devices.Helpers;
 using Familia.Devices.PressureDevice;
 using Familia.Helpers;
-using Fragment = Android.Support.V4.App.Fragment;
 using Result = ZXing.Result;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
+
 
 namespace Familia.Devices.DevicesAsistent {
 	public class AsistentHealthDevicesFragment : Fragment {
@@ -65,7 +66,7 @@ namespace Familia.Devices.DevicesAsistent {
 				alertDialog.SetTitle("Avertisment");
 
 				alertDialog.SetMessage("Nu aveti niciun dispozitiv inregistrat!");
-				alertDialog.SetButton("OK", delegate { Activity.StartActivity(typeof(DevicesManagementActivity)); });
+				alertDialog.SetButton((int)DialogButtonType.Positive, "OK" , delegate { Activity.StartActivity(typeof(DevicesManagementActivity)); });
 				alertDialog.Show();
 			}
 		}

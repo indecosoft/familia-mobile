@@ -3,11 +3,12 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
+
 using Android.Views;
 using Android.Widget;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+using AndroidX.AppCompat.App;
+using AndroidX.CardView.Widget;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
 namespace Familia.Sharing
 {

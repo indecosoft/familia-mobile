@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
-using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Support.V7.Widget;
 using Android.Views;
+using AndroidX.RecyclerView.Widget;
 using Familia.Chat;
 using Familia.Helpers;
 using Familia.JsonModels;
 using Java.Lang;
 using Newtonsoft.Json;
-using Fragment = Android.Support.V4.App.Fragment;
+using AndroidX.Fragment.App;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
 namespace Familia.Active_Conversations
 {
@@ -52,14 +52,15 @@ namespace Familia.Active_Conversations
                                 .Create();
                         alertDialog.SetTitle("Avertisment");
                         alertDialog.SetMessage("Doriti sa stergeti aceasta conversatie?");
-                        alertDialog.SetButton("Da", delegate
+                        
+                        alertDialog.SetButton((int)DialogButtonType.Positive, "Da", delegate
                         {
                             adapter.DeleteConversation(args.Position);
                             adapter.NotifyDataSetChanged();
                             string serialized = JsonConvert.SerializeObject(contacts);
                             Utils.SetDefaults("Rooms", serialized);
                         });
-                        alertDialog.SetButton2("Nu", delegate { });
+                        alertDialog.SetButton((int)DialogButtonType.Negative, "Nu" , delegate { });
                         alertDialog.Show();
                     };
                 }

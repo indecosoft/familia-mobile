@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Support.V4.App;
+using AndroidX.Core.App;
 using Android.Util;
 using Familia.DataModels;
 using Familia.Helpers;
@@ -13,6 +12,7 @@ using Familia.Medicatie.Alarm;
 using Java.Lang;
 using Org.Json;
 using Exception = System.Exception;
+using Android.App;
 
 namespace Familia.Services {
 	[Service]
@@ -84,6 +84,7 @@ namespace Familia.Services {
 						var dict = new Dictionary<string, string> {
 							{"grant_type", "refresh_token"}, {"refresh_token", refreshToken}
 						};
+						// TODO: Check this cal after refactoring requests
 						string response = await WebServices.WebServices.Post("https://api.fitbit.com/oauth2/token", dict);
 						if (response != null) {
 							var obj = new JSONObject(response);
@@ -107,10 +108,11 @@ namespace Familia.Services {
 			_location.LocationRequested += RequestedLocationForSteps;
 		}
 
-		private void RequestedLocationForSleep(object source, EventArgs args) {
+		private void RequestedLocationForSleep(object source, LocationEventArgs args) {
 			_location.LocationRequested -= RequestedLocationForSleep;
 
 			Task.Run(async () => {
+				// ToDo: Check this Request too
 				string data = await WebServices.WebServices.Get("https://api.fitbit.com/1.2/user/-/sleep/date/today.json", _token);
 
 				if (string.IsNullOrEmpty(data)) return;
@@ -135,10 +137,8 @@ namespace Familia.Services {
 						Log.Error("FitBit IdClient", Utils.GetDefaults("IdClient") + "");
 						Log.Error("FitBit IdPersoana", Utils.GetDefaults("IdPersoana") + "");
 						Log.Error("FitBit Data", jsonArray + "");
-						Log.Error("FitBit Latitude",
-							((LocationEventArgs) args).Location.Latitude.ToString().Replace(',', '.') + "");
-						Log.Error("FitBit Longitude",
-							((LocationEventArgs) args).Location.Longitude.ToString().Replace(',', '.') + "");
+						Log.Error("FitBit Latitude", args.Location.Latitude.ToString().Replace(',', '.') + "");
+						Log.Error("FitBit Longitude",args.Location.Longitude.ToString().Replace(',', '.') + "");
 
 						obj.Put("imei", Utils.GetDeviceIdentificator(this))
 							.Put("idClient", Utils.GetDefaults("IdClient"))
@@ -146,7 +146,7 @@ namespace Familia.Services {
 							.Put("laﬁﬁtitude", ((LocationEventArgs) args).Location.Latitude.ToString().Replace(',', '.'))
 							.Put("longitude",
 								((LocationEventArgs) args).Location.Longitude.ToString().Replace(',', '.'));
-						string result = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/smartband/sleep", obj,
+						string result = await WebServices.WebServices.Post("/api/smartband/sleep", obj,
 							Utils.GetDefaults("Token"));
 						if (!string.IsNullOrEmpty(result)) {
 							try {
@@ -183,6 +183,7 @@ namespace Familia.Services {
 			try {
 				_location.LocationRequested -= RequestedLocationForSteps;
 				Task.Run(async () => {
+					// ToDo: Check this Request too
 					string data = await WebServices.WebServices.Get("https://api.fitbit.com/1/user/-/activities/date/today.json",
 						_token);
 					if (!string.IsNullOrEmpty(data)) {
@@ -226,7 +227,7 @@ namespace Familia.Services {
 										((LocationEventArgs) args).Location.Longitude.ToString().Replace(',', '.'));
 
 								string result = await WebServices.WebServices.Post(
-									$"{Constants.PublicServerAddress}/api/smartband/activity", obj,
+									"/api/smartband/activity", obj,
 									Utils.GetDefaults("Token"));
 
 								if (!string.IsNullOrEmpty(result)) {

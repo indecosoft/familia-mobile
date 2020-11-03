@@ -1,22 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
-using Android.OS;
-using Android.Runtime;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
 using Familia.DataModels;
 using Familia.Helpers;
-using Java.Lang;
 using Java.Util;
 using Org.Json;
-using SQLite;
 
 namespace Familia.Devices.Alarm
 {

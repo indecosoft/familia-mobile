@@ -5,11 +5,11 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.App;
+using AndroidX.RecyclerView.Widget;
 using Com.Bumptech.Glide;
 using Com.Bumptech.Glide.Request;
 using Com.Bumptech.Glide.Signature;
@@ -17,7 +17,8 @@ using Familia.Helpers;
 using Familia.Profile.Data;
 using Org.Json;
 using Refractored.Controls;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
+
 
 namespace Familia.Profile
 {
@@ -81,7 +82,7 @@ namespace Familia.Profile
             {
                 try
                 {
-                    string res = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/myProfile", Utils.GetDefaults("Token"));
+                    string res = await WebServices.WebServices.Get("/api/myProfile", Utils.GetDefaults("Token"));
                     if (res != null)
                     {
                         Log.Error("ProfileActivity", res);
@@ -463,7 +464,7 @@ namespace Familia.Profile
 
                     if (Utils.CheckNetworkAvailability())
                     {
-                        string result = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/myProfile", jsonObject, Utils.GetDefaults("Token"));
+                        string result = await WebServices.WebServices.Post("/api/myProfile", jsonObject, Utils.GetDefaults("Token"));
                         if (result != null)
                         {
                             Log.Error("ProfileActivity data", result);

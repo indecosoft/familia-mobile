@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Android.Content;
-using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using AndroidX.RecyclerView.Widget;
 using Familia.Profile.Data;
 
 namespace Familia.Profile

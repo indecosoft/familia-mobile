@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.RecyclerView.Widget;
 using Familia.Medicatie.Entities;
 using Java.Util;
-using AlertDialog = Android.Support.V7.App.AlertDialog;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
 namespace Familia.Medicatie
 {

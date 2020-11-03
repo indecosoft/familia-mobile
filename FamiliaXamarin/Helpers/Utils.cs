@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Android.App;
+//using Android.App;
+using AndroidX.Core.App;
 using Android.Content;
 using Android.Gms.Common;
 using Android.Graphics;
@@ -31,6 +32,8 @@ using Exception = System.Exception;
 using Math = System.Math;
 using Result = ZXing.Result;
 using TaskStackBuilder = Android.Support.V4.App.TaskStackBuilder;
+using Android.App;
+using NotificationCompat = AndroidX.Core.App.NotificationCompat;
 
 namespace Familia.Helpers {
 	public static class Utils {

@@ -8,13 +8,14 @@ using Android.Content.PM;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.App;
+using AndroidX.AppCompat.Widget;
+using AndroidX.CardView.Widget;
 using Familia.Helpers;
+using Google.Android.Material.BottomNavigation;
 using MikePhil.Charting.Charts;
 using MikePhil.Charting.Components;
 using MikePhil.Charting.Data;
@@ -22,7 +23,8 @@ using MikePhil.Charting.Highlight;
 using MikePhil.Charting.Listener;
 using Newtonsoft.Json;
 using Org.Json;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
+
 
 namespace Familia.Sharing
 {
@@ -44,51 +46,30 @@ namespace Familia.Sharing
         private string _name, _email, _imei;
         private readonly List<PressureModel> _bloodPressureDataList = new List<PressureModel>();
         private readonly List<GlucoseModel> _bloodGlucoseDataList = new List<GlucoseModel>();
-        private Drawable buttonBackground;
-        private Drawable buttonBackgroundA;
-        private Drawable buttonBackgroundDatePicker;
-        private LinearLayout layoutButtons;
-        private LinearLayout horizontalScrollLinearLayout;
-        private LinearLayout verticalScrollLinearLayout;
+        private Drawable _buttonBackground;
+        private Drawable _buttonBackgroundA;
+        private Drawable _buttonBackgroundDatePicker;
+        private LinearLayout _layoutButtons;
+        private LinearLayout _horizontalScrollLinearLayout;
+        private LinearLayout _verticalScrollLinearLayout;
         private LineChart _lineChart;
         private HorizontalScrollView _scrollViewButtons;
-        private BottomNavigationView bottomNavigation;
+        private BottomNavigationView _bottomNavigation;
         private TextView _tvDate;
 
         private string _dataType;
-        // Summary:
-        //     Specifies the day of the week.
+
         [Serializable]
         [ComVisible(true)]
         public enum DayOfWeek
         {
-            //
-            // Summary:
-            //     Indicates Monday.
-            Monday = 0,
-            //
-            // Summary:
-            //     Indicates Tuesday.
-            Tuesday = 1,
-            //
-            // Summary:
-            //     Indicates Wednesday.
-            Wednesday = 2,
-            //
-            // Summary:
-            //     Indicates Thursday.
-            Thursday = 3,
-            //
-            // Summary:
-            //     Indicates Friday.
-            Friday = 4,
-            //
-            // Summary:
-            //     Indicates Saturday.
-            Saturday = 5,
-            // Summary:
-            //     Indicates Sunday.
-            Sunday = 6
+            Monday,
+            Tuesday,
+            Wednesday,
+            Thursday,
+            Friday,
+            Saturday,
+            Sunday
         }
         private void InitUi()
         {
@@ -103,17 +84,17 @@ namespace Familia.Sharing
                 OnBackPressed();
             };
 
-            verticalScrollLinearLayout = FindViewById<LinearLayout>(Resource.Id.LinearLayout);
-            horizontalScrollLinearLayout = FindViewById<LinearLayout>(Resource.Id.linearLayout2);
+            _verticalScrollLinearLayout = FindViewById<LinearLayout>(Resource.Id.LinearLayout);
+            _horizontalScrollLinearLayout = FindViewById<LinearLayout>(Resource.Id.linearLayout2);
             _scrollViewButtons = FindViewById<HorizontalScrollView>(Resource.Id.ScrollViewButtons);
             _tvDate = FindViewById<TextView>(Resource.Id.tvDate);
 
-            buttonBackground = Resources.GetDrawable(Resource.Drawable.sharing_round_button_inactiv, Theme);
-            buttonBackgroundA = Resources.GetDrawable(Resource.Drawable.sharing_round_button_activ, Theme);
-            buttonBackgroundDatePicker = Resources.GetDrawable(Resource.Drawable.sharing_date_button_style, Theme);
-            bottomNavigation = FindViewById<BottomNavigationView>(Resource.Id.top_navigation);
+            _buttonBackground = Resources.GetDrawable(Resource.Drawable.sharing_round_button_inactiv, Theme);
+            _buttonBackgroundA = Resources.GetDrawable(Resource.Drawable.sharing_round_button_activ, Theme);
+            _buttonBackgroundDatePicker = Resources.GetDrawable(Resource.Drawable.sharing_date_button_style, Theme);
+            _bottomNavigation = FindViewById<BottomNavigationView>(Resource.Id.top_navigation);
             _lineChart = FindViewById<LineChart>(Resource.Id.chart);
-            bottomNavigation.NavigationItemSelected += BottomNavigationOnNavigationItemSelected;
+            _bottomNavigation.NavigationItemSelected += BottomNavigationOnNavigationItemSelected;
 
             _name = Intent.GetStringExtra("Name");
             _email = Intent.GetStringExtra("Email");
@@ -128,8 +109,8 @@ namespace Familia.Sharing
                     Title = $"Glicemie: {_name}";
                     break;
             }
-            bottomNavigation.SelectedItemId = Resource.Id.week_tab;
-            bottomNavigation.PerformClick();
+            _bottomNavigation.SelectedItemId = Resource.Id.week_tab;
+            _bottomNavigation.PerformClick();
             //LoadDaySelectorButtons();
             _tvDate.Text = DateTime.Now.ToShortDateString();
         }
@@ -142,7 +123,7 @@ namespace Familia.Sharing
                 if (dataType)
                 {
                     _bloodPressureDataList.Clear();
-                    string bloodPressureResult = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/getUsersDataSharing",
+                    string bloodPressureResult = await WebServices.WebServices.Post("/api/getUsersDataSharing",
                         new JSONObject().Put("dataType", "bloodPressure").Put("imei", _imei)
                             .Put("date", startDate.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(bloodPressureResult))
@@ -156,14 +137,14 @@ namespace Familia.Sharing
                     }
 
                     CreateBloodPresureChart();
-                    verticalScrollLinearLayout.RemoveAllViewsInLayout();
-                    horizontalScrollLinearLayout.RemoveAllViewsInLayout();
+                    _verticalScrollLinearLayout.RemoveAllViewsInLayout();
+                    _horizontalScrollLinearLayout.RemoveAllViewsInLayout();
                     LoadDataInScrollLayouts(DateTime.Now);
                 }
                 else
                 {
                     _bloodGlucoseDataList.Clear();
-                    string bloodGlucoseResult = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/getUsersDataSharing",
+                    string bloodGlucoseResult = await WebServices.WebServices.Post("/api/getUsersDataSharing",
                         new JSONObject().Put("dataType", "bloodGlucose").Put("imei", _imei)
                             .Put("date", startDate.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(bloodGlucoseResult))
@@ -176,8 +157,8 @@ namespace Familia.Sharing
                         }
                     }
                     CreateGlucoseChart();
-                    verticalScrollLinearLayout.RemoveAllViewsInLayout();
-                    horizontalScrollLinearLayout.RemoveAllViewsInLayout();
+                    _verticalScrollLinearLayout.RemoveAllViewsInLayout();
+                    _horizontalScrollLinearLayout.RemoveAllViewsInLayout();
                     LoadDataInScrollLayouts(DateTime.Now,false);
                 }
             }
@@ -326,10 +307,10 @@ namespace Familia.Sharing
             Drawable bloodPressureIconDrawable = Resources.GetDrawable(Resource.Drawable.heart, Theme);
             Drawable pulseRateIconDrawable = Resources.GetDrawable(Resource.Drawable.heart_pulse, Theme);
             Drawable glucoseIconDrawable = Resources.GetDrawable(Resource.Drawable.water, Theme);
-            verticalScrollLinearLayout.RemoveAllViewsInLayout();
-            horizontalScrollLinearLayout.RemoveAllViewsInLayout();
-            horizontalScrollLinearLayout.Invalidate();
-            verticalScrollLinearLayout.Invalidate();
+            _verticalScrollLinearLayout.RemoveAllViewsInLayout();
+            _horizontalScrollLinearLayout.RemoveAllViewsInLayout();
+            _horizontalScrollLinearLayout.Invalidate();
+            _verticalScrollLinearLayout.Invalidate();
             //for (int i = 0; i < horizontalScrollLinearLayout.ChildCount; i++)
             //{
             //    horizontalScrollLinearLayout.RemoveViewAt(i);
@@ -359,7 +340,7 @@ namespace Familia.Sharing
                 {
                     Task.Run(async () =>
                     {
-                        string result = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/getDayRec", new JSONObject().Put("imei", _imei).Put("dataType", "bloodPressure").Put("date", date.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
+                        string result = await WebServices.WebServices.Post("/api/getDayRec", new JSONObject().Put("imei", _imei).Put("dataType", "bloodPressure").Put("date", date.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
 
                         if (!string.IsNullOrEmpty(result))
                         {
@@ -372,8 +353,8 @@ namespace Familia.Sharing
                                     var time = Convert.ToDateTime(obj.GetString("date"));
                                     RunOnUiThread(() =>
                                     {
-                                        verticalScrollLinearLayout.AddView(CreateCard(bloodPressureIconDrawable, $"{obj.GetString("systolic")}/{obj.GetString("diastolic")}", "mmHg", time.ToShortTimeString(), verticalScrollLayoutParams));
-                                        horizontalScrollLinearLayout.AddView(CreateCard(pulseRateIconDrawable, $"{obj.GetString("pulseRate")}", "bpm", time.ToShortTimeString(), horizontalScrollLayoutParams));
+                                        _verticalScrollLinearLayout.AddView(CreateCard(bloodPressureIconDrawable, $"{obj.GetString("systolic")}/{obj.GetString("diastolic")}", "mmHg", time.ToShortTimeString(), verticalScrollLayoutParams));
+                                        _horizontalScrollLinearLayout.AddView(CreateCard(pulseRateIconDrawable, $"{obj.GetString("pulseRate")}", "bpm", time.ToShortTimeString(), horizontalScrollLayoutParams));
                                     });
 
 
@@ -400,7 +381,7 @@ namespace Familia.Sharing
             }
             else
             {
-                horizontalScrollLinearLayout.Visibility = ViewStates.Gone;
+                _horizontalScrollLinearLayout.Visibility = ViewStates.Gone;
                 //var size = new Random().Next(5, 20);
                 //for (var i = 0; i < size; i++)
                 //{
@@ -410,7 +391,7 @@ namespace Familia.Sharing
                 {
                     Task.Run(async () =>
                     {
-                        string result = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/getDayRec", new JSONObject().Put("imei", _imei).Put("dataType", "bloodGlucose").Put("date", date.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
+                        string result = await WebServices.WebServices.Post("/api/getDayRec", new JSONObject().Put("imei", _imei).Put("dataType", "bloodGlucose").Put("date", date.ToString("yyyy-MM-dd")), Utils.GetDefaults("Token"));
 
                         if (!string.IsNullOrEmpty(result))
                         {
@@ -423,7 +404,7 @@ namespace Familia.Sharing
                                     var time = Convert.ToDateTime(obj.GetString("date"));
                                     RunOnUiThread(() =>
                                     {
-                                        verticalScrollLinearLayout.AddView(CreateCard(glucoseIconDrawable, $"{obj.GetInt("bloodGlucose")}", "mg/dL", time.ToShortTimeString(), verticalScrollLayoutParams));
+                                        _verticalScrollLinearLayout.AddView(CreateCard(glucoseIconDrawable, $"{obj.GetInt("bloodGlucose")}", "mg/dL", time.ToShortTimeString(), verticalScrollLayoutParams));
                                     });
 
 
@@ -445,8 +426,8 @@ namespace Familia.Sharing
         }
         private void LoadDaySelectorButtons(int type = 1)
         {
-            layoutButtons = FindViewById<LinearLayout>(Resource.Id.layout_buttons);
-            layoutButtons.RemoveAllViews();
+            _layoutButtons = FindViewById<LinearLayout>(Resource.Id.layout_buttons);
+            _layoutButtons.RemoveAllViews();
             var layoutButtonParams = new LinearLayoutCompat.LayoutParams(
                 (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 40, Resources.DisplayMetrics),
                 (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 40, Resources.DisplayMetrics))
@@ -511,7 +492,7 @@ namespace Familia.Sharing
                         btn.SetTextColor(Resources.GetColor(Resource.Color.colorSecondary, Theme));
                     }
                     if (isActive) activeButton = btn;
-                    layoutButtons.AddView(btn);
+                    _layoutButtons.AddView(btn);
                 }
 
                 if (type == 2)
@@ -533,7 +514,7 @@ namespace Familia.Sharing
                     //LayoutParameters = layoutButtonParams
                 };
                 btn.SetTextColor(Color.White);
-                btn.Background = buttonBackgroundDatePicker;
+                btn.Background = _buttonBackgroundDatePicker;
                 btn.SetAllCaps(false);
                 btn.SetCompoundDrawables(img, null, null, null);
                 btn.SetPadding((int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 8, Resources.DisplayMetrics),
@@ -550,19 +531,19 @@ namespace Familia.Sharing
                         switch (_dataType)
                         {
                             case "BloodPressure":
-                                verticalScrollLinearLayout.RemoveAllViewsInLayout();
-                                horizontalScrollLinearLayout.RemoveAllViewsInLayout();
+                                _verticalScrollLinearLayout.RemoveAllViewsInLayout();
+                                _horizontalScrollLinearLayout.RemoveAllViewsInLayout();
                                 LoadDataInScrollLayouts(time);
                                 break;
                             case "BloodGlucose":
-                                verticalScrollLinearLayout.RemoveAllViewsInLayout();
+                                _verticalScrollLinearLayout.RemoveAllViewsInLayout();
                                 LoadDataInScrollLayouts(time,false);
                                 break;
                         }
                     });
                     frag.Show(SupportFragmentManager, SharingDatePickerFragment.TAG);
                 };
-                layoutButtons.AddView(btn);
+                _layoutButtons.AddView(btn);
             }
 
         }
@@ -571,7 +552,7 @@ namespace Familia.Sharing
             var btn = new AppCompatButton(this);
             btn.SetTextSize(ComplexUnitType.Sp, 12f);
             btn.SetTextColor(Color.White);
-            btn.Background = active ? buttonBackgroundA : buttonBackground;
+            btn.Background = active ? _buttonBackgroundA : _buttonBackground;
             btn.Click += DaySelectorButtonOnClick;
             return btn;
         }
@@ -602,18 +583,18 @@ namespace Familia.Sharing
         {
             var btn = (AppCompatButton)sender;
 
-            for (var i = 0; i < layoutButtons.ChildCount; i++)
+            for (var i = 0; i < _layoutButtons.ChildCount; i++)
             {
-                if ((layoutButtons.GetChildAt(i) as AppCompatButton)?.Background == buttonBackgroundA)
-                    ((AppCompatButton)layoutButtons.GetChildAt(i)).Background = buttonBackground;
+                if ((_layoutButtons.GetChildAt(i) as AppCompatButton)?.Background == _buttonBackgroundA)
+                    ((AppCompatButton)_layoutButtons.GetChildAt(i)).Background = _buttonBackground;
             }
 
-            if (btn.Background == buttonBackground)
-                btn.Background = buttonBackgroundA;
+            if (btn.Background == _buttonBackground)
+                btn.Background = _buttonBackgroundA;
 
 
             DateTime selectionDate = DateTime.Now;
-            if(bottomNavigation.SelectedItemId == Resource.Id.week_tab)
+            if(_bottomNavigation.SelectedItemId == Resource.Id.week_tab)
             {
                 int dayIndex = ReturnDayIndex();
 
@@ -635,7 +616,7 @@ namespace Familia.Sharing
                 _tvDate.Text = customWeekStart.ToString("dd.MM.yyyy");
                 selectionDate = customWeekStart;
             }
-            else if(bottomNavigation.SelectedItemId == Resource.Id.month_tab)
+            else if(_bottomNavigation.SelectedItemId == Resource.Id.month_tab)
             {
                 DateTime baseDate = DateTime.Today;
 
@@ -652,12 +633,12 @@ namespace Familia.Sharing
             switch (_dataType)
             {
                 case "BloodPressure":
-                    verticalScrollLinearLayout.RemoveAllViewsInLayout();
-                    horizontalScrollLinearLayout.RemoveAllViewsInLayout();
+                    _verticalScrollLinearLayout.RemoveAllViewsInLayout();
+                    _horizontalScrollLinearLayout.RemoveAllViewsInLayout();
                     LoadDataInScrollLayouts(selectionDate);
                     break;
                 case "BloodGlucose":
-                    verticalScrollLinearLayout.RemoveAllViewsInLayout();
+                    _verticalScrollLinearLayout.RemoveAllViewsInLayout();
                     LoadDataInScrollLayouts(selectionDate,false);
                     break;
             }

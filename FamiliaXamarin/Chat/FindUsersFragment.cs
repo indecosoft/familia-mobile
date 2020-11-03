@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.Animation;
 using Android.OS;
-using Android.Support.V4.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Fragment.App;
 using Com.Airbnb.Lottie;
 using Com.Yuyakaido.Android.CardStackView;
 using Familia.Helpers;
@@ -69,7 +69,7 @@ namespace Familia.Chat {
 			await Task.Run(async () => {
 				try {
 					JSONObject dataToSent = new JSONObject().Put("id", Utils.GetDefaults("Id")).Put("distance", 3000);
-					string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/nearMe",
+					string response = await WebServices.WebServices.Post("/api/nearMe",
 						dataToSent, Utils.GetDefaults("Token"));
 					Log.Error("FindUsers", response + "");
 					if (response != null) {

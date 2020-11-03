@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using AndroidX.RecyclerView.Widget;
 using Familia.Medicatie.Entities;
 
 namespace Familia.Medicatie

@@ -1,22 +1,17 @@
 ﻿using System;
-using Android;
-using Android.Animation;
 using Android.App;
-using Android.Content;
 using Android.Content.PM;
-using Android.Hardware;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V4.Content;
-using Android.Support.V7.App;
 using Android.Util;
 using Android.Widget;
+using AndroidX.AppCompat.App;
 using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
 using Familia.Helpers;
 using Familia.Services;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
 namespace Familia.Activity_Tracker
 {

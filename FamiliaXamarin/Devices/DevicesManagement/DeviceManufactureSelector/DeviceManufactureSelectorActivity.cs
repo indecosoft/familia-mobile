@@ -3,9 +3,10 @@ using System.Linq;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Text;
+using AndroidX.AppCompat.App;
+using AndroidX.AppCompat.Widget;
+using AndroidX.RecyclerView.Widget;
 using Familia.Devices.Models;
 using Newtonsoft.Json;
 

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Android.Util;
 using Familia.Helpers;
-using Familia.JsonModels;
 using Familia.Profile.Data.db;
 
 namespace Familia.Profile.Data

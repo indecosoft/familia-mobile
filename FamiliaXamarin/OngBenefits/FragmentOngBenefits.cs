@@ -5,18 +5,18 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Support.Constraints;
-using Android.Support.Design.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.ConstraintLayout.Widget;
 using Familia.Asistenta_sociala;
 using Familia.Helpers;
+using Google.Android.Material.Snackbar;
 using Java.Text;
 using Java.Util;
 using Newtonsoft.Json;
 using Org.Json;
-using Fragment = Android.Support.V4.App.Fragment;
+using Fragment = AndroidX.Fragment.App.Fragment;
 using ZXingResult = ZXing.Result;
 
 namespace Familia.OngBenefits {
@@ -69,7 +69,7 @@ namespace Familia.OngBenefits {
             _progressBarDialog.Show();
             await Task.Run(async () => {
                 try {
-                    string response = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/selfRegisteredBenefits/" , Utils.GetDefaults("Token"));
+                    string response = await WebServices.WebServices.Get("/api/selfRegisteredBenefits/" , Utils.GetDefaults("Token"));
                     var jsonResponse = new JSONObject(response);
                     if (jsonResponse.GetInt("status") == 2) {
                         JSONArray dataArray = jsonResponse.GetJSONArray("data");
@@ -141,7 +141,7 @@ namespace Familia.OngBenefits {
            .Put("benefits" , GetFormInformation());
             Log.Error("Token" , Utils.GetDefaults("Token") + "");
 
-            string response = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/selfRegisteredBenefits/" , payload , Utils.GetDefaults("Token"));
+            string response = await WebServices.WebServices.Post("/api/selfRegisteredBenefits/" , payload , Utils.GetDefaults("Token"));
             if (response != null) {
                 Log.Error("Response" , response);
                 var responseJson = new JSONObject(response);

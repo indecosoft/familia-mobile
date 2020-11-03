@@ -1,15 +1,16 @@
 ﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Support.V4.View;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
+using AndroidX.AppCompat.App;
+using AndroidX.ViewPager.Widget;
 using Familia.Helpers;
 using Familia.Sharing;
+using Google.Android.Material.BottomNavigation;
 using Java.Lang;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
+
 
 namespace Familia.Medicatie
 {

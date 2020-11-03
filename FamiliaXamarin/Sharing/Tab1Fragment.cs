@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Android.OS;
-using Android.Support.V4.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Fragment.App;
 using Com.Bumptech.Glide;
 using Familia.Helpers;
 using Org.Json;
@@ -14,7 +14,7 @@ namespace Familia.Sharing
     public class Tab1Fragment : Fragment
     {
 
-        private Button btnScan;
+        private Button _btnScan;
 //        private TextView personFound;
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -26,8 +26,8 @@ namespace Familia.Sharing
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View view = inflater.Inflate(Resource.Layout.layout_tab1, container, false);
-            btnScan = view.FindViewById<Button>(Resource.Id.btn_scanQR);
-            btnScan.Click += BtnScan_Click;
+            _btnScan = view.FindViewById<Button>(Resource.Id.btn_scanQR);
+            _btnScan.Click += BtnScan_Click;
             return view;
         }
         private async void BtnScan_Click(object sender, EventArgs e)
@@ -38,14 +38,14 @@ namespace Familia.Sharing
             {
                 CustomDialogProfileSharingData dialog = OpenMiniProfileDialog();
                 dialog.Name.Text = qrJsonData.GetString("Name");
-                Glide.With(this).Load(qrJsonData.GetString("Avatar")).Into(dialog.Image);
+                Glide.With(Activity).Load(qrJsonData.GetString("Avatar")).Into(dialog.Image);
                 dialog.ButtonConfirm.Click += (o, args) =>
                 {
                     Task.Run(async () =>
                     {
                         Log.Error("ListaConexiuni", "send data");
                         Log.Error("qrjsondata", qrJsonData + "  " );
-                        var response = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/newSharingPeople",
+                        var response = await WebServices.WebServices.Post("/api/newSharingPeople",
                             new JSONObject().Put("from", qrJsonData.GetString("Id")).Put("dest", Utils.GetDefaults("Id")), Utils.GetDefaults("Token"));
                         Log.Error("SharingData scan", response + " " );
                         if (!string.IsNullOrEmpty(response))

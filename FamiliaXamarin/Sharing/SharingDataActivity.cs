@@ -1,10 +1,11 @@
 ﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Support.V4.View;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
+
+using AndroidX.AppCompat.App;
+using AndroidX.AppCompat.Widget;
+using AndroidX.ViewPager.Widget;
+using Google.Android.Material.BottomNavigation;
 using Java.Lang;
 
 namespace Familia.Sharing

@@ -11,31 +11,31 @@ using Android.Graphics.Drawables;
 using Android.Media;
 using Android.OS;
 using Android.Provider;
-using Android.Support.Constraints;
-using Android.Support.Design.Widget;
-using Android.Support.V4.App;
-using Android.Support.V4.Content;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.ConstraintLayout.Widget;
+using AndroidX.Core.Content;
+using AndroidX.Fragment.App;
 using Com.Bumptech.Glide;
 using Familia.Asistenta_sociala;
 using Familia.Helpers;
 using Familia.JsonModels;
 using Familia.Medicatie.Alarm;
-using Familia.Profile;
 using Familia.Profile.Data;
 using Familia.Services;
+using Google.Android.Material.Snackbar;
 using Java.Text;
 using Java.Util;
 using Newtonsoft.Json;
 using Org.Json;
 using Refractored.Controls;
-using AlertDialog = Android.Support.V7.App.AlertDialog;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
+
 using Environment = Android.OS.Environment;
 using File = Java.IO.File;
-using Fragment = Android.Support.V4.App.Fragment;
-using FragmentManager = Android.Support.V4.App.FragmentManager;
+using Fragment = AndroidX.Fragment.App.Fragment;
+using FragmentManager = AndroidX.Fragment.App.FragmentManager;
 using Uri = Android.Net.Uri;
 
 namespace Familia.Login_System
@@ -249,7 +249,7 @@ namespace Familia.Login_System
                     {
                         case 1:
                             //_imagePath = _photoUri.Path;
-                            Glide.With(this).Load(new File(_imagePath)).Into(_profileImage);
+                            Glide.With(Activity).Load(new File(_imagePath)).Into(_profileImage);
 
                             GalleryAddPic();
                             _fileInformations = new FileInfo(new File(_imagePath).Path);
@@ -270,7 +270,7 @@ namespace Familia.Login_System
 
 
                             _imagePath = GetPathToImage(uri);
-                            Glide.With(this).Load(new File(_imagePath)).Into(_profileImage);
+                            Glide.With(Activity).Load(new File(_imagePath)).Into(_profileImage);
                             _fileInformations = new FileInfo(_imagePath);
                             Log.Error("Size", _fileInformations.Length.ToString());
                             if (_fileInformations.Length >= 10485760)
@@ -470,7 +470,7 @@ namespace Familia.Login_System
                 progressBarDialog.Show();
                 Task.Run(async () =>
                 {
-                    string result = await WebServices.WebServices.Get(Constants.PublicServerAddress + "/api/getDisease", Utils.GetDefaults("Token"));
+                    string result = await WebServices.WebServices.Get( "/api/getDisease", Utils.GetDefaults("Token"));
                     if (result == null) return;
 
                     var arrayOfDiseases = new JSONArray(result);
@@ -535,7 +535,7 @@ namespace Familia.Login_System
                             Log.Error("data to send", jsonData);
 
                             string response = await WebServices.WebServices.Post(
-                                Constants.PublicServerAddress + "/api/firstSetup",
+                                "/api/firstSetup",
                                 new JSONObject(jsonData), Utils.GetDefaults("Token"));
                             if (response != null)
                             {
@@ -559,7 +559,7 @@ namespace Familia.Login_System
 
                                         Utils.SetDefaults("Logins", true.ToString());
                                         Utils.SetDefaults("Avatar",
-                                            $"{Constants.PublicServerAddress}/{Utils.GetDefaults("Email")}.{FragmentContext._firstSetupModel.ImageExtension}");
+                                            $"/{Utils.GetDefaults("Email")}.{FragmentContext._firstSetupModel.ImageExtension}");
 
 
                                         await SaveProfileData();

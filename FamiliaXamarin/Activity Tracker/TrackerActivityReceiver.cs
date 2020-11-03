@@ -1,12 +1,11 @@
 ﻿using System;
-using Android.App;
+using AndroidX.Core.App;
 using Android.Content;
-using Android.OS;
-using Android.Support.V4.App;
 using Android.Util;
 using Familia.Helpers;
 using Familia.Services;
 using Java.Util;
+using Android.App;
 
 namespace Familia.Activity_Tracker
 {

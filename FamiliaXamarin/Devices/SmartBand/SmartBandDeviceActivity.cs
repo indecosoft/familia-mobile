@@ -5,12 +5,12 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.Constraints;
-using Android.Support.V4.Content;
-using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.App;
+using AndroidX.ConstraintLayout.Widget;
+using AndroidX.Core.Content;
 using Com.Airbnb.Lottie;
 using Com.Airbnb.Lottie.Model;
 using Com.Airbnb.Lottie.Value;
@@ -21,7 +21,8 @@ using Familia.Helpers;
 using Java.Util.Concurrent;
 using Org.Json;
 using Refractored.Controls;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
+
 
 namespace Familia.Devices.SmartBand
 {

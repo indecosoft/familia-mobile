@@ -6,12 +6,11 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Widget;
+using AndroidX.AppCompat.App;
+using AndroidX.RecyclerView.Widget;
 using Familia.DataModels;
-using Familia.Devices.DevicesAsistent;
 using Familia.Devices.DevicesManagement.BloodPressure;
 using Familia.Devices.DevicesManagement.DeviceManufactureSelector;
 using Familia.Devices.DevicesManagement.Dialogs;
@@ -23,7 +22,8 @@ using Familia.Devices.Helpers;
 using Familia.Devices.Models;
 using Familia.Helpers;
 using Newtonsoft.Json;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
+
 
 namespace Familia.Devices.DevicesManagement {
     [Activity(Label = "Familia", Theme = "@style/AppTheme.Dark",

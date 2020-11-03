@@ -5,16 +5,16 @@ using Android.Bluetooth.LE;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Widget;
+using AndroidX.AppCompat.App;
+using AndroidX.RecyclerView.Widget;
 using Familia.DataModels;
 using Familia.Devices.Bluetooth.Callbacks;
 using Familia.Devices.Bluetooth.Events;
 using Familia.Devices.Helpers;
 using Familia.Devices.PressureDevice;
 using Familia.Helpers;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
 namespace Familia.Devices.DevicesManagement.BloodPressure {
 	[Activity(Label = "AddNewBloodPressureDeviceActivity", Theme = "@style/AppTheme.Dark",

@@ -1,6 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
+    <e p="$USER_HOME$/.nuget/packages/xamarin.android.support.core.ui/25.4.0.2/proguard" t="Include">
+      <e p="proguard.txt" t="Include" />
+    </e>
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.activity/1.1.0.3/aar/androidx.activity.activity.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.annotation/1.1.0.6/jar" t="Include">
+      <e p="androidx.annotation.annotation.jar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.appcompat/1.2.0.4/aar/androidx.appcompat.appcompat.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.appcompat/1.2.0.4/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.appcompat.appcompatresources/1.2.0.4/aar/androidx.appcompat.appcompat-resources.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.arch.core.common/2.1.0.6/jar/androidx.arch.core.core-common.jar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.arch.core.runtime/2.1.0.6/aar/androidx.arch.core.core-runtime.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.asynclayoutinflater/1.0.0.5/aar/androidx.asynclayoutinflater.asynclayoutinflater.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.browser/1.2.0.2/aar/androidx.browser.browser.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.cardview/1.0.0.5/aar/androidx.cardview.cardview.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.collection/1.1.0.5/jar/androidx.collection.collection.jar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.constraintlayout/1.1.3.2/aar/androidx.constraintlayout.constraintlayout.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.constraintlayout.solver/1.1.3.2/jar/androidx.constraintlayout.constraintlayout-solver.jar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.coordinatorlayout/1.1.0.5/aar/androidx.coordinatorlayout.coordinatorlayout.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.coordinatorlayout/1.1.0.5/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.core/1.3.0.3/aar/androidx.core.core.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.core/1.3.0.3/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.cursoradapter/1.0.0.5/aar/androidx.cursoradapter.cursoradapter.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.customview/1.1.0.3-rc01/aar/androidx.customview.customview.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.documentfile/1.0.1.5/aar/androidx.documentfile.documentfile.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.drawerlayout/1.0.0.5/aar/androidx.drawerlayout.drawerlayout.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.fragment/1.2.5.3/aar/androidx.fragment.fragment.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.fragment/1.2.5.3/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.interpolator/1.0.0.5/aar/androidx.interpolator.interpolator.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.legacy.support.core.ui/1.0.0.5/aar/androidx.legacy.legacy-support-core-ui.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.legacy.support.core.utils/1.0.0.5/aar/androidx.legacy.legacy-support-core-utils.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.legacy.support.v4/1.0.0.5/aar/androidx.legacy.legacy-support-v4.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.lifecycle.common/2.2.0.3/jar/androidx.lifecycle.lifecycle-common.jar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.lifecycle.livedata.core/2.2.0.3/aar/androidx.lifecycle.lifecycle-livedata-core.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.lifecycle.runtime/2.2.0.3/aar/androidx.lifecycle.lifecycle-runtime.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.lifecycle.runtime/2.2.0.3/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.lifecycle.viewmodel/2.2.0.3/aar/androidx.lifecycle.lifecycle-viewmodel.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.lifecycle.viewmodel/2.2.0.3/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.lifecycle.viewmodelsavedstate/2.2.0.3/aar/androidx.lifecycle.lifecycle-viewmodel-savedstate.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.lifecycle.viewmodelsavedstate/2.2.0.3/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.loader/1.1.0.5/aar/androidx.loader.loader.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.localbroadcastmanager/1.0.0.5/aar/androidx.localbroadcastmanager.localbroadcastmanager.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.media/1.1.0.5/aar/androidx.media.media.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.media/1.1.0.5/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.multidex/2.0.1.4/aar" t="Include">
+      <e p="androidx.multidex.multidex.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.print/1.0.0.5/aar/androidx.print.print.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.recyclerview/1.1.0.5/aar/androidx.recyclerview.recyclerview.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.recyclerview/1.1.0.5/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.savedstate/1.1.0.3-alpha01/aar/androidx.savedstate.savedstate.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.savedstate/1.1.0.3-alpha01/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.slidingpanelayout/1.0.0.5/aar/androidx.slidingpanelayout.slidingpanelayout.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.swiperefreshlayout/1.0.0.5/aar/androidx.swiperefreshlayout.swiperefreshlayout.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.transition/1.2.0.1/aar/androidx.transition.transition.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.transition/1.2.0.1/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.vectordrawable/1.1.0.5/aar/androidx.vectordrawable.vectordrawable.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.vectordrawable.animated/1.1.0.5/aar/androidx.vectordrawable.vectordrawable-animated.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.vectordrawable.animated/1.1.0.5/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.versionedparcelable/1.1.1.5/aar/androidx.versionedparcelable.versionedparcelable.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.versionedparcelable/1.1.1.5/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.androidx.viewpager/1.0.0.5/aar/androidx.viewpager.viewpager.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.google.android.material/1.0.0.1/aar/com.google.android.material.material.aar" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.google.android.material/1.0.0.1/proguard/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.google.guava.listenablefuture/1.0.0.2/buildTransitive/monoandroid50" t="Include">
+      <e p="guava-listenablefuture.jar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.base/117.1.0/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.basement/117.1.0/proguard/monoandroid90" t="Include">
+      <e p="proguard.txt" t="Include" />
+    </e>
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="FamiliaXamarin" t="IncludeRecursive">
         <e p="Active Conversations" t="Include">
@@ -79,8 +150,43 @@
             <e p="jquery.ui.touch-punch.min.js" t="Include" />
             <e p="style.css" t="Include" />
           </e>
+          <e p="joc3" t="Include">
+            <e p="data.js" t="Include" />
+            <e p="Entities" t="Include">
+              <e p="activity.js" t="Include" />
+              <e p="daytime.js" t="Include" />
+              <e p="object.js" t="Include" />
+              <e p="place.js" t="Include" />
+              <e p="task.js" t="Include" />
+            </e>
+            <e p="game.js" t="Include" />
+            <e p="images" t="Include">
+              <e p="iarna.png" t="Include" />
+              <e p="iarna_dark.png" t="Include" />
+              <e p="primavara.png" t="Include" />
+              <e p="primavara_dark.png" t="Include" />
+              <e p="toamna.png" t="Include" />
+              <e p="toamna2.png" t="Include" />
+              <e p="toamna2_dark.png" t="Include" />
+              <e p="toamna_dark.png" t="Include" />
+              <e p="vara.png" t="Include" />
+              <e p="vara_dark.png" t="Include" />
+            </e>
+            <e p="index.html" t="Include" />
+            <e p="lib" t="Include">
+              <e p="jquery.keyframes.min.js" t="Include" />
+              <e p="jquery.ui.touch-punch.min.js" t="Include" />
+            </e>
+            <e p="storage.json" t="Include" />
+            <e p="style.css" t="Include" />
+            <e p="ui" t="Include">
+              <e p="animations.js" t="Include" />
+              <e p="ui.js" t="Include" />
+            </e>
+          </e>
           <e p="p5.js" t="Include" />
         </e>
+        <e p="bin" t="ExcludeRecursive" />
         <e p="Chat" t="Include">
           <e p="ChatActivity.cs" t="Include" />
           <e p="ChatAdapter.cs" t="Include" />
@@ -100,6 +206,10 @@
           <e p="SmartBandRecords.cs" t="Include" />
         </e>
         <e p="Devices" t="Include">
+          <e p="Alarm" t="Include">
+            <e p="AlarmDeviceReceiver.cs" t="Include" />
+            <e p="ConfigReceiver.cs" t="Include" />
+          </e>
           <e p="Bluetooth" t="Include">
             <e p="Callbacks" t="Include">
               <e p="BloodPressure" t="Include">
@@ -154,6 +264,9 @@
           </e>
           <e p="DevicesRecyclerViewAdapter.cs" t="Include" />
           <e p="GlucoseDevice" t="Include">
+            <e p="Dialogs" t="Include">
+              <e p="GlucoseManualRegisterDialog.cs" t="Include" />
+            </e>
             <e p="GlucoseDeviceActivity.cs" t="Include" />
             <e p="GlucoseDeviceData.cs" t="Include" />
           </e>
@@ -171,6 +284,9 @@
           <e p="PressureDevice" t="Include">
             <e p="BloodPressureData.cs" t="Include" />
             <e p="BloodPressureDeviceActivity.cs" t="Include" />
+            <e p="Dialogs" t="Include">
+              <e p="BloodPressureManualRegisterDialog.cs" t="Include" />
+            </e>
           </e>
           <e p="SmartBand" t="Include">
             <e p="SmartBandDeviceActivity.cs" t="Include" />
@@ -184,15 +300,14 @@
           </e>
           <e p="GameActivity.cs" t="Include" />
           <e p="GameCenterActivity.cs" t="Include" />
+          <e p="GamesGridViewAdapter.cs" t="Include" />
           <e p="MyWebViewClient.cs" t="Include" />
           <e p="Sensors" t="Include">
             <e p="AccelerometerSensor.cs" t="Include" />
           </e>
         </e>
         <e p="Helpers" t="Include">
-          <e p="AlarmDeviceReceiver.cs" t="Include" />
           <e p="BiometricUtils.cs" t="Include" />
-          <e p="ChargerReceiver.cs" t="Include" />
           <e p="DatePickerFragment.cs" t="Include" />
           <e p="Encryption.cs" t="Include" />
           <e p="FingerprintHandler.cs" t="Include" />
@@ -255,6 +370,16 @@
           <e p="MedicineServerAdapter.cs" t="Include" />
           <e p="MedicineServerFragment.cs" t="Include" />
           <e p="MedicineServerRecyclerViewOnScrollListener.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="designtime" t="Include">
+              <e p="Resource.Designer.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="OngBenefits" t="Include">
+          <e p="FragmentOngBenefits.cs" t="Include" />
         </e>
         <e p="Profile" t="Include">
           <e p="Data" t="Include">
@@ -390,6 +515,8 @@
             <e p="swipe_message.xml" t="Include" />
             <e p="text_button_style.xml" t="Include" />
             <e p="thumbnailjoc1.png" t="Include" />
+            <e p="thumbnailjoc2.png" t="Include" />
+            <e p="thumbnailjoc3.jpg" t="Include" />
             <e p="trash.xml" t="Include" />
             <e p="tv_tint_selector.xml" t="Include" />
             <e p="view_list.xml" t="Include" />
@@ -419,7 +546,6 @@
             <e p="activity_first_setup.axml" t="Include" />
             <e p="activity_game.axml" t="Include" />
             <e p="activity_game_center.axml" t="Include" />
-            <e p="activity_game_center.xml" t="Include" />
             <e p="activity_login.axml" t="Include" />
             <e p="activity_main.axml" t="Include" />
             <e p="activity_pin_lockscreen.axml" t="Include" />
@@ -442,6 +568,8 @@
             <e p="dialog_add_new_device.axml" t="Include" />
             <e p="dialog_delete_device.axml" t="Include" />
             <e p="dialog_devices_management.axml" t="Include" />
+            <e p="dialog_manual_blood_pressure.axml" t="Include" />
+            <e p="dialog_manual_glucose.axml" t="Include" />
             <e p="find_users_fragment.axml" t="Include" />
             <e p="fragment_asistent_form.axml" t="Include" />
             <e p="fragment_asistent_health_devices.xml" t="Include" />
@@ -451,6 +579,7 @@
             <e p="fragment_medicine_lost.axml" t="Include" />
             <e p="fragment_medicine_server.axml" t="Include" />
             <e p="fragment_monitoring.axml" t="Include" />
+            <e p="fragment_ong_benefits.xml" t="Include" />
             <e p="fragment_qr_code_generator.axml" t="Include" />
             <e p="fragment_settings.axml" t="Include" />
             <e p="fragment_setup1.axml" t="Include" />
@@ -464,6 +593,7 @@
             <e p="item_conversations.xml" t="Include" />
             <e p="item_device_selector.axml" t="Include" />
             <e p="item_device_type.xml" t="Include" />
+            <e p="item_game.xml" t="Include" />
             <e p="item_hour.axml" t="Include" />
             <e p="item_log.xml" t="Include" />
             <e p="item_med.axml" t="Include" />
@@ -544,7 +674,6 @@
             <e p="walk.json" t="Include" />
             <e p="walking_animation.json" t="Include" />
           </e>
-          <e p="Resource.Designer.cs" t="Include" />
           <e p="values" t="Include">
             <e p="colors.xml" t="Include" />
             <e p="dimens.xml" t="Include" />
@@ -597,7 +726,27 @@
       <e p="FamiliaXamarin.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />
     </e>
-    <e p="$USER_HOME$/Library/Caches/Rider2019.3/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/Library/Caches/Rider2019.3/resharper-host/local/Transient/ReSharperHost/v193/SolutionCaches/_FamiliaXamarin.-1021164152.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/Library/Android/sdk/platforms/android-29/Data/res" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Android/sdk/sources/android-29" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.2/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.2/resharper-host/local/Transient/Rider/v202/SolutionCaches/_FamiliaXamarin.-1021164152.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesbase-17.1.0" t="Include">
+      <e p="playservicesbase-17.1.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesbasement-17.1.0" t="Include">
+      <e p="playservicesbasement-17.1.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playserviceslocation-17.0.0" t="Include">
+      <e p="playserviceslocation-17.0.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesmaps-17.0.0" t="Include">
+      <e p="playservicesmaps-17.0.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesplacesplacereport-17.0.0" t="Include">
+      <e p="playservicesplacesplacereport-17.0.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicestasks-17.0.0" t="Include">
+      <e p="playservicestasks-17.0.0.aar" t="Include" />
+    </e>
   </component>
 </project>

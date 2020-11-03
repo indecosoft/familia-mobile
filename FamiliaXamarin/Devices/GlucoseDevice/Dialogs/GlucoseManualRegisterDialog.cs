@@ -3,12 +3,12 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.Design.Widget;
 using Android.Views;
 using Android.Widget;
 using Familia.Devices.DevicesManagement.Dialogs.Events;
 using Familia.Devices.DevicesManagement.Dialogs.Helpers;
 using Familia.Devices.PressureDevice;
+using Google.Android.Material.TextField;
 
 namespace Familia.Devices.GlucoseDevice.Dialogs
 {

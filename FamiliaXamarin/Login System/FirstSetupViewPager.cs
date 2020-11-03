@@ -1,11 +1,11 @@
 ﻿using System;
 using Android.Content;
 using Android.Runtime;
-using Android.Support.V4.View;
 using Android.Util;
 using Android.Views;
 using Android.Views.Animations;
 using Android.Widget;
+using AndroidX.ViewPager.Widget;
 using Java.Lang;
 using Java.Lang.Reflect;
 using Exception = System.Exception;

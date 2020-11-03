@@ -3,7 +3,8 @@ using Android;
 using Android.Content.PM;
 using Android.Hardware.Fingerprints;
 using Android.OS;
-using Android.Support.V4.Content;
+using AndroidX.Core.Content;
+//using Android.Support.V4.Content;
 using Familia.Login_System;
 
 namespace Familia.Helpers {

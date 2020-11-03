@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Support.V4.App;
 using Android.Util;
 using Familia.Helpers;
 using Familia.Medicatie.Alarm;
@@ -14,8 +13,9 @@ using Java.Lang;
 using Java.Text;
 using Java.Util;
 using Org.Json;
+using AndroidX.Core.App;
+
 using Exception = System.Exception;
-using Random = System.Random;
 using TimeZone = Java.Util.TimeZone;
 
 namespace Familia.Services
@@ -60,7 +60,7 @@ namespace Familia.Services
                 try
                 {
                     await cancelPendingIntentsForMedicationSchedule();//_medications
-                    string res = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/userMeds/{Utils.GetDefaults("Id")}", Utils.GetDefaults("Token"));
+                    string res = await WebServices.WebServices.Get($"/api/userMeds/{Utils.GetDefaults("Id")}", Utils.GetDefaults("Token"));
 
                     if (res != null)
                     {

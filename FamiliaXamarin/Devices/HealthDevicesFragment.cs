@@ -4,10 +4,10 @@ using Android;
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.CustomTabs;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Browser.CustomTabs;
 using Familia.DataModels;
 using Familia.Devices.DevicesManagement;
 using Familia.Devices.GlucoseDevice;
@@ -15,7 +15,7 @@ using Familia.Devices.Helpers;
 using Familia.Devices.PressureDevice;
 using Familia.Devices.SmartBand;
 using Familia.Helpers;
-using Fragment = Android.Support.V4.App.Fragment;
+using Fragment = AndroidX.Fragment.App.Fragment;
 using Uri = Android.Net.Uri;
 
 namespace Familia.Devices {

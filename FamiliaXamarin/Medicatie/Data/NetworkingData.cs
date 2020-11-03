@@ -28,7 +28,7 @@ namespace Familia.Medicatie.Data
             {
                 try
                 {
-                    string res = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/medicineList/{Utils.GetDefaults("Id")}/{size}", Utils.GetDefaults("Token")); //this should be here
+                    string res = await WebServices.WebServices.Get($"api/medicineList/{Utils.GetDefaults("Id")}/{size}", Utils.GetDefaults("Token")); //this should be here
                     if (res != null)
                     {
                         Log.Error("Networking data FUTURE", " RESULT_FOR_MEDICATIE" + res);
@@ -63,7 +63,7 @@ namespace Familia.Medicatie.Data
             {
                 try
                 {
-                    string res = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/missedMedicine/{Utils.GetDefaults("Id")}/{size}", Utils.GetDefaults("Token")); //this should be here
+                    string res = await WebServices.WebServices.Get($"/api/missedMedicine/{Utils.GetDefaults("Id")}/{size}", Utils.GetDefaults("Token")); //this should be here
                     if (res != null)
                     {
                         Log.Error("Networking data", " RESULT_FOR_MEDICATIE" + res);

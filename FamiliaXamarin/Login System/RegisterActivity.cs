@@ -3,20 +3,21 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
+
 using Android.Text;
 using Android.Widget;
+using AndroidX.AppCompat.App;
+using AndroidX.AppCompat.Widget;
 using Familia.Helpers;
+using Google.Android.Material.Snackbar;
+using Google.Android.Material.TextField;
 using Org.Json;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
-namespace Familia.Login_System
-{
-    [Activity(Label = "RegisterActivity", Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]
-    public class RegisterActivity : AppCompatActivity
-    {
+namespace Familia.Login_System {
+    [Activity(Label = "RegisterActivity", Theme = "@style/AppTheme.Dark",
+        ScreenOrientation = ScreenOrientation.Portrait)]
+    public class RegisterActivity : AppCompatActivity {
         private RelativeLayout _layout;
         private TextInputLayout _lastNameInputLayout;
         private TextInputLayout _firstNameInputLayout;
@@ -36,8 +37,7 @@ namespace Familia.Login_System
         private bool _validateForm;
 
 
-        protected override void OnCreate(Bundle savedInstanceState)
-        {
+        protected override void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_register);
 
@@ -46,9 +46,8 @@ namespace Familia.Login_System
             InitListeners();
         }
 
-        private void InitUi()
-        {
-            var toolbar =FindViewById<Toolbar>(Resource.Id.toolbar);
+        private void InitUi() {
+            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             Title = string.Empty;
 
@@ -67,51 +66,48 @@ namespace Familia.Login_System
             _passwordRetypeEditText = FindViewById<EditText>(Resource.Id.et_retype_password);
             _btnRegister = FindViewById<AppCompatButton>(Resource.Id.btn_register);
             _bntCancel = FindViewById<AppCompatButton>(Resource.Id.btn_cancel);
-            
+
 
             var tvDeviceId = FindViewById<TextView>(Resource.Id.tv_device_id_value);
             string deviceId = Utils.GetDeviceIdentificator(this);
-            if (!string.IsNullOrEmpty(deviceId))
-            {
-                tvDeviceId.Text = deviceId;
+            if (!string.IsNullOrEmpty(deviceId)) {
+                if (tvDeviceId != null) {
+                    tvDeviceId.Text = deviceId;
+                }
             }
 
-          
+
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati", "Inregistrare...", this, false);
 
             _btnRegister.Enabled = false;
         }
 
-        private void InitListeners()
-        {        
+        private void InitListeners() {
             _btnRegister.Click += BtnRegisterOnClick;
             _bntCancel.Click += BntCancelOnClick;
-            _nameEditText.TextChanged +=NameEditTextOnTextChanged;
+            _nameEditText.TextChanged += NameEditTextOnTextChanged;
             _firstNameEditText.TextChanged += FirstNameEditTextOnTextChanged;
             _emailEditText.TextChanged += EmailEditTextOnTextChanged;
             _passwordEditText.TextChanged += PasswordEditTextOnTextChanged;
             _passwordRetypeEditText.TextChanged += PasswordRetypeEditTextOnTextChanged;
         }
 
-        private void FirstNameEditTextOnTextChanged(object sender, TextChangedEventArgs e)
-        {
+        private void FirstNameEditTextOnTextChanged(object sender, TextChangedEventArgs e) {
             string name = _nameEditText.Text;
-            if (name == string.Empty)
-            {
+            if (name == string.Empty) {
                 _firstNameInputLayout.Error = "Camp obligatoriu";
                 _validateForm = false;
             }
-            else
-            {
+            else {
                 _firstNameInputLayout.Error = null;
                 _validateForm = true;
             }
+
             _btnRegister.Enabled = ValidateForm();
         }
 
-        private bool ValidateForm()
-        {
-            return _nameEditText.Text != string.Empty && 
+        private bool ValidateForm() {
+            return _nameEditText.Text != string.Empty &&
                    _firstNameEditText.Text != string.Empty &&
                    _emailEditText.Text != string.Empty &&
                    _passwordEditText.Text != string.Empty &&
@@ -119,16 +115,12 @@ namespace Familia.Login_System
                    _validateForm;
         }
 
-        private void PasswordRetypeEditTextOnTextChanged(object sender, TextChangedEventArgs e)
-        {
-
-            if (_passwordRetypeEditText.Text.Equals(_passwordEditText.Text))
-            {
+        private void PasswordRetypeEditTextOnTextChanged(object sender, TextChangedEventArgs e) {
+            if (_passwordRetypeEditText.Text != null && _passwordRetypeEditText.Text.Equals(_passwordEditText.Text)) {
                 _passwordRetypeInputLayout.Error = null;
                 _validateForm = true;
             }
-            else
-            {
+            else {
                 _passwordRetypeInputLayout.Error = "Parolele nu coincid!";
                 _validateForm = false;
             }
@@ -136,101 +128,87 @@ namespace Familia.Login_System
             _btnRegister.Enabled = ValidateForm();
         }
 
-        private void PasswordEditTextOnTextChanged(object sender, TextChangedEventArgs e)
-        {
+        private void PasswordEditTextOnTextChanged(object sender, TextChangedEventArgs e) {
             string password = _passwordEditText.Text;
-            if (password == string.Empty)
-            {
+            if (password == string.Empty) {
                 _passwordInputLayout.Error = "Camp obligatoriu";
                 _validateForm = false;
-
             }
-            else if (!Utils.PasswordValidator(password))
-            {
-                _passwordInputLayout.Error = "Parola trebuie sa contina cel putin 8 caractere si cel putin o majuscula si o cifra";
+            else if (!Utils.PasswordValidator(password)) {
+                _passwordInputLayout.Error =
+                    "Parola trebuie sa contina cel putin 8 caractere si cel putin o majuscula si o cifra";
                 _validateForm = false;
             }
-            else
-            {
+            else {
                 _passwordInputLayout.Error = null;
                 _validateForm = true;
             }
+
             _btnRegister.Enabled = ValidateForm();
         }
 
-        private void EmailEditTextOnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (_emailEditText.Text == string.Empty)
-            {
-                _emailInputLayout.Error ="Camp obligatoriu";
+        private void EmailEditTextOnTextChanged(object sender, TextChangedEventArgs e) {
+            if (_emailEditText.Text == string.Empty) {
+                _emailInputLayout.Error = "Camp obligatoriu";
                 _validateForm = false;
-
             }
-            else if (!Utils.EmailValidator(_emailEditText.Text))
-            {
+            else if (!Utils.EmailValidator(_emailEditText.Text)) {
                 _emailInputLayout.Error = "Adresa de email invalida";
                 _validateForm = false;
             }
-            else
-            {
+            else {
                 _emailInputLayout.Error = null;
                 _validateForm = true;
             }
+
             _btnRegister.Enabled = ValidateForm();
         }
 
-        private void NameEditTextOnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (_nameEditText.Text == string.Empty)
-            {
+        private void NameEditTextOnTextChanged(object sender, TextChangedEventArgs e) {
+            if (_nameEditText.Text == string.Empty) {
                 _lastNameInputLayout.Error = "Camp obligatoriu";
                 _validateForm = false;
             }
-            else
-            {
+            else {
                 _lastNameInputLayout.Error = null;
                 _validateForm = true;
             }
+
             _btnRegister.Enabled = ValidateForm();
         }
 
-        private void BntCancelOnClick(object sender, EventArgs e)
-        {
+        private void BntCancelOnClick(object sender, EventArgs e) {
             Finish();
         }
 
-        private async void BtnRegisterOnClick(object sender, EventArgs e)
-        {
+        private async void BtnRegisterOnClick(object sender, EventArgs e) {
             _progressBarDialog.Show();
 
-            //TODO if getImei is null, do something
-            /**
-             * return imei if android version is 9 or below
-             * return android_id if android version is bigger than 9*
+            // TODO: if getImei is null, do something
+            /*
+             return imei if android version is 9 or below
+             return android_id if android version is bigger than 9*
              */
 
 
             await Task.Run(async () => {
+                JSONObject dataToSend = new JSONObject().Put("name", $"{_nameEditText.Text} {_firstNameEditText.Text}")
+                    .Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text).Put("type", 4)
+                    .Put("imei", Utils.GetDeviceIdentificator(this));
 
-                JSONObject dataToSend = new JSONObject().Put("name", $"{_nameEditText.Text} {_firstNameEditText.Text}").Put("email", _emailEditText.Text).Put("password", _passwordEditText.Text).Put("type", 4).Put("imei", Utils.GetDeviceIdentificator(this));
-
-                string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/register", dataToSend);
-                if (response != null)
-                {
-                    Snackbar snack = new JSONObject(response).GetInt("status") switch
-                    {
+                string response =
+                    await WebServices.WebServices.Post("/api/register", dataToSend);
+                if (response != null) {
+                    Snackbar snack = new JSONObject(response).GetInt("status") switch {
                         0 => Snackbar.Make(_layout, "Date incorecte", Snackbar.LengthLong),
                         1 => Snackbar.Make(_layout, "Eroare server", Snackbar.LengthLong),
-                        2 => Snackbar.Make(_layout, "Cont creat cu succes", Snackbar.LengthIndefinite).SetAction("Ok", v =>
-                        {
-                            Finish();
-                        }),
+                        2 => Snackbar.Make(_layout, "Cont creat cu succes", Snackbar.LengthIndefinite)
+                            .SetAction("Ok", v => { Finish(); }),
                         _ => Snackbar.Make(_layout, "A fost intampinata o eroare", Snackbar.LengthLong)
                     };
                     snack.Show();
                 }
-                else
-                {
+                else {
                     Snackbar.Make(_layout, "Unable to reach the server!", Snackbar.LengthLong).Show();
                 }
             });

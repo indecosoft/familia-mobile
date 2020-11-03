@@ -2,12 +2,10 @@
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.Constraints;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.App;
 using Com.Airbnb.Lottie;
 using Familia.Games.entities;
 using Familia.Helpers;
@@ -15,7 +13,7 @@ using Org.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
 namespace Familia.Games
 {
@@ -116,7 +114,7 @@ namespace Familia.Games
             try
             {
                 dialog.Show();
-                string res = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/gamesCategories/", Utils.GetDefaults("Token"));
+                string res = await WebServices.WebServices.Get("/api/gamesCategories/", Utils.GetDefaults("Token"));
                 if (res != null)
                 {
                     Log.Error(LOG_TAG, " RESULT " + res);

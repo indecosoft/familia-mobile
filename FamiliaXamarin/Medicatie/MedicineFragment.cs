@@ -2,14 +2,15 @@
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
+using AndroidX.Fragment.App;
+using AndroidX.RecyclerView.Widget;
 using Familia.Medicatie.Alarm;
 using Familia.Medicatie.Data;
 using Familia.Medicatie.Entities;
 using SQLite;
-using Fragment = Android.Support.V4.App.Fragment;
+using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace Familia.Medicatie
 {

@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Android;
-using Android.App;
+using AndroidX.Core.App;
 using Android.Content;
-using Android.Content.PM;
 using Android.OS;
-using Android.Support.Constraints;
-using Android.Support.Design.Widget;
-using Android.Support.V4.App;
-using Android.Support.V4.Content;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -26,8 +20,11 @@ using Java.Text;
 using Java.Util;
 using Newtonsoft.Json;
 using Org.Json;
-using Fragment = Android.Support.V4.App.Fragment;
 using LocationEventArgs = Familia.Location.LocationEventArgs;
+using AndroidX.Fragment.App;
+using AndroidX.ConstraintLayout.Widget;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
+using Google.Android.Material.Snackbar;
 
 namespace Familia.Asistenta_sociala {
     public class AsistentForm : Fragment, DistanceCalculator.IServiceStoppedListener {
@@ -184,7 +181,7 @@ namespace Familia.Asistenta_sociala {
                 alertDialog.SetTitle("Avertisment");
 
                 alertDialog.SetMessage("Nu aveti niciun dispozitiv inregistrat!");
-                alertDialog.SetButton("OK" , delegate { Activity.StartActivity(typeof(DevicesManagementActivity)); });
+                alertDialog.SetButton((int)DialogButtonType.Positive, "OK" , delegate { Activity.StartActivity(typeof(DevicesManagementActivity)); });
                 alertDialog.Show();
             }
         }
@@ -203,7 +200,7 @@ namespace Familia.Asistenta_sociala {
                 try {
                     //Utils.GetDefaults("QrId")
                     // string response = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/getUserBenefits/{Utils.GetDefaults("Id")}", Utils.GetDefaults("Token"));
-                    string response = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/getAllBenefits/" , Utils.GetDefaults("Token"));
+                    string response = await WebServices.WebServices.Get("/api/getAllBenefits/" , Utils.GetDefaults("Token"));
                     Log.Error("Debug Log in " + nameof(AsistentForm) , "Response: " + response);
                     var jsonResponse = new JSONObject(response);
                     Log.Error("ASISTEN FORM BENEFITS" , jsonResponse.ToString());
@@ -362,7 +359,7 @@ namespace Familia.Asistenta_sociala {
                         .Put("dateTimeStop" , _dateTimeEnd)
                         .Put("imei" , _qrJsonData.GetString("deviceId"))
                         .Put("location" , locationObj).Put("details" , _details);
-                        string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/consultByImei" , dataToSend , Utils.GetDefaults("Token"));
+                        string response = await WebServices.WebServices.Post("/api/consultByImei" , dataToSend , Utils.GetDefaults("Token"));
                         Log.Error("Data Payload" , dataToSend.ToString());
                         if (response != null) {
                             var responseJson = new JSONObject(response);
@@ -383,7 +380,7 @@ namespace Familia.Asistenta_sociala {
                         JSONObject dataToSend = new JSONObject().Put("dateTimeStart" , _dateTimeStart)
                         .Put("dateTimeStop" , _dateTimeEnd).Put("qrCodeData" , _qrJsonData)
                         .Put("location" , locationObj).Put("details" , _details);
-                        string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/consult" , dataToSend , Utils.GetDefaults("Token"));
+                        string response = await WebServices.WebServices.Post("/api/consult" , dataToSend , Utils.GetDefaults("Token"));
                         if (response != null) {
                             var responseJson = new JSONObject(response);
                             switch (responseJson.GetInt("status")) {
@@ -409,7 +406,7 @@ namespace Familia.Asistenta_sociala {
 
         public override void OnActivityResult(int requestCode , int resultCode , Intent data) {
             base.OnActivityResult(requestCode , resultCode , data);
-            if (resultCode == (int)Result.Ok) {
+            if (resultCode == (int)Android.App.Result.Ok) {
                 _selectedBenefits = JsonConvert.DeserializeObject<List<SearchListModel>>(data.GetStringExtra("result"));
                 _btnScan.Enabled = FieldsValidation();
                 _btnBenefits.Text = $"Ati Selectat {_selectedBenefits.Count} beneficii";

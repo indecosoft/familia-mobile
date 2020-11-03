@@ -4,16 +4,16 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
+using AndroidX.RecyclerView.Widget;
 using Com.Bumptech.Glide;
 using Familia.Helpers;
 using Familia.JsonModels;
 using Java.Lang;
 using Newtonsoft.Json;
 using Org.Json;
-using Fragment = Android.Support.V4.App.Fragment;
+using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace Familia.Sharing
 {
@@ -39,7 +39,7 @@ namespace Familia.Sharing
                 List<SharingModel> contacts = null;
                 await Task.Run(async () =>
                 {
-                    string response = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/getSharedPeople",
+                    string response = await WebServices.WebServices.Post("/api/getSharedPeople",
                         new JSONObject().Put("id", Utils.GetDefaults("Id")),
                             Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(response))
@@ -69,7 +69,7 @@ namespace Familia.Sharing
                         string email = contacts[args.Position].Email;
                         CustomDialogProfileSharingData dialog = OpenMiniProfileDialog();
                         dialog.Name.Text = name;
-                        Glide.With(this).Load($"{Constants.PublicServerAddress}/{contacts[args.Position].Avatar}").Into(dialog.Image);
+                        Glide.With(Activity).Load($"{Constants.PublicServerAddress}/{contacts[args.Position].Avatar}").Into(dialog.Image);
 
                         dialog.ButtonConfirm.Visibility = ViewStates.Gone;
                         dialog.ButtonCancel.Text = "Sterge";
@@ -155,7 +155,7 @@ namespace Familia.Sharing
                 Log.Error("DeleteSharing", "sending obj: " + jsonObj);
                 if (Utils.CheckNetworkAvailability())
                 {
-                    string result = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/deleteSharingPeople", jsonObj, Utils.GetDefaults("Token"));
+                    string result = await WebServices.WebServices.Post($"/api/deleteSharingPeople", jsonObj, Utils.GetDefaults("Token"));
                     Log.Error("DeleteSharing", "response: " + result);
                 }
             } catch(Exception e) {
@@ -174,7 +174,7 @@ namespace Familia.Sharing
                 List<SharingModel> contacts = null;
                 await Task.Run(async () =>
                 {
-                    string response = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/getSharingPeople",
+                    string response = await WebServices.WebServices.Post("/api/getSharingPeople",
                         new JSONObject().Put("email", Utils.GetDefaults("Email")),
                             Utils.GetDefaults("Token"));
                     if (!string.IsNullOrEmpty(response))

@@ -1,6 +1,6 @@
 ﻿using System;
-using Android.Support.V7.Widget;
 using Android.Util;
+using AndroidX.RecyclerView.Widget;
 
 namespace Familia.Medicatie
 {

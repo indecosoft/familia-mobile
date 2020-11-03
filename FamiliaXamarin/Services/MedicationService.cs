@@ -7,9 +7,8 @@ using System.Timers;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Support.V4.App;
+using AndroidX.Core.App;
 using Android.Util;
-using Android.Widget;
 using Familia.DataModels;
 using Familia.Helpers;
 using Familia.Medicatie.Alarm;
@@ -99,7 +98,7 @@ namespace Familia.Services
                 if (Utils.CheckNetworkAvailability())
                 {
                     Log.Error("Medication Service:", "network checked");
-                    string result = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/medicine", jsonList, Utils.GetDefaults("Token"));
+                    string result = await WebServices.WebServices.Post("/api/medicine", jsonList, Utils.GetDefaults("Token"));
                     Log.Error("Medication Service", result);
                     switch (result)
                     {

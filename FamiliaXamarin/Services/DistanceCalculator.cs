@@ -3,12 +3,12 @@ using System.Globalization;
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Support.V4.App;
 using Android.Util;
 using Android.Widget;
 using Familia.Helpers;
 using Familia.Location;
 using Familia.Medicatie.Alarm;
+using AndroidX.Core.App;
 using Exception = System.Exception;
 using Math = System.Math;
 

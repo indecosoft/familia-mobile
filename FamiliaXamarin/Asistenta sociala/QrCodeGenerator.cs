@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Android.Graphics;
 using Android.OS;
-using Android.Support.V4.App;
 using Android.Views;
 using Android.Widget;
 using Familia.Helpers;
+using AndroidX.Fragment.App;
 
 namespace Familia.Asistenta_sociala {
     public class QrCodeGenerator : Fragment {

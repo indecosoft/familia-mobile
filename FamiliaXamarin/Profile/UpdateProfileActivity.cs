@@ -11,12 +11,12 @@ using Android.Database;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Provider;
-using Android.Support.V4.Content;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.App;
+using AndroidX.AppCompat.Widget;
+using AndroidX.Core.Content;
 using Com.Bumptech.Glide;
 using Com.Bumptech.Glide.Request;
 using Com.Bumptech.Glide.Signature;
@@ -29,7 +29,7 @@ using Java.Util;
 using Newtonsoft.Json;
 using Org.Json;
 using Refractored.Controls;
-using AlertDialog = Android.Support.V7.App.AlertDialog;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 using Environment = Android.OS.Environment;
 using File = Java.IO.File;
 using Uri = Android.Net.Uri;
@@ -262,7 +262,7 @@ namespace Familia.Profile
             var items = new List<SearchListModel>();
             await Task.Run(async () =>
             {
-                string result = await WebServices.WebServices.Get(Constants.PublicServerAddress + "/api/getDisease", Utils.GetDefaults("Token"));
+                string result = await WebServices.WebServices.Get("/api/getDisease", Utils.GetDefaults("Token"));
                 if (result != null)
                 {
                     Log.Error("UpdateProfileActivity", "RESULT " + result);

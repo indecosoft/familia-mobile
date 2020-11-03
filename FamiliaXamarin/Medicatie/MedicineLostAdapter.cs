@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Android.Graphics;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.CardView.Widget;
+using AndroidX.RecyclerView.Widget;
 using Familia.Medicatie.Entities;
 
 namespace Familia.Medicatie

@@ -1,13 +1,16 @@
 ﻿using System;
 using Android.App;
+//using Android.App;
 using Android.Content;
 using Android.Views;
 using Android.Widget;
-using AlertDialog = Android.Support.V7.App.AlertDialog.Builder;
+//using AlertDialog = Android.Support.V7.App.AlertDialog.Builder;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
+
 
 namespace Familia.Helpers {
 	internal class ProgressBarDialog {
-		private readonly Dialog _dialog;
+		private readonly AlertDialog _dialog;
 
 		/// <summary>
 		/// Retrieve the current Window for the activity
@@ -40,19 +43,18 @@ namespace Familia.Helpers {
 
 			var contentTv = view.FindViewById<TextView>(Resource.Id.loading_msg);
 			contentTv.Text = content;
-			var builder = new AlertDialog(ctx);
+			_dialog = new AlertDialog.Builder(ctx , Resource.Style.AppTheme_Dialog).Create();
 
-			builder.SetView(view);
-			builder.SetTitle(title);
+			_dialog.SetView(view);
+			_dialog.SetTitle(title);
 
 			if (okEventHandler != null)
-				builder.SetPositiveButton(okButtonText, okEventHandler);
+				_dialog.SetButton((int)DialogButtonType.Positive,okButtonText , okEventHandler);
 			if (neutralEventHandler != null)
-				builder.SetNeutralButton(neutralButtonText, neutralEventHandler);
+				_dialog.SetButton((int)DialogButtonType.Neutral, neutralButtonText , neutralEventHandler);
 			if (cancelEventHandler != null)
-				builder.SetNegativeButton(cancelButtonText, cancelEventHandler);
-			builder.SetCancelable(cancelable);
-			_dialog = builder.Create();
+				_dialog.SetButton((int)DialogButtonType.Negative, cancelButtonText , cancelEventHandler);
+			_dialog.SetCancelable(cancelable);
 			Window = _dialog.Window;
 			Window.SetBackgroundDrawableResource(Resource.Color.colorPrimaryDark);
 		}

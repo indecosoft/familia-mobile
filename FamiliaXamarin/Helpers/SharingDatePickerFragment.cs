@@ -3,7 +3,7 @@ using Android.App;
 using Android.OS;
 using Android.Util;
 using Android.Widget;
-using DialogFragment = Android.Support.V4.App.DialogFragment;
+using DialogFragment = AndroidX.Fragment.App.DialogFragment;
 
 namespace Familia.Helpers {
 	class SharingDatePickerFragment : DialogFragment, DatePickerDialog.IOnDateSetListener {

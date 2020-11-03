@@ -11,13 +11,13 @@ using Familia.Helpers;
 using Org.Json;
 
 namespace Familia.Location {
-    public class LocationManager : ILocationEvents {
+    public sealed class LocationManager : ILocationEvents {
 
         private static readonly Lazy<LocationManager>
-        lazy =
+        Lazy =
         new Lazy<LocationManager>(() => new LocationManager());
 
-        public static LocationManager Instance { get { return lazy.Value; } }
+        public static LocationManager Instance => Lazy.Value;
         private FusedLocationProviderClient _fusedLocationProviderClient;
         private LocationCallback _locationCallback;
         private LocationRequest _locationRequest;
@@ -28,7 +28,7 @@ namespace Familia.Location {
         public async Task StartRequestingLocation(int miliseconds = 1000 * 60 * 30) {
             Log.Error("Starting location" , miliseconds.ToString());
             if (!Utils.CheckIfLocationIsEnabled()) {
-                Toast.MakeText(Application.Context , "Nu aveti locatia activata" , ToastLength.Long).Show();
+                Toast.MakeText(Application.Context , "Nu aveti locatia activata" , ToastLength.Long)?.Show();
                 return;
             }
 
@@ -65,24 +65,24 @@ namespace Familia.Location {
         }
 
         public void OnLocationRequested(LocationEventArgs args) {
-            OnLocationRequested(((LocationEventArgs)args).Location);
+            OnLocationRequested(args.Location);
             if (!Utils.CheckNetworkAvailability()) return;
-            JSONObject obj = new JSONObject().Put("latitude" , ((LocationEventArgs)args).Location.Latitude).Put("longitude" , (args as LocationEventArgs).Location.Longitude);
+            JSONObject obj = new JSONObject().Put("latitude" , args.Location.Latitude).Put("longitude" , args.Location.Longitude);
             JSONObject finalObj = new JSONObject().Put("idUser" , Utils.GetDefaults("Id")).Put("location" , obj);
             try {
                 Task.Run(() => {
-                    _ = WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/updateLocation" , finalObj , Utils.GetDefaults("Token"));
-                    Utils.SetDefaults("Latitude" , ((LocationEventArgs)args).Location.Latitude.ToString());
-                    Utils.SetDefaults("Longitude" , ((LocationEventArgs)args).Location.Longitude.ToString());
-                    Log.Debug("Latitude " , ((LocationEventArgs)args).Location.Latitude.ToString());
-                    Log.Debug("Longitude" , ((LocationEventArgs)args).Location.Longitude.ToString());
+                    _ = WebServices.WebServices.Post("/api/updateLocation" , finalObj , Utils.GetDefaults("Token"));
+                    Utils.SetDefaults("Latitude" , args.Location.Latitude.ToString());
+                    Utils.SetDefaults("Longitude" , args.Location.Longitude.ToString());
+                    Log.Debug("Latitude " , args.Location.Latitude.ToString());
+                    Log.Debug("Longitude" , args.Location.Longitude.ToString());
                 });
             } catch (Exception e) {
                 Log.Error("Error sending location to server" , e.Message);
             }
         }
 
-        protected virtual void OnLocationRequested(Android.Locations.Location location) {
+        private void OnLocationRequested(Android.Locations.Location location) {
             LocationRequested?.Invoke(this , new LocationEventArgs {
                 Location = location
             });

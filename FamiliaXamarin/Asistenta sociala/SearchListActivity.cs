@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Android.App;
+using AndroidX.Core.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Text;
 using Newtonsoft.Json;
+using AndroidX.AppCompat.App;
+using Android.App;
+using Google.Android.Material.FloatingActionButton;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
+using AndroidX.RecyclerView.Widget;
+using AndroidX.AppCompat.Widget;
 
 namespace Familia.Asistenta_sociala {
     [Activity(Theme = "@style/AppTheme.Dark", ScreenOrientation = ScreenOrientation.Portrait)]

@@ -5,18 +5,18 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Support.V4.App;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Widget;
+using AndroidX.AppCompat.App;
+using AndroidX.Core.App;
+using AndroidX.RecyclerView.Widget;
 using Familia.DataModels;
 using Familia.Helpers;
 using Familia.JsonModels;
 using Familia.WebSocket;
 using Newtonsoft.Json;
 using Org.Json;
-using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
 namespace Familia.Chat
 {

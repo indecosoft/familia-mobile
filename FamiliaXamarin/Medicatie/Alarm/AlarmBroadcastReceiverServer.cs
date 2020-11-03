@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
-using Android.App;
+using AndroidX.Core.App;
 using Android.Content;
-using Android.Media;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Util;
-using Familia.DataModels;
 using Familia.Helpers;
 using Familia.Medicatie.Data;
-using Org.Json;
-using SQLite;
-using Uri = Android.Net.Uri;
+using Android.App;
+using NotificationCompat = AndroidX.Core.App.NotificationCompat;
+using NotificationManagerCompat = AndroidX.Core.App.NotificationManagerCompat;
 
 namespace Familia.Medicatie.Alarm {
     [BroadcastReceiver(Enabled = true, Exported = true)]
