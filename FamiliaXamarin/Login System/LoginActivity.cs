@@ -60,26 +60,22 @@ namespace Familia.Login_System {
 
         protected override void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
-            
-
             if (IsAuthWithFingerprintEnabled()) {
-                
                 AuthWithFingerprint();
             } else {
                 if (IsAuthWithPin()) {
                     StartActivity(typeof(PinActivity));
                 } else {
-                    
                     LoadLoginUi();
                 }
             }
         }
 
-        private bool IsAuthWithFingerprintEnabled() => !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint")) &&
-                              Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
-        
-        private bool IsAuthWithPin() => !string.IsNullOrEmpty(Utils.GetDefaults("UserPin"));
-        
+        private static bool IsAuthWithFingerprintEnabled() =>
+            !string.IsNullOrEmpty(Utils.GetDefaults("fingerprint")) &&
+            Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
+
+        private static bool IsAuthWithPin() => !string.IsNullOrEmpty(Utils.GetDefaults("UserPin"));
 
         private void AuthWithFingerprint() {
             SetContentView(Resource.Layout.activity_finger);
@@ -100,22 +96,19 @@ namespace Familia.Login_System {
                     "Nu exista permisiuni pentru autentificare utilizand amprenta",
                     ToastLength.Long)?.Show();
                 LoadLoginUi();
-            }
-            else {
+            } else {
                 if (fingerprintManager != null && !fingerprintManager.HasEnrolledFingerprints) {
                     Toast.MakeText(this,
                         "Nu ati inregistrat nici o amprenta in setari",
                         ToastLength.Long)?.Show();
                     LoadLoginUi();
-                }
-                else {
+                } else {
                     if (keyguardManager != null && !keyguardManager.IsKeyguardSecure) {
                         Toast.MakeText(this,
                             "Telefonul trebuie sa fie securizat utilizand senzorul de amprente",
                             ToastLength.Long)?.Show();
                         LoadLoginUi();
-                    }
-                    else {
+                    } else {
                         GenKey();
                     }
 
@@ -128,15 +121,13 @@ namespace Familia.Login_System {
                         if (args.Status) {
                             StartActivity(typeof(MainActivity));
                             Finish();
-                        }
-                        else {
+                        } else {
                             var filterError =
                                 new SimpleColorFilter(
                                     ContextCompat.GetColor(this, Resource.Color.accent));
-                            if (_animationView != null)
-                                _animationView.AddValueCallback(new KeyPath("**"),
-                                    LottieProperty.ColorFilter,
-                                    new LottieValueCallback(filterError));
+                            _animationView.AddValueCallback(new KeyPath("**"),
+                                LottieProperty.ColorFilter,
+                                new LottieValueCallback(filterError));
                             var vibrator = (Vibrator) GetSystemService(VibratorService);
                             vibrator?.Vibrate(VibrationEffect.CreateOneShot(100,
                                 VibrationEffect.DefaultAmplitude));
@@ -158,14 +149,12 @@ namespace Familia.Login_System {
                 RequestPermissions(Constants.PermissionsArray, 0);
             }
 
-
             try {
                 if (!bool.Parse(Utils.GetDefaults("Logins")) ||
                     Utils.GetDefaults("Token") == null) return;
                 StartActivity(typeof(MainActivity));
                 Finish();
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 Log.Error("loginActivity Error la verificare login", ex.Message);
             }
         }
@@ -179,10 +168,9 @@ namespace Familia.Login_System {
                                              + KeyProperties.EncryptionPaddingPkcs7);
                 _keyStore.Load(null);
                 IKey key = _keyStore.GetKey(_keyName, null);
-                _cipher.Init(CipherMode.EncryptMode, key);
+                _cipher?.Init(CipherMode.EncryptMode, key);
                 return true;
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 return false;
             }
         }
@@ -191,13 +179,13 @@ namespace Familia.Login_System {
             _keyStore = KeyStore.GetInstance("AndroidKeyStore");
             var keyGenerator =
                 KeyGenerator.GetInstance(KeyProperties.KeyAlgorithmAes, "AndroidKeyStore");
-            _keyStore.Load(null);
-            keyGenerator.Init(new KeyGenParameterSpec.Builder(_keyName, (KeyStorePurpose) 3)
+            _keyStore?.Load(null);
+            keyGenerator?.Init(new KeyGenParameterSpec.Builder(_keyName, (KeyStorePurpose) 3)
                 .SetBlockModes(KeyProperties.BlockModeCbc)
                 .SetUserAuthenticationRequired(true)
                 .SetEncryptionPaddings(KeyProperties.EncryptionPaddingPkcs7)
                 .Build());
-            keyGenerator.GenerateKey();
+            keyGenerator?.GenerateKey();
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions,
@@ -206,13 +194,11 @@ namespace Familia.Login_System {
                 var snack = Snackbar.Make(_layout, "Permisiuni pentru telefon refuzate",
                     Snackbar.LengthShort);
                 snack.Show();
-            }
-            else if (grantResults[1] != Permission.Granted || grantResults[2] != Permission.Granted) {
+            } else if (grantResults[1] != Permission.Granted || grantResults[2] != Permission.Granted) {
                 var snack = Snackbar.Make(_layout, "Permisiuni pentru locatie refuzate",
                     Snackbar.LengthShort);
                 snack.Show();
-            }
-            else if (grantResults[3] != Permission.Granted) {
+            } else if (grantResults[3] != Permission.Granted) {
                 var snack = Snackbar.Make(_layout, "Permisiuni pentru camera refuzate",
                     Snackbar.LengthShort);
                 snack.Show();
@@ -237,9 +223,10 @@ namespace Familia.Login_System {
             _progressBarDialog =
                 new ProgressBarDialog(
                     "Va rugam asteptati", "Autentificare...", this, false);
-            
+
             _animationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
         }
+
         private void InitFingerprintUi() {
             _pinButton = FindViewById<AppCompatButton>(Resource.Id.btn_pin);
             _animationView = FindViewById<LottieAnimationView>(Resource.Id.animation_view);
@@ -250,6 +237,7 @@ namespace Familia.Login_System {
             _registerButton.Click += RegisterButtonOnClick;
             _pwdResetTextView.Click += PwdResetTextViewOnClick;
         }
+
         private void InitFingerprintListeners() {
             _pinButton.Click += PinButtonOnClick;
         }
@@ -291,12 +279,23 @@ namespace Familia.Login_System {
                                 break;
                             case 2:
                                 JSONObject payload = new JSONObject(response);
-                                string token = payload.IsNull("token") ? null : payload.GetString("token");
-                                string nume = payload.IsNull("nume") ? null : payload.GetString("nume");
-                                bool logins = payload.IsNull("logins") ? false : payload.GetBoolean("logins");
-                                string avatar = payload.IsNull("avatar") ? null : payload.GetString("avatar");
-                                string id = payload.IsNull("id") ? null : payload.GetString("id");
-                                string idClient = payload.IsNull("idClient") ? null : payload.GetString("idClient");
+                                string token = payload.IsNull("token")
+                                    ? null
+                                    : payload.GetString("token");
+                                string nume = payload.IsNull("nume")
+                                    ? null
+                                    : payload.GetString("nume");
+                                bool logins = !payload.IsNull("logins") &&
+                                              payload.GetBoolean("logins");
+                                string avatar = payload.IsNull("avatar")
+                                    ? null
+                                    : payload.GetString("avatar");
+                                string id = payload.IsNull("id")
+                                    ? null
+                                    : payload.GetString("id");
+                                string idClient = payload.IsNull("idClient")
+                                    ? null
+                                    : payload.GetString("idClient");
                                 string idPersoana = payload.IsNull("idPersAsisoc")
                                     ? null
                                     : payload.GetString("idPersAsisoc");
@@ -319,9 +318,9 @@ namespace Familia.Login_System {
 
                                 if (logins) {
                                     if ((UsersTypes) int.Parse(Utils.GetDefaults("UserType")) == UsersTypes.Pacient) {
-                                        var _medicationServerServiceIntent =
+                                        var medicationServerServiceIntent =
                                             new Intent(this, typeof(MedicationServerService));
-                                        StartService(_medicationServerServiceIntent);
+                                        StartService(medicationServerServiceIntent);
                                         StartConfigReceiver();
                                     }
                                 }
@@ -341,14 +340,12 @@ namespace Familia.Login_System {
                                 ShowInactiveUserDialog(cod);
                                 break;
                         }
-                    }
-                    else {
+                    } else {
                         var snack = Snackbar.Make(_layout, "Nu se poate conecta la server!",
                             Snackbar.LengthLong);
                         snack.Show();
                     }
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     Log.Error("Eroare la parsarea Jsonului", ex.Message);
                 }
             });
@@ -384,6 +381,6 @@ namespace Familia.Login_System {
         Asistent = 2,
         Pacient = 3,
         SelfRegistered = 4,
-        ONG = 5
+        Ong = 5
     }
 }

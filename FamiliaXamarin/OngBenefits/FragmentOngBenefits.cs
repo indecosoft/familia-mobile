@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.App;
@@ -21,24 +20,20 @@ using ZXingResult = ZXing.Result;
 
 namespace Familia.OngBenefits {
     public class FragmentOngBenefits : Fragment {
-
-
         private EditText _tbDetails;
         private Button _btnScan, _btnCancel, _btnBenefits;
         private ConstraintLayout _formContainer;
         private string _dateTimeStart;
         private ProgressBarDialog _progressBarDialog;
         private List<SearchListModel> _selectedBenefits = new List<SearchListModel>();
-        private readonly SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-
-        private string scannedQrCode;
+        private readonly SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        private string _scannedQrCode;
 
         private void IntiUi(View v) {
 
             _tbDetails = v.FindViewById<EditText>(Resource.Id.input_details);
             _btnScan = v.FindViewById<Button>(Resource.Id.btnScan);
             _btnCancel = v.FindViewById<Button>(Resource.Id.btnAnulare);
-
 
             _btnBenefits = v.FindViewById<Button>(Resource.Id.benefits_button);
             _formContainer = v.FindViewById<ConstraintLayout>(Resource.Id.container);
@@ -48,9 +43,9 @@ namespace Familia.OngBenefits {
             if (IsActivityInProgress()) {
                 _dateTimeStart = Utils.GetDefaults("StartingDateTime");
                 _btnScan.Enabled = IsFormValid();
-                ShowUI();
+                ShowUi();
             } else {
-                HideUI();
+                HideUi();
             }
         }
 
@@ -88,7 +83,7 @@ namespace Familia.OngBenefits {
 
                     }
                 } catch (Exception ex) {
-                    Log.Error("error la beneficii" , ex.Message);
+                    Log.Error("Error getting the list of benefits." , ex.Message);
                 }
             });
             _progressBarDialog.Dismiss();
@@ -106,7 +101,7 @@ namespace Familia.OngBenefits {
             Log.Debug("Result" , result.Text);
             if (IsActivityInProgress()) {
                 if (IsFormValid()) {
-                    if (result.Text == scannedQrCode) {
+                    if (result.Text == _scannedQrCode) {
                         _progressBarDialog.Show();
                         await SendData(result.Text);
                         _progressBarDialog.Dismiss();
@@ -120,11 +115,11 @@ namespace Familia.OngBenefits {
                 }
 
             } else {
-                scannedQrCode = result.Text;
-                Utils.SetDefaults("ScannedQrCode" , scannedQrCode);
-                Utils.SetDefaults("StartingDateTime" , dateFormat.Format(new Date()));
+                _scannedQrCode = result.Text;
+                Utils.SetDefaults("ScannedQrCode" , _scannedQrCode);
+                Utils.SetDefaults("StartingDateTime" , _dateFormat.Format(new Date()));
                 _btnScan.Enabled = IsFormValid();
-                ShowUI();
+                ShowUi();
             }
         }
 
@@ -135,7 +130,7 @@ namespace Familia.OngBenefits {
 
         private async Task SendData(string scannedValue) {
             JSONObject payload = new JSONObject()
-           .Put("data" , dateFormat.Format(new Date()))
+           .Put("data" , _dateFormat.Format(new Date()))
            .Put("obs" , _tbDetails.Text)
            .Put("idPersAsisoc" , IsValueInteger(scannedValue).Item2)
            .Put("benefits" , GetFormInformation());
@@ -153,7 +148,7 @@ namespace Familia.OngBenefits {
                         Log.Debug("Activity in progress" , "Should send data and reset form.");
                         Log.Debug("Payload" , payload.ToString());
                         Utils.SetDefaults("ScannedQrCode" , null);
-                        HideUI();
+                        HideUi();
                         ResetForm();
                         break;
                 }
@@ -163,22 +158,22 @@ namespace Familia.OngBenefits {
         }
 
         private void _btnAnulare_Click(object sender , EventArgs e) {
-            HideUI();
+            HideUi();
             ResetForm();
         }
 
         private bool IsActivityInProgress() {
-            scannedQrCode = Utils.GetDefaults("ScannedQrCode");
+            _scannedQrCode = Utils.GetDefaults("ScannedQrCode");
             _dateTimeStart = Utils.GetDefaults("StartingDateTime");
-            return scannedQrCode != null && _dateTimeStart != null;
+            return _scannedQrCode != null && _dateTimeStart != null;
         }
 
-        private void HideUI() {
+        private void HideUi() {
             _btnCancel.Visibility = ViewStates.Gone;
             _formContainer.Visibility = ViewStates.Gone;
         }
 
-        private void ShowUI() {
+        private void ShowUi() {
             _btnCancel.Visibility = ViewStates.Visible;
             _formContainer.Visibility = ViewStates.Visible;
         }
@@ -205,11 +200,6 @@ namespace Familia.OngBenefits {
             return _selectedBenefits.Count > 0 && !string.IsNullOrEmpty(_tbDetails.Text);
         }
 
-        public override void OnCreate(Bundle savedInstanceState) {
-            base.OnCreate(savedInstanceState);
-
-        }
-
         public override View OnCreateView(LayoutInflater inflater , ViewGroup container , Bundle savedInstanceState) {
             View view = inflater.Inflate(Resource.Layout.fragment_ong_benefits , container , false);
             IntiUi(view);
@@ -231,7 +221,7 @@ namespace Familia.OngBenefits {
         }
 
         public override void OnDestroy() {
-            dateFormat.Dispose();
+            _dateFormat.Dispose();
             base.OnDestroy();
         }
     }

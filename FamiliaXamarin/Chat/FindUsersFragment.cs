@@ -133,6 +133,9 @@ namespace Familia.Chat {
 			InitUi(view);
 			Setup();
 			//start annimation
+
+			
+
 			_animationView.PlayAnimation();
 			_adapter = new UserCardAdapter(Activity, _people);
 			_cardStackView.SetAdapter(_adapter);
