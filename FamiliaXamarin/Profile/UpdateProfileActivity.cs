@@ -294,11 +294,19 @@ namespace Familia.Profile
 
             if (resultCode == Result.Ok)
             {
+
+                RequestOptions requestOptions = getGlideRequestOptions();
+
                 switch (requestCode)
                 {
                     case 1:
 
-                        Glide.With(this).Load(new File(_imagePath)).Into(ciwProfileImage);
+                        Glide.With(this)
+                            .Load(new File(_imagePath))
+                            .Apply(requestOptions)
+                            .Apply(RequestOptions.SignatureOf(new ObjectKey(ProfileActivity.ImageUpdated)))
+                            .Into(ciwProfileImage);
+
                         GalleryAddPic();
                         _fileInformations = new FileInfo(new File(_imagePath).Path);
                         Log.Error("Size", _fileInformations.Length.ToString());
@@ -322,7 +330,13 @@ namespace Familia.Profile
                         {
                         Uri uri = data.Data;
                         _imagePath = GetPathToImage(uri);
-                        Glide.With(this).Load(new File(_imagePath)).Into(ciwProfileImage);
+
+
+                        Glide.With(this)
+                             .Load(new File(_imagePath))
+                             .Apply(requestOptions)
+                             .Into(ciwProfileImage);
+
                         _fileInformations = new FileInfo(_imagePath);
                         Log.Error("Size", _fileInformations.Length.ToString());
                         if (_fileInformations.Length >= 10485760)
@@ -375,6 +389,14 @@ namespace Familia.Profile
 
         }
 
+        private static RequestOptions getGlideRequestOptions()
+        {
+            var requestOptions = new RequestOptions();
+            requestOptions.Placeholder(Resource.Drawable.account_profile_default);
+            requestOptions.CenterCrop();
+            return requestOptions;
+        }
+
         private void OnDateClick()
         {
             var frag = DatePickerMedicine.NewInstance(delegate (DateTime time)
@@ -391,8 +413,11 @@ namespace Familia.Profile
             dialog.Show(); try
             {
                 Log.Error("UpdateProfileActivity ERR load model", "load picture");
+
+                var requestedOptions = getGlideRequestOptions();
                 Glide.With(this)
                     .Load(personView.Avatar)
+                    .Apply(requestedOptions)
                     .Apply(RequestOptions.SignatureOf(new ObjectKey(ProfileActivity.ImageUpdated)))
                     .Into(ciwProfileImage);
 
@@ -400,7 +425,18 @@ namespace Familia.Profile
                 SetGender(personView.Gender);
 
                 birthdate = getDateString(personView.Birthdate);
+
+                if (birthdate == null)
+                {
+                    birthdate = "-/-/-";
+                }
+
                 personView.Birthdate = getDateString(personView.Birthdate);
+
+                if (personView.Birthdate == null)
+                {
+                    personView.Birthdate = "-/-/-";
+                }
 
                 tvBirthDate.Text = personView.Birthdate;
 
@@ -413,7 +449,6 @@ namespace Familia.Profile
                 {
                     Log.Error("UpdateProfileActivity ERR load model", "something went wrong");
                     Toast.MakeText(this, "S-a intampinat o eroare.", ToastLength.Long).Show();
-                   // return;
                 }
                 else {
                     Log.Error("UpdateProfileActivity ERR load model", " else ");

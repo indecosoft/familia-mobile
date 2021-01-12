@@ -446,6 +446,7 @@ namespace Familia.Login_System {
         Asistent = 2,
         Pacient = 3,
         SelfRegistered = 4,
-        ONG = 5
+        MOB = 5,
+        MOBWEB = 56
     }
 }

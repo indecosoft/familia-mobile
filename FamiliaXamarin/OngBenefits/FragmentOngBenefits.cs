@@ -69,7 +69,9 @@ namespace Familia.OngBenefits {
             _progressBarDialog.Show();
             await Task.Run(async () => {
                 try {
-                    string response = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/selfRegisteredBenefits/" , Utils.GetDefaults("Token"));
+                    string response = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/selfRegisteredBenefits/" ,
+                                                            Utils.GetDefaults("Token"));
+
                     var jsonResponse = new JSONObject(response);
                     if (jsonResponse.GetInt("status") == 2) {
                         JSONArray dataArray = jsonResponse.GetJSONArray("data");

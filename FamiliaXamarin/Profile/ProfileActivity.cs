@@ -200,9 +200,15 @@ namespace Familia.Profile
             {
                 ImageUpdated = DateTime.Now.Millisecond.ToString();
             }
-       
+
+            var requestOptions = new RequestOptions();
+            requestOptions.Placeholder(Resource.Drawable.account_profile_default);
+            requestOptions.SkipMemoryCache(true);
+            requestOptions.CenterCrop();
+
             Glide.With(this)
                 .Load(avatar)
+                .Apply(requestOptions)
                 .Apply(RequestOptions.SignatureOf(new ObjectKey(ImageUpdated)))
                 .Into(ciwProfileImage);
 
@@ -212,17 +218,7 @@ namespace Familia.Profile
             tvName.Text = name;
             tvEmail.Text = email;
             SetGender(gender);
-            if (convertDateToStringFormat(birthdate) != null)
-            {
-                tvDateOftBirth.Text = convertDateToStringFormat(birthdate);
-            }
-            else
-            {
-                tvDateOftBirth.Text = birthdate;
-            }
-
-            tvAge.Text = GetAge(birthdate) + " ani";
-
+            SetAge(birthdate);
 
             if (int.Parse(Utils.GetDefaults("UserType")) == 2)
             {
@@ -232,14 +228,43 @@ namespace Familia.Profile
 
         }
 
+        private void SetAge(string birthdate)
+        {
+
+            if (birthdate == null || birthdate.Equals("null"))
+            {
+                tvDateOftBirth.Text = "-/-/-";
+                tvAge.Text = "-";
+                return;
+            }
+            else {
+
+                if (convertDateToStringFormat(birthdate) != null)
+                {
+                    tvDateOftBirth.Text = convertDateToStringFormat(birthdate);
+                }
+                else
+                {
+                    tvDateOftBirth.Text = birthdate;
+                }
+
+                tvAge.Text = GetAge(birthdate) + " ani";
+            }
+
+
+        }
+
         private void SetGender(string gender)
         {
+            tvGender.Text = "-";
+
             if (gender.Equals("Feminin"))
             {
                 iwGender.SetImageResource(Resource.Drawable.human_female);
                 tvGender.Text = "Feminin";
             }
-            else
+
+            if (gender.Equals("Masculin"))
             {
                 iwGender.SetImageResource(Resource.Drawable.human_male);
                 tvGender.Text = "Masculin";
@@ -378,6 +403,7 @@ namespace Familia.Profile
 
                     personalData = await ProfileStorage.GetInstance().read();
                     await RefreshAdapter();
+                    Log.Error("AAAAAAA", "imagename " + personalData.ImageName);
 
                     if (await CallServerToSendData(personalData.Base64Image,
                         personalData.ImageName,

@@ -189,7 +189,7 @@ namespace Familia {
                     }
                     break;
                 case UsersTypes.Asistent:
-                case UsersTypes.ONG:
+                case UsersTypes.MOB:
                     StartForegroundService(_webSocketServiceIntent);
                     break;
                 default:
@@ -221,7 +221,7 @@ namespace Familia {
                     StartForegroundService(_stepCounterServiceIntent);
                     break;
                 case UsersTypes.Asistent:
-                case UsersTypes.ONG:
+                case UsersTypes.MOB:
                     StartForegroundService(_webSocketServiceIntent);
                     break;
                 default:
@@ -248,7 +248,15 @@ namespace Familia {
         private void LoadUIBasedonUserType(UsersTypes userType , IMenu menuNav) {
             
             string avatar = Utils.GetDefaults("Avatar");
-            Glide.With(this).Load(avatar).Apply(RequestOptions.SignatureOf(new ObjectKey(ProfileActivity.ImageUpdated)))
+
+            var requestOptions = new RequestOptions();
+            requestOptions.Placeholder(Resource.Drawable.account_profile_default);
+            requestOptions.CenterCrop();
+     
+            Glide.With(this)
+                .Load(avatar)
+                .Apply(requestOptions)
+                .Apply(RequestOptions.SignatureOf(new ObjectKey(ProfileActivity.ImageUpdated)))
                 .Into(_profileImageView);
             switch (userType) {
                 case UsersTypes.Unknown:
@@ -302,7 +310,8 @@ namespace Familia {
                         .Replace(Resource.Id.fragment_container , new FindUsersFragment()).AddToBackStack(null).Commit();
                     Title = "Cauta prieteni";
                     break;
-                case UsersTypes.ONG:
+                case UsersTypes.MOB:
+                case UsersTypes.MOBWEB:
                     menuNav.FindItem(Resource.Id.nav_ong_benefits).SetVisible(true);
 
                     SupportFragmentManager.BeginTransaction()

@@ -304,8 +304,10 @@
       </Generator>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\fragment_ong_benefits.xml">
-      <SubType></SubType>
-      <Generator></Generator>
+      <SubType>
+      </SubType>
+      <Generator>
+      </Generator>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
@@ -1339,10 +1341,10 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\joc3\images\vara.png" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Folder Include="OngBenefits\" />
+    <AndroidResource Include="Resources\drawable\account_profile_default.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.
