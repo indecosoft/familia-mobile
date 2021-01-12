@@ -60,12 +60,14 @@ namespace Familia.Services {
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) {
 			StartCommands();
+			if (intent.HasExtra("IsShouldStop")) {
+				StopForeground(true);
+				StopSelf();
+			}
 			return StartCommandResult.Sticky;
 		}
 
 		private async void StartCommands() {
-			Log.Error("SmartBand Service", "Started");
-
 			_sqlHelper = await SqlHelper<SmartBandRecords>.CreateAsync();
 			await RefreshToken();
 			_token = Utils.GetDefaults(GetString(Resource.String.smartband_device));

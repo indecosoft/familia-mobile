@@ -74,7 +74,12 @@ namespace Familia.Services {
 			   "{}";
 		}
 
-		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) =>
-			StartCommandResult.Sticky;
+		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) {
+			if (intent.HasExtra("IsShouldStop")) {
+				StopForeground(true);
+				StopSelf();
+			}
+			return StartCommandResult.Sticky;
+		}
 	}
 }

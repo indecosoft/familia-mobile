@@ -7,52 +7,69 @@
         <item
             android:id="@+id/nav_asistenta"
             android:icon="@drawable/account_heart"
-            android:title="Asistenta Sociala" />
+            android:title="Asistenta Sociala"
+            android:visible="false"/>
+        <item
+            android:id="@+id/nav_ong_benefits"
+            android:icon="@drawable/account_heart"
+            android:title="Acorda beneficii"
+            android:visible="false"/>
         <item
             android:id="@+id/nav_monitorizare"
             android:icon="@drawable/account_group"
-            android:title="Persoane sub monitorizare" />
+            android:title="Persoane sub monitorizare"
+            android:visible="false"/>
         <item
             android:id="@+id/nav_QRCode"
             android:icon="@drawable/qrcode"
-            android:title="Generare cod QR" />
+            android:title="Generare cod QR"
+            android:visible="false"/>
         <item
             android:id="@+id/harta"
             android:icon="@drawable/account_search"
-            android:title="Cauta prieteni" />
+            android:title="Cauta prieteni"
+            android:visible="false"/>
         <item
             android:id="@+id/chat"
             android:icon="@drawable/message_text"
-            android:title="Conversatii active" />
+            android:title="Conversatii active"
+            android:visible="false"/>
         <item
             android:id="@+id/nav_devices"
             android:icon="@drawable/heart_pulse"
-            android:title="Dispozitive de masurare" />
+            android:title="Dispozitive de masurare"
+            android:visible="false"/>
         <item
             android:id="@+id/nav_statistics"
             android:icon="@drawable/heart_pulse"
-            android:title="Valori masurate" />
+            android:title="Valori masurate"
+            android:visible="false"/>
         
       <item
             android:id="@+id/nav_devices_asistent"
             android:icon="@drawable/heart_pulse"
-            android:title="Dispozitive de masurare" />
+            android:title="Dispozitive de masurare"
+            android:visible="false"/>
         <item
             android:id="@+id/medicatie"
             android:icon="@drawable/pill"
-            android:title="Medicatie" />
+            android:title="Medicatie"
+            android:visible="false"/>
         <item
             android:id="@+id/partajare_date"
             android:icon="@drawable/share_variant"
-            android:title="Partajare Date" />
+            android:title="Partajare Date"
+            android:visible="false"/>
       <item
         android:id="@+id/games"
         android:icon="@drawable/gamepad_variant"
-        android:title="Jocuri" />
+        android:title="Jocuri"
+            android:visible="false"/>
       <item
         android:id="@+id/activity_tracker"
         android:icon="@drawable/shoe_print"
-        android:title="Consiliere Activitate" />
+        android:title="Consiliere Activitate"
+            android:visible="false"/>
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
@@ -62,18 +79,5 @@
             android:icon="@drawable/logout"
             android:title="Delogare" />
     </group>
-
-    <!--<item android:title="Communicate">-->
-    <!--<menu>-->
-    <!--<item-->
-    <!--android:id="@+id/nav_share"-->
-    <!--android:icon="@drawable/ic_menu_share"-->
-    <!--android:title="Share" />-->
-    <!--<item-->
-    <!--android:id="@+id/nav_send"-->
-    <!--android:icon="@drawable/ic_menu_send"-->
-    <!--android:title="Send" />-->
-    <!--</menu>-->
-    <!--</item>-->
 
 </menu>

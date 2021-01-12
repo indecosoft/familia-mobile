@@ -89,11 +89,6 @@ namespace Familia.WebSocket {
         private void OnConnectTimeout(Object[] obj) {
             Log.Error("WebSocket", "Connection Timeout");
         }
-        private void OnTransport(Object[] obj) {
-            var transport = (Transport)obj[0];
-            transport.On(Transport.EventRequestHeaders, this);
-
-        }
 
         private async void OnConversation(Object[] obj) {
             Log.Error("WebSocket", "OnConversation");
