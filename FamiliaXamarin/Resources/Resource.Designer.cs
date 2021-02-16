@@ -70,16 +70,19 @@ namespace Familia
 			public const int abc_tooltip_exit = 2130771979;
 			
 			// aapt resource value: 0x7F01000C
-			public const int design_bottom_sheet_slide_in = 2130771980;
+			public const int blink_effect = 2130771980;
 			
 			// aapt resource value: 0x7F01000D
-			public const int design_bottom_sheet_slide_out = 2130771981;
+			public const int design_bottom_sheet_slide_in = 2130771981;
 			
 			// aapt resource value: 0x7F01000E
-			public const int design_snackbar_in = 2130771982;
+			public const int design_bottom_sheet_slide_out = 2130771982;
 			
 			// aapt resource value: 0x7F01000F
-			public const int design_snackbar_out = 2130771983;
+			public const int design_snackbar_in = 2130771983;
+			
+			// aapt resource value: 0x7F010010
+			public const int design_snackbar_out = 2130771984;
 			
 			static Animation()
 			{
