@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
@@ -12,6 +13,7 @@ using Android.Views;
 using Android.Widget;
 using Familia.Asistenta_sociala;
 using Familia.Helpers;
+using Familia.Location;
 using Java.Text;
 using Java.Util;
 using Newtonsoft.Json;
@@ -30,6 +32,11 @@ namespace Familia.OngBenefits {
         private ProgressBarDialog _progressBarDialog;
         private List<SearchListModel> _selectedBenefits = new List<SearchListModel>();
         private readonly SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        private Dictionary<int, OngBenefitModel> benefitsDictionary;
+        private LocationManager location = LocationManager.Instance;
+        private double latitude;
+        private double longitude;
+
 
         private string scannedQrCode;
 
@@ -45,6 +52,7 @@ namespace Familia.OngBenefits {
 
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati" , "Datele sunt procesate..." , Activity , false);
             _progressBarDialog.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimary);
+            
             if (IsActivityInProgress()) {
                 _dateTimeStart = Utils.GetDefaults("StartingDateTime");
                 _btnScan.Enabled = IsFormValid();
@@ -69,17 +77,34 @@ namespace Familia.OngBenefits {
             _progressBarDialog.Show();
             await Task.Run(async () => {
                 try {
-                    string response = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/selfRegisteredBenefits/" ,
+                    
+                    string response = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/get-asisoc-benefits/" ,
                                                             Utils.GetDefaults("Token"));
+                    if (response == null) {
+                        return;
+                    }
 
-                    var jsonResponse = new JSONObject(response);
-                    if (jsonResponse.GetInt("status") == 2) {
-                        JSONArray dataArray = jsonResponse.GetJSONArray("data");
+                    Log.Error("AAAAAAAAAAA get benefits", response);
+                    var jsonArrayResponse = new JSONArray(response);
                         var items = new List<SearchListModel>();
-                        for (var i = 0; i < dataArray.Length(); i++) {
+
+                        benefitsDictionary = new Dictionary<int, OngBenefitModel>();
+                        for (var i = 0; i < jsonArrayResponse.Length(); i++) {
+
+                        var jsonObj = jsonArrayResponse.GetJSONObject(i);
+                        var ongModel = new OngBenefitModel(
+                            jsonObj.GetInt("id_beneficiu"),
+                            jsonObj.GetInt("id_beneficiu_asisoc"),
+                            jsonObj.GetInt("idClient"),
+                            jsonObj.GetString("nume"),
+                            jsonObj.GetString("detalii")
+                            );
+
+                        benefitsDictionary.Add(ongModel.idBeneficiu, ongModel);
+
                             items.Add(new SearchListModel {
-                                Id = dataArray.GetJSONObject(i).GetInt("id") ,
-                                Title = dataArray.GetJSONObject(i).GetString("benefit")
+                                Id = ongModel.idBeneficiu, 
+                                Title = ongModel.nume
                             });
                         }
 
@@ -88,7 +113,7 @@ namespace Familia.OngBenefits {
                         intent.PutExtra("SelectedItems" , JsonConvert.SerializeObject(_selectedBenefits));
                         StartActivityForResult(intent , 1);
 
-                    }
+                 
                 } catch (Exception ex) {
                     Log.Error("error la beneficii" , ex.Message);
                 }
@@ -101,11 +126,14 @@ namespace Familia.OngBenefits {
             if(result is null) {
                 return;
             }
-            if (!IsValueInteger(result.Text).Item1) {
+
+
+           /* if (!IsValueInteger(result.Text).Item1) {
                 Snackbar.Make(_formContainer , "Codul scanat nu este valid" , Snackbar.LengthLong).Show();
                 return;
-            }
-            Log.Debug("Result" , result.Text);
+            }*/
+
+            Log.Error("AAAAAAAAAAAA Result qr code" , result.Text);
             if (IsActivityInProgress()) {
                 if (IsFormValid()) {
                     if (result.Text == scannedQrCode) {
@@ -136,32 +164,59 @@ namespace Familia.OngBenefits {
         }
 
         private async Task SendData(string scannedValue) {
-            JSONObject payload = new JSONObject()
-           .Put("data" , dateFormat.Format(new Date()))
-           .Put("obs" , _tbDetails.Text)
-           .Put("idPersAsisoc" , IsValueInteger(scannedValue).Item2)
-           .Put("benefits" , GetFormInformation());
-            Log.Error("Token" , Utils.GetDefaults("Token") + "");
 
-            string response = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/selfRegisteredBenefits/" , payload , Utils.GetDefaults("Token"));
+            
+            await location.StartRequestingLocation();
+
+            JSONObject resultJSON = null;
+            try {
+                resultJSON = new JSONObject(scannedValue);
+            }
+            catch (Exception e) {
+                Log.Error("AAAAAAAAA error parsing result json from qr code", e.Message);
+            }
+
+
+
+            JSONObject payload = new JSONObject()
+           //.Put("data" , dateFormat.Format(new Date()))
+           .Put("observatii", _tbDetails.Text)
+           .Put("idClient", benefitsDictionary.First().Value.idClient)
+           .Put("beneficii", GetFormInformation())
+           .Put("latitudine", latitude)
+           .Put("longitudine", longitude);
+
+            if (resultJSON == null){
+                return;
+            }
+
+            payload.Put("id_persoana", resultJSON.GetString("id_pers"));
+
+            string response = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/save-asisoc-benefits/" , payload , Utils.GetDefaults("Token"));
             if (response != null) {
                 Log.Error("Response" , response);
                 var responseJson = new JSONObject(response);
-                switch (responseJson.GetInt("status")) {
-                    case 1:
-                        Snackbar.Make(_formContainer , "Eroare de comunicare cu server-ul" , Snackbar.LengthLong).Show();
-                        break;
-                    case 2:
-                        Log.Debug("Activity in progress" , "Should send data and reset form.");
-                        Log.Debug("Payload" , payload.ToString());
-                        Utils.SetDefaults("ScannedQrCode" , null);
-                        HideUI();
-                        ResetForm();
-                        break;
+                if (responseJson.Has("message"))
+                {
+                    Snackbar.Make(_formContainer, responseJson.GetString("message"), Snackbar.LengthLong).Show();
+                    Utils.SetDefaults("ScannedQrCode", null);
+                    HideUI();
+                    ResetForm();
                 }
+                else {
+                    Snackbar.Make(_formContainer, "Eroare de comunicare cu server-ul", Snackbar.LengthLong).Show();
+                }
+    
             } else {
                 Snackbar.Make(_formContainer , "Eroare de comunicare cu server-ul" , Snackbar.LengthLong).Show();
             }
+        }
+
+        private void LocationRequested(object source, LocationEventArgs args)
+        {
+            latitude = args.Location.Latitude;
+            longitude = args.Location.Longitude;
+            _ = location.StopRequestionLocationUpdates();
         }
 
         private void _btnAnulare_Click(object sender , EventArgs e) {
@@ -197,7 +252,15 @@ namespace Familia.OngBenefits {
         private JSONArray GetFormInformation() {
             JSONArray benefitsArray = new JSONArray();
             foreach (SearchListModel t in _selectedBenefits) {
-                benefitsArray.Put(t.Id);
+                var jsonObj = new JSONObject().Put("id_beneficiu", t.Id);
+                if (benefitsDictionary != null) {
+
+                    var obj = benefitsDictionary.GetValueOrDefault(t.Id);
+                    jsonObj.Put("id_beneficiu_asisoc", obj.idBeneficiuAsisoc);
+                    
+                    benefitsArray.Put(jsonObj);
+                }
+               
             }
 
             return benefitsArray;
@@ -209,7 +272,7 @@ namespace Familia.OngBenefits {
 
         public override void OnCreate(Bundle savedInstanceState) {
             base.OnCreate(savedInstanceState);
-
+            location.LocationRequested += LocationRequested;
         }
 
         public override View OnCreateView(LayoutInflater inflater , ViewGroup container , Bundle savedInstanceState) {
