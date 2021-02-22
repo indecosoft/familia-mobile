@@ -14,6 +14,7 @@ using Android.Support.V4.Content;
 using Android.Util;
 using Android.Views;
 using Android.Views.Animations;
+using Android.Views.InputMethods;
 using Android.Widget;
 using Familia.DataModels;
 using Familia.Devices.DevicesManagement;
@@ -353,6 +354,9 @@ namespace Familia.Asistenta_sociala {
                 _selectedBenefits = JsonConvert.DeserializeObject<List<SearchListModel>>(data.GetStringExtra("result"));
                 _btnScan.Enabled = FieldsValidation();
 
+                _tbDetails.RequestFocus();
+                ShowKeyboard();
+
                 if (_btnScan.Enabled) {
                     StartBlinkingAnimation(Activity, _btnScan);
                 }
@@ -386,6 +390,24 @@ namespace Familia.Asistenta_sociala {
             _tbDetails.Text = string.Empty;
             _btnScan.Enabled = true;
             inProgressQRCode = string.Empty;
+        }
+
+        public override void OnPause()
+        {
+            HideKeyboard();
+            base.OnPause();
+        }
+
+        private void ShowKeyboard()
+        {
+            var inputMethodManager = (InputMethodManager)Context.GetSystemService(Context.InputMethodService);
+            inputMethodManager.ToggleSoftInput(ShowFlags.Forced, HideSoftInputFlags.ImplicitOnly);
+        }
+
+        private void HideKeyboard()
+        {
+            var inputMethodManager = (InputMethodManager)Context.GetSystemService(Context.InputMethodService);
+            inputMethodManager.HideSoftInputFromWindow(_tbDetails.WindowToken, 0);
         }
 
         private void StartBlinkingAnimation(Context context, View view)

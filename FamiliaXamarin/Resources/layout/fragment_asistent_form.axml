@@ -76,12 +76,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        android:padding="12dp"
+        android:layout_marginTop="50dp"
+        
         android:text="Anuleaza activitatea"
         android:textAllCaps="true"
         android:background="@drawable/secondary_button_style"
-        android:textSize="18sp"
+        android:textSize="14sp"
 		android:layout_below ="@+id/btnScan"/>
         
 

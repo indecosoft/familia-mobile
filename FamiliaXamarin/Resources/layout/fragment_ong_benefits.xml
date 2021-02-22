@@ -9,6 +9,24 @@
     android:layout_height="wrap_content"
     android:padding="16dp">
 
+<TextView
+    android:id="@+id/tvNume"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentEnd="true"
+    
+    android:textSize="18sp"
+    android:textStyle="bold"/>
+  <TextView
+    android:id="@+id/tvPrenume"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentEnd="true"
+    
+    android:layout_below="@+id/tvNume"
+    android:textSize="18sp"
+            android:textStyle="bold"/>
+
     <ImageView
         android:id="@+id/image"
         android:layout_marginTop="16dp"
@@ -17,12 +35,8 @@
         android:src="@drawable/qrcode_scan"
         android:tint="@color/colorAccent"
         android:contentDescription="QRCode icon"
-        android:layout_centerHorizontal="true" />
-        
-
-
-        
-
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tvPrenume"/>
     
     <android.support.constraint.ConstraintLayout
         android:id="@+id/container"
@@ -94,13 +108,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        android:padding="12dp"
+        android:layout_marginTop="50dp"
         android:text="Renunta"
         android:textAllCaps="true"
         android:background="@drawable/secondary_button_style"
-        android:textSize="18sp"
-		android:layout_below ="@id/btnScan"/>
+        android:textSize="14sp"
+		android:layout_below ="@id/btnScan"
+        />
 
 
 </RelativeLayout>

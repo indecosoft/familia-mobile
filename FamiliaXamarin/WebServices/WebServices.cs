@@ -105,6 +105,7 @@ namespace Familia.WebServices
             try
             {
                 Log.Error("Token Post Request on", url);
+                Log.Error("Token", token);
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "POST";
