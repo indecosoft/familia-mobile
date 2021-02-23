@@ -66,6 +66,11 @@
         android:title="Jocuri"
             android:visible="false"/>
       <item
+        android:id="@+id/showBenefits"
+        android:icon="@drawable/gamepad_variant"
+        android:title="Vizualizare beneficii"
+            android:visible="false"/>
+      <item
         android:id="@+id/activity_tracker"
         android:icon="@drawable/shoe_print"
         android:title="Consiliere Activitate"

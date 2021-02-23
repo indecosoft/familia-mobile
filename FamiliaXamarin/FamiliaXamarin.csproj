@@ -100,6 +100,9 @@
     <Compile Include="Activity Tracker\StepCounterSensor.cs" />
     <Compile Include="Activity Tracker\TrackerActivity.cs" />
     <Compile Include="Activity Tracker\TrackerActivityReceiver.cs" />
+    <Compile Include="OngBenefits\ShowBenefits\Benefit.cs" />
+    <Compile Include="OngBenefits\ShowBenefits\BenefitsAdapter.cs" />
+    <Compile Include="OngBenefits\ShowBenefits\ShowBenefitsFragment.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataModels\BluetoothDeviceRecords.cs" />
     <Compile Include="DataModels\DeviceConfigRecords.cs" />
@@ -1363,6 +1366,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\anim\blink_effect.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_show_benefits.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_benefit_detailed.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -22,6 +22,7 @@ using Com.Bumptech.Glide.Signature;
 using Familia.Active_Conversations;
 using Familia.Activity_Tracker;
 using Familia.Asistenta_sociala;
+using Familia.OngBenefits.ShowBenefits;
 using Familia.Chat;
 using Familia.DataModels;
 using Familia.Devices;
@@ -313,6 +314,7 @@ namespace Familia {
                 case UsersTypes.MOB:
                 case UsersTypes.MOBWEB:
                     menuNav.FindItem(Resource.Id.nav_ong_benefits).SetVisible(true);
+                    menuNav.FindItem(Resource.Id.showBenefits).SetVisible(true);
 
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container , new OngBenefits.FragmentOngBenefits()).AddToBackStack(null).Commit();
@@ -433,6 +435,11 @@ namespace Familia {
                 case Resource.Id.nav_asistenta:
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container , new AsistentForm()).AddToBackStack(null).Commit();
+                    Title = item.ToString();
+                    break;
+                case Resource.Id.showBenefits:
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new ShowBenefitsFragment()).AddToBackStack(null).Commit();
                     Title = item.ToString();
                     break;
                 case Resource.Id.nav_monitorizare:
