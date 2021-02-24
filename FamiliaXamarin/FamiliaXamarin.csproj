@@ -100,6 +100,7 @@
     <Compile Include="Activity Tracker\StepCounterSensor.cs" />
     <Compile Include="Activity Tracker\TrackerActivity.cs" />
     <Compile Include="Activity Tracker\TrackerActivityReceiver.cs" />
+    <Compile Include="OngBenefits\GenerateCardQR\GenerateCardQRFragment.cs" />
     <Compile Include="OngBenefits\ShowBenefits\Benefit.cs" />
     <Compile Include="OngBenefits\ShowBenefits\BenefitsAdapter.cs" />
     <Compile Include="OngBenefits\ShowBenefits\ShowBenefitsFragment.cs" />
@@ -1372,6 +1373,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\item_benefit_detailed.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\account_check.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\qrcode_generate.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

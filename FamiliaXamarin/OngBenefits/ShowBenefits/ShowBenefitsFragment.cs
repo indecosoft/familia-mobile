@@ -15,6 +15,7 @@ namespace Familia.OngBenefits.ShowBenefits
 {
     public class ShowBenefitsFragment : Fragment
     {
+        public static string KEY_SHOW_BENEFITS = "key show benefits";
         private View containerView;
         private Button btnScanQRCode;
         private RelativeLayout relativeLayout;

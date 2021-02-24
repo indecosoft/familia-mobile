@@ -46,17 +46,19 @@ using SQLite;
 using AlertDialog = Android.App.AlertDialog;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Uri = Android.Net.Uri;
+using Familia.OngBenefits.GenerateCardQR;
 
 namespace Familia {
     [Activity(Label = "@string/app_name" , Theme = "@style/AppTheme.Dark" ,
         ScreenOrientation = ScreenOrientation.Portrait)]
-    public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener {
+    public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener, SettingsFragment.BenefitsChangedListener {
         Intent _loacationServiceIntent;
         Intent _webSocketServiceIntent;
         Intent _smartBandServiceIntent;
         Intent _stepCounterServiceIntent;
         CircleImageView _profileImageView;
         UsersTypes _userType;
+        IMenu menuNav;
 
         protected override void OnActivityResult(int requestCode , Result resultCode , Intent data) {
             base.OnActivityResult(requestCode , resultCode , data);
@@ -116,7 +118,7 @@ namespace Familia {
             var navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
             View headerView = navigationView.GetHeaderView(0);
-            IMenu menuNav = navigationView.Menu;
+            menuNav = navigationView.Menu;
             _profileImageView = headerView.FindViewById<CircleImageView>(Resource.Id.menu_profile_image);
 
             CreateNotificationsChanelsBasedOnUserType(_userType);
@@ -314,7 +316,17 @@ namespace Familia {
                 case UsersTypes.MOB:
                 case UsersTypes.MOBWEB:
                     menuNav.FindItem(Resource.Id.nav_ong_benefits).SetVisible(true);
-                    menuNav.FindItem(Resource.Id.showBenefits).SetVisible(true);
+
+                    var showBenefits = Utils.GetDefaults(ShowBenefitsFragment.KEY_SHOW_BENEFITS);
+                    if (showBenefits != null) {
+                        menuNav.FindItem(Resource.Id.showBenefits).SetVisible(true);
+                    }
+
+                    var showGenerateQRCardBenefits= Utils.GetDefaults(GenerateCardQRFragment.KEY_GENERATE_CARD_QR_BENEFITS);
+                    if (showGenerateQRCardBenefits != null)
+                    {
+                        menuNav.FindItem(Resource.Id.generateQRCardBenefits).SetVisible(true);
+                    }
 
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container , new OngBenefits.FragmentOngBenefits()).AddToBackStack(null).Commit();
@@ -411,8 +423,12 @@ namespace Familia {
                     Title = item.ToString();
                     break;
                 case Resource.Id.nav_manage:
+
+                    var settingsFragment = new SettingsFragment();
+                    settingsFragment.SetBenefitsListener(this);
+
                     SupportFragmentManager.BeginTransaction()
-                        .Replace(Resource.Id.fragment_container , new SettingsFragment()).AddToBackStack(null).Commit();
+                        .Replace(Resource.Id.fragment_container , settingsFragment).AddToBackStack(null).Commit();
                     Title = item.ToString();
                     break;
                 case Resource.Id.partajare_date:
@@ -440,6 +456,11 @@ namespace Familia {
                 case Resource.Id.showBenefits:
                     SupportFragmentManager.BeginTransaction()
                         .Replace(Resource.Id.fragment_container, new ShowBenefitsFragment()).AddToBackStack(null).Commit();
+                    Title = item.ToString();
+                    break;
+                case Resource.Id.generateQRCardBenefits:
+                    SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.fragment_container, new GenerateCardQRFragment()).AddToBackStack(null).Commit();
                     Title = item.ToString();
                     break;
                 case Resource.Id.nav_monitorizare:
@@ -557,6 +578,36 @@ namespace Familia {
             } catch (Exception e) {
                 Log.Error("Logout Clear Conversations Error" , e.Message);
             }
+        }
+
+        public void OnShowBenefitsChanged(bool visibility)
+        {
+            Log.Error("AAAAAAA MAIN ACTIVITY", "changed  show benefits" + visibility);
+            menuNav.FindItem(Resource.Id.showBenefits).SetVisible(visibility);
+            if (visibility)
+            {
+                Utils.SetDefaults(ShowBenefitsFragment.KEY_SHOW_BENEFITS, visibility.ToString());
+            }
+            else
+            {
+                Utils.SetDefaults(ShowBenefitsFragment.KEY_SHOW_BENEFITS, null);
+            }
+        }
+
+        public void OnCardQRChanged(bool visibility)
+        {
+            Log.Error("AAAAAAA MAIN ACTIVITY", "changed card qr" + visibility);
+            menuNav.FindItem(Resource.Id.generateQRCardBenefits).SetVisible(visibility);
+
+            if (visibility)
+            {
+                Utils.SetDefaults(GenerateCardQRFragment.KEY_GENERATE_CARD_QR_BENEFITS, visibility.ToString());
+            }
+            else
+            {
+                Utils.SetDefaults(GenerateCardQRFragment.KEY_GENERATE_CARD_QR_BENEFITS, null);
+            }
+
         }
     }
 }
