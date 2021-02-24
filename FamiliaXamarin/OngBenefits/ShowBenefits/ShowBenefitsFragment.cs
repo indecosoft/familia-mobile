@@ -19,6 +19,7 @@ namespace Familia.OngBenefits.ShowBenefits
         private View containerView;
         private Button btnScanQRCode;
         private RelativeLayout relativeLayout;
+        private ProgressBar progressBar;
 
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -37,6 +38,7 @@ namespace Familia.OngBenefits.ShowBenefits
             btnScanQRCode = containerView.FindViewById<Button>(Resource.Id.btnScanQR);
             btnScanQRCode.Click += OnButtonScanQRCodeClicked;
             relativeLayout = containerView.FindViewById<RelativeLayout>(Resource.Id.rlData);
+            progressBar = containerView.FindViewById<ProgressBar>(Resource.Id.progressBar);
             HideUI();
         }
 
@@ -51,7 +53,9 @@ namespace Familia.OngBenefits.ShowBenefits
 
                 var jsonQrCodeScanned = new JSONObject(result.Text);
                 var idPers = jsonQrCodeScanned.GetString("id_pers");
+                progressBar.Visibility = ViewStates.Visible;
                 var jsonServerResponse = await GetBenefits(idPers);
+                progressBar.Visibility = ViewStates.Gone;
                 ShowUI(jsonServerResponse);
             }
             catch (Exception ex) {
@@ -97,6 +101,7 @@ namespace Familia.OngBenefits.ShowBenefits
         private void HideUI() {
             relativeLayout.Visibility = ViewStates.Gone;
             // TODO clear adapter
+            
         }
 
         private void SetFirstAndLastNameInUI(JSONObject jsonServerResponse)
