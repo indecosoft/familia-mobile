@@ -15,7 +15,7 @@ namespace Familia.OngBenefits.GenerateCardQR
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            containerView = inflater.Inflate(Resource.Layout.fragment_show_benefits, container, false);
+            containerView = inflater.Inflate(Resource.Layout.fragment_generate_qr_card, container, false);
 
             // TODO implement Scanare Buletine
             return containerView;

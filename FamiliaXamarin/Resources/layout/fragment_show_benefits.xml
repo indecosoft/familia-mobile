@@ -41,7 +41,6 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:text="Mic"
         android:layout_alignParentEnd="true"/>
 
     <TextView
@@ -50,7 +49,6 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:text="Patricia"
         android:layout_below="@+id/tvLastName"
         android:layout_alignParentEnd="true"/>
 
