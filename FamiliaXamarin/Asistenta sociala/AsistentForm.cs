@@ -134,11 +134,11 @@ namespace Familia.Asistenta_sociala {
                 intent.PutExtra("Data" , readedQR);
                 Activity.StartActivity(intent);
             } else {
-                using AlertDialog alertDialog = new AlertDialog.Builder(Activity , Resource.Style.AppTheme_Dialog).Create();
+                var alertDialog = new AlertDialog.Builder(Activity);
                 alertDialog.SetTitle("Avertisment");
 
                 alertDialog.SetMessage("Nu aveti niciun dispozitiv inregistrat!");
-                alertDialog.SetButton("OK" , delegate { Activity.StartActivity(typeof(DevicesManagementActivity)); });
+                alertDialog.SetPositiveButton( "OK" , (senderAlert, args) => { Activity.StartActivity(typeof(DevicesManagementActivity)); });
                 alertDialog.Show();
             }
         }

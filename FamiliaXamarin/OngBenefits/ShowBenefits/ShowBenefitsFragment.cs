@@ -1,5 +1,4 @@
 ﻿using Android.OS;
-using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -8,7 +7,8 @@ using Org.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Fragment = Android.Support.V4.App.Fragment;
+using AndroidX.RecyclerView.Widget;
+using AndroidX.Fragment.App;
 using ZXingResult = ZXing.Result;
 
 namespace Familia.OngBenefits.ShowBenefits

@@ -20,6 +20,7 @@ using Org.Json;
 using Fragment = AndroidX.Fragment.App.Fragment;
 using ZXingResult = ZXing.Result;
 using Android.Views.InputMethods;
+using Google.Android.Material.Snackbar;
 
 namespace Familia.OngBenefits {
     public class FragmentOngBenefits : Fragment {
@@ -31,7 +32,7 @@ namespace Familia.OngBenefits {
         private string _dateTimeStart;
         private ProgressBarDialog _progressBarDialog;
         private List<SearchListModel> _selectedBenefits = new List<SearchListModel>();
-        private readonly SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        private readonly SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         private Dictionary<int, OngBenefitModel> benefitsDictionary;
         private LocationManager location = LocationManager.Instance;
         private double latitude;
@@ -39,7 +40,7 @@ namespace Familia.OngBenefits {
         private string serverResponse;
 
 
-        private string scannedQrCode;
+        private string _scannedQrCode;
 
         private void IntiUi(View v) {
 
@@ -160,7 +161,7 @@ namespace Familia.OngBenefits {
                     JSONObject resultJSON = null;
                     try
                     {
-                        resultJSON = new JSONObject(scannedQrCode);
+                        resultJSON = new JSONObject(_scannedQrCode);
                         var obj = new JSONObject().Put("idPers", resultJSON.GetString("id_pers"));
                         serverResponse = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/get-asisoc-benefits/", obj,
                                                      Utils.GetDefaults("Token"));
@@ -186,7 +187,7 @@ namespace Familia.OngBenefits {
                    
                 });
 
-                ShowUI();
+                ShowUi();
             }
         }
 
@@ -232,7 +233,7 @@ namespace Familia.OngBenefits {
                 {
                     Snackbar.Make(_formContainer, responseJson.GetString("message"), Snackbar.LengthLong).Show();
                     Utils.SetDefaults("ScannedQrCode", null);
-                    HideUI();
+                    HideUi();
                     ResetForm();
                 }
                 else {

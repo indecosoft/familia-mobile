@@ -72,6 +72,28 @@
     <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.basement/117.1.0/proguard/monoandroid90" t="Include">
       <e p="proguard.txt" t="Include" />
     </e>
+    <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.3/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.3/resharper-host/local/Transient/Rider/v203/SolutionCaches/_FamiliaXamarin.755909079.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesbase-17.1.0" t="Include">
+      <e p="playservicesbase-17.1.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesbasement-17.1.0" t="Include">
+      <e p="playservicesbasement-17.1.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playserviceslocation-17.0.0" t="Include">
+      <e p="playserviceslocation-17.0.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesmaps-17.0.0" t="Include">
+      <e p="playservicesmaps-17.0.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesplacesplacereport-17.0.0" t="Include">
+      <e p="playservicesplacesplacereport-17.0.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicestasks-17.0.0" t="Include">
+      <e p="playservicestasks-17.0.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Developer/Xamarin/android-sdk-macosx/platforms/android-30/Data/res" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Developer/Xamarin/android-sdk-macosx/sources/android-30" t="IncludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="FamiliaXamarin" t="IncludeRecursive">
         <e p="Active Conversations" t="Include">
@@ -380,6 +402,15 @@
         </e>
         <e p="OngBenefits" t="Include">
           <e p="FragmentOngBenefits.cs" t="Include" />
+          <e p="GenerateCardQR" t="Include">
+            <e p="GenerateCardQRFragment.cs" t="Include" />
+          </e>
+          <e p="OngBenefitModel.cs" t="Include" />
+          <e p="ShowBenefits" t="Include">
+            <e p="Benefit.cs" t="Include" />
+            <e p="BenefitsAdapter.cs" t="Include" />
+            <e p="ShowBenefitsFragment.cs" t="Include" />
+          </e>
         </e>
         <e p="Profile" t="Include">
           <e p="Data" t="Include">
@@ -402,12 +433,17 @@
         </e>
         <e p="Resources" t="Include">
           <e p="AboutResources.txt" t="Include" />
+          <e p="anim" t="Include">
+            <e p="blink_effect.xml" t="Include" />
+          </e>
           <e p="drawable" t="Include">
             <e p="account.xml" t="Include" />
+            <e p="account_check.xml" t="Include" />
             <e p="account_group.xml" t="Include" />
             <e p="account_heart.xml" t="Include" />
             <e p="account_heart_outline.xml" t="Include" />
             <e p="account_link.xml" t="Include" />
+            <e p="account_profile_default.png" t="Include" />
             <e p="account_search.xml" t="Include" />
             <e p="alert.xml" t="Include" />
             <e p="at.xml" t="Include" />
@@ -492,6 +528,7 @@
             <e p="profile.png" t="Include" />
             <e p="pulse.xml" t="Include" />
             <e p="qrcode.xml" t="Include" />
+            <e p="qrcode_generate.xml" t="Include" />
             <e p="qrcode_scan.xml" t="Include" />
             <e p="round_button.xml" t="Include" />
             <e p="rounded_button.xml" t="Include" />
@@ -586,8 +623,10 @@
             <e p="fragment_setup2.axml" t="Include" />
             <e p="fragment_setup3.axml" t="Include" />
             <e p="fragment_sharing_data.axml" t="Include" />
+            <e p="fragment_show_benefits.xml" t="Include" />
             <e p="item_action.xml" t="Include" />
             <e p="item_benefit.axml" t="Include" />
+            <e p="item_benefit_detailed.xml" t="Include" />
             <e p="item_boala.axml" t="Include" />
             <e p="item_conversation.axml" t="Include" />
             <e p="item_conversations.xml" t="Include" />
@@ -725,28 +764,6 @@
       </e>
       <e p="FamiliaXamarin.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />
-    </e>
-    <e p="$USER_HOME$/Library/Android/sdk/platforms/android-29/Data/res" t="IncludeRecursive" />
-    <e p="$USER_HOME$/Library/Android/sdk/sources/android-29" t="IncludeRecursive" />
-    <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.2/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.2/resharper-host/local/Transient/Rider/v202/SolutionCaches/_FamiliaXamarin.-1021164152.00" t="ExcludeRecursive" />
-    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesbase-17.1.0" t="Include">
-      <e p="playservicesbase-17.1.0.aar" t="Include" />
-    </e>
-    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesbasement-17.1.0" t="Include">
-      <e p="playservicesbasement-17.1.0.aar" t="Include" />
-    </e>
-    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playserviceslocation-17.0.0" t="Include">
-      <e p="playserviceslocation-17.0.0.aar" t="Include" />
-    </e>
-    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesmaps-17.0.0" t="Include">
-      <e p="playservicesmaps-17.0.0.aar" t="Include" />
-    </e>
-    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesplacesplacereport-17.0.0" t="Include">
-      <e p="playservicesplacesplacereport-17.0.0.aar" t="Include" />
-    </e>
-    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicestasks-17.0.0" t="Include">
-      <e p="playservicestasks-17.0.0.aar" t="Include" />
     </e>
   </component>
 </project>
