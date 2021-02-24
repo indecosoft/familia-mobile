@@ -44,6 +44,10 @@
     <MandroidExtraArgs>
     </MandroidExtraArgs>
     <LangVersion>8.0</LangVersion>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -60,6 +64,18 @@
     <Debugger>Xamarin</Debugger>
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
     <LangVersion>8.0</LangVersion>
+    <AndroidKeyStore>true</AndroidKeyStore>
+    <AndroidSigningKeyStore>C:\Users\patricia.mic\AppData\Local\Xamarin\Mono for Android\Keystore\keystore\fAMILIA.keystore</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>Indeco$oft2019</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>key0</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>Indeco$oft2019</AndroidSigningKeyPass>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <BundleAssemblies>false</BundleAssemblies>
+    <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev.Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -84,6 +100,10 @@
     <Compile Include="Activity Tracker\StepCounterSensor.cs" />
     <Compile Include="Activity Tracker\TrackerActivity.cs" />
     <Compile Include="Activity Tracker\TrackerActivityReceiver.cs" />
+    <Compile Include="OngBenefits\GenerateCardQR\GenerateCardQRFragment.cs" />
+    <Compile Include="OngBenefits\ShowBenefits\Benefit.cs" />
+    <Compile Include="OngBenefits\ShowBenefits\BenefitsAdapter.cs" />
+    <Compile Include="OngBenefits\ShowBenefits\ShowBenefitsFragment.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataModels\BluetoothDeviceRecords.cs" />
     <Compile Include="DataModels\DeviceConfigRecords.cs" />
@@ -140,6 +160,7 @@
     <Compile Include="Medicatie\MedicineServerFragment.cs" />
     <Compile Include="Medicatie\MedicineLostFragment.cs" />
     <Compile Include="Medicatie\MedicineServerRecyclerViewOnScrollListener.cs" />
+    <Compile Include="OngBenefits\OngBenefitModel.cs" />
     <Compile Include="Profile\Data\db\DiseaseDataModel.cs" />
     <Compile Include="Profile\Data\PersonView.cs" />
     <Compile Include="Profile\Data\PersonalData.cs" />
@@ -304,8 +325,10 @@
       </Generator>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\fragment_ong_benefits.xml">
-      <SubType></SubType>
-      <Generator></Generator>
+      <SubType>
+      </SubType>
+      <Generator>
+      </Generator>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
@@ -1339,9 +1362,23 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\joc3\images\vara.png" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Folder Include="OngBenefits\" />
+    <AndroidResource Include="Resources\drawable\account_profile_default.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\anim\blink_effect.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_show_benefits.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\item_benefit_detailed.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\account_check.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\qrcode_generate.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

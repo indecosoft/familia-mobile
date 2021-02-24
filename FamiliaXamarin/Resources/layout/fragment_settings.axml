@@ -199,6 +199,59 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Beneficii"
+        android:textSize="20sp"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+     <TextView
+            android:id="@+id/showBenefits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Verificare beneficii"
+            android:textSize="18sp"
+            android:layout_marginTop="20dp"
+             />
+
+        <Switch
+            android:id="@+id/showBenefitsSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/showBenefits"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+     <TextView
+            android:id="@+id/QRCardBenefits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Solicitare card QR"
+            android:textSize="18sp"
+            android:layout_marginTop="20dp"
+             />
+
+        <Switch
+            android:id="@+id/QRCardBenefitsSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/QRCardBenefits"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+    
+
 	<RelativeLayout
 		android:layout_width="match_parent"
         android:layout_height="match_parent">

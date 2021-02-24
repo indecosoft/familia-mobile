@@ -66,6 +66,17 @@
         android:title="Jocuri"
             android:visible="false"/>
       <item
+        android:id="@+id/showBenefits"
+        android:icon="@drawable/account_check"
+        android:title="Vizualizare Beneficii"
+            android:visible="false"/>
+
+      <item
+      android:id="@+id/generateQRCardBenefits"
+      android:icon="@drawable/qrcode_generate"
+      android:title="Solicitare Card QR"
+          android:visible="false"/>
+      <item
         android:id="@+id/activity_tracker"
         android:icon="@drawable/shoe_print"
         android:title="Consiliere Activitate"

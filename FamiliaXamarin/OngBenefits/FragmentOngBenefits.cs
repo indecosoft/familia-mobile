@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
@@ -10,24 +11,35 @@ using Android.Widget;
 using AndroidX.ConstraintLayout.Widget;
 using Familia.Asistenta_sociala;
 using Familia.Helpers;
-using Google.Android.Material.Snackbar;
+using Familia.Location;
 using Java.Text;
 using Java.Util;
 using Newtonsoft.Json;
+using Android.Views.Animations;
 using Org.Json;
 using Fragment = AndroidX.Fragment.App.Fragment;
 using ZXingResult = ZXing.Result;
+using Android.Views.InputMethods;
 
 namespace Familia.OngBenefits {
     public class FragmentOngBenefits : Fragment {
         private EditText _tbDetails;
         private Button _btnScan, _btnCancel, _btnBenefits;
         private ConstraintLayout _formContainer;
+        private TextView tvNume;
+        private TextView tvPrenume;
         private string _dateTimeStart;
         private ProgressBarDialog _progressBarDialog;
         private List<SearchListModel> _selectedBenefits = new List<SearchListModel>();
-        private readonly SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        private string _scannedQrCode;
+        private readonly SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        private Dictionary<int, OngBenefitModel> benefitsDictionary;
+        private LocationManager location = LocationManager.Instance;
+        private double latitude;
+        private double longitude;
+        private string serverResponse;
+
+
+        private string scannedQrCode;
 
         private void IntiUi(View v) {
 
@@ -40,6 +52,10 @@ namespace Familia.OngBenefits {
 
             _progressBarDialog = new ProgressBarDialog("Va rugam asteptati" , "Datele sunt procesate..." , Activity , false);
             _progressBarDialog.Window.SetBackgroundDrawableResource(Resource.Color.colorPrimary);
+
+            tvNume = v.FindViewById<TextView>(Resource.Id.tvNume);
+            tvPrenume = v.FindViewById<TextView>(Resource.Id.tvPrenume);
+            
             if (IsActivityInProgress()) {
                 _dateTimeStart = Utils.GetDefaults("StartingDateTime");
                 _btnScan.Enabled = IsFormValid();
@@ -58,21 +74,44 @@ namespace Familia.OngBenefits {
 
         private void _tbDetails_TextChanged(object sender , Android.Text.TextChangedEventArgs e) {
             _btnScan.Enabled = IsFormValid();
+            if (_btnScan.Enabled)
+            {
+                StartBlinkingAnimation(Activity, _btnScan);
+            }
         }
 
         private async void _btnBenefits_Click(object sender , EventArgs e) {
+            Log.Error("AAAAAAAAAAA get benefits", "clicked");
             _progressBarDialog.Show();
             await Task.Run(async () => {
                 try {
-                    string response = await WebServices.WebServices.Get("/api/selfRegisteredBenefits/" , Utils.GetDefaults("Token"));
-                    var jsonResponse = new JSONObject(response);
-                    if (jsonResponse.GetInt("status") == 2) {
-                        JSONArray dataArray = jsonResponse.GetJSONArray("data");
+                   
+                    if (serverResponse == null) {
+                        return;
+                    }
+
+                    Log.Error("AAAAAAAAAAA get benefits", serverResponse);
+                    var jsonObjectResponse = new JSONObject(serverResponse);
+                    var jsonArrayResponse = jsonObjectResponse.GetJSONArray("beneficii");
                         var items = new List<SearchListModel>();
-                        for (var i = 0; i < dataArray.Length(); i++) {
+
+                        benefitsDictionary = new Dictionary<int, OngBenefitModel>();
+                        for (var i = 0; i < jsonArrayResponse.Length(); i++) {
+
+                        var jsonObj = jsonArrayResponse.GetJSONObject(i);
+                        var ongModel = new OngBenefitModel(
+                            jsonObj.GetInt("id_beneficiu"),
+                            jsonObj.GetInt("id_beneficiu_asisoc"),
+                            jsonObj.GetInt("idClient"),
+                            jsonObj.GetString("nume"),
+                            jsonObj.GetString("detalii")
+                            );
+
+                        benefitsDictionary.Add(ongModel.idBeneficiu, ongModel);
+
                             items.Add(new SearchListModel {
-                                Id = dataArray.GetJSONObject(i).GetInt("id") ,
-                                Title = dataArray.GetJSONObject(i).GetString("benefit")
+                                Id = ongModel.idBeneficiu, 
+                                Title = ongModel.nume
                             });
                         }
 
@@ -81,7 +120,7 @@ namespace Familia.OngBenefits {
                         intent.PutExtra("SelectedItems" , JsonConvert.SerializeObject(_selectedBenefits));
                         StartActivityForResult(intent , 1);
 
-                    }
+                 
                 } catch (Exception ex) {
                     Log.Error("Error getting the list of benefits." , ex.Message);
                 }
@@ -94,11 +133,8 @@ namespace Familia.OngBenefits {
             if(result is null) {
                 return;
             }
-            if (!IsValueInteger(result.Text).Item1) {
-                Snackbar.Make(_formContainer , "Codul scanat nu este valid" , Snackbar.LengthLong).Show();
-                return;
-            }
-            Log.Debug("Result" , result.Text);
+
+            Log.Error("AAAAAAAAAAAA Result qr code" , result.Text);
             if (IsActivityInProgress()) {
                 if (IsFormValid()) {
                     if (result.Text == _scannedQrCode) {
@@ -119,7 +155,38 @@ namespace Familia.OngBenefits {
                 Utils.SetDefaults("ScannedQrCode" , _scannedQrCode);
                 Utils.SetDefaults("StartingDateTime" , _dateFormat.Format(new Date()));
                 _btnScan.Enabled = IsFormValid();
-                ShowUi();
+
+                await Task.Run(async () => {
+                    JSONObject resultJSON = null;
+                    try
+                    {
+                        resultJSON = new JSONObject(scannedQrCode);
+                        var obj = new JSONObject().Put("idPers", resultJSON.GetString("id_pers"));
+                        serverResponse = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/get-asisoc-benefits/", obj,
+                                                     Utils.GetDefaults("Token"));
+
+                        if (serverResponse == null) {
+                            return;
+                        }
+
+
+                        var jsonReponse = new JSONObject(serverResponse);
+                        Activity.RunOnUiThread(() =>
+                        {
+                            tvNume.Text = jsonReponse.GetString("nume");
+                            tvPrenume.Text = jsonReponse.GetString("prenume");
+                        });
+          
+
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("AAAAAAAAA error parsing result json from qr code", e.Message);
+                    }
+                   
+                });
+
+                ShowUI();
             }
         }
 
@@ -129,32 +196,59 @@ namespace Familia.OngBenefits {
         }
 
         private async Task SendData(string scannedValue) {
-            JSONObject payload = new JSONObject()
-           .Put("data" , _dateFormat.Format(new Date()))
-           .Put("obs" , _tbDetails.Text)
-           .Put("idPersAsisoc" , IsValueInteger(scannedValue).Item2)
-           .Put("benefits" , GetFormInformation());
-            Log.Error("Token" , Utils.GetDefaults("Token") + "");
 
-            string response = await WebServices.WebServices.Post("/api/selfRegisteredBenefits/" , payload , Utils.GetDefaults("Token"));
+            
+            await location.StartRequestingLocation();
+
+            JSONObject resultJSON = null;
+            try {
+                resultJSON = new JSONObject(scannedValue);
+            }
+            catch (Exception e) {
+                Log.Error("AAAAAAAAA error parsing result json from qr code", e.Message);
+            }
+
+
+
+            JSONObject payload = new JSONObject()
+           //.Put("data" , dateFormat.Format(new Date()))
+           .Put("observatii", _tbDetails.Text)
+           .Put("idClient", benefitsDictionary.First().Value.idClient)
+           .Put("beneficii", GetFormInformation())
+           .Put("latitudine", latitude)
+           .Put("longitudine", longitude);
+
+            if (resultJSON == null){
+                return;
+            }
+
+            payload.Put("id_persoana", resultJSON.GetString("id_pers"));
+
+            string response = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/save-asisoc-benefits/" , payload , Utils.GetDefaults("Token"));
             if (response != null) {
                 Log.Error("Response" , response);
                 var responseJson = new JSONObject(response);
-                switch (responseJson.GetInt("status")) {
-                    case 1:
-                        Snackbar.Make(_formContainer , "Eroare de comunicare cu server-ul" , Snackbar.LengthLong).Show();
-                        break;
-                    case 2:
-                        Log.Debug("Activity in progress" , "Should send data and reset form.");
-                        Log.Debug("Payload" , payload.ToString());
-                        Utils.SetDefaults("ScannedQrCode" , null);
-                        HideUi();
-                        ResetForm();
-                        break;
+                if (responseJson.Has("message"))
+                {
+                    Snackbar.Make(_formContainer, responseJson.GetString("message"), Snackbar.LengthLong).Show();
+                    Utils.SetDefaults("ScannedQrCode", null);
+                    HideUI();
+                    ResetForm();
                 }
+                else {
+                    Snackbar.Make(_formContainer, "Eroare de comunicare cu server-ul", Snackbar.LengthLong).Show();
+                }
+    
             } else {
                 Snackbar.Make(_formContainer , "Eroare de comunicare cu server-ul" , Snackbar.LengthLong).Show();
             }
+        }
+
+        private void LocationRequested(object source, LocationEventArgs args)
+        {
+            latitude = args.Location.Latitude;
+            longitude = args.Location.Longitude;
+            _ = location.StopRequestionLocationUpdates();
         }
 
         private void _btnAnulare_Click(object sender , EventArgs e) {
@@ -185,12 +279,22 @@ namespace Familia.OngBenefits {
             _selectedBenefits.Clear();
             _btnBenefits.Text = "Selecteaza beneficii";
             _btnScan.Enabled = true;
+            tvNume.Text = null;
+            tvPrenume.Text = null;
         }
 
         private JSONArray GetFormInformation() {
             JSONArray benefitsArray = new JSONArray();
             foreach (SearchListModel t in _selectedBenefits) {
-                benefitsArray.Put(t.Id);
+                var jsonObj = new JSONObject().Put("id_beneficiu", t.Id);
+                if (benefitsDictionary != null) {
+
+                    var obj = benefitsDictionary.GetValueOrDefault(t.Id);
+                    jsonObj.Put("id_beneficiu_asisoc", obj.idBeneficiuAsisoc);
+                    
+                    benefitsArray.Put(jsonObj);
+                }
+               
             }
 
             return benefitsArray;
@@ -198,6 +302,11 @@ namespace Familia.OngBenefits {
 
         private bool IsFormValid() {
             return _selectedBenefits.Count > 0 && !string.IsNullOrEmpty(_tbDetails.Text);
+        }
+
+        public override void OnCreate(Bundle savedInstanceState) {
+            base.OnCreate(savedInstanceState);
+            location.LocationRequested += LocationRequested;
         }
 
         public override View OnCreateView(LayoutInflater inflater , ViewGroup container , Bundle savedInstanceState) {
@@ -211,7 +320,19 @@ namespace Familia.OngBenefits {
             base.OnActivityResult(requestCode , resultCode , data);
             if (resultCode == (int)Result.Ok) {
                 _selectedBenefits = JsonConvert.DeserializeObject<List<SearchListModel>>(data.GetStringExtra("result"));
+
+                if (_selectedBenefits.Count != 0)
+                {
+                    _tbDetails.RequestFocus();
+                    ShowKeyboard();
+                }
+
                 _btnScan.Enabled = IsFormValid();
+
+                if (_btnScan.Enabled) {
+                    StartBlinkingAnimation(Activity, _btnScan);
+                }
+
                 _btnBenefits.Text = $"Ati Selectat {_selectedBenefits.Count} beneficii";
             } else {
                 Log.Error("Nu avem result" , "User-ul a zis CANCEL");
@@ -220,9 +341,33 @@ namespace Familia.OngBenefits {
             }
         }
 
+        private void ShowKeyboard()
+        {
+            var inputMethodManager = (InputMethodManager)Context.GetSystemService(Context.InputMethodService);
+            inputMethodManager.ToggleSoftInput(ShowFlags.Forced, HideSoftInputFlags.ImplicitOnly);
+        }
+
+        private void HideKeyboard()
+        {
+            var inputMethodManager = (InputMethodManager)Context.GetSystemService(Context.InputMethodService);
+            inputMethodManager.HideSoftInputFromWindow(_tbDetails.WindowToken, 0);
+        }
+
+
+        public override void OnPause()
+        {
+            HideKeyboard();
+            base.OnPause();
+        }
         public override void OnDestroy() {
             _dateFormat.Dispose();
             base.OnDestroy();
+        }
+
+        private void StartBlinkingAnimation(Context context, View view)
+        {
+            Animation startAnimation = AnimationUtils.LoadAnimation(context, Resource.Animation.blink_effect);
+            view.StartAnimation(startAnimation);
         }
     }
 }

@@ -7,6 +7,8 @@ using AndroidX.Core.Hardware.Fingerprint;
 using AndroidX.Fragment.App;
 using Familia.Devices.DevicesManagement;
 using Familia.Helpers;
+using Familia.OngBenefits.GenerateCardQR;
+using Familia.OngBenefits.ShowBenefits;
 
 namespace Familia.Settings
 {
@@ -28,6 +30,9 @@ namespace Familia.Settings
         private TextView _tvDailyTargetValue;
         private EditText _etDailyTargetValue;
         private TextView _tvDailyTargetLabel;
+        private Switch showBenefitsSwitch;
+        private Switch cardQRBenefitsSwitch;
+        private BenefitsChangedListener benefitsListener;
 
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -55,6 +60,24 @@ namespace Familia.Settings
             FingerprintManagerCompat checkHardware;
 
             checkHardware = FingerprintManagerCompat.From(Activity);
+
+            showBenefitsSwitch = v.FindViewById<Switch>(Resource.Id.showBenefitsSwitch);
+            showBenefitsSwitch.CheckedChange += ShowBenefitsSwitch_CheckedChange;
+
+            cardQRBenefitsSwitch = v.FindViewById<Switch>(Resource.Id.QRCardBenefitsSwitch);
+            cardQRBenefitsSwitch.CheckedChange += CardQRSwitch_CheckedChange;
+
+            var showBenefits = Utils.GetDefaults(ShowBenefitsFragment.KEY_SHOW_BENEFITS);
+            if (showBenefits != null)
+            {
+                showBenefitsSwitch.Checked = true;
+            }
+
+            var showGenerateQRCardBenefits = Utils.GetDefaults(GenerateCardQRFragment.KEY_GENERATE_CARD_QR_BENEFITS);
+            if (showGenerateQRCardBenefits != null)
+            {
+                cardQRBenefitsSwitch.Checked = true;
+            }
 
 
             var fingerprint = Convert.ToBoolean(Utils.GetDefaults("fingerprint"));
@@ -87,6 +110,40 @@ namespace Familia.Settings
 
             return v;
         }
+
+        public void SetBenefitsListener(BenefitsChangedListener benefitsListener) {
+            this.benefitsListener = benefitsListener;
+        }
+
+        private void ShowBenefitsSwitch_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            if (e.IsChecked)
+            {
+                benefitsListener.OnShowBenefitsChanged(true);
+            }
+            else {
+                benefitsListener.OnShowBenefitsChanged(false);
+            }
+        }
+
+        private void CardQRSwitch_CheckedChange (object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            if (e.IsChecked)
+            {
+                benefitsListener.OnCardQRChanged(true);
+            }
+            else
+            {
+                benefitsListener.OnCardQRChanged(false);
+            }
+        }
+
+        public interface BenefitsChangedListener {
+            void OnShowBenefitsChanged(bool visibility);
+            void OnCardQRChanged(bool visibility);
+        }
+
+        
 
         private void SetViewSettingsForTrackerActivity(View v)
         {

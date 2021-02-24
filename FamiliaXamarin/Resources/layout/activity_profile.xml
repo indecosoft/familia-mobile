@@ -242,7 +242,6 @@
         android:id="@+id/iw_gender"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:src="@drawable/human_male"
         android:layout_centerHorizontal="true"/>
       <TextView
         android:id="@+id/tv_labelGender"

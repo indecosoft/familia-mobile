@@ -7,6 +7,8 @@ using Android.Content;
 using Android.OS;
 using Android.Util;
 using Android.Views;
+using Android.Views.Animations;
+using Android.Views.InputMethods;
 using Android.Widget;
 using Familia.DataModels;
 using Familia.Devices.DevicesManagement;
@@ -64,14 +66,11 @@ namespace Familia.Asistenta_sociala {
         }
 
         public override View OnCreateView(LayoutInflater inflater , ViewGroup container , Bundle savedInstanceState) {
-            // Use this to return your custom view for this Fragment
-            // return inflater.Inflate(Resource.Layout.YourFragment, container, false);
+          
             View view = inflater.Inflate(Resource.Layout.fragment_asistent_form , container , false);
             NotificationManagerCompat.From(Activity).Cancel(2);
             IntiUi(view);
-            //_distanceCalculatorService = new Intent(Activity , typeof(DistanceCalculator));
-            //_medicalAsistanceService = new Intent(Activity, typeof(MedicalAsistanceService));
-
+           
             string fromPreferences = Utils.GetDefaults("ActivityStart");
             string qrData = Utils.GetDefaults("QrCode");
             readedQR = Utils.GetDefaults("readedQR");
@@ -81,26 +80,12 @@ namespace Familia.Asistenta_sociala {
             _tbDetails.TextChanged += delegate {
 
                 _btnScan.Enabled = FieldsValidation();
+                if (_btnScan.Enabled) {
+                    StartBlinkingAnimation(Activity, _btnScan);
+                }
             };
             _btnAnulare.Click += delegate {
-                //Activity.StopService(_distanceCalculatorService);
-                //Utils.SetDefaults("ActivityStart" , string.Empty);
-                //Utils.SetDefaults("QrId" , string.Empty);
-                //Utils.SetDefaults("QrCode" , string.Empty);
-                //Utils.SetDefaults("readedQR" , string.Empty);
-
-
-                //_formContainer.Visibility = ViewStates.Gone;
-                //_btnAnulare.Visibility = ViewStates.Gone;
-                //_btnBloodPressure.Visibility = ViewStates.Gone;
-                //_btnBloodGlucose.Visibility = ViewStates.Gone;
-
-                //_btnScan.Text = "Incepe activitatea";
-
-                //_selectedBenefits.Clear();
-                //_tbDetails.Text = string.Empty;
-                //_btnBenefits.Text = "Selecteaza beneficii";
-                //_btnScan.Enabled = true;
+             
                 OnServiceStopped();
 
             };
@@ -130,11 +115,8 @@ namespace Familia.Asistenta_sociala {
                     e.PrintStackTrace();
                 }
                 _btnScan.Text = "Finalizeaza activitatea";
+
                 _btnScan.Enabled = false;
-                //if (!Utils.IsServiceRunning(typeof(DistanceCalculator))) {
-                //    Log.Error("Service" , "not running");
-                //    StartDistanceCalculationService();
-                //}
             }
 
             _btnScan.Click += BtnScan_Click;
@@ -142,31 +124,6 @@ namespace Familia.Asistenta_sociala {
             return view;
         }
 
-        //private void StartDistanceCalculationService(JSONObject locationObj = null) {
-        //    Log.Error("Service" , "hereeeeeeeee");
-        //    if (_qrJsonData.Has("latitude") && _qrJsonData.Has("longitude")) {
-        //        _distanceCalculatorService.PutExtra("Latitude" , _qrJsonData.GetString("latitude"));
-        //        _distanceCalculatorService.PutExtra("Longitude" , _qrJsonData.GetString("longitude"));
-        //    } else {
-        //        if (locationObj != null) {
-        //            _distanceCalculatorService.PutExtra("Latitude" , locationObj.GetString("latitude"));
-        //            _distanceCalculatorService.PutExtra("Longitude" , locationObj.GetString("longitude"));
-        //        } else {
-        //            _distanceCalculatorService.PutExtra("Latitude" , _location.GetString("latitude"));
-        //            _distanceCalculatorService.PutExtra("Longitude" , _location.GetString("longitude"));
-        //        }
-        //    }
-
-        //    if (!Utils.IsServiceRunning(typeof(DistanceCalculator))) {
-        //        Activity.StopService(_distanceCalculatorService);
-        //    }
-        //    if (Build.VERSION.SdkInt >= BuildVersionCodes.O) {
-        //        Activity.StartForegroundService(_distanceCalculatorService);
-        //    } else {
-        //        Activity.StartService(_distanceCalculatorService);
-        //    }
-        //    DistanceCalculator.SetListener(this);
-        //}
 
         private async void StartNewActivity(Type activity , DeviceType deviceType) {
             if (readedQR is null) return;
@@ -181,7 +138,7 @@ namespace Familia.Asistenta_sociala {
                 alertDialog.SetTitle("Avertisment");
 
                 alertDialog.SetMessage("Nu aveti niciun dispozitiv inregistrat!");
-                alertDialog.SetButton((int)DialogButtonType.Positive, "OK" , delegate { Activity.StartActivity(typeof(DevicesManagementActivity)); });
+                alertDialog.SetButton("OK" , delegate { Activity.StartActivity(typeof(DevicesManagementActivity)); });
                 alertDialog.Show();
             }
         }
@@ -198,9 +155,8 @@ namespace Familia.Asistenta_sociala {
             _progressBarDialog.Show();
             await Task.Run(async () => {
                 try {
-                    //Utils.GetDefaults("QrId")
-                    // string response = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/getUserBenefits/{Utils.GetDefaults("Id")}", Utils.GetDefaults("Token"));
-                    string response = await WebServices.WebServices.Get("/api/getAllBenefits/" , Utils.GetDefaults("Token"));
+                    
+                    string response = await WebServices.WebServices.Get($"{Constants.PublicServerAddress}/api/getAllBenefits/" , Utils.GetDefaults("Token"));
                     Log.Error("Debug Log in " + nameof(AsistentForm) , "Response: " + response);
                     var jsonResponse = new JSONObject(response);
                     Log.Error("ASISTEN FORM BENEFITS" , jsonResponse.ToString());
@@ -235,21 +191,12 @@ namespace Familia.Asistenta_sociala {
             Date dateTimeNow = sdf.Parse(currentDateandTime);
             var result = await Utils.ScanQrCode(Activity);
             if (result is null) return;
-            //if (string.IsNullOrEmpty(inProgressQRCode)) {
-            //    inProgressQRCode = result.Text;
-            //    Utils.SetDefaults("InProgressQRCode" , inProgressQRCode);
-            //} else {
-            //    if (inProgressQRCode != result.Text) {
-            //        Snackbar.Make(_formContainer , "QRCode invalid!" , Snackbar.LengthLong).Show();
-            //        return;
-            //    }
-            //}
+           
             readedQR = result.Text;
       
             Utils.SetDefaults("readedQR" , readedQR);
             if (Utils.isJson(readedQR)) {
                 Log.Error("QrCode" , "is json");
-                //Utils.SetDefaults("QrId", _qrJsonData.GetInt("Id").ToString());
                 isPacientWithoutApp = true;
                 _qrJsonData = new JSONObject(readedQR);
                 Utils.SetDefaults("QrCode" , _qrJsonData.ToString());
@@ -334,7 +281,6 @@ namespace Familia.Asistenta_sociala {
                 JSONObject obj = new JSONObject().Put("QRData" , _qrJsonData.ToString()).Put("Start" , _dateTimeStart).Put("Location" , locationObj.ToString());
                 Utils.SetDefaults("ActivityStart" , obj.ToString());
 
-                //StartDistanceCalculationService(locationObj);
             } else {
                 location.LocationRequested -= LocationRequested;
                 await location.StopRequestionLocationUpdates();
@@ -348,10 +294,8 @@ namespace Familia.Asistenta_sociala {
 
                 _details = new JSONObject().Put("benefit" , _benefitsArray).Put("details" , _tbDetails.Text);
                 Log.Error("Details" , _details.ToString());
-                //Activity.StopService(_distanceCalculatorService);
 
 
-                //await Task.Run(async () => {
                     Log.Error("before send" , _qrJsonData.ToString());
 
                     if (isPacientWithoutApp) {
@@ -359,7 +303,7 @@ namespace Familia.Asistenta_sociala {
                         .Put("dateTimeStop" , _dateTimeEnd)
                         .Put("imei" , _qrJsonData.GetString("deviceId"))
                         .Put("location" , locationObj).Put("details" , _details);
-                        string response = await WebServices.WebServices.Post("/api/consultByImei" , dataToSend , Utils.GetDefaults("Token"));
+                        string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/consultByImei" , dataToSend , Utils.GetDefaults("Token"));
                         Log.Error("Data Payload" , dataToSend.ToString());
                         if (response != null) {
                             var responseJson = new JSONObject(response);
@@ -373,14 +317,13 @@ namespace Familia.Asistenta_sociala {
                                 case 2:
                                     break;
                             }
-                            //Activity.RunOnUiThread(_progressBarDialog.Dismiss);
                         } else
                             Snackbar.Make(_formContainer , "Nu se poate conecta la server!" , Snackbar.LengthLong).Show();
                     } else {
                         JSONObject dataToSend = new JSONObject().Put("dateTimeStart" , _dateTimeStart)
                         .Put("dateTimeStop" , _dateTimeEnd).Put("qrCodeData" , _qrJsonData)
                         .Put("location" , locationObj).Put("details" , _details);
-                        string response = await WebServices.WebServices.Post("/api/consult" , dataToSend , Utils.GetDefaults("Token"));
+                        string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/consult" , dataToSend , Utils.GetDefaults("Token"));
                         if (response != null) {
                             var responseJson = new JSONObject(response);
                             switch (responseJson.GetInt("status")) {
@@ -393,13 +336,11 @@ namespace Familia.Asistenta_sociala {
                                 case 2:
                                     break;
                             }
-                            //Activity.RunOnUiThread(_progressBarDialog.Dismiss);
                         } else
                             Snackbar.Make(_formContainer , "Nu se poate conecta la server!" , Snackbar.LengthLong).Show();
                     }
                 OnServiceStopped();
 
-                //});
             }
             _progressBarDialog.Dismiss();
         }
@@ -409,6 +350,14 @@ namespace Familia.Asistenta_sociala {
             if (resultCode == (int)Android.App.Result.Ok) {
                 _selectedBenefits = JsonConvert.DeserializeObject<List<SearchListModel>>(data.GetStringExtra("result"));
                 _btnScan.Enabled = FieldsValidation();
+
+                _tbDetails.RequestFocus();
+                ShowKeyboard();
+
+                if (_btnScan.Enabled) {
+                    StartBlinkingAnimation(Activity, _btnScan);
+                }
+
                 _btnBenefits.Text = $"Ati Selectat {_selectedBenefits.Count} beneficii";
             } else {
                 Log.Error("Nu avem result" , "User-ul a zis CANCEL");
@@ -439,6 +388,33 @@ namespace Familia.Asistenta_sociala {
             _btnScan.Enabled = true;
             inProgressQRCode = string.Empty;
         }
+
+        public override void OnPause()
+        {
+            HideKeyboard();
+            base.OnPause();
+        }
+
+        private void ShowKeyboard()
+        {
+            var inputMethodManager = (InputMethodManager)Context.GetSystemService(Context.InputMethodService);
+            inputMethodManager.ToggleSoftInput(ShowFlags.Forced, HideSoftInputFlags.ImplicitOnly);
+        }
+
+        private void HideKeyboard()
+        {
+            var inputMethodManager = (InputMethodManager)Context.GetSystemService(Context.InputMethodService);
+            inputMethodManager.HideSoftInputFromWindow(_tbDetails.WindowToken, 0);
+        }
+
+        private void StartBlinkingAnimation(Context context, View view)
+        {
+            Animation startAnimation = AnimationUtils.LoadAnimation(context, Resource.Animation.blink_effect);
+            view.StartAnimation(startAnimation);
+        }
+
     }
+
+   
 
 }
