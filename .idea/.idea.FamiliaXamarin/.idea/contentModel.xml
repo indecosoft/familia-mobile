@@ -68,17 +68,26 @@
     <e p="$USER_HOME$/.nuget/packages/xamarin.google.guava.listenablefuture/1.0.0.2/buildTransitive/monoandroid50" t="Include">
       <e p="guava-listenablefuture.jar" t="Include" />
     </e>
-    <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.base/117.1.0/proguard/monoandroid90/proguard.txt" t="Include" />
-    <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.basement/117.1.0/proguard/monoandroid90" t="Include">
+    <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.base/117.5.0/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.basement/117.5.0/proguard/monoandroid90" t="Include">
       <e p="proguard.txt" t="Include" />
     </e>
+    <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.clearcut/117.0.0/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.vision/120.1.3/proguard/monoandroid90/proguard.txt" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.vision.common/119.1.3/proguard/monoandroid90/proguard.txt" t="Include" />
     <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.3/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.3/resharper-host/local/Transient/Rider/v203/SolutionCaches/_FamiliaXamarin.755909079.00" t="ExcludeRecursive" />
-    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesbase-17.1.0" t="Include">
-      <e p="playservicesbase-17.1.0.aar" t="Include" />
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesbase-17.5.0" t="Include">
+      <e p="playservicesbase-17.5.0.aar" t="Include" />
     </e>
-    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesbasement-17.1.0" t="Include">
-      <e p="playservicesbasement-17.1.0.aar" t="Include" />
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesbasement-17.5.0" t="Include">
+      <e p="playservicesbasement-17.5.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesclearcut-17.0.0" t="Include">
+      <e p="playservicesclearcut-17.0.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesflags-17.0.0" t="Include">
+      <e p="playservicesflags-17.0.0.aar" t="Include" />
     </e>
     <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playserviceslocation-17.0.0" t="Include">
       <e p="playserviceslocation-17.0.0.aar" t="Include" />
@@ -86,11 +95,20 @@
     <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesmaps-17.0.0" t="Include">
       <e p="playservicesmaps-17.0.0.aar" t="Include" />
     </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesphenotype-17.0.0" t="Include">
+      <e p="playservicesphenotype-17.0.0.aar" t="Include" />
+    </e>
     <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesplacesplacereport-17.0.0" t="Include">
       <e p="playservicesplacesplacereport-17.0.0.aar" t="Include" />
     </e>
-    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicestasks-17.0.0" t="Include">
-      <e p="playservicestasks-17.0.0.aar" t="Include" />
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicestasks-17.2.0" t="Include">
+      <e p="playservicestasks-17.2.0.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesvision-20.1.3" t="Include">
+      <e p="playservicesvision-20.1.3.aar" t="Include" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/XamarinBuildDownload/playservicesvisioncommon-19.1.3" t="Include">
+      <e p="playservicesvisioncommon-19.1.3.aar" t="Include" />
     </e>
     <e p="$USER_HOME$/Library/Developer/Xamarin/android-sdk-macosx/platforms/android-30/Data/res" t="IncludeRecursive" />
     <e p="$USER_HOME$/Library/Developer/Xamarin/android-sdk-macosx/sources/android-30" t="IncludeRecursive" />
@@ -394,7 +412,7 @@
           <e p="MedicineServerRecyclerViewOnScrollListener.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
+          <e p="Release" t="Include">
             <e p="designtime" t="Include">
               <e p="Resource.Designer.cs" t="Include" />
             </e>
@@ -403,7 +421,20 @@
         <e p="OngBenefits" t="Include">
           <e p="FragmentOngBenefits.cs" t="Include" />
           <e p="GenerateCardQR" t="Include">
+            <e p="Camera" t="Include">
+              <e p="CameraSourcePreview.cs" t="Include" />
+            </e>
+            <e p="Entities" t="Include">
+              <e p="PersonIdInfo.cs" t="Include" />
+            </e>
+            <e p="Events" t="Include">
+              <e p="IOCREvents.cs" t="Include" />
+            </e>
             <e p="GenerateCardQRFragment.cs" t="Include" />
+            <e p="OCR" t="Include">
+              <e p="OcrCameraScanActivity.cs" t="Include" />
+            </e>
+            <e p="StringComputations.cs" t="Include" />
           </e>
           <e p="OngBenefitModel.cs" t="Include" />
           <e p="ShowBenefits" t="Include">
@@ -491,7 +522,9 @@
             <e p="heart_pulse.xml" t="Include" />
             <e p="human_female.xml" t="Include" />
             <e p="human_male.xml" t="Include" />
+            <e p="ic_arrow_forward_24dp.xml" t="Include" />
             <e p="ic_menu_manage.xml" t="Include" />
+            <e p="ic_scan_id.xml" t="Include" />
             <e p="image_1.png" t="Include" />
             <e p="image_10.png" t="Include" />
             <e p="image_2.png" t="Include" />
@@ -585,6 +618,7 @@
             <e p="activity_game_center.axml" t="Include" />
             <e p="activity_login.axml" t="Include" />
             <e p="activity_main.axml" t="Include" />
+            <e p="activity_ocr_capture.axml" t="Include" />
             <e p="activity_pin_lockscreen.axml" t="Include" />
             <e p="activity_pressure_and_glucose.axml" t="Include" />
             <e p="activity_profile.axml" t="Include" />
@@ -611,6 +645,7 @@
             <e p="fragment_asistent_form.axml" t="Include" />
             <e p="fragment_asistent_health_devices.xml" t="Include" />
             <e p="fragment_conversations.axml" t="Include" />
+            <e p="fragment_generate_qr_card.xml" t="Include" />
             <e p="fragment_health_devices.axml" t="Include" />
             <e p="fragment_medicine.axml" t="Include" />
             <e p="fragment_medicine_lost.axml" t="Include" />

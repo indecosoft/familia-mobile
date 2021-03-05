@@ -81,5 +81,29 @@
   <string name="open_location_settings">Activeaza locatia</string>
   <string name="cancel">Anulare</string>
   <string name="gps_network_not_enabled">Aplicatia necesita acces la locatie</string>
+  
+  <!-- Scanare buletine -->
+  <string name="ok">OK</string>
+  <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+  <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+  <string name="low_storage_error">Ocr dependencies cannot be downloaded due to low device storage</string>
+  <string name="title_activity_main">Ocr Detector Sample</string>
+  <string name="ocr_header">Date citite:</string>
+  <string name="read_text">Scanare</string>
+  <string name="auto_focus">Auto Focus</string>
+  <string name="use_flash">Use Flash</string>
+  <string name="ocr_success">Text read successfully</string>
+  <string name="ocr_failure">No text captured</string>
+  <string name="ocr_error">"Error reading text: %1$s"</string>
+  <string name="salveaza">Salveaza</string>
+  <string name="cnp">CNP:</string>
+  <string name="nume">Nume:</string>
+  <string name="prenume">Prenume:</string>
+  <string name="emisa_de">Emisa de:</string>
+  <string name="valabilitate">Valabilitate:</string>
+  <string name="seria_nr">Seria/nr:</string>
+  <string name="domiciliu">Domiciliu:</string>
+  <string name="loc_nastere">Loc nastere:</string>
+  <string name="cetatenie">Cetatenie:</string>
 
 </resources>
