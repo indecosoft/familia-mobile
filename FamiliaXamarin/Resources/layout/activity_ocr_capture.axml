@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/topLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary"
+                android:keepScreenOn="true">
+
+    <Familia.OngBenefits.GenerateCardQR.Camera.CameraSourcePreview
+            android:id="@+id/preview"
+            android:layout_width="match_parent"
+            android:layout_height="400dp">
+    </Familia.OngBenefits.GenerateCardQR.Camera.CameraSourcePreview>
+
+    <android.support.v7.widget.CardView
+            android:id="@+id/cardViewData"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/preview"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="-15dp"
+            app:cardBackgroundColor="@color/colorPrimaryDark"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="6dp">
+
+        <RelativeLayout
+                android:id="@+id/rl_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:padding="16dp">
+
+            <TextView
+                    android:id="@+id/tv_cnp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/preview"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/cnp"/>
+
+            <TextView
+                    android:id="@+id/tv_nume"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_cnp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/nume"/>
+
+            <TextView
+                    android:id="@+id/tv_prenume"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_nume"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/prenume"/>
+
+
+            <TextView
+                    android:id="@+id/tv_cetatenie"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_prenume"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/cetatenie"/>
+
+            <TextView
+                    android:id="@+id/tv_loc_nastere"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_cetatenie"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/loc_nastere"/>
+
+            <TextView
+                    android:id="@+id/tv_domiciliu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_loc_nastere"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/domiciliu"/>
+
+            <TextView
+                    android:id="@+id/tv_serie_nr"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_domiciliu"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/seria_nr"/>
+
+            <TextView
+                    android:id="@+id/tv_valabilitate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_serie_nr"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/valabilitate"/>
+
+            <TextView
+                    android:id="@+id/tv_emisa"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_valabilitate"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/emisa_de"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+    <Button
+            android:id="@+id/btn_salveaza"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"
+            android:text="@string/salveaza"/>
+
+
+</RelativeLayout>

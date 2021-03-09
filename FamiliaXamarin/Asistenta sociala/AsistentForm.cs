@@ -249,8 +249,8 @@ namespace Familia.Asistenta_sociala {
                     _dateTimeEnd = null;
                     _details = null;
 
-                    location.LocationRequested += LocationRequested;
-                    await location.StartRequestingLocation();
+                    // location.LocationRequested += LocationRequested;
+                    // await location.StartRequestingLocation();
 
 
                     _progressBarDialog.Dismiss();
@@ -260,8 +260,9 @@ namespace Familia.Asistenta_sociala {
             } else {
                 try {
 
-                    location.LocationRequested += LocationRequested;
-                    await location.StartRequestingLocation(1000);
+                    // location.LocationRequested += LocationRequested;
+                    // await location.StartRequestingLocation(1000);
+                    LocationRequested();
 
                 } catch (JSONException ex) {
                     ex.PrintStackTrace();
@@ -269,14 +270,17 @@ namespace Familia.Asistenta_sociala {
             }
         }
 
-        private async void LocationRequested(object source , LocationEventArgs args) {
+        private async void LocationRequested() {
             _progressBarDialog.Show();
+            Android.Locations.Location loc = await location.GetLastKnownLocation();
             using var locationObj = new JSONObject();
-            locationObj.Put("latitude" , args.Location.Latitude);
-            locationObj.Put("longitude" , args.Location.Longitude);
+            // locationObj.Put("latitude" , args.Location.Latitude);
+            // locationObj.Put("longitude" , args.Location.Longitude);
+            locationObj.Put("latitude" , loc.Latitude);
+            locationObj.Put("longitude" , loc.Longitude);
 
             if (_btnScan.Text.Equals("Incepe activitatea")) {
-                location.LocationRequested -= LocationRequested;
+                // location.LocationRequested -= LocationRequested;
                 await location.StopRequestionLocationUpdates();
                 Log.Error("Asist" , "Start");
 
@@ -285,7 +289,7 @@ namespace Familia.Asistenta_sociala {
                 Utils.SetDefaults("ActivityStart" , obj.ToString());
 
             } else {
-                location.LocationRequested -= LocationRequested;
+                // location.LocationRequested -= LocationRequested;
                 await location.StopRequestionLocationUpdates();
                 Log.Error("Asist" , "Stop");
                 using var sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");

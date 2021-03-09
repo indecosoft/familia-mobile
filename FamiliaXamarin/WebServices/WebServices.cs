@@ -217,5 +217,20 @@ namespace Familia.WebServices
                 return null;
             }
         }
+        public static async Task<string> Post<T>(string url, MultipartFormDataContent form) {
+            try {
+                using var client = new HttpClient();
+                // var byteArray = Encoding.ASCII.GetBytes(url);
+                // client.DefaultRequestHeaders.Authorization =
+                //     new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                // client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                HttpResponseMessage response = await client.PostAsync(url, form);
+                return await response.Content.ReadAsStringAsync();
+            } catch (Exception e) {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
     }
 }

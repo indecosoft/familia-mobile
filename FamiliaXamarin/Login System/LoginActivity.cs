@@ -333,7 +333,7 @@ namespace Familia.Login_System {
             _progressBarDialog.Show();
             await Task.Run(async () => {
                 try {
-                    JSONObject dataToSend = new JSONObject().Put("email" , _usernameEditText.Text)
+                    JSONObject dataToSend = new JSONObject().Put("email" , _usernameEditText.Text?.Trim())
                     .Put("password" , _passwordEditText.Text).Put("imei" ,
                         Utils.GetDeviceIdentificator(this));
 

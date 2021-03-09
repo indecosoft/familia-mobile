@@ -128,7 +128,7 @@ namespace Familia.OngBenefits.ShowBenefits
                     }
                     Log.Error("AAAAAAAAAA", serverResponse);
 
-                    return new JSONObject(serverResponse); ;
+                    return new JSONObject(serverResponse);
                     
                 }
                 catch (Exception e)

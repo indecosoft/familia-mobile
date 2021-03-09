@@ -50,6 +50,16 @@ namespace Familia.Location {
                 await RequestLocationUpdates();
             }
         }
+
+        public async Task<Android.Locations.Location> GetLastKnownLocation()
+        {
+            if (_locationRequest != null && _fusedLocationProviderClient != null)
+            {
+                return await _fusedLocationProviderClient.GetLastLocationAsync();
+            }
+
+            return null;
+        }
         private async Task RequestLocationUpdates() {
             if (ContextCompat.CheckSelfPermission(Application.Context , Manifest.Permission.AccessFineLocation) !=
                     Permission.Granted) return;

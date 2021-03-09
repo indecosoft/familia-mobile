@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -42,11 +43,13 @@ namespace Familia.OngBenefits.ShowBenefits
         public override int ItemCount => list.Count;
 
         private string ParseDateAndTime(string dateAndTime) {
+            var t = DateTimeOffset.Parse(dateAndTime).UtcDateTime;
+            
             var parts = dateAndTime.Split('T');
             var date = parts[0];
             var time = parts[1];
             var dateParsed = ParseDate(date);
-            var timeParsed = ParseTime(time);
+            var timeParsed = ParseTime(time); 
             return dateParsed + " " + timeParsed;
         }
 
@@ -55,7 +58,7 @@ namespace Familia.OngBenefits.ShowBenefits
             var day = parts[2];
             var month = parts[1];
             var year = parts[0];
-            return day + "/" + month + "/" + year;
+            return day + "/" + month + "/" + year; 
         }
 
         private string ParseTime(string timeString)
@@ -63,7 +66,9 @@ namespace Familia.OngBenefits.ShowBenefits
             var parts = timeString.Split(':');
             var hour = parts[0];
             var minutes = parts[1];
+            int hourInt = int.Parse(hour)+2;
             return hour + ":" + minutes;
+            return $"{(hourInt < 10 ? "0" : string.Empty)}{hourInt}:{minutes}"; // hour + ":" + minutes;
         }
 
         public class BenefitViewHolder : RecyclerView.ViewHolder
