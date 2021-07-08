@@ -62,7 +62,7 @@ namespace Familia {
 
 
         public static int WebSocketPort { get; } = 3000;
-		public static int RequestGallery { get; } = 2;
-		public static int RequestCamera { get; } = 1;
+		public const int RequestGallery = 2;
+		public const int RequestCamera = 1;
 	}
 }

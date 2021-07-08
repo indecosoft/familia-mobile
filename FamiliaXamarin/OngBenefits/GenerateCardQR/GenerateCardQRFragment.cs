@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Graphics;
+using Android.Media;
 using Android.OS;
 using Android.Provider;
 using Android.Support.Design.Widget;
@@ -95,7 +96,7 @@ namespace Familia.OngBenefits.GenerateCardQR
             }
         }
 
-        private async Task SendData()
+        private async Task SendData(Bitmap bitmap)
         {
             if (_personIdInfo is null) return;
             await Task.Run(async () =>
@@ -119,12 +120,12 @@ namespace Familia.OngBenefits.GenerateCardQR
                 // Log.Error("Payload", GetBase64Img(_imageAbsolutePath));
                 //byte[] fileBytes = System.IO.File.ReadAllBytes(_imageAbsolutePath);
                 //Bitmap bitmap = BitmapFactory.DecodeFile(_imageAbsolutePath);
-                Bitmap bitmap = MediaStore.Images.Media.GetBitmap(Activity.ContentResolver, _imageUri);
+                // Bitmap bitmap = MediaStore.Images.Media.GetBitmap(Activity.ContentResolver, _imageUri);
                 //ByteArrayOutputStream @out = new ByteArrayOutputStream();
                 //bitmap.Compress(Bitmap.CompressFormat.Jpeg, 30, @out);
 
                 byte[] imageArr = ByteArrayFromImage(bitmap);
-                byte[] test = new byte[] { 0x44, 0x55, 0xff, 0x11 };
+                // byte[] test = new byte[] { 0x44, 0x55, 0xff, 0x11 };
        
                 MultipartFormDataContent form = new MultipartFormDataContent
                 {
@@ -304,8 +305,45 @@ namespace Familia.OngBenefits.GenerateCardQR
             else if (requestCode == 10001)
             {
                 Log.Error("From Cammera", _imageAbsolutePath);
-                _ = SendData();
+                Bitmap bitmap = MediaStore.Images.Media.GetBitmap(Activity.ContentResolver, _imageUri);
+                ExifInterface ei = null;
+                try {
+                    ei = new ExifInterface(_imageAbsolutePath);
+                } catch (IOException e)
+                {
+                    Log.Error("Error", e.Message);
+                }
+                string orientation = ei.GetAttribute(ExifInterface.TagOrientation);
+
+                Bitmap rotatedBitmap = null;
+                switch (orientation)
+                {
+                    case "1": // landscape
+                        break;
+                    case "3":
+                    case "4":
+                        rotatedBitmap =rotateImage(bitmap, 180);
+                        break;
+                    case "5":
+                    case "6": // portrait
+                        rotatedBitmap =rotateImage(bitmap, 90);
+                        break;
+                    case "7":
+                    case "8":
+                        rotatedBitmap = rotateImage(bitmap, -90);
+                        break;
+                    default: 
+                        rotatedBitmap = bitmap;
+                        break;
+                }
+                _ = SendData(rotatedBitmap);
             }
+        }
+        public Bitmap rotateImage(Bitmap source, float angle) {
+            Matrix matrix = new Matrix();
+            matrix.PostRotate(angle);
+            return Bitmap.CreateBitmap(source, 0, 0, source.Width, source.Height,
+                matrix, true);
         }
     }
 }

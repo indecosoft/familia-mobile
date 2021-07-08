@@ -247,7 +247,7 @@ namespace Familia.Login_System
                 {
                     switch (requestCode)
                     {
-                        case 1:
+                        case Constants.RequestCamera:
                             //_imagePath = _photoUri.Path;
                             Glide.With(this).Load(new File(_imagePath)).Into(_profileImage);
 
@@ -265,7 +265,7 @@ namespace Familia.Login_System
                             }
 
                             break;
-                        case 2:
+                        case Constants.RequestGallery:
                             Uri uri = data.Data;
 
 
