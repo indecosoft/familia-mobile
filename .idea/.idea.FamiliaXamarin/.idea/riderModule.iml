@@ -17,7 +17,6 @@
     <content url="file://$USER_HOME$/.nuget/packages/xamarin.googleplayservices.clearcut/71.1600.4/proguard/MonoAndroid90/proguard.txt" />
     <content url="file://$USER_HOME$/.nuget/packages/xamarin.googleplayservices.vision.common/71.1702.4/proguard/MonoAndroid90/proguard.txt" />
     <content url="file://$USER_HOME$/.nuget/packages/xamarin.googleplayservices.vision/71.1702.4/proguard/MonoAndroid90/proguard.txt" />
-    <content url="file://$USER_HOME$/Desktop/GenerateCardQR" />
     <content url="file://$MODULE_DIR$/../.." />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

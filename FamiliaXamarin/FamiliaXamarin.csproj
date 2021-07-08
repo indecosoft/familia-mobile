@@ -64,8 +64,7 @@
     <Debugger>Xamarin</Debugger>
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
     <LangVersion>8.0</LangVersion>
-    <AndroidKeyStore>true</AndroidKeyStore>
-    <AndroidSigningKeyStore>C:\Users\patricia.mic\AppData\Local\Xamarin\Mono for Android\Keystore\keystore\fAMILIA.keystore</AndroidSigningKeyStore>
+    <AndroidSigningKeyStore>/Users/voicubabiciu/Documents/Keys/fAMILIA/fAMILIA.keystore</AndroidSigningKeyStore>
     <AndroidSigningStorePass>Indeco$oft2019</AndroidSigningStorePass>
     <AndroidSigningKeyAlias>key0</AndroidSigningKeyAlias>
     <AndroidSigningKeyPass>Indeco$oft2019</AndroidSigningKeyPass>
@@ -75,7 +74,7 @@
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
-    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <AndroidPackageFormat>aab</AndroidPackageFormat>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev.Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -97,39 +96,19 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\..\..\Desktop\GenerateCardQR\Camera\CameraSourcePreview.cs">
-      <Link>OngBenefits\GenerateCardQR\Camera\CameraSourcePreview.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\..\..\..\Desktop\GenerateCardQR\Entities\PersonIdInfo.cs">
-      <Link>OngBenefits\GenerateCardQR\Entities\PersonIdInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\..\..\..\Desktop\GenerateCardQR\Events\IOCREvents.cs">
-      <Link>OngBenefits\GenerateCardQR\Events\IOCREvents.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\..\..\..\Desktop\GenerateCardQR\GenerateCardQRFragment.cs">
-      <Link>OngBenefits\GenerateCardQR\GenerateCardQRFragment.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\..\..\..\Desktop\GenerateCardQR\Models\Buletin.cs">
-      <Link>OngBenefits\GenerateCardQR\Models\Buletin.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\..\..\..\Desktop\GenerateCardQR\Models\Config.cs">
-      <Link>OngBenefits\GenerateCardQR\Models\Config.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\..\..\..\Desktop\GenerateCardQR\Models\DosarModel.cs">
-      <Link>OngBenefits\GenerateCardQR\Models\DosarModel.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\..\..\..\Desktop\GenerateCardQR\OCR\OcrCameraScanActivity.cs">
-      <Link>OngBenefits\GenerateCardQR\OCR\OcrCameraScanActivity.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\..\..\..\Desktop\GenerateCardQR\Storage\Storage.cs">
-      <Link>OngBenefits\GenerateCardQR\Storage\Storage.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\..\..\..\Desktop\GenerateCardQR\StringComputations.cs">
-      <Link>OngBenefits\GenerateCardQR\StringComputations.cs</Link>
-    </Compile>
     <Compile Include="Activity Tracker\StepCounterSensor.cs" />
     <Compile Include="Activity Tracker\TrackerActivity.cs" />
     <Compile Include="Activity Tracker\TrackerActivityReceiver.cs" />
+    <Compile Include="OngBenefits\GenerateCardQR\Camera\CameraSourcePreview.cs" />
+    <Compile Include="OngBenefits\GenerateCardQR\Entities\PersonIdInfo.cs" />
+    <Compile Include="OngBenefits\GenerateCardQR\Events\IOCREvents.cs" />
+    <Compile Include="OngBenefits\GenerateCardQR\GenerateCardQRFragment.cs" />
+    <Compile Include="OngBenefits\GenerateCardQR\Models\Buletin.cs" />
+    <Compile Include="OngBenefits\GenerateCardQR\Models\Config.cs" />
+    <Compile Include="OngBenefits\GenerateCardQR\Models\DosarModel.cs" />
+    <Compile Include="OngBenefits\GenerateCardQR\OCR\OcrCameraScanActivity.cs" />
+    <Compile Include="OngBenefits\GenerateCardQR\Storage\Storage.cs" />
+    <Compile Include="OngBenefits\GenerateCardQR\StringComputations.cs" />
     <Compile Include="OngBenefits\ShowBenefits\Benefit.cs" />
     <Compile Include="OngBenefits\ShowBenefits\BenefitsAdapter.cs" />
     <Compile Include="OngBenefits\ShowBenefits\ShowBenefitsFragment.cs" />

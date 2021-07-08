@@ -4,4 +4,12 @@
         <domain includeSubdomains="true">indecosoft.net</domain>
         <domain includeSubdomains="true">fitbit.com</domain>
     </domain-config>
+     <base-config>
+       <trust-anchors>
+        <!-- Trust preinstalled CAs -->
+        <certificates src="system" />
+        <!-- Additionally trust user added CAs -->
+        <certificates src="user" />
+      </trust-anchors>
+     </base-config>
 </network-security-config>

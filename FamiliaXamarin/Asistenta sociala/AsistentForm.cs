@@ -124,6 +124,8 @@ namespace Familia.Asistenta_sociala {
 
             _btnScan.Click += BtnScan_Click;
 
+            
+
             return view;
         }
 
@@ -189,6 +191,16 @@ namespace Familia.Asistenta_sociala {
         }
 
         private async void BtnScan_Click(object sender , EventArgs e) {
+
+
+            const string permission = Manifest.Permission.AccessFineLocation;
+            if (Activity.CheckSelfPermission(permission) != Permission.Granted ||
+                Activity.CheckSelfPermission(Manifest.Permission.AccessCoarseLocation) != Permission.Granted ||
+                Activity.CheckSelfPermission(Manifest.Permission.Camera) != Permission.Granted) {
+                RequestPermissions(Constants.PermissionsArray, 5000);
+                return;
+            }
+
             using var sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             string currentDateandTime = sdf.Format(new Date());
             Date dateTimeNow = sdf.Parse(currentDateandTime);
@@ -236,6 +248,7 @@ namespace Familia.Asistenta_sociala {
         }
 
         private async Task CheckActivity(string start) {
+            _progressBarDialog.Show();
             if (_btnScan.Text.Equals("Incepe activitatea")) {
                 _formContainer.Visibility = ViewStates.Visible;
 
@@ -244,112 +257,122 @@ namespace Familia.Asistenta_sociala {
                 _btnBloodPressure.Visibility = ViewStates.Visible;
                 _btnBloodGlucose.Visibility = ViewStates.Visible;
                 try {
-                    _progressBarDialog.Show();
+                    
                     _dateTimeStart = start;
                     _dateTimeEnd = null;
                     _details = null;
 
-                    // location.LocationRequested += LocationRequested;
-                    // await location.StartRequestingLocation();
+                    location.LocationRequested += LocationRequested;
+                    await location.StartRequestingLocation();
+                    // LocationRequested();
 
-
-                    _progressBarDialog.Dismiss();
                 } catch (JSONException ex) {
                     ex.PrintStackTrace();
                 }
             } else {
                 try {
+                    location.LocationRequested += LocationRequested;
+                    await location.StartRequestingLocation();
+                    
 
-                    // location.LocationRequested += LocationRequested;
-                    // await location.StartRequestingLocation(1000);
-                    LocationRequested();
+                    // LocationRequested();
 
                 } catch (JSONException ex) {
                     ex.PrintStackTrace();
                 }
             }
+            _progressBarDialog.Dismiss();
         }
 
-        private async void LocationRequested() {
-            _progressBarDialog.Show();
-            Android.Locations.Location loc = await location.GetLastKnownLocation();
-            using var locationObj = new JSONObject();
-            // locationObj.Put("latitude" , args.Location.Latitude);
-            // locationObj.Put("longitude" , args.Location.Longitude);
-            locationObj.Put("latitude" , loc.Latitude);
-            locationObj.Put("longitude" , loc.Longitude);
-
-            if (_btnScan.Text.Equals("Incepe activitatea")) {
-                // location.LocationRequested -= LocationRequested;
+        private async void LocationRequested(object source , LocationEventArgs args) {
+            try {
+                // Android.Locations.Location loc = await location.GetLastKnownLocation();
+                Android.Locations.Location loc = args.Location;
+                using var locationObj = new JSONObject();
+                // locationObj.Put("latitude" , args.Location.Latitude);
+                // locationObj.Put("longitude" , args.Location.Longitude);
+                locationObj.Put("latitude", loc.Latitude);
+                locationObj.Put("longitude", loc.Longitude);
+                location.LocationRequested -= LocationRequested;
                 await location.StopRequestionLocationUpdates();
-                Log.Error("Asist" , "Start");
+                //throw new Exception("Error");
 
-                _btnScan.Text = "Finalizeaza activitatea";
-                JSONObject obj = new JSONObject().Put("QRData" , _qrJsonData.ToString()).Put("Start" , _dateTimeStart).Put("Location" , locationObj.ToString());
-                Utils.SetDefaults("ActivityStart" , obj.ToString());
+                if (_btnScan.Text.Equals("Incepe activitatea")) {
 
-            } else {
-                // location.LocationRequested -= LocationRequested;
-                await location.StopRequestionLocationUpdates();
-                Log.Error("Asist" , "Stop");
-                using var sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                string currentDateandTime = sdf.Format(new Date());
-                _dateTimeEnd = currentDateandTime;
-                _benefitsArray = new JSONArray();
-                foreach (SearchListModel t in _selectedBenefits)
-                    _benefitsArray.Put(t.Id);
+                    Log.Error("Asist", "Start");
 
-                _details = new JSONObject().Put("benefit" , _benefitsArray).Put("details" , _tbDetails.Text);
-                Log.Error("Details" , _details.ToString());
+                    _btnScan.Text = "Finalizeaza activitatea";
+                    JSONObject obj = new JSONObject().Put("QRData", _qrJsonData.ToString()).Put("Start", _dateTimeStart).Put("Location", locationObj.ToString());
+                    Utils.SetDefaults("ActivityStart", obj.ToString());
+
+                } else {
+                    Log.Error("Asist", "Stop");
+                    using var sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    string currentDateandTime = sdf.Format(new Date());
+                    _dateTimeEnd = currentDateandTime;
+                    _benefitsArray = new JSONArray();
+                    foreach (SearchListModel t in _selectedBenefits)
+                        _benefitsArray.Put(t.Id);
+
+                    _details = new JSONObject().Put("benefit", _benefitsArray).Put("details", _tbDetails.Text);
+                    Log.Error("Details", _details.ToString());
 
 
-                    Log.Error("before send" , _qrJsonData.ToString());
+                    Log.Error("before send", _qrJsonData.ToString());
 
                     if (isPacientWithoutApp) {
-                        JSONObject dataToSend = new JSONObject().Put("dateTimeStart" , _dateTimeStart)
-                        .Put("dateTimeStop" , _dateTimeEnd)
-                        .Put("imei" , _qrJsonData.GetString("deviceId"))
-                        .Put("location" , locationObj).Put("details" , _details);
-                        string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/consultByImei" , dataToSend , Utils.GetDefaults("Token"));
-                        Log.Error("Data Payload" , dataToSend.ToString());
+                        JSONObject dataToSend = new JSONObject().Put("dateTimeStart", _dateTimeStart)
+                        .Put("dateTimeStop", _dateTimeEnd)
+                        .Put("imei", _qrJsonData.GetString("deviceId"))
+                        .Put("location", locationObj).Put("details", _details);
+                        string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/consultByImei", dataToSend, Utils.GetDefaults("Token"));
+                        Log.Error("Data Payload", dataToSend.ToString());
                         if (response != null) {
                             var responseJson = new JSONObject(response);
                             switch (responseJson.GetInt("status")) {
                                 case 0:
-                                    Snackbar.Make(_formContainer , "Nu sunteti la pacient!" , Snackbar.LengthLong).Show();
+                                    Snackbar.Make(_formContainer, "Nu sunteti la pacient!", Snackbar.LengthLong).Show();
                                     break;
                                 case 1:
-                                    Snackbar.Make(_formContainer , "Eroare conectare la server" , Snackbar.LengthLong).Show();
+                                    Snackbar.Make(_formContainer, "Eroare conectare la server", Snackbar.LengthLong).Show();
                                     break;
                                 case 2:
                                     break;
                             }
                         } else
-                            Snackbar.Make(_formContainer , "Nu se poate conecta la server!" , Snackbar.LengthLong).Show();
+                            Snackbar.Make(_formContainer, "Nu se poate conecta la server!", Snackbar.LengthLong).Show();
                     } else {
-                        JSONObject dataToSend = new JSONObject().Put("dateTimeStart" , _dateTimeStart)
-                        .Put("dateTimeStop" , _dateTimeEnd).Put("qrCodeData" , _qrJsonData)
-                        .Put("location" , locationObj).Put("details" , _details);
-                        string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/consult" , dataToSend , Utils.GetDefaults("Token"));
+                        JSONObject dataToSend = new JSONObject().Put("dateTimeStart", _dateTimeStart)
+                        .Put("dateTimeStop", _dateTimeEnd).Put("qrCodeData", _qrJsonData)
+                        .Put("location", locationObj).Put("details", _details);
+                        string response = await WebServices.WebServices.Post(Constants.PublicServerAddress + "/api/consult", dataToSend, Utils.GetDefaults("Token"));
                         if (response != null) {
                             var responseJson = new JSONObject(response);
                             switch (responseJson.GetInt("status")) {
                                 case 0:
-                                    Snackbar.Make(_formContainer , "Nu sunteti la pacient!" , Snackbar.LengthLong).Show();
+                                    Snackbar.Make(_formContainer, "Nu sunteti la pacient!", Snackbar.LengthLong).Show();
                                     break;
                                 case 1:
-                                    Snackbar.Make(_formContainer , "Eroare conectare la server" , Snackbar.LengthLong).Show();
+                                    Snackbar.Make(_formContainer, "Eroare conectare la server", Snackbar.LengthLong).Show();
                                     break;
                                 case 2:
                                     break;
                             }
                         } else
-                            Snackbar.Make(_formContainer , "Nu se poate conecta la server!" , Snackbar.LengthLong).Show();
+                            Snackbar.Make(_formContainer, "Nu se poate conecta la server!", Snackbar.LengthLong).Show();
                     }
-                OnServiceStopped();
+                    OnServiceStopped();
+
+                }
+            } catch (Exception ex) {
+                Log.Error("Asistenta", ex.Message);
+                Toast.MakeText(Activity, ex.Message, ToastLength.Long).Show();
+
+            } finally {
+                _progressBarDialog.Dismiss();
 
             }
-            _progressBarDialog.Dismiss();
+
         }
 
         public override void OnActivityResult(int requestCode , int resultCode , Intent data) {
@@ -418,6 +441,24 @@ namespace Familia.Asistenta_sociala {
         {
             Animation startAnimation = AnimationUtils.LoadAnimation(context, Resource.Animation.blink_effect);
             view.StartAnimation(startAnimation);
+        }
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions,
+            Permission[] grantResults) {
+
+            if (grantResults[0] != Permission.Granted) {
+                Snackbar.Make(_formContainer, "Permisiuni pentru telefon refuzate",
+                    Snackbar.LengthShort).Show();
+            } else if (grantResults[1] != Permission.Granted || grantResults[2] != Permission.Granted) {
+                Snackbar.Make(_formContainer, "Permisiuni pentru locatie refuzate",
+                    Snackbar.LengthShort).Show();
+
+            } else if (grantResults[3] != Permission.Granted) {
+                Snackbar.Make(_formContainer, "Permisiuni pentru camera refuzate",
+                    Snackbar.LengthShort).Show();
+
+            } else {
+                BtnScan_Click(null, null);
+            }
         }
 
     }

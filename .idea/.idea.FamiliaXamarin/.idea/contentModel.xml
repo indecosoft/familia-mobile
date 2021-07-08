@@ -19,30 +19,6 @@
     <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.clearcut/71.1600.4/proguard/monoandroid90/proguard.txt" t="Include" />
     <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.vision/71.1702.4/proguard/monoandroid90/proguard.txt" t="Include" />
     <e p="$USER_HOME$/.nuget/packages/xamarin.googleplayservices.vision.common/71.1702.4/proguard/monoandroid90/proguard.txt" t="Include" />
-    <e p="$USER_HOME$/Desktop/GenerateCardQR" t="Include">
-      <e p="Camera" t="Include">
-        <e p="CameraSourcePreview.cs" t="Include" />
-      </e>
-      <e p="Entities" t="Include">
-        <e p="PersonIdInfo.cs" t="Include" />
-      </e>
-      <e p="Events" t="Include">
-        <e p="IOCREvents.cs" t="Include" />
-      </e>
-      <e p="GenerateCardQRFragment.cs" t="Include" />
-      <e p="Models" t="Include">
-        <e p="Buletin.cs" t="Include" />
-        <e p="Config.cs" t="Include" />
-        <e p="DosarModel.cs" t="Include" />
-      </e>
-      <e p="OCR" t="Include">
-        <e p="OcrCameraScanActivity.cs" t="Include" />
-      </e>
-      <e p="Storage" t="Include">
-        <e p="Storage.cs" t="Include" />
-      </e>
-      <e p="StringComputations.cs" t="Include" />
-    </e>
     <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.3/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.3/resharper-host/local/Transient/Rider/v203/SolutionCaches/_FamiliaXamarin.755909079.00" t="ExcludeRecursive" />
     <e p="$USER_HOME$/Library/Developer/Xamarin/android-sdk-macosx/platforms/android-29/Data/res" t="IncludeRecursive" />
@@ -354,6 +330,30 @@
         </e>
         <e p="OngBenefits" t="Include">
           <e p="FragmentOngBenefits.cs" t="Include" />
+          <e p="GenerateCardQR" t="Include">
+            <e p="Camera" t="Include">
+              <e p="CameraSourcePreview.cs" t="Include" />
+            </e>
+            <e p="Entities" t="Include">
+              <e p="PersonIdInfo.cs" t="Include" />
+            </e>
+            <e p="Events" t="Include">
+              <e p="IOCREvents.cs" t="Include" />
+            </e>
+            <e p="GenerateCardQRFragment.cs" t="Include" />
+            <e p="Models" t="Include">
+              <e p="Buletin.cs" t="Include" />
+              <e p="Config.cs" t="Include" />
+              <e p="DosarModel.cs" t="Include" />
+            </e>
+            <e p="OCR" t="Include">
+              <e p="OcrCameraScanActivity.cs" t="Include" />
+            </e>
+            <e p="Storage" t="Include">
+              <e p="Storage.cs" t="Include" />
+            </e>
+            <e p="StringComputations.cs" t="Include" />
+          </e>
           <e p="OngBenefitModel.cs" t="Include" />
           <e p="ShowBenefits" t="Include">
             <e p="Benefit.cs" t="Include" />

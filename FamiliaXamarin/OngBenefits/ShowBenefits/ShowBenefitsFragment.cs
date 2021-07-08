@@ -31,6 +31,7 @@ namespace Familia.OngBenefits.ShowBenefits
         {
             containerView = inflater.Inflate(Resource.Layout.fragment_show_benefits, container, false);
             InitView();
+            _= StartScan();
             return containerView;
         }
 
@@ -42,7 +43,13 @@ namespace Familia.OngBenefits.ShowBenefits
             HideUI();
         }
 
-        public async void OnButtonScanQRCodeClicked(object sender, EventArgs e) {
+        public async void OnButtonScanQRCodeClicked(object sender, EventArgs e)
+        {
+            await StartScan();
+        }
+
+        private async Task StartScan()
+        {
             try
             {
                 ZXingResult result = await Utils.ScanQrCode(Activity);
@@ -58,7 +65,8 @@ namespace Familia.OngBenefits.ShowBenefits
                 progressBar.Visibility = ViewStates.Gone;
                 ShowUI(jsonServerResponse);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Log.Error("AAAAAAAA", ex.Message);
             }
         }

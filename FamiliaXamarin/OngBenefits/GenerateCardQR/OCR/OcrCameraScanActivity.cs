@@ -41,7 +41,6 @@ namespace Familia.OngBenefits.GenerateCardQR.OCR
         private string _imageExtension, _imagePath;
 
 
-
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions,
             Permission[] grantResults)
         {
@@ -88,15 +87,13 @@ namespace Familia.OngBenefits.GenerateCardQR.OCR
                     .SetRequestedPreviewSize(1280, 1024)
                     .SetRequestedFps(2.0f)
                     .SetAutoFocusEnabled(autoFocus)
-                    
                     .Build();
                 // _cameraSource.F
                 cameraView.Start(_cameraSource);
                 textRecognizer.SetProcessor(this);
                 if (useFocus)
                 {
-                    
-                    var _myCamera =  cameraView.GetCamera();
+                    var _myCamera = cameraView.GetCamera();
                     if (_myCamera != null)
                     {
                         var prams = _myCamera.GetParameters();
@@ -108,30 +105,32 @@ namespace Familia.OngBenefits.GenerateCardQR.OCR
                     {
                         Log.Error("Error", "Camera null");
                     }
-                    
                 }
-                
             }
 
             ocrStringComputations.ScanningCompleted += OcrStringComputationsOnScanningCompleted;
         }
-        
+
         private void OcrStringComputationsOnScanningCompleted(object source, PersonIdInfo args)
         {
             ocrStringComputations.ScanningCompleted -= OcrStringComputationsOnScanningCompleted;
             Log.Error("Scanned data", args.ToString());
-            tvCnp.Text = $"{GetString(Resource.String.cnp)} {args.Cnp}";
-            tvFirstName.Text = $"{GetString(Resource.String.prenume)} {args.FirstName}";
-            tvLastName.Text = $"{GetString(Resource.String.nume)} {args.LastName}";
-            tvNationality.Text = $"{GetString(Resource.String.cetatenie)} {args.Nationality}";
-            tvBirthplace.Text = $"{GetString(Resource.String.loc_nastere)} {args.Birthplace}";
-            tvHomeAddress.Text = $"{GetString(Resource.String.domiciliu)} {args.HomeAddress}";
-            tvSeriesAndNumber.Text = $"{GetString(Resource.String.seria_nr)} {args.Series}/{args.Number}";
-            tvValidity.Text = $"{GetString(Resource.String.valabilitate)} {args.Validity}";
-            tvIssued.Text = $"{GetString(Resource.String.emisa_de)} {args.Issued}";
+            RunOnUiThread(() =>
+            {
+                tvCnp.Text = $"{GetString(Resource.String.cnp)} {args.Cnp}";
+                tvFirstName.Text = $"{GetString(Resource.String.prenume)} {args.FirstName}";
+                tvLastName.Text = $"{GetString(Resource.String.nume)} {args.LastName}";
+                tvNationality.Text = $"{GetString(Resource.String.cetatenie)} {args.Nationality}";
+                tvBirthplace.Text = $"{GetString(Resource.String.loc_nastere)} {args.Birthplace}";
+                tvHomeAddress.Text = $"{GetString(Resource.String.domiciliu)} {args.HomeAddress}";
+                tvSeriesAndNumber.Text = $"{GetString(Resource.String.seria_nr)} {args.Series}/{args.Number}";
+                tvValidity.Text = $"{GetString(Resource.String.valabilitate)} {args.Validity}";
+                tvIssued.Text = $"{GetString(Resource.String.emisa_de)} {args.Issued}";
+                
+            });
 
             Intent data = new Intent();
-            data.PutExtra("Result", JsonConvert.SerializeObject (args));
+            data.PutExtra("Result", JsonConvert.SerializeObject(args));
             SetResult(Result.Ok, data);
             Finish();
         }
@@ -146,14 +145,13 @@ namespace Familia.OngBenefits.GenerateCardQR.OCR
                 {
                     TextBlock item = (TextBlock) items.ValueAt(i);
                     ocrStringComputations.RetrieveInfo(item);
+                    Log.Error("Scanned", ocrStringComputations.ToString());
                 }
             }
         }
 
-
         public void Release()
         {
-            
         }
 
         protected override void OnResume()

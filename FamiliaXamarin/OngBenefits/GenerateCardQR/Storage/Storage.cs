@@ -72,7 +72,27 @@ public class Storage {
         return Utils.GetDefaults(key);
     }
 
-
+    // public string getBase64Img() {
+    //     File imgFile = new File(imagePath);
+    //     if (imgFile.Exists()) {
+    //
+    //         Bitmap myBitmap = BitmapFactory.DecodeFile(imgFile.AbsolutePath);
+    //
+    //         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    //         myBitmap.Compress(Bitmap.CompressFormat.Jpeg, 100, byteArrayOutputStream);
+    //         byte[] byteArrayImage = byteArrayOutputStream.ToByteArray();
+    //         return Base64.EncodeToString(byteArrayImage, Base64Flags.Default);
+    //     }
+    //     return null;
+    // }
+    //
+    //
+    // private string convertImageToBase64(Bitmap photo) {
+    //     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    //     photo.Compress(Bitmap.CompressFormat.Png, 100, baos);
+    //     byte[] imageBytes = baos.ToByteArray();
+    //     return Base64.EncodeToString(imageBytes, Base64Flags.Default);
+    // }
 
 }
 

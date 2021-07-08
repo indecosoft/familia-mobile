@@ -129,7 +129,7 @@ namespace Familia.WebServices
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error("Request error", e.Message);
                 return null;
             }
         }

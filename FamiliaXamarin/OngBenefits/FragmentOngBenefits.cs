@@ -134,29 +134,32 @@ namespace Familia.OngBenefits {
         }
 
         private async void _btnScan_Click(object sender , EventArgs e) {
-            ZXingResult result = await Utils.ScanQrCode(Activity);
-            if(result is null) {
-                return;
-            }
+           
 
-            Log.Error("AAAAAAAAAAAA Result qr code" , result.Text);
             if (IsActivityInProgress()) {
                 if (IsFormValid()) {
-                    if (result.Text == scannedQrCode) {
+                    //if (result.Text == scannedQrCode) {
                         _progressBarDialog.Show();
-                        await SendData(result.Text);
+                        await SendData();
                         _progressBarDialog.Dismiss();
 
-                    } else {
-                        Snackbar.Make(_formContainer , "Codul scanat nu corespunde cu cel scanat la inceputul activitatii" , Snackbar.LengthLong).Show();
-                    }
+                    //} else {
+                    //    Snackbar.Make(_formContainer , "Codul scanat nu corespunde cu cel scanat la inceputul activitatii" , Snackbar.LengthLong).Show();
+                    //}
 
                 } else {
                     Snackbar.Make(_formContainer , "A fost intampinata o eroare" , Snackbar.LengthLong).Show();
                 }
 
             } else {
+                ZXingResult result = await Utils.ScanQrCode(Activity);
+                if (result is null)
+                {
+                    return;
+                }
                 scannedQrCode = result.Text;
+                Log.Error("AAAAAAAAAAAA Result qr code", result.Text);
+
                 Utils.SetDefaults("ScannedQrCode" , scannedQrCode);
                 Utils.SetDefaults("StartingDateTime" , dateFormat.Format(new Date()));
                 _btnScan.Enabled = IsFormValid();
@@ -170,6 +173,10 @@ namespace Familia.OngBenefits {
                         serverResponse = await WebServices.WebServices.Post($"{Constants.PublicServerAddress}/api/get-asisoc-benefits/", obj,
                                                      Utils.GetDefaults("Token"));
 
+                        Log.Error("Request URL", $"{Constants.PublicServerAddress}/api/get-asisoc-benefits/");
+                        Log.Error("Request Token", Utils.GetDefaults("Token"));
+                        Log.Error("Request OBJ", obj.ToString());
+                        Log.Error("Request Response", serverResponse + " Allow null");
                         if (serverResponse == null) {
                             return;
                         }
@@ -200,14 +207,14 @@ namespace Familia.OngBenefits {
             return new Tuple<bool , int>(isInteger , idAsisocPerson);
         }
 
-        private async Task SendData(string scannedValue) {
+        private async Task SendData() {
 
             
             await location.StartRequestingLocation();
 
             JSONObject resultJSON = null;
             try {
-                resultJSON = new JSONObject(scannedValue);
+                resultJSON = new JSONObject(scannedQrCode);
             }
             catch (Exception e) {
                 Log.Error("AAAAAAAAA error parsing result json from qr code", e.Message);

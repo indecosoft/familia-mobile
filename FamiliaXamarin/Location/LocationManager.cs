@@ -53,6 +53,7 @@ namespace Familia.Location {
 
         public async Task<Android.Locations.Location> GetLastKnownLocation()
         {
+        
             if (_locationRequest != null && _fusedLocationProviderClient != null)
             {
                 return await _fusedLocationProviderClient.GetLastLocationAsync();

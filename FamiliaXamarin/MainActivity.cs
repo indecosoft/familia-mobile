@@ -582,30 +582,37 @@ namespace Familia {
 
         public void OnShowBenefitsChanged(bool visibility)
         {
-            Log.Error("AAAAAAA MAIN ACTIVITY", "changed  show benefits" + visibility);
-            menuNav.FindItem(Resource.Id.showBenefits).SetVisible(visibility);
-            if (visibility)
+            if(_userType == UsersTypes.MOB || _userType == UsersTypes.MOBWEB)
             {
-                Utils.SetDefaults(ShowBenefitsFragment.KEY_SHOW_BENEFITS, visibility.ToString());
+                Log.Error("AAAAAAA MAIN ACTIVITY", "changed  show benefits" + visibility);
+                menuNav.FindItem(Resource.Id.showBenefits).SetVisible(visibility);
+                if (visibility)
+                {
+                    Utils.SetDefaults(ShowBenefitsFragment.KEY_SHOW_BENEFITS, visibility.ToString());
+                }
+                else
+                {
+                    Utils.SetDefaults(ShowBenefitsFragment.KEY_SHOW_BENEFITS, null);
+                }
             }
-            else
-            {
-                Utils.SetDefaults(ShowBenefitsFragment.KEY_SHOW_BENEFITS, null);
-            }
+            
         }
 
         public void OnCardQRChanged(bool visibility)
         {
-            Log.Error("AAAAAAA MAIN ACTIVITY", "changed card qr" + visibility);
-            menuNav.FindItem(Resource.Id.generateQRCardBenefits).SetVisible(visibility);
+            if (_userType == UsersTypes.MOB || _userType == UsersTypes.MOBWEB)
+            {
+                Log.Error("AAAAAAA MAIN ACTIVITY", "changed card qr" + visibility);
+                menuNav.FindItem(Resource.Id.generateQRCardBenefits).SetVisible(visibility);
 
-            if (visibility)
-            {
-                Utils.SetDefaults(GenerateCardQRFragment.KEY_GENERATE_CARD_QR_BENEFITS, visibility.ToString());
-            }
-            else
-            {
-                Utils.SetDefaults(GenerateCardQRFragment.KEY_GENERATE_CARD_QR_BENEFITS, null);
+                if (visibility)
+                {
+                    Utils.SetDefaults(GenerateCardQRFragment.KEY_GENERATE_CARD_QR_BENEFITS, visibility.ToString());
+                }
+                else
+                {
+                    Utils.SetDefaults(GenerateCardQRFragment.KEY_GENERATE_CARD_QR_BENEFITS, null);
+                }
             }
 
         }
