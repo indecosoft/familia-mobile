@@ -1,5 +1,4 @@
 ﻿using System;
-
 using System.Net.Http;
 using System.Threading.Tasks;
 using Android.App;
@@ -11,6 +10,7 @@ using Android.Provider;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
+using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -48,12 +48,13 @@ namespace Familia.OngBenefits.GenerateCardQR
         private TextView tvSeriesAndNumber;
         private TextView tvValidity;
         private TextView tvIssued;
+        private TextInputLayout etBeneficiaryEmail;
         private PersonIdInfo _personIdInfo;
         private string _imageAbsolutePath;
         private Android.Net.Uri _imageUri;
         private static readonly int RC_OCR_CAPTURE = 9003;
-        
-        
+        private bool dataSent = false;
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -79,21 +80,27 @@ namespace Familia.OngBenefits.GenerateCardQR
 
             return null;
         }
-        public  byte[] ReadFully(System.IO.Stream input) {
+
+        public byte[] ReadFully(System.IO.Stream input)
+        {
             byte[] buffer = new byte[16 * 1024];
-            using (System.IO.MemoryStream ms = new System.IO.MemoryStream()) {
+            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+            {
                 int read;
-                while ((read = input.Read(buffer, 0, buffer.Length)) > 0) {
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
                     ms.Write(buffer, 0, read);
                 }
+
                 return ms.ToArray();
             }
         }
-        public byte[] ByteArrayFromImage(Bitmap bmp) {
-            using (var stream = new System.IO.MemoryStream()) {
-                bmp.Compress(Bitmap.CompressFormat.Jpeg, 30, stream);
-                return stream.ToArray();
-            }
+
+        public byte[] ByteArrayFromImage(Bitmap bmp)
+        {
+            using var stream = new System.IO.MemoryStream();
+            bmp.Compress(Bitmap.CompressFormat.Jpeg, 30, stream);
+            return stream.ToArray();
         }
 
         private async Task SendData(Bitmap bitmap)
@@ -113,6 +120,11 @@ namespace Familia.OngBenefits.GenerateCardQR
                 model.Put("seria", _personIdInfo.Series);
                 model.Put("nr", _personIdInfo.Number);
                 model.Put("valabilitate", _personIdInfo.Validity);
+                // Activity.RunOnUiThread(() =>
+                // {
+                    model.Put("email",etBeneficiaryEmail.EditText.Text);
+                // });
+
                 // personalInfoJson.Put("imagine", GetBase64Img(_imageAbsolutePath));
                 // model.Put("idClient", Utils.GetDefaults("IdClient"));
                 // model.Put("data", personalInfoJson);
@@ -126,7 +138,7 @@ namespace Familia.OngBenefits.GenerateCardQR
 
                 byte[] imageArr = ByteArrayFromImage(bitmap);
                 // byte[] test = new byte[] { 0x44, 0x55, 0xff, 0x11 };
-       
+
                 MultipartFormDataContent form = new MultipartFormDataContent
                 {
                     {new StringContent(Utils.GetDefaults("IdClient")), "idClient"},
@@ -134,7 +146,7 @@ namespace Familia.OngBenefits.GenerateCardQR
                     //{new ByteArrayContent(fileBytes, 0, fileBytes.Length), "fisier", "CI.jpg"},
                     {new ByteArrayContent(imageArr), "fisier", "CI.jpg"}
                 };
-                
+
 
                 Log.Error("personalInfoJson", model.ToString());
                 Log.Error("Request", form.ToString());
@@ -144,13 +156,18 @@ namespace Familia.OngBenefits.GenerateCardQR
 
                 string message;
                 if (response is null)
-                 {
+                {
                     message = "A fost intampinata o eroare";
                 }
                 else
                 {
                     var responseJson = new JSONObject(response);
                     message = responseJson.GetString(responseJson.Has("message") ? "message" : "error");
+                    Activity.RunOnUiThread(() =>
+                    {
+                        dataSent = true;
+                        etBeneficiaryEmail.EditText.Text = string.Empty;
+                    });
                 }
 
                 Activity.RunOnUiThread(() =>
@@ -190,6 +207,8 @@ namespace Familia.OngBenefits.GenerateCardQR
             tvSeriesAndNumber = Activity.FindViewById<TextView>(Resource.Id.tv_serie_nr_f);
             tvValidity = Activity.FindViewById<TextView>(Resource.Id.tv_valabilitate_f);
             tvIssued = Activity.FindViewById<TextView>(Resource.Id.tv_emisa_f);
+            etBeneficiaryEmail = Activity.FindViewById<TextInputLayout>(Resource.Id.et_email_layout);
+            etBeneficiaryEmail.EditText.TextChanged += EmailEditTextOnTextChanged;
 
             RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) rlActions.LayoutParameters;
             lp.AddRule(LayoutRules.CenterInParent);
@@ -201,7 +220,38 @@ namespace Familia.OngBenefits.GenerateCardQR
 
         private void OnScanCardClick(object sender, EventArgs e)
         {
-            ReadText();
+            if (string.IsNullOrEmpty(etBeneficiaryEmail.EditText.Text))
+            {
+                etBeneficiaryEmail.Error = "Adresa de email este obligatorie";
+            }
+            else
+            {
+                etBeneficiaryEmail.Error = null;
+                ReadText();
+            }
+        }
+
+        private void EmailEditTextOnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (dataSent)
+            {
+                etBeneficiaryEmail.Error = null;
+                dataSent = false;
+                return;
+            }
+
+            if (etBeneficiaryEmail.EditText.Text == string.Empty)
+            {
+                etBeneficiaryEmail.Error = "Camp obligatoriu";
+            }
+            else if (!Utils.EmailValidator(etBeneficiaryEmail.EditText.Text))
+            {
+                etBeneficiaryEmail.Error = "Adresa de email invalida";
+            }
+            else
+            {
+                etBeneficiaryEmail.Error = null;
+            }
         }
 
         private void ReadText()
@@ -307,39 +357,46 @@ namespace Familia.OngBenefits.GenerateCardQR
                 Log.Error("From Cammera", _imageAbsolutePath);
                 Bitmap bitmap = MediaStore.Images.Media.GetBitmap(Activity.ContentResolver, _imageUri);
                 ExifInterface ei = null;
-                try {
+                try
+                {
                     ei = new ExifInterface(_imageAbsolutePath);
-                } catch (IOException e)
+                }
+                catch (IOException e)
                 {
                     Log.Error("Error", e.Message);
                 }
+
                 string orientation = ei.GetAttribute(ExifInterface.TagOrientation);
 
                 Bitmap rotatedBitmap = null;
                 switch (orientation)
                 {
                     case "1": // landscape
+                        rotatedBitmap = bitmap;
                         break;
                     case "3":
                     case "4":
-                        rotatedBitmap =rotateImage(bitmap, 180);
+                        rotatedBitmap = rotateImage(bitmap, 180);
                         break;
                     case "5":
                     case "6": // portrait
-                        rotatedBitmap =rotateImage(bitmap, 90);
+                        rotatedBitmap = rotateImage(bitmap, 90);
                         break;
                     case "7":
                     case "8":
                         rotatedBitmap = rotateImage(bitmap, -90);
                         break;
-                    default: 
+                    default:
                         rotatedBitmap = bitmap;
                         break;
                 }
+
                 _ = SendData(rotatedBitmap);
             }
         }
-        public Bitmap rotateImage(Bitmap source, float angle) {
+
+        public Bitmap rotateImage(Bitmap source, float angle)
+        {
             Matrix matrix = new Matrix();
             matrix.PostRotate(angle);
             return Bitmap.CreateBitmap(source, 0, 0, source.Width, source.Height,
