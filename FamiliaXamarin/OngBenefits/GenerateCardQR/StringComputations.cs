@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Android.Gms.Vision.Texts;
 using Android.Util;
@@ -67,14 +68,55 @@ namespace Familia.OngBenefits.GenerateCardQR
             {
                 if (cnp.ToLower().Contains("cnp ") && cnp.Length == 17)
                 {
-                    Cnp = cnp.Substring(4);
+                    string value = cnp[4..];
+                    if (IsCNPValid(value))
+                    {
+                        Cnp = value;
+
+                    }
                 }
             }
 
             // OcrGraphic graphic = new OcrGraphic(context, mGraphicOverlay, item);
             // mGraphicOverlay.Add(graphic);
         }
+        private bool IsCNPValid(string cnp)
+        {
+            if(cnp.Length < 13)
+            {
+                return false;
+            }
+            int[] control = { 2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9 };
+            int add = 0;
+            for (int i = 0; i < cnp.Length-1; i++)
+            {
+                try
+                {
+                    add += int.Parse(cnp[i].ToString()) * control[i];
 
+                }catch (Exception)
+                {
+                    return false;
+                }
+            }
+
+            try
+            {
+                int lastDigit = int.Parse(cnp[cnp.Length - 1].ToString());
+                int r = add % 11;
+                if ((r < 10 && r == lastDigit) || (r == 10 && lastDigit == 1))
+                {
+                    return true;
+                }
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            
+            return false;
+        }
         //
         private void GetNume(TextBlock item)
         {
