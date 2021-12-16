@@ -147,12 +147,12 @@ namespace Familia.OngBenefits.GenerateCardQR
                     {new ByteArrayContent(imageArr), "fisier", "CI.jpg"}
                 };
 
-
+                
                 Log.Error("personalInfoJson", model.ToString());
                 Log.Error("Request", form.ToString());
                 string response =
                     await WebServices.WebServices.Post<MultipartFormDataContent>(
-                        "https://asisocdev.indecosoft.net/scanare_pers_extern.php", form);
+                        "https://asisoc.indecosoft.net/scanare_pers_extern.php", form);
 
                 string message;
                 if (response is null)

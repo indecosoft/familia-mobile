@@ -39,19 +39,19 @@ namespace Familia {
 
 
         // Dev
-        public static string SaveDeviceDataUrl { get; } = "https://gisdev.indecosoft.net/chat/api/save-device-measurements";
-        public static string PublicServerAddress { get; } = "https://gisdev.indecosoft.net/chat";
-        public static string WebSocketLocationAddress { get; } = "https://gisdev.indecosoft.net/location";
-        public static string WebSocketAddress { get; } = "https://gisdev.indecosoft.net/ws";
-        public static string Config { get; } = "https://gisdev.indecosoft.net/chat/api/get-device-config";
+       // public static string SaveDeviceDataUrl { get; } = "https://asisocdev.indecosoft.net/chat/api/save-device-measurements";
+        //public static string PublicServerAddress { get; } = "https://asisocdev.indecosoft.net/chat";
+       // public static string WebSocketLocationAddress { get; } = "https://asisocdev.indecosoft.net/location";
+     //   public static string WebSocketAddress { get; } = "https://asisocdev.indecosoft.net/ws";
+       // public static string Config { get; } = "https://asisocdev.indecosoft.net/chat/api/get-device-config";
 
 
         // Prod
-        //public static string SaveDeviceDataUrl { get; } = "https://gis.indecosoft.net/chat/api/save-device-measurements";
-        //public static string PublicServerAddress { get; } = "https://gis.indecosoft.net/chat";
-        //public static string WebSocketLocationAddress { get; } = "https://gis.indecosoft.net/location";
-        //public static string WebSocketAddress { get; } = "https://gis.indecosoft.net/ws";
-        //public static string Config { get; } = "https://gis.indecosoft.net/chat/api/get-device-config";
+        public static string SaveDeviceDataUrl { get; } = "https://gis.indecosoft.net/chat/api/save-device-measurements";
+        public static string PublicServerAddress { get; } = "https://gis.indecosoft.net/chat";
+        public static string WebSocketLocationAddress { get; } = "https://gis.indecosoft.net/location";
+        public static string WebSocketAddress { get; } = "https://gis.indecosoft.net/ws";
+        public static string Config { get; } = "https://gis.indecosoft.net/chat/api/get-device-config";
 
 
         // local
